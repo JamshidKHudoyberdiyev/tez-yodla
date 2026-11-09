@@ -39,7 +39,7 @@ export function Wordmark({ size = 28, dark = false }: { size?: number; dark?: bo
 
 /** Bog' bosqichlari: 0 urug' · 1 maysa · 2 nihol · 3 ko'chat · 4 daraxt · 5 meva */
 export function Plant({ stage, size = 56 }: { stage: number; size?: number }) {
-  const ground = <Ellipse cx={32} cy={54} rx={20} ry={5} fill="#D8C3A5" />;
+  const ground = <Ellipse cx={32} cy={54} rx={20} ry={5} fill={colors.soil} />;
   let g: React.ReactNode;
   switch (Math.max(0, Math.min(5, stage))) {
     case 0:
@@ -104,16 +104,17 @@ export function Plant({ stage, size = 56 }: { stage: number; size?: number }) {
 /** Olov — faqat streak uchun. */
 export function FlameArt({ size = 28, dim = false, inner = '#FCE38A' }: { size?: number; dim?: boolean; inner?: string }) {
   const id = `fl${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  // «Bugun hali sanalmagan» — kulrang olov (shaffof qilinsa tungi fonda loyqa ko'rinadi).
   return (
-    <Svg width={size} height={size} viewBox="0 0 32 32" opacity={dim ? 0.35 : 1} {...hidden}>
+    <Svg width={size} height={size} viewBox="0 0 32 32" {...hidden}>
       <Defs>
         <LinearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor="#F0A35E" />
-          <Stop offset="1" stopColor="#C0631C" />
+          <Stop offset="0" stopColor={dim ? colors.flameOff : '#F0A35E'} />
+          <Stop offset="1" stopColor={dim ? colors.flameOff : '#C0631C'} />
         </LinearGradient>
       </Defs>
       <Path d="M16 2c1.2 4.6 7.5 7.4 7.5 15.2A7.5 7.5 0 0 1 8.5 17.2c0-3.7 2.3-6.2 3.6-7.4.1 2.5 1.3 3.9 2.7 4.1C14.6 9.4 13.6 6 16 2z" fill={`url(#${id})`} />
-      <Path d="M16 15.5c.7 2 3.2 3 3.2 6a3.2 3.2 0 0 1-6.4 0c0-1.6 1-2.6 1.6-3.1.1 1 .6 1.5 1.1 1.6-.2-1.8-.2-3.1.5-4.5z" fill={inner} />
+      <Path d="M16 15.5c.7 2 3.2 3 3.2 6a3.2 3.2 0 0 1-6.4 0c0-1.6 1-2.6 1.6-3.1.1 1 .6 1.5 1.1 1.6-.2-1.8-.2-3.1.5-4.5z" fill={dim ? colors.flameOffInner : inner} />
     </Svg>
   );
 }
@@ -133,7 +134,7 @@ export function SnowArt({ size = 16, color = colors.blue }: { size?: number; col
 /** Ikki rangli ikonlar: 2px chiziq, yumaloq uchlar, ichi laym. */
 export type DuoName = 'home' | 'decks' | 'garden' | 'stats' | 'add' | 'voice' | 'bell' | 'games' | 'text' | 'calendar' | 'settings' | 'exam' | 'work' | 'travel' | 'school' | 'media';
 
-export function DuoIcon({ name, size = 24, fill = LIME, stroke = colors.forestText }: { name: DuoName; size?: number; fill?: string; stroke?: string }) {
+export function DuoIcon({ name, size = 24, fill = colors.duoFill, stroke = colors.duoStroke }: { name: DuoName; size?: number; fill?: string; stroke?: string }) {
   const p = { fill: 'none' as const };
   const f = { fill };
   const shapes: Record<DuoName, React.ReactNode> = {

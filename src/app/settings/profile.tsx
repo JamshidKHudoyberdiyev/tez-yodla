@@ -116,7 +116,7 @@ export default function Profile() {
             return (
               <Pressable key={g.id} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={g.label} onPress={() => toggleGoal(g.id)}
                 style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, height: 40, paddingLeft: 10, paddingRight: 13, borderRadius: 20, borderWidth: 2, borderColor: on ? colors.forestLine : colors.line, backgroundColor: on ? colors.limeSoft : colors.surface, opacity: pressed ? 0.85 : 1 })}>
-                <DuoIcon name={g.icon} size={18} fill={on ? colors.lime : 'transparent'} stroke={on ? colors.forestText : colors.faint} />
+                <DuoIcon name={g.icon} size={18} fill={on ? colors.duoFill : 'transparent'} stroke={on ? colors.duoStroke : colors.faint} />
                 <T w="bold" size={13}>{g.label}</T>
               </Pressable>
             );

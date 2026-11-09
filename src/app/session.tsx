@@ -772,7 +772,7 @@ function Tip({ text }: { text: string }) {
 /** Keyingi takrorlashgacha bo'lgan vaqt — tugma ostida ko'rsatiladi. */
 function gapLabel(days: number): string {
   if (days <= 0) return 'bugun';
-  if (days === 1) return 'ertaga';
+  if (days === 1) return '1 kun';
   if (days % 30 === 0) return `${days / 30} oy`;
   if (days % 7 === 0) return `${days / 7} hafta`;
   return `${days} kun`;
@@ -791,7 +791,8 @@ const GRADE_LOOK = (): Record<Grade, { label: string; icon: React.ComponentProps
  * Yangi guruhning «Eslash» bosqichida esa faqat ikki tanlov: esladim / eslay olmadim (yana ko'rsatiladi).
  */
 function GradeButtons({ onGrade, card, today }: { onGrade: (g: Grade) => void; card?: CardT; today?: number }) {
-  const grades: Grade[] = card ? ['again', 'hard', 'good', 'easy'] : ['again', 'good'];
+  // Ikki tanlov: eslay olmadim / esladim. Takrorlashda ostida so'z qachon qaytishi yoziladi.
+  const grades: Grade[] = ['again', 'good'];
   const sub = (g: Grade) => {
     if (!card || today === undefined) return g === 'again' ? "yana ko'rsatiladi" : 'keyingisiga';
     return gapLabel(gradeCard(card, g, today).due - today);
@@ -799,12 +800,12 @@ function GradeButtons({ onGrade, card, today }: { onGrade: (g: Grade) => void; c
   return (
     <View style={{ gap: 8 }}>
       <T size={13} color={colors.muted} style={{ textAlign: 'center' }}>
-        {card ? 'Qanday esladingiz? Tugma ostida — so\'z qachon qaytishi' : 'Esladingizmi?'}
+        Esladingizmi?
       </T>
       <View style={{ flexDirection: 'row', gap: 8 }}>
         {grades.map((g) => {
           const look = GRADE_LOOK()[g];
-          const label = !card && g === 'again' ? 'Eslay olmadim' : look.label;
+          const label = g === 'again' ? 'Eslay olmadim' : look.label;
           return (
             <Pressable key={g} accessibilityRole="button" accessibilityLabel={`${label}: ${sub(g)}`} onPress={() => onGrade(g)}
               style={({ pressed }) => ({ flex: 1, minHeight: 76, borderRadius: 18, paddingVertical: 10, paddingHorizontal: 4, gap: 4, backgroundColor: pressed ? look.bg : colors.surface,
@@ -812,8 +813,8 @@ function GradeButtons({ onGrade, card, today }: { onGrade: (g: Grade) => void; c
               <View style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: look.bg, alignItems: 'center', justifyContent: 'center' }}>
                 <Feather name={look.icon} size={14} color={look.fg} />
               </View>
-              <T w="extrabold" size={card ? 14 : 15} color={colors.ink} numberOfLines={1}>{label}</T>
-              <T size={11} color={look.fg} numberOfLines={1} adjustsFontSizeToFit>{sub(g)}</T>
+              <T w="extrabold" size={15} color={colors.ink} numberOfLines={1}>{label}</T>
+              <T size={12} color={look.fg} numberOfLines={1} adjustsFontSizeToFit>{card ? (g === 'again' ? 'bugun yana so\'raladi' : `${sub(g)}dan keyin qaytadi`) : sub(g)}</T>
             </Pressable>
           );
         })}

@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
-import { DayGoal, Flame, FreezeChip, ICE, ICE_SOFT, StreakCard, WeekStrip } from '@/components/Streak';
+import { DayGoal, Flame, FreezeChip, StreakCard, WeekStrip } from '@/components/Streak';
 import { SnowArt } from '@/components/Art';
 import { Button, Screen, T } from '@/components/ui';
 import { computeStats } from '@/lib/plan';
@@ -89,10 +89,10 @@ export default function StreakScreen() {
         ))}
       </View>
 
-      <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', padding: 14, borderRadius: 20, backgroundColor: ICE_SOFT }}>
+      <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', padding: 14, borderRadius: 20, backgroundColor: colors.blueSoft }}>
         <View style={{ marginTop: 2 }}><SnowArt size={16} /></View>
-        <T size={13} color={ICE} style={{ flex: 1, lineHeight: 19 }}>
-          <T w="extrabold" size={13} color={ICE}>Muzlatish</T> — bir kun kira olmasangiz, streak saqlanadi (lekin o'smaydi). Har {FREEZE_EVERY} kunda 1 ta beriladi, zaxirada ko'pi bilan {MAX_FREEZES} ta.
+        <T size={13} color={colors.blue} style={{ flex: 1, lineHeight: 19 }}>
+          <T w="extrabold" size={13} color={colors.blue}>Muzlatish</T> — bir kun kira olmasangiz, streak saqlanadi (lekin o'smaydi). Har {FREEZE_EVERY} kunda 1 ta beriladi, zaxirada ko'pi bilan {MAX_FREEZES} ta.
         </T>
       </View>
 

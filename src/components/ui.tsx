@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { ReactNode, useContext } from 'react';
 import { Pressable, ScrollView, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, font, FontScaleContext, radius, ThemeContext } from '../lib/theme';
+import { colors, font, FontScaleContext, radius, themed, ThemeContext } from '../lib/theme';
 
 export type IconName = keyof typeof Feather.glyphMap;
 
@@ -120,8 +120,8 @@ export function Card({ children, style, onPress }: { children: ReactNode; style?
 
 export function IconTile({ icon, label, bg = colors.surfaceMuted, fg = colors.ink, size = 48 }: { icon?: IconName; label?: string; bg?: string; fg?: string; size?: number }) {
   return (
-    <View style={{ width: size, height: size, borderRadius: size * 0.33, backgroundColor: bg, alignItems: 'center', justifyContent: 'center' }}>
-      {icon ? <Feather name={icon} size={size * 0.46} color={fg} /> : <T w="extrabold" size={size * 0.3} color={fg}>{label}</T>}
+    <View style={{ width: size, height: size, borderRadius: size * 0.33, backgroundColor: themed(bg), alignItems: 'center', justifyContent: 'center' }}>
+      {icon ? <Feather name={icon} size={size * 0.46} color={themed(fg)} /> : <T w="extrabold" size={size * 0.3} color={themed(fg)}>{label}</T>}
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { Flame, ICE, ICE_SOFT } from '@/components/Streak';
+import { Flame} from '@/components/Streak';
 import { BackHeader, Screen, T } from '@/components/ui';
 import { uzDate } from '@/lib/drill';
 import { practiced } from '@/lib/streak';
@@ -63,8 +63,8 @@ export default function StreakCalendar() {
           {Array.from({ length: daysInMonth }, (_, i) => {
             const d = first + i;
             const st = dayState(s, d, today);
-            const bg = st === 'done' ? colors.forest : st === 'todayDone' ? colors.lime : st === 'frozen' ? ICE_SOFT : 'transparent';
-            const fg = st === 'done' ? colors.lime : st === 'todayDone' ? colors.limeInk : st === 'frozen' ? ICE : st === 'future' ? '#C4C8BF' : colors.muted;
+            const bg = st === 'done' ? colors.forest : st === 'todayDone' ? colors.lime : st === 'frozen' ? colors.blueSoft : 'transparent';
+            const fg = st === 'done' ? colors.lime : st === 'todayDone' ? colors.limeInk : st === 'frozen' ? colors.blue : st === 'future' ? '#C4C8BF' : colors.muted;
             return (
               <View key={d} style={{ width: `${100 / 7}%`, paddingHorizontal: 2 }}>
                 <View accessibilityLabel={`${uzDate(d)}: ${st}`} style={{ height: 36, borderRadius: 11, backgroundColor: bg, alignItems: 'center', justifyContent: 'center', borderWidth: st === 'today' ? 2 : 0, borderColor: colors.error, borderStyle: 'dashed' }}>
@@ -75,7 +75,7 @@ export default function StreakCalendar() {
           })}
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 14 }}>
-          {[{ c: colors.forest, l: "Shug'ullandingiz" }, { c: ICE_SOFT, l: 'Muzlatildi' }, { c: colors.lime, l: 'Bugun' }].map((x) => (
+          {[{ c: colors.forest, l: "Shug'ullandingiz" }, { c: colors.blueSoft, l: 'Muzlatildi' }, { c: colors.lime, l: 'Bugun' }].map((x) => (
             <View key={x.l} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <View style={{ width: 12, height: 12, borderRadius: 4, backgroundColor: x.c }} />
               <T size={12} color={colors.inkSoft}>{x.l}</T>
@@ -115,7 +115,7 @@ export default function StreakCalendar() {
           {heat.map((week, w) => (
             <View key={w} style={{ gap: 4 }}>
               {week.map(({ day, lv }) => (
-                <View key={day} style={{ width: 20, height: 20, borderRadius: 5, backgroundColor: lv === -1 ? 'transparent' : lv === -2 ? ICE_SOFT : HEAT[lv], borderWidth: lv === -1 ? 1 : lv === -2 ? 1 : 0, borderColor: lv === -2 ? ICE : colors.line, borderStyle: lv === -1 ? 'dashed' : 'solid' }} />
+                <View key={day} style={{ width: 20, height: 20, borderRadius: 5, backgroundColor: lv === -1 ? 'transparent' : lv === -2 ? colors.blueSoft : HEAT[lv], borderWidth: lv === -1 ? 1 : lv === -2 ? 1 : 0, borderColor: lv === -2 ? colors.blue : colors.line, borderStyle: lv === -1 ? 'dashed' : 'solid' }} />
               ))}
             </View>
           ))}

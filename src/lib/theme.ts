@@ -39,6 +39,14 @@ const light = {
   inverse: '#131A15',
   onInverse: '#FFFFFF',
   veil: 'rgba(241,242,236,0.78)',
+  /** Ikki rangli ikon: ichki bo'yoq va chiziq */
+  duoFill: '#B6E44E',
+  duoStroke: '#1F5A2E',
+  /** O'simlik ostidagi tuproq */
+  soil: '#D8C3A5',
+  /** «Bugun hali sanalmagan» olov */
+  flameOff: '#C9CCC4',
+  flameOffInner: '#E4E6DF',
 };
 
 export type Palette = typeof light;
@@ -79,6 +87,11 @@ const dark: Palette = {
   inverse: '#2C3730',
   onInverse: '#FFFFFF',
   veil: 'rgba(14,20,17,0.8)',
+  duoFill: '#35521F',
+  duoStroke: '#C2EC6A',
+  soil: '#3B342A',
+  flameOff: '#3F4A42',
+  flameOffInner: '#5A665D',
 };
 
 /**
@@ -96,6 +109,18 @@ export function applyTheme(scheme: Scheme) {
   Object.assign(colors, scheme === 'dark' ? dark : light);
 }
 export const PALETTES = { light, dark };
+/** Ma'lumotlarda yozilgan yorug' ranglar (to'plam belgilari) — tungi mavzuda mos to'q juftiga almashtiriladi. */
+const DARK_SWAP: Record<string, keyof Palette | string> = {
+  '#E6F4CC': 'limeSoft', '#F1E8FB': 'purpleSoft', '#E4EDFB': 'blueSoft', '#F6EAD7': 'amberSoft',
+  '#17461F': 'forestText', '#1F55A8': 'blue', '#8F4A12': 'amber', '#6B3FA8': '#C3A3F0',
+};
+export function themed(c: string): string {
+  if (current !== 'dark') return c;
+  const k = DARK_SWAP[c.toUpperCase()];
+  if (!k) return c;
+  return k.startsWith('#') ? k : (colors as Record<string, string>)[k];
+}
+
 /** Joriy mavzu — o'zgarganda matn komponentlari ham qayta chiziladi. */
 export const ThemeContext = createContext<Scheme>('light');
 

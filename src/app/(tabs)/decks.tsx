@@ -112,7 +112,7 @@ export default function Decks() {
             <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/add', params: { tab: 'text' } })}
               style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 24, backgroundColor: colors.forest, opacity: pressed ? 0.92 : 1 })}>
               <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center' }}>
-                <DuoIcon name="text" size={24} fill={colors.lime} stroke="#FFFFFF" />
+                <DuoIcon name="text" size={24} fill={colors.lime} stroke={colors.limeInk} />
               </View>
               <View style={{ flex: 1 }}>
                 <T w="extrabold" size={16} color="#FFFFFF">O'qiyotgan matningizdan</T>

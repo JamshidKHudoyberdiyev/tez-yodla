@@ -6,10 +6,6 @@ import { T } from '@/components/ui';
 import { DAY_GOAL, dayState, milestoneLabel, StreakInfo, weekDays, WEEKDAYS } from '@/lib/streak';
 import { colors } from '@/lib/theme';
 
-export const FIRE = colors.error;
-export const FIRE_SOFT = colors.amberSoft;
-export const ICE = '#1F55A8';
-export const ICE_SOFT = colors.blueSoft;
 
 /** Olov belgisi — vektor (v3), faqat streak uchun ishlatiladi */
 export function Flame({ size = 24, dim = false }: { size?: number; dim?: boolean }) {
@@ -18,9 +14,9 @@ export function Flame({ size = 24, dim = false }: { size?: number; dim?: boolean
 
 export function FreezeChip({ n, big = false }: { n: number; big?: boolean }) {
   return (
-    <View accessibilityLabel={`Zaxirada ${n} ta muzlatish`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, height: big ? 40 : 30, paddingHorizontal: big ? 12 : 10, borderRadius: 999, backgroundColor: ICE_SOFT }}>
+    <View accessibilityLabel={`Zaxirada ${n} ta muzlatish`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, height: big ? 40 : 30, paddingHorizontal: big ? 12 : 10, borderRadius: 999, backgroundColor: colors.blueSoft }}>
       <SnowArt size={big ? 16 : 14} />
-      <T w="extrabold" size={big ? 15 : 13} color={ICE}>{n}</T>
+      <T w="extrabold" size={big ? 15 : 13} color={colors.blue}>{n}</T>
     </View>
   );
 }
@@ -31,7 +27,7 @@ export function DayGoal({ count, light = false }: { count: number; light?: boole
   return (
     <View style={{ flexDirection: 'row', gap: 4 }} accessibilityLabel={`Bugun ${count} ta so'z, maqsad ${DAY_GOAL}`}>
       {Array.from({ length: DAY_GOAL }, (_, i) => (
-        <View key={i} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: i < n ? FIRE : light ? 'rgba(255,255,255,0.25)' : FIRE_SOFT }} />
+        <View key={i} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: i < n ? colors.error : light ? 'rgba(255,255,255,0.25)' : colors.amberSoft }} />
       ))}
     </View>
   );
@@ -47,9 +43,9 @@ export function WeekStrip({ info, today }: { info: StreakInfo; today: number }) 
         const look = {
           done: { bg: colors.forest, border: 'transparent', icon: 'check' },
           todayDone: { bg: colors.lime, border: colors.limeSoft, icon: 'check' },
-          frozen: { bg: ICE_SOFT, border: 'transparent', icon: 'snow' },
+          frozen: { bg: colors.blueSoft, border: 'transparent', icon: 'snow' },
           missed: { bg: colors.line, border: 'transparent', icon: '' },
-          today: { bg: colors.surface, border: FIRE, icon: '' },
+          today: { bg: colors.surface, border: colors.error, icon: '' },
           future: { bg: 'transparent', border: colors.line, icon: '' },
           none: { bg: 'transparent', border: colors.line, icon: '' },
         }[st];
@@ -60,7 +56,7 @@ export function WeekStrip({ info, today }: { info: StreakInfo; today: number }) 
             <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: look.bg, borderWidth: st === 'today' ? 2.5 : st === 'todayDone' ? 3 : st === 'future' || st === 'none' ? 2 : 0, borderColor: look.border, borderStyle: st === 'today' ? 'dashed' : 'solid', alignItems: 'center', justifyContent: 'center' }}>
               {look.icon === 'check' ? <Feather name="check" size={17} color={st === 'todayDone' ? colors.limeInk : colors.lime} /> : null}
               {look.icon === 'snow' ? <SnowArt size={16} /> : null}
-              {st === 'today' && info.todayCount > 0 ? <T w="extrabold" size={11} color={FIRE}>{info.todayCount}/{DAY_GOAL}</T> : null}
+              {st === 'today' && info.todayCount > 0 ? <T w="extrabold" size={11} color={colors.error}>{info.todayCount}/{DAY_GOAL}</T> : null}
             </View>
           </View>
         );
@@ -107,12 +103,12 @@ export function StreakCard({ info, today, onRepair, onRestart }: { info: StreakI
 
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={`${info.current} kunlik streak. ${sub}`} onPress={() => router.push('/streak')}
-      style={({ pressed }) => ({ backgroundColor: frozeYesterday ? ICE_SOFT : colors.surface, borderRadius: 26, padding: 16, gap: 14, opacity: pressed ? 0.9 : 1 })}>
+      style={({ pressed }) => ({ backgroundColor: frozeYesterday ? colors.blueSoft : colors.surface, borderRadius: 26, padding: 16, gap: 14, opacity: pressed ? 0.9 : 1 })}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <Flame size={30} dim={!info.todayDone && info.current === 0} />
         <View style={{ flex: 1 }}>
           <T w="extrabold" size={18}>{info.current ? `${info.current} kunlik streak` : 'Streakni boshlang'}</T>
-          <T size={13} color={frozeYesterday ? ICE : info.repairing ? colors.forestText : colors.muted}>{info.current || info.todayCount ? sub : `Bugun ${DAY_GOAL} ta so'z — birinchi kun`}</T>
+          <T size={13} color={frozeYesterday ? colors.blue : info.repairing ? colors.forestText : colors.muted}>{info.current || info.todayCount ? sub : `Bugun ${DAY_GOAL} ta so'z — birinchi kun`}</T>
         </View>
         <FreezeChip n={info.freezes} />
       </View>
@@ -131,9 +127,9 @@ export function StreakStrip({ info, today }: { info: StreakInfo; today: number }
   const note = info.repairing
     ? { text: `Qaytarish: ${info.repairing.step}/2 kun — ${info.repairing.step === 0 ? 'bugun' : 'ertaga'} ham shug'ullaning`, color: colors.forestText }
     : frozeYesterday
-      ? { text: 'Kecha muzlatish ishlatildi — streak saqlandi', color: ICE }
+      ? { text: 'Kecha muzlatish ishlatildi — streak saqlandi', color: colors.blue }
       : !info.todayDone && info.todayCount > 0
-        ? { text: `Kun sanalishiga yana ${DAY_GOAL - info.todayCount} ta so'z`, color: FIRE }
+        ? { text: `Kun sanalishiga yana ${DAY_GOAL - info.todayCount} ta so'z`, color: colors.error }
         : null;
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={`${info.current} kunlik streak, zaxirada ${info.freezes} ta muzlatish. ${note?.text ?? ''}`} onPress={() => router.push('/streak')}
@@ -146,9 +142,9 @@ export function StreakStrip({ info, today }: { info: StreakInfo; today: number }
             const look = {
               done: { bg: colors.forest, bw: 0, bc: 'transparent' },
               todayDone: { bg: colors.lime, bw: 0, bc: 'transparent' },
-              frozen: { bg: ICE_SOFT, bw: 0, bc: 'transparent' },
+              frozen: { bg: colors.blueSoft, bw: 0, bc: 'transparent' },
               missed: { bg: colors.line, bw: 0, bc: 'transparent' },
-              today: { bg: colors.surface, bw: 2.5, bc: FIRE },
+              today: { bg: colors.surface, bw: 2.5, bc: colors.error },
               future: { bg: 'transparent', bw: 2, bc: colors.line },
               none: { bg: 'transparent', bw: 2, bc: colors.line },
             }[st];
@@ -166,7 +162,7 @@ export function StreakStrip({ info, today }: { info: StreakInfo; today: number }
         <View style={{ alignItems: 'center', minWidth: 40 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
             <SnowArt size={13} />
-            <T w="extrabold" size={14} color={ICE}>{info.freezes}</T>
+            <T w="extrabold" size={14} color={colors.blue}>{info.freezes}</T>
           </View>
           <T size={10} color={colors.faint}>zaxira</T>
         </View>
