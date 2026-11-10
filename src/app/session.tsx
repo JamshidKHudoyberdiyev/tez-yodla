@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, Modal, Pressable, TextInput, View } from 'react-native';
 import { Association, DiffLetters, Example, SoundButton, WordHead, WordPhoto } from '@/components/WordParts';
@@ -12,7 +12,7 @@ import { gardenIndex } from '@/lib/garden';
 import { DAY_GOAL, milestoneLabel, MILESTONES, type StreakInfo } from '@/lib/streak';
 import { buildChoices, groupTimeline, intervalLabel, relativeDay, shuffle, uzDate } from '@/lib/drill';
 import { Word } from '@/data/words';
-import { todayPlan } from '@/lib/plan';
+import { EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { clozeOf, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence } from '@/lib/speech';
 import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
@@ -74,9 +74,11 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
   /** Mashg'ulot boshidagi streak — oxirida «+1 kun», marra va muzlatishni aniqlash uchun */
   const streakBefore = useRef(store.streak);
 
+  /** «Yana 5 ta so'z» — kunlik reja bajarilgandan keyingi qo'shimcha guruh */
+  const { extra } = useLocalSearchParams<{ extra?: string }>();
   // Reja mashg'ulot boshida bir marta tuziladi.
   const initial = useMemo(() => {
-    const p = todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, log: state.log, today });
+    const p = todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: extra ? EXTRA_NEW : undefined, log: state.log, today });
     return {
       groups: p.groups,
       reviews: p.reviews.filter((c) => c.state !== 'relearning' && wordById(c.wordId)),

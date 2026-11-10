@@ -8,7 +8,7 @@ import { Flame, StreakCard, StreakStrip } from '@/components/Streak';
 import { Avatar } from '@/components/Avatar';
 import { Button, T } from '@/components/ui';
 import { gardenStages } from '@/lib/garden';
-import { todayPlan } from '@/lib/plan';
+import { EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
@@ -27,6 +27,9 @@ export default function Home() {
   const left = plan.newWords.length + plan.reviews.length;
   const done = streak.todayCount;
   const allDone = left === 0;
+  // Reja bajarilgach — yana nechta yangi so'z bor (to'plamlar tugagan bo'lsa tugma chiqmaydi)
+  const more = allDone ? todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: EXTRA_NEW, log: state.log, today }).newWords.length : 0;
+  const newToday = state.log[today]?.newLearned ?? 0;
   const minutes = Math.max(1, Math.round(plan.newWords.length * 0.8 + plan.reviews.length * 0.25));
   const garden = useMemo(() => gardenStages(state.cards, today), [state.cards, today]);
   const gardenTotal = garden.reduce((n, g) => n + g.ids.length, 0);
@@ -74,7 +77,7 @@ export default function Home() {
                 {allDone ? 'Barakalla!' : done > 0 ? `Yana ${left} ta karta` : `${left} ta karta`}
               </T>
               <T size={13} color={colors.onForestSoft}>
-                {allDone ? "Miya endi bu so'zlarni uyquda mustahkamlaydi" : [plan.reviews.length ? `${plan.reviews.length} takror` : '', plan.newWords.length ? `${plan.newWords.length} yangi` : '', `~${minutes} daq`].filter(Boolean).join(' · ')}
+                {allDone ? (newToday > state.dailyNew ? `Bugun ${newToday} ta yangi so'z — zo'r!` : "Miya endi bu so'zlarni uyquda mustahkamlaydi") : [plan.reviews.length ? `${plan.reviews.length} takror` : '', plan.newWords.length ? `${plan.newWords.length} yangi` : '', `~${minutes} daq`].filter(Boolean).join(' · ')}
               </T>
             </View>
           </View>
@@ -85,7 +88,14 @@ export default function Home() {
             </View>
           ) : null}
           {allDone ? (
-            <Button title="Matndan so'z qo'shish" iconRight="arrow-right" onPress={() => router.push({ pathname: '/add', params: { tab: 'text' } })} />
+            <>
+              {more ? <Button title={`Yana ${more} ta so'z o'rganish`} icon="plus" onPress={() => router.push({ pathname: '/session', params: { extra: '1' } })} /> : null}
+              <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/add', params: { tab: 'text' } })}
+                style={({ pressed }) => ({ height: more ? 48 : 56, borderRadius: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: more ? 'rgba(255,255,255,0.1)' : colors.lime, opacity: pressed ? 0.8 : 1 })}>
+                <Feather name="align-left" size={18} color={more ? colors.lime : colors.limeInk} />
+                <T w="extrabold" size={15} color={more ? '#FFFFFF' : colors.limeInk}>Matndan so'z qo'shish</T>
+              </Pressable>
+            </>
           ) : (
             <Button title={done > 0 ? 'Davom etish' : 'Boshlash'} iconRight="arrow-right" onPress={() => router.push('/session')} />
           )}

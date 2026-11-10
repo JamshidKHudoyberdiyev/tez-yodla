@@ -42,6 +42,15 @@ describe('plan', () => {
     expect(one.newWords.map((w) => w.word)).toEqual(['passport', 'ticket', 'luggage', 'flight', 'airport']);
   });
 
+  test("«Yana 5 ta so'z»: kunlik limit tugagan bo'lsa ham qo'shimcha yangi so'zlar beriladi", () => {
+    const log = { [T]: { newLearned: 5, reviews: 0, correct: 0, total: 0 } } as never;
+    const done = todayPlan({ words: WORDS, cards: {}, activeDecks: ['travel'], knownLemmas: new Set(), dailyNew: 5, log, today: T });
+    expect(done.newWords).toHaveLength(0);
+    const extra = todayPlan({ words: WORDS, cards: {}, activeDecks: ['travel'], knownLemmas: new Set(), dailyNew: 5, extraNew: 5, log, today: T });
+    expect(extra.newWords).toHaveLength(5);
+    expect(extra.groups).toHaveLength(1);
+  });
+
   test('streak bugun yoki kechadan boshlab hisoblanadi', () => {
     const l = { newLearned: 1, reviewed: 0, correct: 0, total: 0 };
     expect(streak({ [T - 1]: l, [T - 2]: l }, T)).toBe(2);

@@ -14,6 +14,8 @@ export interface PlanInput {
   activeDecks: string[];
   knownLemmas: Set<string>;
   dailyNew: number;
+  /** Reja bajarilgandan keyin «Yana 5 ta so'z»: kunlik limit o'rniga shuncha yangi so'z beriladi */
+  extraNew?: number;
   log: Record<number, DayLog>;
   today: number;
 }
@@ -25,10 +27,13 @@ export interface TodayPlan {
   newLeftToday: number;
 }
 
+/** «Yana N ta so'z» tugmasi bir bosishda beradigan qo'shimcha yangi so'zlar */
+export const EXTRA_NEW = 5;
+
 /** Bugungi reja: kunlik limitgacha yangi so'zlar (5 tadan guruh) va vaqti kelgan takrorlashlar. */
 export function todayPlan(input: PlanInput): TodayPlan {
   const learnedToday = input.log[input.today]?.newLearned ?? 0;
-  const newLeftToday = Math.max(0, input.dailyNew - learnedToday);
+  const newLeftToday = input.extraNew ?? Math.max(0, input.dailyNew - learnedToday);
   // Bir xil so'z bir nechta to'plamda bo'lsa (masalan, "honey"), u faqat bir marta o'rgatiladi.
   const taken = new Set(
     input.words.filter((w) => input.cards[w.id] && input.cards[w.id].state !== 'new').map((w) => w.word.toLowerCase()),
