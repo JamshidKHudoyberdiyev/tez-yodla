@@ -8,6 +8,7 @@
  */
 
 import { CORE_ENTRIES } from './core';
+import { FAMILY, SCHOOL, TRAVEL, WORK } from './topics';
 
 export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
 
@@ -49,13 +50,21 @@ export interface Deck {
   tint: string;
   ink: string;
   custom?: boolean;
+  /** «Mavzular» bo'limidagi to'plam (oshxona, maktab, ...) — aks holda daraja bo'yicha to'plam */
+  topic?: boolean;
+  /** Mavzu ikonkasi — MaterialCommunityIcons nomi */
+  icon?: string;
 }
 
 export const DECKS: Deck[] = [
   { id: 'core', title: "1000 asosiy so'z", subtitle: "A1–A2 · eng ko'p ishlatiladigan", badge: '1K', tint: '#E6F4CC', ink: '#17461F' },
   { id: 'b1', title: 'CEFR B1', subtitle: "O'rta daraja", badge: 'B1', tint: '#F1E8FB', ink: '#6B3FA8' },
   { id: 'ielts', title: 'IELTS Academic', subtitle: "B2–C1 · akademik so'zlar", badge: 'IE', tint: '#E4EDFB', ink: '#1F55A8' },
-  { id: 'kitchen', title: 'Oshxona va ovqat', subtitle: 'Mavzu', badge: 'OV', tint: '#F6EAD7', ink: '#8F4A12' },
+  { id: 'kitchen', title: 'Oshxona va ovqat', subtitle: 'A2', badge: 'OV', tint: '#F6EAD7', ink: '#8F4A12', topic: true, icon: 'pot-steam' },
+  { id: 'school', title: "Maktab va ta'lim", subtitle: 'A1–A2', badge: 'MT', tint: '#E4EDFB', ink: '#1F55A8', topic: true, icon: 'school' },
+  { id: 'work', title: 'Ish va ofis', subtitle: 'A2–B1', badge: 'IS', tint: '#F1E8FB', ink: '#6B3FA8', topic: true, icon: 'briefcase' },
+  { id: 'travel', title: 'Sayohat', subtitle: 'A1–B1', badge: 'SY', tint: '#DDF1F2', ink: '#14707A', topic: true, icon: 'airplane' },
+  { id: 'family', title: "Oila va do'stlar", subtitle: 'A1–A2', badge: 'OL', tint: '#FBE4EC', ink: '#B02F5C', topic: true, icon: 'account-group' },
   { id: 'mine', title: "Mening so'zlarim", subtitle: "O'qiganlaringizdan saqlangan", badge: '★', tint: '#1F5A2E', ink: '#B6E44E', custom: true },
 ];
 
@@ -67,6 +76,10 @@ const CORE_WORDS: Word[] = CORE_ENTRIES.map((e, i) => ({ ...e, id: `core:${e.wor
 
 export const WORDS: Word[] = [
   ...CORE_WORDS,
+  ...SCHOOL,
+  ...WORK,
+  ...TRAVEL,
+  ...FAMILY,
   ...w('b1', 'B1', [
     { word: 'although', translation: 'garchi, ...ga qaramay', ipa: '/ɔːlˈðəʊ/', pos: "bog'lovchi", example: 'Although it was cold, we went out.', exampleUz: 'Sovuq bo\'lishiga qaramay, tashqariga chiqdik.' },
     { word: 'improve', translation: 'yaxshilamoq', ipa: '/ɪmˈpruːv/', pos: "fe'l", example: 'I want to improve my English.', exampleUz: 'Ingliz tilimni yaxshilamoqchiman.' },

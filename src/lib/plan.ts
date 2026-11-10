@@ -33,15 +33,37 @@ export function todayPlan(input: PlanInput): TodayPlan {
   const taken = new Set(
     input.words.filter((w) => input.cards[w.id] && input.cards[w.id].state !== 'new').map((w) => w.word.toLowerCase()),
   );
-  const newWords: Word[] = [];
+  // To'plamlar navbatma-navbat so'z beradi (eng oxirgi qo'shilgan to'plamdan boshlab).
+  // Aks holda katta to'plam (1000 so'z) kunlik limitni doim to'ldirib, yangi mavzu so'zlariga navbat kelmasdi.
+  const byDeck = new Map<string, Word[]>();
   for (const w of input.words) {
-    if (newWords.length >= newLeftToday) break;
-    const key = w.word.toLowerCase();
     if (!input.activeDecks.includes(w.deckId)) continue;
     if (input.cards[w.id] && input.cards[w.id].state !== 'new') continue;
-    if (input.knownLemmas.has(key) || taken.has(key)) continue;
-    taken.add(key);
-    newWords.push(w);
+    const list = byDeck.get(w.deckId);
+    if (list) list.push(w);
+    else byDeck.set(w.deckId, [w]);
+  }
+  const order = [...input.activeDecks].reverse().filter((d, i, a) => byDeck.has(d) && a.indexOf(d) === i);
+  const pos = new Map<string, number>(order.map((d) => [d, 0]));
+  const newWords: Word[] = [];
+  let progressed = true;
+  while (newWords.length < newLeftToday && progressed) {
+    progressed = false;
+    for (const d of order) {
+      if (newWords.length >= newLeftToday) break;
+      const list = byDeck.get(d)!;
+      let i = pos.get(d)!;
+      while (i < list.length) {
+        const w = list[i++];
+        const key = w.word.toLowerCase();
+        if (input.knownLemmas.has(key) || taken.has(key)) continue;
+        taken.add(key);
+        newWords.push(w);
+        progressed = true;
+        break;
+      }
+      pos.set(d, i);
+    }
   }
   const groups: Word[][] = [];
   for (let i = 0; i < newWords.length; i += GROUP_SIZE) groups.push(newWords.slice(i, i + GROUP_SIZE));

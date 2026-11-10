@@ -31,6 +31,17 @@ describe('plan', () => {
     expect(learned.newWords).toHaveLength(0);
   });
 
+  test("yangi qo'shilgan mavzu katta to'plam ortida qolib ketmaydi: to'plamlar navbatma-navbat so'z beradi", () => {
+    const plan = todayPlan({ words: WORDS, cards: {}, activeDecks: ['core', 'travel'], knownLemmas: new Set(), dailyNew: 6, log: {}, today: T });
+    const decks = plan.newWords.map((w) => w.deckId);
+    expect(decks[0]).toBe('travel'); // eng oxirgi qo'shilgani birinchi
+    expect(decks.filter((d) => d === 'travel')).toHaveLength(3);
+    expect(decks.filter((d) => d === 'core')).toHaveLength(3);
+    // Faqat bitta to'plam faol bo'lsa — eski tartib saqlanadi
+    const one = todayPlan({ words: WORDS, cards: {}, activeDecks: ['travel'], knownLemmas: new Set(), dailyNew: 5, log: {}, today: T });
+    expect(one.newWords.map((w) => w.word)).toEqual(['passport', 'ticket', 'luggage', 'flight', 'airport']);
+  });
+
   test('streak bugun yoki kechadan boshlab hisoblanadi', () => {
     const l = { newLearned: 1, reviewed: 0, correct: 0, total: 0 };
     expect(streak({ [T - 1]: l, [T - 2]: l }, T)).toBe(2);

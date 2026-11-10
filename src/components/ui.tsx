@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Modal, Pressable, ScrollView, type ScrollViewInstance, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
@@ -215,10 +215,12 @@ export function Card({ children, style, onPress }: { children: ReactNode; style?
   return <View style={[base, style]}>{children}</View>;
 }
 
-export function IconTile({ icon, label, bg = colors.surfaceMuted, fg = colors.ink, size = 48 }: { icon?: IconName; label?: string; bg?: string; fg?: string; size?: number }) {
+/** `mdi` — MaterialCommunityIcons nomi (mavzu to'plamlari: qozon, samolyot, ...). */
+export function IconTile({ icon, mdi, label, bg = colors.surfaceMuted, fg = colors.ink, size = 48 }: { icon?: IconName; mdi?: string; label?: string; bg?: string; fg?: string; size?: number }) {
   return (
     <View style={{ width: size, height: size, borderRadius: size * 0.33, backgroundColor: themed(bg), alignItems: 'center', justifyContent: 'center' }}>
-      {icon ? <Feather name={icon} size={size * 0.46} color={themed(fg)} /> : <T w="extrabold" size={size * 0.3} color={themed(fg)}>{label}</T>}
+      {mdi ? <MaterialCommunityIcons name={mdi as never} size={size * 0.52} color={themed(fg)} />
+        : icon ? <Feather name={icon} size={size * 0.46} color={themed(fg)} /> : <T w="extrabold" size={size * 0.3} color={themed(fg)}>{label}</T>}
     </View>
   );
 }

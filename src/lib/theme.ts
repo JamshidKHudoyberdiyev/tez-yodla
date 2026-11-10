@@ -120,6 +120,8 @@ export const PALETTES = { light, dark };
 const DARK_SWAP: Record<string, keyof Palette | string> = {
   '#E6F4CC': 'limeSoft', '#F1E8FB': 'purpleSoft', '#E4EDFB': 'blueSoft', '#F6EAD7': 'amberSoft',
   '#17461F': 'forestText', '#1F55A8': 'blue', '#8F4A12': 'amber', '#6B3FA8': '#C3A3F0',
+  // Mavzular: sayohat (moviy-yashil), oila (pushti)
+  '#DDF1F2': '#16302F', '#14707A': '#7FD3DB', '#FBE4EC': '#3A1F2A', '#B02F5C': '#F29BBB',
 };
 export function themed(c: string): string {
   if (current !== 'dark') return c;
