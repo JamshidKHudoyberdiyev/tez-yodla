@@ -48,6 +48,20 @@
     },
     "runtimeVersion": {
       "policy": "appVersion"
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "0b7e664e-ba54-46bd-a55f-18f271724cdf"
+      }
+    },
+    "owner": "jamshidxudoyberdiyev",
+    "updates": {
+      "url": "https://u.expo.dev/0b7e664e-ba54-46bd-a55f-18f271724cdf"
     }
   }
 }
