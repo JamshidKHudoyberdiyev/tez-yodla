@@ -3,6 +3,7 @@ import { Pressable, View } from 'react-native';
 import { Avatar } from '@/components/Avatar';
 import { SettingGroup, SettingRow } from '@/components/SettingsUI';
 import { BackHeader, Screen, T } from '@/components/ui';
+import { appVersion } from '@/lib/monitoring';
 import { timeLabel } from '@/lib/reminders';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
@@ -60,7 +61,7 @@ export default function Settings() {
         <SettingRow icon="help-circle" tone="gray" title="Streak qoidalari" onPress={() => router.push('/streak-help')} last />
       </SettingGroup>
 
-      <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Tez Yodla 0.3 · ma'lumotlar faqat telefoningizda</T>
+      <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Tez Yodla {appVersion()} · ma'lumotlar faqat telefoningizda</T>
     </Screen>
   );
 }

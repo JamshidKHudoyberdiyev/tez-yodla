@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ReminderSync } from '@/components/ReminderSync';
+import { initMonitoring, wrapRoot } from '@/lib/monitoring';
 import { SpeechNotice } from '@/components/SpeechNotice';
 import { StoreProvider, useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
@@ -25,7 +26,9 @@ function Root() {
   );
 }
 
-export default function RootLayout() {
+initMonitoring();
+
+function RootLayout() {
   const [fontsLoaded] = useFonts({ Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold });
   if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: colors.forestDeep }} />;
   return (
@@ -36,3 +39,5 @@ export default function RootLayout() {
     </SafeAreaProvider>
   );
 }
+
+export default wrapRoot(RootLayout);

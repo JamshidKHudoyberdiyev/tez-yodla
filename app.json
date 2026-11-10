@@ -1,13 +1,14 @@
 {
   "expo": {
     "name": "Tez Yodla",
-    "slug": "yodla",
+    "slug": "tez-yodla",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "uz.tezyodla.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -16,7 +17,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "uz.tezyodla.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,6 +32,12 @@
         {
           "color": "#1F5A2E"
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "disableAutoUpload": true
+        }
       ]
     ],
     "experiments": {
@@ -37,6 +45,9 @@
     },
     "splash": {
       "backgroundColor": "#12261A"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

@@ -33,6 +33,10 @@ git commit -m "Nima o'zgardi"
 git push            # tugatgach — GitHub'ga yuborish
 ```
 
+## Testerlarga yuborish
+
+APK yasash, tez tuzatish (OTA) va Google Play — [docs/RELEASE.md](docs/RELEASE.md).
+
 ## Tekshiruvlar
 
 ```bash
