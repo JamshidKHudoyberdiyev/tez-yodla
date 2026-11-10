@@ -1,5 +1,8 @@
 import * as Speech from 'expo-speech';
 import { Platform } from 'react-native';
+import { slowRate, snapRate } from './speechRate';
+
+export { slowRate, snapRate, SPEECH_RATES, type SpeechRate } from './speechRate';
 
 /**
  * So'zni ingliz tilida ovoz chiqarib o'qiydi (telefondagi ovoz sintezatori).
@@ -23,7 +26,7 @@ export interface VoiceInfo {
 const listeners = new Set<Listener>();
 let voices: Speech.Voice[] | null = null;
 let accent: 'us' | 'uk' = 'us';
-let baseRate = 0.95;
+let baseRate = 1;
 let voiceId: string | undefined;
 
 export function onSpeechProblem(fn: Listener) {
@@ -66,7 +69,7 @@ loadVoices();
 /** Sozlamalardan: talaffuz va tezlik */
 export function configureSpeech(opts: { accent: 'us' | 'uk'; rate: number }) {
   accent = opts.accent;
-  baseRate = opts.rate;
+  baseRate = snapRate(opts.rate);
   pick();
 }
 
@@ -83,7 +86,7 @@ function options(slow: boolean, onDone?: () => void): Speech.SpeechOptions {
   return {
     language: Platform.OS === 'android' ? 'en' : accent === 'uk' ? 'en-GB' : 'en-US',
     voice: voiceId,
-    rate: slow ? Math.max(0.5, baseRate - 0.25) : baseRate,
+    rate: slow ? slowRate(baseRate) : baseRate,
     onError: () => report('error'),
     onDone,
   };

@@ -7,7 +7,9 @@ import { DayLog } from './plan';
 import { computeStreak, StreakInfo } from './streak';
 import { applyTheme, FontScaleContext, ThemeContext, type Scheme } from './theme';
 import { configureSpeech } from './speech';
+import { snapRate } from './speechRate';
 import { pickExample } from './example';
+import { migrateReminder, type ReminderPrefs } from './reminders';
 
 const KEY = 'yodla:v1';
 
@@ -56,7 +58,7 @@ export interface Prefs {
   goals: string[];
   lastBackupAt: number | null;
   /** Kunlik eslatma: soat, daqiqa va kechki ogohlantirish */
-  reminder: { enabled: boolean; hour: number; minute: number; evening: boolean };
+  reminder: ReminderPrefs;
   /** Eslatma haqida bir marta so'ralganmi (birinchi mashg'ulotdan keyin) */
   reminderAsked: boolean;
   /** O'yinlar rekordlari */
@@ -67,7 +69,7 @@ export interface Prefs {
 
 export const defaultPrefs: Prefs = {
   steps: { recall: true, test: true, match: true, write: true },
-  reminder: { enabled: false, hour: 20, minute: 0, evening: true },
+  reminder: { enabled: false, times: [{ h: 20, m: 0 }], evening: true },
   reminderAsked: false,
   gameBest: {},
   theme: 'system',
@@ -75,7 +77,7 @@ export const defaultPrefs: Prefs = {
   autoAdvance: false,
   letterBoxes: true,
   accent: 'us',
-  rate: 0.95,
+  rate: 1,
   autoSpeakNew: true,
   autoSpeakCorrect: true,
   autoSpeakExample: false,
@@ -110,7 +112,8 @@ const initialState: AppState = {
 function hydrate(raw: Partial<AppState>): AppState {
   const prefs = { ...defaultPrefs, ...(raw.prefs ?? {}) };
   prefs.steps = { ...defaultPrefs.steps, ...(raw.prefs?.steps ?? {}) };
-  prefs.reminder = { ...defaultPrefs.reminder, ...(raw.prefs?.reminder ?? {}) };
+  prefs.reminder = migrateReminder(raw.prefs?.reminder, defaultPrefs.reminder);
+  prefs.rate = snapRate(prefs.rate);
   prefs.gameBest = { ...(raw.prefs?.gameBest ?? {}) };
   // Matndan olingan eski so'zlar: uzun «asl gap» o'rniga lug'atdagi misol (bo'lsa); qisqa bo'lmasa — misolsiz.
   const customWords = (raw.customWords ?? []).map((w) => {

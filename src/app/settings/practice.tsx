@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Segmented, SettingGroup, SettingRow, Toggle, ToggleRow } from '@/components/SettingsUI';
+import { Segmented, SettingGroup, SettingRow, Toggle } from '@/components/SettingsUI';
 import { BackHeader, Screen, T } from '@/components/ui';
 import { Prefs, useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
@@ -61,10 +61,6 @@ export default function Practice() {
           <Segmented options={[{ value: 'wait', label: 'Tugmani kutish' }, { value: 'auto', label: "O'zi o'tsin" }]} value={p.autoAdvance ? 'auto' : 'wait'} onChange={(v) => setPrefs({ autoAdvance: v === 'auto' })} />
         </View>
       </View>
-
-      <SettingGroup>
-        <ToggleRow title="Yozishda harf kataklari" sub="So'z necha harfligini ko'rsatadi" value={p.letterBoxes} onChange={(v) => setPrefs({ letterBoxes: v })} last />
-      </SettingGroup>
     </Screen>
   );
 }

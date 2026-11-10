@@ -83,7 +83,7 @@ function Round({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
         <TextInput value={text} onChangeText={(v) => !result && setText(v)} onSubmitEditing={() => (result ? next() : check())}
           placeholder="Eshitganingizni yozing" placeholderTextColor={colors.placeholder} autoCapitalize="none" autoCorrect={false} spellCheck={false} autoFocus
           accessibilityLabel="Javobingiz" returnKeyType="done"
-          style={{ height: 60, borderRadius: 20, borderWidth: 2, borderColor: result === 'good' ? colors.forestLine : result ? colors.error : colors.line, backgroundColor: result === 'good' ? colors.limeSoft : colors.surface,
+          style={{ height: 60, borderRadius: 20, borderWidth: 2, borderColor: result === 'good' ? colors.forestLine : result ? colors.wrong : colors.line, backgroundColor: result === 'good' ? colors.limeSoft : colors.surface,
             paddingHorizontal: 18, fontFamily: font.bold, fontSize: 22, color: colors.ink, textAlign: 'center' }} />
       </Shake>
 
@@ -97,7 +97,7 @@ function Round({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
         </View>
       ) : result ? (
         <View accessibilityLiveRegion="polite" style={{ gap: 8, padding: 16, borderRadius: 22, backgroundColor: colors.surface }}>
-          <T w="extrabold" size={15} color={result === 'close' ? colors.amber : colors.error}>{result === 'close' ? "Deyarli! Bitta harf xato" : "To'g'risi:"}</T>
+          <T w="extrabold" size={15} color={result === 'close' ? colors.amber : colors.wrong}>{result === 'close' ? "Deyarli! Bitta harf xato" : "To'g'risi:"}</T>
           <DiffLetters answer={text} expected={w.word} />
           <T size={14} color={colors.inkSoft}>{w.ipa ? `${w.ipa} — ` : ''}{w.translation}</T>
         </View>

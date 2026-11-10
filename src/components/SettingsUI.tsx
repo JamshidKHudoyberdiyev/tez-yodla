@@ -106,7 +106,12 @@ export function StepSlider<V extends number>({ values, value, onChange, labels }
       </View>
       {labels ? (
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          {labels.map((l, k) => <T key={l} w={k === i ? 'bold' : 'medium'} size={12} color={k === i ? colors.ink : colors.muted}>{l}</T>)}
+          {labels.map((l, k) => (
+            // Har bir yozuv o'z nuqtasining aynan tagida turadi
+            <View key={`${k}-${l}`} style={{ width: 26, height: 18 }}>
+              <T w={k === i ? 'extrabold' : 'medium'} size={12} color={k === i ? colors.ink : colors.muted} style={{ position: 'absolute', left: -15, width: 56, textAlign: 'center' }}>{l}</T>
+            </View>
+          ))}
         </View>
       ) : null}
     </View>

@@ -118,7 +118,7 @@ function WordRow({ word, first, open, status, onToggle, onSave, onDelete, onImag
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <T w="semibold" size={14} color={colors.amber} style={{ flex: 1 }}>O'chirilsinmi? Takrorlash tarixi ham o'chadi.</T>
               <Button title="Yo'q" variant="ghost" small onPress={() => setConfirm(false)} />
-              <Button title="O'chirish" variant="dark" small style={{ backgroundColor: colors.error }} onPress={onDelete} />
+              <Button title="O'chirish" variant="dangerOutline" small onPress={onDelete} />
             </View>
           ) : (
             <View style={{ flexDirection: 'row', gap: 8 }}>

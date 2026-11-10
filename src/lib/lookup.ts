@@ -76,3 +76,32 @@ export async function lookupWord(word: string, signal?: AbortSignal): Promise<Lo
   if (!translation && !info) return null;
   return { translation, ...(info ?? {}) };
 }
+
+/** MyMemory javobidan inglizcha variantlar (asosiy tarjima + muqobillari), ko'pi bilan `max` ta. */
+export function parseEnglishOptions(json: unknown, query: string, max = 3): string[] {
+  const j = json as { responseStatus?: number | string; responseData?: { translatedText?: string }; matches?: { translation?: string; quality?: number | string }[] };
+  if (!j || Number(j.responseStatus) !== 200) return [];
+  const raw = [j.responseData?.translatedText, ...(j.matches ?? []).filter((m) => Number(m.quality ?? 0) >= 50).map((m) => m.translation)];
+  const out: string[] = [];
+  for (const r of raw) {
+    let t = (r ?? '').trim().replace(/[.!?,;:]+$/, '');
+    if (!t || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID/i.test(t)) continue;
+    if (!/^[a-z][a-z' -]*$/i.test(t) || t.split(' ').length > 3) continue; // faqat qisqa inglizcha so'z
+    t = t.toLowerCase();
+    if (t === query.trim().toLowerCase() || out.includes(t)) continue;
+    out.push(t);
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
+/** O'zbekcha so'zning inglizchasi (lug'atimizda bo'lmasa): uz → en. */
+export async function lookupEnglish(uz: string, signal?: AbortSignal): Promise<string[]> {
+  const q = uz.trim();
+  try {
+    const j = await getJson(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=uz|en`, signal);
+    return parseEnglishOptions(j, q);
+  } catch {
+    return [];
+  }
+}

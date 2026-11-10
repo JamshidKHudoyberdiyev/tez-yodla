@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Segmented, SettingGroup, StepSlider, ToggleRow } from '@/components/SettingsUI';
 import { BackHeader, Screen, T } from '@/components/ui';
-import { speak, voiceInfo, type VoiceInfo } from '@/lib/speech';
+import { snapRate, speak, SPEECH_RATES, voiceInfo, type VoiceInfo } from '@/lib/speech';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
-const RATES = [0.75, 0.85, 0.95, 1.05, 1.15];
-const RATE_LABELS = ['Sekin', '', 'Normal', '', 'Tez'];
+const RATES = [...SPEECH_RATES];
+const RATE_LABELS = RATES.map((r) => `${r}×`);
+const rateName = (r: number) => (r === 1 ? 'Normal' : r < 1 ? 'Sekin' : 'Tez');
 const SAMPLE = 'The weather is beautiful today.';
 
 export default function Voice() {
@@ -23,7 +24,7 @@ export default function Voice() {
   }, [p.accent]);
 
   const ok = info?.status === 'ok';
-  const rate = RATES.reduce((a, b) => (Math.abs(b - p.rate) < Math.abs(a - p.rate) ? b : a));
+  const rate = snapRate(p.rate);
 
   return (
     <Screen>
@@ -51,9 +52,9 @@ export default function Voice() {
         <View style={{ gap: 6 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <T w="extrabold" size={14}>Tezlik</T>
-            <T size={13} color={colors.muted}>{rate}×</T>
+            <T w="bold" size={13} color={rate === 1 ? colors.muted : colors.forestText}>{rate}× · {rateName(rate)}</T>
           </View>
-          <StepSlider values={RATES} value={rate} labels={RATE_LABELS} onChange={(v) => { setPrefs({ rate: v }); setTimeout(() => speak('Hello'), 50); }} />
+          <StepSlider values={RATES} value={rate} labels={RATE_LABELS} onChange={(v) => { setPrefs({ rate: v }); setTimeout(() => speak(SAMPLE), 50); }} />
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Ovozni sinab ko'rish" onPress={() => speak(SAMPLE)}
           style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 16, backgroundColor: pressed ? colors.limeSoft : colors.bg })}>

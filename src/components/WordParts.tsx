@@ -5,7 +5,32 @@ import { speak } from '../lib/speech';
 import { letterLayout } from '../lib/letters';
 import { diffLetters } from '../lib/srs';
 import { colors } from '../lib/theme';
-import { Chip, RoundIconButton, T } from './ui';
+import { Chip, T } from './ui';
+
+/** Karnaycha tugmasi — yumaloq burchakli kvadrat (so'z yoki gapni o'qiydi). */
+export function SoundButton({ text, label = 'Eshitish', size = 48, bg = colors.limeSoft, fg = colors.forestText, slow = false }: { text: string; label?: string; size?: number; bg?: string; fg?: string; slow?: boolean }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} hitSlop={6} onPress={() => speak(text, slow)}
+      style={({ pressed }) => ({ width: size, height: size, borderRadius: Math.round(size * 0.32), backgroundColor: bg, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.75 : 1, transform: [{ scale: pressed ? 0.95 : 1 }] })}>
+      <Feather name="volume-2" size={Math.round(size * 0.44)} color={fg} />
+    </Pressable>
+  );
+}
+
+/** Gap ichidagi o'rganilayotgan so'zni ajratib ko'rsatadi (katta-kichik harf farqsiz). */
+function Highlight({ text, word, size }: { text: string; word: string; size: number }) {
+  const w = word.trim();
+  if (!w) return <T w="semibold" size={size}>{text}</T>;
+  const esc = w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(\\b${esc}\\w*)`, 'i'));
+  return (
+    <T w="semibold" size={size} style={{ lineHeight: Math.round(size * 1.4) }}>
+      {parts.map((p, i) => (i % 2 === 1
+        ? <T key={i} w="extrabold" size={size} color={colors.forestText} style={{ backgroundColor: colors.limeSoft }}>{p}</T>
+        : p))}
+    </T>
+  );
+}
 
 export function WordHead({ word, big = false, badge }: { word: Word; big?: boolean; badge?: string }) {
   return (
@@ -15,7 +40,7 @@ export function WordHead({ word, big = false, badge }: { word: Word; big?: boole
         <T w="extrabold" size={big ? 44 : 32} style={{ lineHeight: big ? 52 : 40, letterSpacing: -0.5 }}>{word.word}</T>
         {word.ipa || word.pos ? <T size={15} color={colors.muted}>{[word.ipa, word.pos].filter(Boolean).join(' · ')}</T> : null}
       </View>
-      <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(word.word)} />
+      <SoundButton text={word.word} label="Talaffuzni eshitish" size={52} bg={colors.forest} fg={colors.lime} />
     </View>
   );
 }
@@ -40,10 +65,13 @@ export function Association({ word }: { word: Word }) {
 export function Example({ word }: { word: Word }) {
   if (!word.example) return null;
   return (
-    <View style={{ gap: 2, borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: 12 }}>
-      <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.8, textTransform: 'uppercase' }}>Misol</T>
-      <T size={16}>{word.example}</T>
-      {word.exampleUz ? <T size={14} color={colors.muted}>{word.exampleUz}</T> : null}
+    <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: colors.bg, borderRadius: 18, padding: 14 }}>
+      <View style={{ flex: 1, gap: 4 }}>
+        <T w="bold" size={11} color={colors.muted} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Misol</T>
+        <Highlight text={word.example} word={word.word} size={16} />
+        {word.exampleUz ? <T size={14} color={colors.muted}>{word.exampleUz}</T> : null}
+      </View>
+      <SoundButton text={word.example} label="Misol gapni eshitish" size={44} bg={colors.surface} />
     </View>
   );
 }

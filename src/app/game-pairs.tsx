@@ -99,8 +99,8 @@ function Board({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
                   back={
                     <Pop trigger={isMatched} from={isMatched ? 0.9 : 1} style={{ flex: 1 }}>
                       <View style={{ flex: 1, borderRadius: 20, padding: 6, alignItems: 'center', justifyContent: 'center', borderWidth: 2,
-                        borderColor: isMatched ? colors.forestLine : wrong ? colors.error : colors.line,
-                        backgroundColor: isMatched ? colors.limeSoft : wrong ? colors.amberSoft : colors.surface }}>
+                        borderColor: isMatched ? colors.forestLine : wrong ? colors.wrong : colors.line,
+                        backgroundColor: isMatched ? colors.limeSoft : colors.surface }}>
                         <T w={t.side === 'word' ? 'extrabold' : 'bold'} size={t.side === 'word' ? 16 : 14} style={{ textAlign: 'center' }} numberOfLines={3}
                           color={isMatched ? colors.forestText : colors.ink}>{t.text}</T>
                       </View>

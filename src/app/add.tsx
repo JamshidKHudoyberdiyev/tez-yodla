@@ -5,12 +5,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, TextInput, View } from 'react-native';
 import { BackHeader, Button, Card, Group, RoundIconButton, Screen, SectionLabel, T } from '@/components/ui';
 import type { Word } from '@/data/words';
-import { lookupWord, type LookupResult } from '@/lib/lookup';
+import { lookupEnglish, lookupWord, type LookupResult } from '@/lib/lookup';
 import { speak } from '@/lib/speech';
 import { FoundPhoto, toWordImage, trackDownload } from '@/lib/unsplash';
 import { PhotoPicker } from '@/components/PhotoPicker';
 import { Plant } from '@/components/Art';
-import { suggestWords } from '@/lib/suggest';
+import { looksUzbek, suggestWords } from '@/lib/suggest';
 import { pickExample } from '@/lib/example';
 import { useStore } from '@/lib/store';
 import { findUnknownWords, splitSentences, tokenize } from '@/lib/text';
@@ -52,6 +52,8 @@ function WriteTab() {
   const [recent, setRecent] = useState<string[]>([]);
   // Lug'atda yo'q so'z: internetdan tarjima, talaffuz va misol.
   const [auto, setAuto] = useState<{ q: string; state: 'loading' | 'done' | 'fail'; data?: LookupResult } | null>(null);
+  /** O'zbekcha yozilgan so'zning inglizcha variantlari (internetdan) */
+  const [enOpts, setEnOpts] = useState<{ q: string; state: 'loading' | 'done' | 'fail'; options: string[] } | null>(null);
   const [translationTouched, setTranslationTouched] = useState(false);
   /** Tanlangan so'zning ma'nolari («yo'l; usul») — keraklisini belgilash uchun */
   const [meanings, setMeanings] = useState<{ text: string; on: boolean }[]>([]);
@@ -105,7 +107,30 @@ function WriteTab() {
   };
 
   const manual = !picked && query.trim().length >= 2 && !suggestions.length;
-  const lookupQ = manual && /^[a-z][a-z' -]*$/i.test(query.trim()) ? query.trim() : '';
+  // Lug'atda yo'q so'z: o'zbekchaga o'xshasa — inglizchasini qidiramiz, aks holda — tarjimasini.
+  const uzQ = manual && looksUzbek(query) ? query.trim() : '';
+  const lookupQ = manual && !uzQ && /^[a-z][a-z' -]*$/i.test(query.trim()) ? query.trim() : '';
+  useEffect(() => {
+    if (!uzQ) { setEnOpts((o) => (o && o.q === query.trim() ? o : null)); return; }
+    const ctrl = new AbortController();
+    setEnOpts({ q: uzQ, state: 'loading', options: [] });
+    const t = setTimeout(() => {
+      lookupEnglish(uzQ, ctrl.signal).then((options) => { if (!ctrl.signal.aborted) setEnOpts({ q: uzQ, state: options.length ? 'done' : 'fail', options }); });
+    }, 600);
+    return () => { clearTimeout(t); ctrl.abort(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uzQ]);
+  /** Inglizcha variant tanlandi: lug'atda bo'lsa — tayyor kartochka, bo'lmasa — inglizcha so'z + o'zbekcha tarjima. */
+  const chooseEnglish = (en: string) => {
+    const uz = query.trim();
+    setEnOpts(null);
+    const w = words.find((x) => x.word.toLowerCase() === en.toLowerCase());
+    if (w) { pick(w); return; }
+    setQuery(en);
+    setTranslation(uz);
+    setTranslationTouched(true);
+    speak(en);
+  };
   useEffect(() => {
     if (!lookupQ) { setAuto(null); return; }
     const ctrl = new AbortController();
@@ -114,6 +139,10 @@ function WriteTab() {
       lookupWord(lookupQ, ctrl.signal)
         .then((data) => {
           setAuto({ q: lookupQ, state: data ? 'done' : 'fail', data: data ?? undefined });
+          // Inglizcha lug'atda ham, tarjimada ham topilmadi — ehtimol o'zbekcha so'z: inglizchasini qidiramiz.
+          if (!data?.ipa && !data?.pos && !data?.translation) {
+            lookupEnglish(lookupQ, ctrl.signal).then((options) => { if (options.length && !ctrl.signal.aborted) setEnOpts({ q: lookupQ, state: 'done', options }); });
+          }
           if (data?.translation) setTranslationTouched((touched) => { if (!touched) setTranslation(data.translation!); return touched; });
         })
         .catch(() => { if (!ctrl.signal.aborted) setAuto({ q: lookupQ, state: 'fail' }); });
@@ -143,13 +172,13 @@ function WriteTab() {
   return (
     <View style={{ gap: 14 }}>
       <View style={{ gap: 6 }}>
-        <T w="semibold" size={13} color={colors.inkSoft}>Inglizcha so'z yoki o'zbekcha tarjima</T>
+        <T w="semibold" size={13} color={colors.inkSoft}>Inglizcha yoki o'zbekcha so'z yozing</T>
         <View style={[inputStyleOf(), { flexDirection: 'row', alignItems: 'center', gap: 10, borderColor: query ? colors.ink : colors.line, borderWidth: query ? 2 : 1 }]}>
           <Feather name="search" size={20} color={colors.muted} />
           <TextInput
             value={query}
             onChangeText={(v) => { setQuery(v); setPhoto(null); if (picked) { setPicked(null); setTranslation(''); } }}
-            placeholder="masalan: honey yoki asal"
+            placeholder="masalan: honey yoki qiz"
             placeholderTextColor={colors.placeholder}
             accessibilityLabel="So'z qidirish"
             autoCapitalize="none"
@@ -182,12 +211,18 @@ function WriteTab() {
 
       {suggestions.length ? (
         <View accessibilityRole="list" style={{ backgroundColor: colors.surface, borderRadius: 20, overflow: 'hidden' }}>
+          {suggestions[0]?.by === 'uz' ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 2 }}>
+              <Feather name="repeat" size={12} color={colors.muted} />
+              <T w="bold" size={12} color={colors.muted}>«{query.trim()}» — inglizchasi:</T>
+            </View>
+          ) : null}
           {suggestions.map((s, i) => (
             <Pressable key={s.word.id} accessibilityRole="button" accessibilityLabel={`${s.word.word} — ${s.word.translation}`} onPress={() => pick(s.word)}
               style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.limeSoft : 'transparent' })}>
               <View style={{ flex: 1 }}>
                 <T size={16} numberOfLines={1}><T w="extrabold" size={16}>{highlight(s.word.word, s.by === 'en' ? query : '')}</T>{s.word.pos ? <T size={12} color={colors.muted}>  {s.word.pos}</T> : null}</T>
-                <T size={14} color={colors.inkSoft} numberOfLines={1}>{s.word.translation}</T>
+                <T size={14} color={colors.inkSoft} numberOfLines={1}>{s.by === 'uz' ? highlight(s.word.translation, query) : s.word.translation}</T>
               </View>
               {s.word.association ? <Feather name="zap" size={14} color={colors.amber} accessibilityLabel="Assotsiatsiyasi bor" /> : null}
               <Feather name="plus-circle" size={22} color={colors.forestText} />
@@ -225,6 +260,32 @@ function WriteTab() {
             </View>
           ) : null}
           {picked.example ? <T size={14} color={colors.inkSoft}>{picked.example}</T> : null}
+        </Card>
+      ) : manual && enOpts && enOpts.q === query.trim() && (uzQ || enOpts.state === 'done') ? (
+        <Card style={{ gap: 12 }}>
+          <View style={{ gap: 2 }}>
+            <T size={13} color={colors.muted}>O'zbekcha so'z</T>
+            <T w="extrabold" size={24}>{query.trim()}</T>
+          </View>
+          {enOpts.state === 'loading' ? (
+            <T size={14} color={colors.muted}>Inglizchasi internetdan qidirilmoqda…</T>
+          ) : enOpts.options.length ? (
+            <View style={{ gap: 8 }}>
+              <T w="semibold" size={13} color={colors.inkSoft}>Inglizchasi — tanlang:</T>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                {enOpts.options.map((en) => (
+                  <Pressable key={en} accessibilityRole="button" accessibilityLabel={`${en} ni tanlash`} onPress={() => chooseEnglish(en)}
+                    style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, height: 44, paddingHorizontal: 16, borderRadius: 999, borderWidth: 2, borderColor: colors.forestLine, backgroundColor: pressed ? colors.limeSoft : colors.surface })}>
+                    <T w="extrabold" size={17} color={colors.forestText}>{en}</T>
+                    <Feather name="plus" size={16} color={colors.forestText} />
+                  </Pressable>
+                ))}
+              </View>
+              <T size={12} color={colors.amber}>Internetdan topildi — to'g'riligini tekshirib oling</T>
+            </View>
+          ) : (
+            <T size={13} color={colors.muted} style={{ lineHeight: 19 }}>Inglizchasini topa olmadik (yoki internet yo'q). Inglizcha so'zni o'zingiz yozing — tarjimasi sifatida «{query.trim()}» qoladi.</T>
+          )}
         </Card>
       ) : manual ? (
         <Card style={{ gap: 10 }}>

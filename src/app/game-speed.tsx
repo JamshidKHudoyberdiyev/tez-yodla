@@ -99,9 +99,9 @@ function Run({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
             <Shake key={`${n}-${c}`} trigger={state === 'wrong' ? n + 1 : null} style={{ width: '48.5%' }}>
               <Pressable accessibilityRole="button" accessibilityLabel={c} onPress={() => pick(c)}
                 style={({ pressed }) => ({ minHeight: 84, borderRadius: 22, padding: 10, alignItems: 'center', justifyContent: 'center', borderWidth: 2,
-                  borderColor: state === 'right' ? colors.forestLine : state === 'wrong' ? colors.error : 'transparent',
-                  borderBottomWidth: state === 'idle' ? 5 : 2, borderBottomColor: state === 'idle' ? colors.track : state === 'right' ? colors.forestLine : state === 'wrong' ? colors.error : 'transparent',
-                  backgroundColor: state === 'right' ? colors.limeSoft : state === 'wrong' ? colors.amberSoft : colors.surface,
+                  borderColor: state === 'right' ? colors.forestLine : state === 'wrong' ? colors.wrong : 'transparent',
+                  borderBottomWidth: state === 'idle' ? 5 : 2, borderBottomColor: state === 'idle' ? colors.track : state === 'right' ? colors.forestLine : state === 'wrong' ? colors.wrong : 'transparent',
+                  backgroundColor: state === 'right' ? colors.limeSoft : colors.surface,
                   opacity: state === 'dim' ? 0.5 : 1, transform: [{ scale: pressed && !flash ? 0.97 : 1 }] })}>
                 <T w="bold" size={16} style={{ textAlign: 'center' }} numberOfLines={3}>{c}</T>
               </Pressable>

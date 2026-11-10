@@ -2,9 +2,9 @@ import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Modal, Platform, Pressable, Share, TextInput, View } from 'react-native';
+import { Platform, Share, TextInput, View } from 'react-native';
 import { SettingGroup, SettingRow } from '@/components/SettingsUI';
-import { BackHeader, Button, Screen, T } from '@/components/ui';
+import { BackHeader, BottomSheet, Button, Screen, T } from '@/components/ui';
 import { AppState, parseBackup, useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
@@ -101,9 +101,9 @@ export default function Data() {
         {restoreOpen ? (
           <View style={{ padding: 14, gap: 10, borderBottomWidth: 1, borderBottomColor: colors.divider }}>
             <TextInput value={restoreText} onChangeText={(t) => { setRestoreText(t); setParsed(parseBackup(t)); }} multiline placeholder='{"app":"yodla", …}' placeholderTextColor={colors.placeholder} accessibilityLabel="Zaxira matni"
-              style={{ minHeight: 90, maxHeight: 140, padding: 12, borderRadius: 14, borderWidth: 1, borderColor: restoreText && !parsed ? colors.error : colors.line, fontFamily: font.medium, fontSize: 12, color: colors.ink, textAlignVertical: 'top' }} />
+              style={{ minHeight: 90, maxHeight: 140, padding: 12, borderRadius: 14, borderWidth: 1, borderColor: restoreText && !parsed ? colors.wrong : colors.line, fontFamily: font.medium, fontSize: 12, color: colors.ink, textAlignVertical: 'top' }} />
             {restoreText ? (
-              <T size={12} color={parsed ? colors.forestText : colors.error}>
+              <T size={12} color={parsed ? colors.forestText : colors.wrongInk}>
                 {parsed ? `Topildi: ${Object.keys(parsed.cards).length} ta kartochka, ${parsed.customWords.length} ta so'z. Hozirgi ma'lumotlar shu bilan almashtiriladi.` : "Bu Tez Yodla zaxira nusxasiga o'xshamaydi."}
               </T>
             ) : null}
@@ -121,12 +121,10 @@ export default function Data() {
         <SettingRow icon="trash-2" danger title="Hammasini o'chirish" sub="Ilova birinchi kundagidek bo'ladi" onPress={() => setConfirm('all')} last />
       </SettingGroup>
 
-      <Modal visible={!!confirm} transparent animationType="fade" onRequestClose={() => setConfirm(null)} statusBarTranslucent>
-        <Pressable accessibilityLabel="Yopish" onPress={() => setConfirm(null)} style={{ flex: 1, backgroundColor: 'rgba(18,26,21,0.55)', justifyContent: 'flex-end' }}>
-          <Pressable onPress={() => {}} accessibilityViewIsModal style={{ backgroundColor: colors.bg, borderTopLeftRadius: 30, borderTopRightRadius: 30, padding: 22, paddingBottom: 34, gap: 12 }}>
+      <BottomSheet visible={!!confirm} animation="fade" bottomBase={28} onClose={() => { setConfirm(null); setTyped(''); }} contentStyle={{ padding: 22, gap: 12 }}>
             <View style={{ alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line }} />
-            <View style={{ width: 56, height: 56, borderRadius: 20, backgroundColor: colors.amberSoft, alignItems: 'center', justifyContent: 'center' }}>
-              <Feather name={confirm === 'all' ? 'trash-2' : 'rotate-ccw'} size={26} color={colors.error} />
+            <View style={{ width: 56, height: 56, borderRadius: 20, backgroundColor: colors.wrongSoft, alignItems: 'center', justifyContent: 'center' }}>
+              <Feather name={confirm === 'all' ? 'trash-2' : 'rotate-ccw'} size={26} color={colors.wrong} />
             </View>
             <T w="extrabold" size={22} accessibilityRole="header">{confirm === 'all' ? "Hammasini o'chirasizmi?" : 'Progressni nolga tushirasizmi?'}</T>
             <View style={{ gap: 4 }}>
@@ -134,21 +132,19 @@ export default function Data() {
               <T size={14} color={colors.inkSoft}>• {streak.current} kunlik streak va {days} kunlik tarix</T>
               {confirm === 'all' ? <T size={14} color={colors.inkSoft}>• {state.customWords.length} ta o'zingiz qo'shgan so'z va sozlamalar</T> : <T size={14} color={colors.forestText}>✓ {state.customWords.length} ta so'zingiz va sozlamalar qoladi</T>}
             </View>
-            <T w="bold" size={13} color={colors.error}>Buni qaytarib bo'lmaydi. Avval zaxira nusxa olishni maslahat beramiz.</T>
+            <T w="bold" size={13} color={colors.wrongInk}>Buni qaytarib bo'lmaydi. Avval zaxira nusxa olishni maslahat beramiz.</T>
             <View style={{ gap: 6 }}>
               <T w="bold" size={13} color={colors.inkSoft}>Tasdiqlash uchun <T w="extrabold" size={13}>{CONFIRM_WORD}</T> deb yozing</T>
               <TextInput value={typed} onChangeText={setTyped} autoCapitalize="characters" autoCorrect={false} accessibilityLabel="Tasdiqlash so'zi"
-                style={{ height: 50, paddingHorizontal: 14, borderRadius: 14, borderWidth: 2, borderColor: colors.error, backgroundColor: colors.surface, fontFamily: font.extrabold, fontSize: 16, letterSpacing: 1, color: colors.ink }} />
+                style={{ height: 50, paddingHorizontal: 14, borderRadius: 14, borderWidth: 2, borderColor: colors.wrong, backgroundColor: colors.surface, fontFamily: font.extrabold, fontSize: 16, letterSpacing: 1, color: colors.ink }} />
             </View>
             <View style={{ flexDirection: 'row', gap: 8 }}>
               <Button title="Bekor qilish" variant="white" style={{ flex: 1 }} onPress={() => { setConfirm(null); setTyped(''); }} />
-              <Button title="O'chirish" variant="dark" style={{ flex: 1, backgroundColor: typed.trim().toUpperCase().replace(/[‘’ʻʼ`]/g, "'") === CONFIRM_WORD ? colors.error : '#E8C3A4' }}
+              <Button title="O'chirish" variant="dangerOutline" style={{ flex: 1 }}
                 disabled={typed.trim().toUpperCase().replace(/[‘’ʻʼ`]/g, "'") !== CONFIRM_WORD} onPress={doConfirm} />
             </View>
             <T w="bold" size={14} color={colors.forestText} style={{ textAlign: 'center' }} accessibilityRole="button" onPress={() => { setConfirm(null); setTyped(''); backup(); }}>Avval zaxira nusxa olish</T>
-          </Pressable>
-        </Pressable>
-      </Modal>
+      </BottomSheet>
     </Screen>
   );
 }

@@ -28,9 +28,23 @@
       "expo-router",
       "expo-font",
       [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#12261A",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#12261A"
+          }
+        }
+      ],
+      [
         "expo-notifications",
         {
-          "color": "#1F5A2E"
+          "color": "#1F5A2E",
+          "icon": "./assets/notification-icon.png"
         }
       ],
       [

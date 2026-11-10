@@ -41,7 +41,7 @@ export default function Settings() {
       </SettingGroup>
 
       <SettingGroup label="Eslatma va ovoz">
-        <SettingRow icon="bell" tone="amber" title="Kunlik eslatma" value={p.reminder.enabled ? timeLabel(p.reminder.hour, p.reminder.minute) : "o'chiq"} onPress={() => router.push('/settings/reminder')} />
+        <SettingRow icon="bell" tone="amber" title="Kunlik eslatma" value={p.reminder.enabled && p.reminder.times.length ? p.reminder.times.slice(0, 2).map((t) => timeLabel(t.h, t.m)).join(', ') + (p.reminder.times.length > 2 ? ` +${p.reminder.times.length - 2}` : '') : "o'chiq"} onPress={() => router.push('/settings/reminder')} />
         <SettingRow icon="volume-2" tone="blue" title="Ovoz va talaffuz" value={p.accent === 'uk' ? 'Britaniya' : 'Amerika'} onPress={() => router.push('/settings/voice')} last />
       </SettingGroup>
 

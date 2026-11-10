@@ -1,12 +1,12 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, TextInput, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 import { DuoIcon, Plant, RingsDecor, type DuoName } from '@/components/Art';
 import { achievements, ArtGlyph, artBg, Avatar, AVATAR_ARTS, type Progress } from '@/components/Avatar';
 import { Flame } from '@/components/Streak';
 import { LEVELS, LevelLadder } from '@/components/Level';
-import { Button, RoundIconButton, Screen, T } from '@/components/ui';
+import { BottomSheet, Button, RoundIconButton, Screen, T } from '@/components/ui';
 import { computeStats } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { AVATAR_COLORS, colors, font } from '@/lib/theme';
@@ -192,9 +192,7 @@ function EditSheet({ visible, onClose, progress }: { visible: boolean; onClose: 
   const dirty = name.trim() !== state.name || color !== state.prefs.avatarColor || previewArt !== state.prefs.avatarArt;
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
-      <Pressable accessibilityLabel="Yopish" onPress={close} style={{ flex: 1, backgroundColor: 'rgba(18,26,21,0.55)', justifyContent: 'flex-end' }}>
-        <Pressable onPress={() => {}} accessibilityViewIsModal style={{ backgroundColor: colors.bg, borderTopLeftRadius: 30, borderTopRightRadius: 30, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 30, gap: 14 }}>
+    <BottomSheet visible={visible} onClose={close} contentStyle={{ paddingHorizontal: 20, paddingTop: 12, gap: 14 }}>
           <View style={{ alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line }} />
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
             <Avatar name={name} color={color} art={previewArt} size={72} />
@@ -255,8 +253,6 @@ function EditSheet({ visible, onClose, progress }: { visible: boolean; onClose: 
               style={{ height: 52, paddingHorizontal: 16, borderRadius: 16, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface, fontFamily: font.bold, fontSize: 17, color: colors.ink }} />
           </View>
           <Button title="Saqlash" disabled={!dirty} onPress={save} />
-        </Pressable>
-      </Pressable>
-    </Modal>
+    </BottomSheet>
   );
 }

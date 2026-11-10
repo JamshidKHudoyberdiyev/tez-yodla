@@ -67,7 +67,7 @@ function Round({ onAgain }: { onAgain: () => void }) {
       <Shake trigger={ok === false ? i + 1 : null}>
         <TextInput ref={ref} value={value} onChangeText={(t) => !checked && set(t)} onSubmitEditing={onSubmit} autoCapitalize="none" autoCorrect={false} spellCheck={false}
           accessibilityLabel={label} returnKeyType="next" placeholder="…" placeholderTextColor={colors.placeholder}
-          style={{ height: 56, borderRadius: 18, borderWidth: 2, borderColor: ok === undefined ? colors.line : ok ? colors.forestLine : colors.error, backgroundColor: ok ? colors.limeSoft : colors.surface,
+          style={{ height: 56, borderRadius: 18, borderWidth: 2, borderColor: ok === undefined ? colors.line : ok ? colors.forestLine : colors.wrong, backgroundColor: ok ? colors.limeSoft : colors.surface,
             fontFamily: font.bold, fontSize: 19, color: colors.ink, textAlign: 'center' }} />
       </Shake>
       {ok === false ? <T w="extrabold" size={14} color={colors.forestText} style={{ textAlign: 'center' }}>{answer}</T> : null}

@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { ReactNode, useContext } from 'react';
-import { Pressable, ScrollView, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { Keyboard, KeyboardAvoidingView, Modal, Pressable, ScrollView, type ScrollViewInstance, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, font, FontScaleContext, radius, themed, ThemeContext } from '../lib/theme';
 
@@ -17,7 +17,60 @@ export function T({ w = 'medium', size = 15, color, style, ...rest }: TextProps 
   return <Text {...rest} style={[{ fontFamily: font[w], fontSize: fs, color, lineHeight: Math.round(fs * 1.4) }, style]} />;
 }
 
-export function Screen({ children, scroll = true, bg = colors.bg, padded = true, footer, edges, sheet }: {
+/** Pastdan chiqadigan oyna uchun pastki bo'shliq: telefonning navigatsiya paneli (◀ ● ■) ustida tursin. */
+export function useSheetBottom(base = 24) {
+  return base + useSafeAreaInsets().bottom;
+}
+
+/**
+ * Pastdan chiqadigan oyna (yozish maydoni bo'lsa ham to'g'ri ishlaydi):
+ * — telefonning navigatsiya paneli ustida turadi;
+ * — klaviatura ochilsa, oyna klaviatura ustiga ko'tariladi va yozilayotgan joy ko'rinadigan qilib suriladi;
+ * — juda baland bo'lsa, ichi suriladi.
+ */
+export function BottomSheet({ visible, onClose, animation = 'slide', bottomBase = 24, contentStyle, children }: {
+  visible: boolean;
+  onClose: () => void;
+  animation?: 'slide' | 'fade';
+  bottomBase?: number;
+  contentStyle?: StyleProp<ViewStyle>;
+  children: ReactNode;
+}) {
+  const insets = useSafeAreaInsets();
+  const bottom = useSheetBottom(bottomBase);
+  const scroll = useRef<ScrollViewInstance>(null);
+  useEffect(() => {
+    if (!visible) return;
+    const sub = Keyboard.addListener('keyboardDidShow', () => setTimeout(() => scroll.current?.scrollToEnd({ animated: true }), 60));
+    return () => sub.remove();
+  }, [visible]);
+  return (
+    <Modal visible={visible} transparent animationType={animation} onRequestClose={onClose} statusBarTranslucent navigationBarTranslucent>
+      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+        <Pressable accessibilityLabel="Yopish" onPress={onClose} style={{ flex: 1, paddingTop: insets.top + 12, backgroundColor: 'rgba(18,26,21,0.55)', justifyContent: 'flex-end' }}>
+          <Pressable onPress={() => {}} accessibilityViewIsModal style={{ maxHeight: '100%', backgroundColor: colors.bg, borderTopLeftRadius: 30, borderTopRightRadius: 30, overflow: 'hidden' }}>
+            <ScrollView ref={scroll} bounces={false} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={[contentStyle, { paddingBottom: bottom }]}>
+              {children}
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
+/** Klaviatura ochiqmi (pastki panelni klaviatura ustiga joylash uchun). */
+export function useKeyboardShown() {
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const a = Keyboard.addListener('keyboardDidShow', () => setShown(true));
+    const b = Keyboard.addListener('keyboardDidHide', () => setShown(false));
+    return () => { a.remove(); b.remove(); };
+  }, []);
+  return shown;
+}
+
+export function Screen({ children, scroll = true, bg = colors.bg, padded = true, footer, edges, sheet, sheetBorder, avoidKeyboard }: {
   children: ReactNode;
   scroll?: boolean;
   bg?: string;
@@ -26,16 +79,22 @@ export function Screen({ children, scroll = true, bg = colors.bg, padded = true,
   edges?: ('top' | 'bottom' | 'left' | 'right')[];
   /** Pastki panel to'liq kenglikda, yumaloq tepali rangli «varaq» bo'lib chiqadi (v3: javob paneli). */
   sheet?: string;
+  /** Varaqning tepa chegarasi rangi (masalan, xato javobda — qizil). */
+  sheetBorder?: string;
+  /** Pastki panel (tugma yoki natija) klaviatura ochilganda uning ustiga chiqadi — yopilib qolmaydi. */
+  avoidKeyboard?: boolean;
 }) {
   const insets = useSafeAreaInsets();
+  const kb = useKeyboardShown() && !!avoidKeyboard;
   const content = padded ? { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24, gap: 16 } : undefined;
   const footerStyle: StyleProp<ViewStyle> = sheet
-    ? { backgroundColor: sheet, borderTopLeftRadius: 30, borderTopRightRadius: 30, paddingHorizontal: 20, paddingTop: 18, paddingBottom: Math.max(insets.bottom, 16) + 8, gap: 14,
+    ? { backgroundColor: sheet, borderTopLeftRadius: 30, borderTopRightRadius: 30,
+        ...(sheetBorder ? { borderTopWidth: 2.5, borderLeftWidth: 2.5, borderRightWidth: 2.5, borderColor: sheetBorder } : null), paddingHorizontal: 20, paddingTop: 18, paddingBottom: kb ? 14 : Math.max(insets.bottom, 16) + 8, gap: 14,
         shadowColor: '#121820', shadowOpacity: 0.12, shadowRadius: 18, shadowOffset: { width: 0, height: -6 }, elevation: 16 }
-    : { paddingHorizontal: 20, paddingBottom: 16, paddingTop: 8, gap: 8 };
+    : { paddingHorizontal: 20, paddingBottom: kb ? 10 : 16, paddingTop: 8, gap: 8 };
   const safeEdges = edges ?? ['top', 'bottom', 'left', 'right'];
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: bg }} edges={sheet && footer ? safeEdges.filter((e) => e !== 'bottom') : safeEdges}>
+  const body = (
+    <SafeAreaView style={{ flex: 1, backgroundColor: bg }} edges={(sheet && footer) || kb ? safeEdges.filter((e) => e !== 'bottom') : safeEdges}>
       {scroll ? (
         <ScrollView contentContainerStyle={[content, { flexGrow: 1 }]} keyboardShouldPersistTaps="handled">
           {children}
@@ -46,15 +105,19 @@ export function Screen({ children, scroll = true, bg = colors.bg, padded = true,
       {footer ? <View style={footerStyle}>{footer}</View> : null}
     </SafeAreaView>
   );
+  return avoidKeyboard ? <KeyboardAvoidingView behavior="padding" style={{ flex: 1, backgroundColor: bg }}>{body}</KeyboardAvoidingView> : body;
 }
 
-type Variant = 'lime' | 'dark' | 'forest' | 'outline' | 'ghost' | 'white';
+type Variant = 'lime' | 'dark' | 'forest' | 'outline' | 'ghost' | 'white' | 'danger' | 'dangerOutline';
 
 // Funksiya: ranglar mavzuga qarab render paytida o'qiladi.
-const variantStyle = (): Record<Variant, { bg: string; fg: string; border?: string }> => ({
-  lime: { bg: colors.lime, fg: colors.limeInk },
-  dark: { bg: colors.inverse, fg: colors.onInverse },
-  forest: { bg: colors.forest, fg: '#FFFFFF' },
+// Qora tugma yo'q: «dark» ham to'q yashil (ikkinchi darajali tugma). `ledge` — pastidagi qalin qirra.
+const variantStyle = (): Record<Variant, { bg: string; fg: string; border?: string; ledge?: string }> => ({
+  lime: { bg: colors.lime, fg: colors.limeInk, ledge: '#8FBF2E' },
+  dark: { bg: colors.forest, fg: '#FFFFFF', ledge: colors.forestDeep },
+  forest: { bg: colors.forest, fg: '#FFFFFF', ledge: colors.forestDeep },
+  danger: { bg: colors.wrong, fg: '#FFFFFF', ledge: colors.wrongInk },
+  dangerOutline: { bg: colors.surface, fg: colors.wrong, border: colors.wrong },
   outline: { bg: colors.surface, fg: colors.ink, border: colors.line },
   ghost: { bg: 'transparent', fg: colors.inkSoft },
   white: { bg: colors.surface, fg: colors.ink },
@@ -72,8 +135,8 @@ export function Button({ title, onPress, variant = 'lime', icon, iconRight, disa
   accessibilityLabel?: string;
 }) {
   const v = variantStyle()[variant];
-  // v3: asosiy (laym) tugma «bosiladigan» — pastida to'qroq qirra, bosilganda pastga tushadi.
-  const ledge = variant === 'lime' && !small && !disabled;
+  // v3: asosiy tugmalar «bosiladigan» — pastida to'qroq qirra, bosilganda pastga tushadi.
+  const ledge = !!v.ledge && !small && !disabled;
   return (
     <Pressable
       accessibilityRole="button"
@@ -87,9 +150,9 @@ export function Button({ title, onPress, variant = 'lime', icon, iconRight, disa
           paddingHorizontal: small ? 16 : 20,
           borderRadius: small ? radius.pill : 20,
           backgroundColor: v.bg,
-          borderWidth: v.border ? 1 : 0,
+          borderWidth: v.border ? (variant === 'dangerOutline' ? 2 : 1) : 0,
           borderColor: v.border,
-          ...(ledge ? { borderBottomWidth: pressed ? 1 : 5, borderBottomColor: '#8FBF2E', marginTop: pressed ? 4 : 0, height: pressed ? 52 : 56 } : null),
+          ...(ledge ? { borderBottomWidth: pressed ? 1 : 5, borderBottomColor: v.ledge, marginTop: pressed ? 4 : 0, height: pressed ? 52 : 56 } : null),
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
