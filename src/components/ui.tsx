@@ -70,6 +70,39 @@ export function useKeyboardShown() {
   return shown;
 }
 
+/**
+ * Klaviatura ekranning pastki qismini qanchalik yopayotganini o'lchaydi (px).
+ * KeyboardAvoidingView ba'zi Android qurilmalarda ishlamaydi (ekran o'zi qisqarsa yoki qisqarmasa farq qiladi),
+ * shuning uchun aniq o'lchaymiz: ikkala holatda ham tugma klaviatura ustida ko'rinadi.
+ */
+function useKeyboardOverlap(enabled: boolean) {
+  const ref = useRef<{ measureInWindow: (cb: (x: number, y: number, w: number, h: number) => void) => void } | null>(null);
+  const kbTop = useRef<number | null>(null);
+  const [overlap, setOverlap] = useState(0);
+  const measure = () => {
+    if (kbTop.current == null) return setOverlap(0);
+    ref.current?.measureInWindow((_x, y, _w, h) => {
+      const top = kbTop.current;
+      if (top == null) return;
+      setOverlap(Math.max(0, Math.round(y + h - top)));
+    });
+  };
+  useEffect(() => {
+    if (!enabled) return;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const show = Keyboard.addListener('keyboardDidShow', (e) => {
+      kbTop.current = e.endCoordinates.screenY;
+      measure();
+      // Oyna o'lchami biroz kechikib o'zgarishi mumkin — qayta o'lchaymiz
+      timers.push(setTimeout(measure, 120), setTimeout(measure, 400));
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => { kbTop.current = null; setOverlap(0); });
+    return () => { show.remove(); hide.remove(); timers.forEach(clearTimeout); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
+  return { ref, overlap, onLayout: measure };
+}
+
 export function Screen({ children, scroll = true, bg = colors.bg, padded = true, footer, edges, sheet, sheetBorder, avoidKeyboard }: {
   children: ReactNode;
   scroll?: boolean;
@@ -86,6 +119,7 @@ export function Screen({ children, scroll = true, bg = colors.bg, padded = true,
 }) {
   const insets = useSafeAreaInsets();
   const kb = useKeyboardShown() && !!avoidKeyboard;
+  const avoid = useKeyboardOverlap(!!avoidKeyboard);
   const content = padded ? { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24, gap: 16 } : undefined;
   const footerStyle: StyleProp<ViewStyle> = sheet
     ? { backgroundColor: sheet, borderTopLeftRadius: 30, borderTopRightRadius: 30,
@@ -105,7 +139,7 @@ export function Screen({ children, scroll = true, bg = colors.bg, padded = true,
       {footer ? <View style={footerStyle}>{footer}</View> : null}
     </SafeAreaView>
   );
-  return avoidKeyboard ? <KeyboardAvoidingView behavior="padding" style={{ flex: 1, backgroundColor: bg }}>{body}</KeyboardAvoidingView> : body;
+  return avoidKeyboard ? <View ref={avoid.ref as never} onLayout={avoid.onLayout} collapsable={false} style={{ flex: 1, backgroundColor: bg, paddingBottom: avoid.overlap }}>{body}</View> : body;
 }
 
 type Variant = 'lime' | 'dark' | 'forest' | 'outline' | 'ghost' | 'white' | 'danger' | 'dangerOutline';

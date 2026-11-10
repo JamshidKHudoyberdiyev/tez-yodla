@@ -32,7 +32,7 @@ export default function LevelResult() {
   };
 
   return (
-    <Screen footer={<Button title={retake ? 'Darajani saqlash' : 'Boshlash'} onPress={start} />}>
+    <Screen avoidKeyboard footer={<Button title={retake ? 'Darajani saqlash' : 'Boshlash'} onPress={start} />}>
       <View style={{ alignItems: 'center', gap: 10, marginTop: 12 }}>
         <View style={{ width: 150, height: 130, alignItems: 'center', justifyContent: 'center' }}>
           <Confetti trigger spread={90} />

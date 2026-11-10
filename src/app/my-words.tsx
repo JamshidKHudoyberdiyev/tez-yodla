@@ -32,7 +32,7 @@ export default function MyWords() {
   };
 
   return (
-    <Screen footer={<Button title="So'z qo'shish" icon="plus" onPress={() => router.push('/add')} />}>
+    <Screen avoidKeyboard footer={<Button title="So'z qo'shish" icon="plus" onPress={() => router.push('/add')} />}>
       <BackHeader title="Mening so'zlarim" right={<T w="bold" size={14} color={colors.muted}>{list.length} ta</T>} />
 
       {list.length > 6 ? (
@@ -122,7 +122,7 @@ function WordRow({ word, first, open, status, onToggle, onSave, onDelete, onImag
             </View>
           ) : (
             <View style={{ flexDirection: 'row', gap: 8 }}>
-              <Button title="O'chirish" icon="trash-2" variant="outline" small style={{ flex: 1 }} onPress={() => setConfirm(true)} />
+              <Button title="O'chirish" icon="trash-2" variant="dangerOutline" small style={{ flex: 1 }} onPress={() => setConfirm(true)} />
               <Button title="Saqlash" icon="check" small style={{ flex: 1 }} disabled={!tr.trim() || tr.trim() === word.translation} onPress={() => onSave(tr.trim())} />
             </View>
           )}

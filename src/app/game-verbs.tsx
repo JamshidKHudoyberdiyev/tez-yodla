@@ -75,7 +75,7 @@ function Round({ onAgain }: { onAgain: () => void }) {
   );
 
   return (
-    <Screen footer={checked ? <Button title={i + 1 < list.length ? 'Keyingisi' : 'Natija'} variant={allOk ? 'lime' : 'dark'} onPress={next} />
+    <Screen avoidKeyboard footer={checked ? <Button title={i + 1 < list.length ? 'Keyingisi' : 'Natija'} variant={allOk ? 'lime' : 'danger'} onPress={next} />
       : <Button title="Tekshirish" disabled={!past.trim() || !part.trim()} onPress={check} />}>
       <GameHeader progress={(i + (checked ? 1 : 0)) / list.length} label={`${i + 1}/${list.length}`} score={score} />
 

@@ -69,7 +69,7 @@ function Round({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
   }
 
   return (
-    <Screen footer={result ? <Button title={i + 1 < list.length ? 'Keyingisi' : 'Natija'} variant={result === 'good' ? 'lime' : 'dark'} onPress={next} />
+    <Screen avoidKeyboard footer={result ? <Button title={i + 1 < list.length ? 'Keyingisi' : 'Natija'} variant={result === 'good' ? 'lime' : 'danger'} onPress={next} />
       : <Button title="Tekshirish" disabled={!text.trim()} onPress={check} />}>
       <GameHeader progress={(i + (result ? 1 : 0)) / list.length} label={`${i + 1}/${list.length}`} score={score} />
 

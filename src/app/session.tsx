@@ -15,7 +15,7 @@ import { Word } from '@/data/words';
 import { todayPlan } from '@/lib/plan';
 import { clozeOf, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence } from '@/lib/speech';
-import { Grade, gradeCard, gradeTyped, levenshtein, normalize, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
+import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
@@ -60,7 +60,7 @@ function ExitConfirm({ kind, onStay, onLeave }: { kind: ExitKind | null; onStay:
           <T size={15} color={colors.inkSoft}>{text}</T>
           <View style={{ gap: 8, marginTop: 6 }}>
             <Button title="Davom etish" onPress={onStay} />
-            <Button title="Chiqish" variant="ghost" onPress={onLeave} />
+            <Button title="Chiqish" variant="dangerOutline" onPress={onLeave} />
           </View>
         </Pressable>
       </Pressable>
@@ -889,7 +889,6 @@ function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Exclude<R
   const parts = target.trim().split(/\s+/).length;
   const sizeHint = parts > 1 ? `${parts} ta so'z` : `${target.length} ta harf`;
   const ok = result === 'good';
-  const dist = result && !ok ? levenshtein(normalize(submitted), normalize(target)) : 0;
   const ring = !result ? colors.forestLine : ok ? colors.lime : colors.wrong;
 
   const footer = !result ? (
@@ -897,36 +896,23 @@ function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Exclude<R
   ) : (
     <>
       <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <Pop from={0.4}>
-          <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: ok ? colors.forest : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-            <Feather name={ok ? 'check' : 'alert-circle'} size={ok ? 17 : 28} color={ok ? colors.lime : colors.wrong} />
-          </View>
-          {ok ? <Confetti trigger spread={40} /> : null}
-        </Pop>
+        {ok ? <Confetti trigger spread={40} /> : null}
         <View style={{ flex: 1 }}>
-          <T w="extrabold" size={20} color={ok ? colors.forestText : colors.wrongInk}>{ok ? "To'g'ri!" : result === 'hard' ? "Deyarli to'g'ri" : "Noto'g'ri"}</T>
-          <T size={13} color={ok ? colors.forestText : colors.muted}>
-            {ok ? `${word.word} — ${word.translation}` : result === 'hard' ? (dist === 0 ? 'Yordam bilan topdingiz' : dist === 1 ? 'Bitta harf xato' : `${dist} ta harf xato`) : word.translation}
-          </T>
+          <T w="extrabold" size={22} color={ok ? colors.forestText : colors.wrongInk}>{ok ? "To'g'ri!" : "Noto'g'ri javob"}</T>
+          {ok ? (
+            <T size={14} color={colors.forestText}>{word.word} — {word.translation}</T>
+          ) : (
+            <T size={14} color={colors.inkSoft}>To'g'risi: <T w="extrabold" size={20} color={colors.forestText}>{target}</T></T>
+          )}
         </View>
-        <SoundButton text={target} size={40} bg={ok ? colors.surface : colors.limeSoft} />
+        <SoundButton text={target} size={44} bg={ok ? colors.surface : colors.limeSoft} />
       </View>
-      {!ok ? (
-        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-          <T size={14} color={colors.inkSoft}>Siz: <T w="bold" size={14} color={colors.wrongInk} style={{ textDecorationLine: 'line-through' }}>{submitted.trim()}</T></T>
-          <Feather name="arrow-right" size={14} color={colors.muted} />
-          <T size={14} color={colors.inkSoft}>To'g'risi:</T>
-          <View style={{ paddingHorizontal: 10, paddingVertical: 2, borderRadius: 10, borderWidth: 2, borderColor: colors.lime, backgroundColor: colors.limeSoft }}>
-            <T w="extrabold" size={16} color={colors.forestText}>{target}</T>
-          </View>
-        </View>
-      ) : null}
-      <Button title="Davom etish" onPress={() => finish(result)} />
+      <Button title="Davom etish" variant={ok ? 'lime' : 'danger'} onPress={() => finish(result)} />
     </>
   );
 
   return (
-    <Screen avoidKeyboard sheet={result ? (ok ? colors.limeSoft : colors.surface) : undefined} sheetBorder={result && !ok ? colors.wrong : undefined} footer={footer}>
+    <Screen avoidKeyboard sheet={result ? (ok ? colors.limeSoft : colors.wrongSoft) : undefined} sheetBorder={result ? (ok ? colors.lime : colors.wrong) : undefined} footer={footer}>
       {header}
       <Card style={{ borderRadius: 26, padding: 18, alignItems: 'center', gap: 12, borderWidth: 1, borderColor: colors.line }}>
         {mode === 'listen' ? (
@@ -1022,36 +1008,24 @@ function TestStep({ word, groupOthers, pool, header, onDone }: { word: Word; gro
 
   return (
     <Screen
-      sheet={picked ? (correct ? colors.forest : colors.surface) : undefined}
-      sheetBorder={picked && !correct ? colors.wrong : undefined}
+      sheet={picked ? (correct ? colors.limeSoft : colors.wrongSoft) : undefined}
+      sheetBorder={picked ? (correct ? colors.lime : colors.wrong) : undefined}
       footer={picked ? (
         <SlideUp style={{ gap: 14 }}>
           <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            <Pop from={0.4}>
-              <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: correct ? colors.lime : 'transparent', borderWidth: correct ? 0 : 2.5, borderColor: colors.wrong, alignItems: 'center', justifyContent: 'center' }}>
-                <Feather name={correct ? 'check' : 'x'} size={22} color={correct ? colors.forestDeep : colors.wrong} />
-              </View>
-            </Pop>
             <View style={{ flex: 1 }}>
-              {correct ? <T w="extrabold" size={20} color="#FFFFFF" style={{ lineHeight: 26 }}>Barakalla!</T> : (
-                <T size={13} color={colors.muted}>To'g'ri javob</T>
+              {correct ? <T w="extrabold" size={22} color={colors.forestText} style={{ lineHeight: 28 }}>Barakalla!</T> : (
+                <T w="bold" size={13} color={colors.wrongInk}>To'g'ri javob</T>
               )}
               {!correct ? <T w="extrabold" size={22} color={colors.ink} style={{ lineHeight: 27 }}>{word.word} — <T w="extrabold" size={22} color={colors.forestText}>{word.translation}</T></T> : null}
-              {correct && word.example ? <T size={13} color={colors.onForestSoft} numberOfLines={2}>{word.example}{word.exampleUz ? ` — ${word.exampleUz}` : ''}</T> : null}
+              {correct && word.example ? <T size={13} color={colors.forestText} numberOfLines={2}>{word.example}{word.exampleUz ? ` — ${word.exampleUz}` : ''}</T> : null}
             </View>
           </View>
-          {!correct && word.association ? (
-            <View style={{ flexDirection: 'row', gap: 8, padding: 12, borderRadius: 16, backgroundColor: colors.amberBg }}>
-              <Feather name="zap" size={15} color={colors.amber} style={{ marginTop: 2 }} />
-              <T size={13} color={colors.inkSoft} style={{ flex: 1, lineHeight: 19 }}>
-                {word.soundsLike ? <T w="extrabold" size={13}>{word.word} ≈ «{word.soundsLike}» — </T> : null}{word.association}
-              </T>
-            </View>
-          ) : !correct && word.example ? (
+          {!correct && word.example ? (
             <T size={13} color={colors.inkSoft} style={{ lineHeight: 19 }}>{word.example}{word.exampleUz ? ` — ${word.exampleUz}` : ''}</T>
           ) : null}
           {!correct ? <T size={12} color={colors.muted}>Bu so'z guruh oxirida yana so'raladi.</T> : null}
-          <Button title="Davom etish" onPress={() => finish(correct)} />
+          <Button title="Davom etish" variant={correct ? 'lime' : 'danger'} onPress={() => finish(correct)} />
         </SlideUp>
       ) : undefined}>
       {header}
@@ -1071,18 +1045,15 @@ function TestStep({ word, groupOthers, pool, header, onDone }: { word: Word; gro
           const border = state === 'right' ? colors.forest : state === 'wrong' ? colors.wrong : 'transparent';
           const option = (
             <Pressable accessibilityRole="radio" accessibilityState={{ checked: c === picked, disabled: !!picked }} accessibilityLabel={c} onPress={() => pick(c)}
-              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 62, paddingHorizontal: 16, borderRadius: 20, borderWidth: 2, borderColor: border, backgroundColor: bg,
+              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, height: 58, paddingHorizontal: 20, borderRadius: 18, borderWidth: 2.5, borderColor: border, backgroundColor: bg,
                 opacity: state === 'dim' ? 0.45 : 1, transform: [{ scale: pressed && !picked ? 0.98 : 1 }],
                 ...(state === 'right' ? { shadowColor: colors.forest, shadowOpacity: 0.18, shadowRadius: 12, shadowOffset: { width: 0, height: 8 }, elevation: 4 } : null) })}>
-              <View style={{ width: 32, height: 32, borderRadius: 11, backgroundColor: state === 'right' ? colors.forest : state === 'wrong' ? 'transparent' : colors.bg, borderWidth: state === 'wrong' ? 2 : 0, borderColor: colors.wrong, alignItems: 'center', justifyContent: 'center' }}>
-                {state === 'right' ? <Feather name="check" size={17} color={colors.lime} /> : state === 'wrong' ? <Feather name="x" size={17} color={colors.wrong} /> : <T w="extrabold" size={13} color={colors.muted}>{'ABCDEF'[i]}</T>}
-              </View>
-              <T w={state === 'right' ? 'extrabold' : 'bold'} size={18} style={{ flex: 1 }} color={state === 'right' ? colors.forestDeep : state === 'wrong' ? colors.wrongInk : colors.ink}>{c}</T>
+              <T w={state === 'right' ? 'extrabold' : 'bold'} size={18} style={{ flex: 1 }} color={state === 'right' ? colors.forestText : state === 'wrong' ? colors.wrongInk : colors.ink}>{c}</T>
               {state === 'right' && c === picked ? <T w="extrabold" size={13} color={colors.forestText}>+1</T> : null}
             </Pressable>
           );
           return state === 'right' ? (
-            <Pop key={c} from={1} to={1.03} trigger={picked} style={{ zIndex: 2 }}>
+            <Pop key={c} from={1} to={1} trigger={picked} style={{ zIndex: 2 }}>
               {option}
               <Confetti trigger={correct ? picked : null} />
             </Pop>
