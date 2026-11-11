@@ -22,7 +22,8 @@ function greeting(d = new Date()) {
 }
 
 export default function Home() {
-  const { state, words, today, streak, repairStreak, dismissBreak } = useStore();
+  const { state, words, today, streak, repairStreak, dismissBreak, wordById } = useStore();
+  const mistakeCount = Object.keys(state.mistakes).filter((id) => !!wordById(id)).length;
   const plan = todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, log: state.log, today });
   const left = plan.newWords.length + plan.reviews.length;
   const done = streak.todayCount;
@@ -101,6 +102,21 @@ export default function Home() {
           )}
         </View>
 
+        {mistakeCount ? (
+          <Pressable accessibilityRole="button" accessibilityLabel={`Xatolarim: ${mistakeCount} ta so'z. Mashq qilish`} onPress={() => router.push('/mistakes')}
+            style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surface, borderRadius: 22, padding: 14, borderWidth: 2, borderColor: colors.wrongSoft, opacity: pressed ? 0.9 : 1 })}>
+            <View style={{ width: 52, height: 52, borderRadius: 17, backgroundColor: colors.wrongSoft, alignItems: 'center', justifyContent: 'center' }}>
+              <Feather name="alert-circle" size={24} color={colors.wrongInk} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <T w="extrabold" size={16}>Xatolarim</T>
+              <T size={13} color={colors.muted}>{mistakeCount} ta so'z · ko'p adashganlaringiz</T>
+            </View>
+            <View style={{ height: 38, paddingHorizontal: 14, borderRadius: 19, backgroundColor: colors.lime, justifyContent: 'center', borderBottomWidth: 3, borderBottomColor: '#8FBF2E' }}>
+              <T w="extrabold" size={14} color={colors.limeInk}>Mashq</T>
+            </View>
+          </Pressable>
+        ) : null}
         {streak.offer ? <StreakCard info={streak} today={today} onRepair={repairStreak} onRestart={dismissBreak} /> : <StreakStrip info={streak} today={today} />}
 
         {/* So'zlar bog'i */}

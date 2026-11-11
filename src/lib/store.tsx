@@ -10,6 +10,7 @@ import { configureSpeech } from './speech';
 import { snapRate } from './speechRate';
 import { pickExample } from './example';
 import { migrateReminder, type ReminderPrefs } from './reminders';
+import { noteCorrect, noteMistake, type MistakeLog } from './mistakes';
 
 const KEY = 'yodla:v1';
 
@@ -33,6 +34,8 @@ export interface AppState {
   streakRepairs: number[];
   /** «Yangidan boshlash» tanlangan uzilish kunlari */
   streakDismissed: number[];
+  /** «Xatolarim»: adashilgan so'zlar (lib/mistakes.ts) */
+  mistakes: MistakeLog;
   prefs: Prefs;
 }
 
@@ -105,6 +108,7 @@ const initialState: AppState = {
   doneDays: [],
   streakRepairs: [],
   streakDismissed: [],
+  mistakes: {},
   prefs: defaultPrefs,
 };
 
@@ -152,6 +156,10 @@ interface Store {
   learnWords: (results: { wordId: string; correct: boolean }[]) => void;
   /** Takrorlashdagi baho */
   review: (wordId: string, grade: Grade) => void;
+  /** Mashqdagi xato — so'z «Xatolarim»ga tushadi */
+  noteMistake: (wordId: string) => void;
+  /** Xatolar mashqidagi to'g'ri javob; so'z ro'yxatdan chiqsa — true */
+  noteMistakeCorrect: (wordId: string) => boolean;
   /** Qayta yodlash tugadi */
   relearned: (wordIds: string[]) => void;
   addCustomWords: (words: Omit<Word, 'id' | 'deckId'>[]) => void;
@@ -194,6 +202,9 @@ function bumpLog(log: Record<number, DayLog>, day: number, patch: Partial<DayLog
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(initialState);
+  /** Joriy holat — natijani darhol qaytaradigan amallar uchun (noteMistakeCorrect) */
+  const stateRef = useRef(state);
+  stateRef.current = state;
   const [ready, setReady] = useState(false);
   const loaded = useRef(false);
   const today = dayNumber();
@@ -277,11 +288,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (!card) return s;
         const ok = grade === 'good' || grade === 'easy';
         return withEvent(
-          { ...s, cards: { ...s.cards, [wordId]: gradeCard(card, grade, today) }, log: bumpLog(s.log, today, { reviewed: 1, correct: ok ? 1 : 0, total: 1 }) },
+          { ...s, mistakes: grade === 'again' ? noteMistake(s.mistakes, wordId, today) : s.mistakes, cards: { ...s.cards, [wordId]: gradeCard(card, grade, today) }, log: bumpLog(s.log, today, { reviewed: 1, correct: ok ? 1 : 0, total: 1 }) },
           'card_reviewed',
           { grade, stage: card.stage },
         );
       }),
+    noteMistake: (wordId) => setState((s) => ({ ...s, mistakes: noteMistake(s.mistakes, wordId, today) })),
+    noteMistakeCorrect: (wordId) => {
+      const r = noteCorrect(stateRef.current.mistakes, wordId);
+      setState((s) => ({ ...s, mistakes: noteCorrect(s.mistakes, wordId).log }));
+      return r.cleared;
+    },
     relearned: (ids) =>
       setState((s) => {
         const cards = { ...s.cards };

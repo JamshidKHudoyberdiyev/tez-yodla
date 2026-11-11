@@ -1,4 +1,4 @@
-import { findUnknownWords, lemmatize, splitSentences } from './text';
+import { clozeParts, findUnknownWords, lemmatize, splitSentences } from './text';
 
 describe('text', () => {
   test("so'zlarni asosiy shaklga keltiradi", () => {
@@ -29,5 +29,13 @@ describe('text', () => {
 
   test("gaplarga ajratadi", () => {
     expect(splitSentences('One. Two!  Three?')).toEqual(['One.', 'Two!', 'Three?']);
+  });
+});
+
+describe('clozeParts', () => {
+  test("gapni so'zdan oldingi, so'z va keyingi qismga ajratadi (shakli bilan)", () => {
+    expect(clozeParts('bear', 'Bears love honey.')).toEqual({ before: '', match: 'Bears', after: ' love honey.' });
+    expect(clozeParts('look after', 'She will look after her brother.')).toEqual({ before: 'She will ', match: 'look after', after: ' her brother.' });
+    expect(clozeParts('cat', 'I like dogs.')).toBeNull();
   });
 });

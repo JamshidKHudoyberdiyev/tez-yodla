@@ -121,14 +121,26 @@ export function exampleHasWord(word: string, example: string): boolean {
   return clozeOf(word, example) !== null;
 }
 
-/** Misol gapdagi so'zni bo'sh joy bilan almashtiradi: "Bears love honey." → "Bears love _____." */
-export function clozeOf(word: string, example: string): string | null {
+/** Misol gapdagi so'z (yoki shakli) uchun qidiruv ifodasi */
+function wordPattern(word: string): RegExp {
   const first = word.split(' ')[0].toLowerCase();
   const stem = first.slice(0, Math.max(3, first.length - 1)).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const rest = word.split(' ').slice(1);
   const tail = rest.length ? `(?:\\s+${rest.join('\\s+')})?` : '';
-  const re = new RegExp(`\\b${stem}[a-z'’]*${tail}`, 'i');
+  return new RegExp(`\\b${stem}[a-z'’]*${tail}`, 'i');
+}
+
+/** Misol gapdagi so'zni bo'sh joy bilan almashtiradi: "Bears love honey." → "Bears love _____." */
+export function clozeOf(word: string, example: string): string | null {
+  const re = wordPattern(word);
   return re.test(example) ? example.replace(re, '_____') : null;
+}
+
+/** Gapni so'zdan oldingi, so'zning o'zi (gapdagi shakli) va keyingi qismlarga ajratadi — «Matnda» mashqi uchun. */
+export function clozeParts(word: string, example: string): { before: string; match: string; after: string } | null {
+  const m = wordPattern(word).exec(example);
+  if (!m) return null;
+  return { before: example.slice(0, m.index), match: m[0], after: example.slice(m.index + m[0].length) };
 }
 
 export function splitSentences(text: string): string[] {
