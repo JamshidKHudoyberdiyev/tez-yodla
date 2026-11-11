@@ -61,7 +61,8 @@ export function BottomSheet({ visible, onClose, animation = 'slide', bottomBase 
 
 /** Klaviatura ochiqmi (pastki panelni klaviatura ustiga joylash uchun). */
 export function useKeyboardShown() {
-  const [shown, setShown] = useState(false);
+  // Ekran klaviatura allaqachon ochiq paytda ochilishi mumkin (keyingi so'zga o'tganda) — boshlang'ich holatni ham olamiz
+  const [shown, setShown] = useState(() => Keyboard.isVisible());
   useEffect(() => {
     const a = Keyboard.addListener('keyboardDidShow', () => setShown(true));
     const b = Keyboard.addListener('keyboardDidHide', () => setShown(false));
@@ -90,11 +91,20 @@ function useKeyboardOverlap(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    const show = Keyboard.addListener('keyboardDidShow', (e) => {
-      kbTop.current = e.endCoordinates.screenY;
+    const remeasure = () => {
       measure();
       // Oyna o'lchami biroz kechikib o'zgarishi mumkin — qayta o'lchaymiz
       timers.push(setTimeout(measure, 120), setTimeout(measure, 400));
+    };
+    // Klaviatura shu ekran ochilishidan oldin chiqqan bo'lsa (masalan, keyingi so'zga o'tganda yopilmay qoldi),
+    // «keyboardDidShow» qayta kelmaydi — joriy o'lchamini o'zimiz olamiz.
+    if (Keyboard.isVisible()) {
+      const m = Keyboard.metrics();
+      if (m) { kbTop.current = m.screenY; remeasure(); }
+    }
+    const show = Keyboard.addListener('keyboardDidShow', (e) => {
+      kbTop.current = e.endCoordinates.screenY;
+      remeasure();
     });
     const hide = Keyboard.addListener('keyboardDidHide', () => { kbTop.current = null; setOverlap(0); });
     return () => { show.remove(); hide.remove(); timers.forEach(clearTimeout); };

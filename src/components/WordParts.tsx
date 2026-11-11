@@ -1,8 +1,9 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image, Linking, Pressable, useWindowDimensions, View } from 'react-native';
 import { Word } from '../data/words';
 import { speak } from '../lib/speech';
 import { letterLayout } from '../lib/letters';
+import { pluralOf } from '../lib/plural';
 import { diffLetters } from '../lib/srs';
 import { colors } from '../lib/theme';
 import { Chip, T } from './ui';
@@ -34,10 +35,12 @@ function Highlight({ text, word, size }: { text: string; word: string; size: num
 
 export function WordHead({ word, big = false, badge }: { word: Word; big?: boolean; badge?: string }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
-      <View style={{ flex: 1, gap: 4 }}>
-        {badge ? <Chip label={badge} bg={colors.blueSoft} fg={colors.blue} /> : null}
-        <T w="extrabold" size={big ? 44 : 32} style={{ lineHeight: big ? 52 : 40, letterSpacing: -0.5 }}>{word.word}</T>
+    <View style={{ flexDirection: 'row', alignItems: big ? 'center' : 'flex-start', gap: 12 }}>
+      <View style={{ flex: 1, gap: big ? 2 : 4 }}>
+        {badge ? <View style={big ? { marginBottom: 6 } : undefined}><Chip label={badge} bg={colors.blueSoft} fg={colors.blue} /></View> : null}
+        {/* Uzun so'z ikkinchi qatorga tushmaydi — shrift o'zi kichrayadi */}
+        <T w="extrabold" size={big ? 44 : 32} numberOfLines={big ? 1 : undefined} adjustsFontSizeToFit={big} minimumFontScale={0.55}
+          style={{ lineHeight: big ? 50 : 40, letterSpacing: -0.5 }}>{word.word}</T>
         {word.ipa || word.pos ? <T size={15} color={colors.muted}>{[word.ipa, word.pos].filter(Boolean).join(' · ')}</T> : null}
       </View>
       <SoundButton text={word.word} label="Talaffuzni eshitish" size={52} bg={colors.forest} fg={colors.lime} />
@@ -51,8 +54,8 @@ export function Association({ word }: { word: Word }) {
   return (
     <View style={{ backgroundColor: colors.amberBg, borderWidth: 1, borderColor: colors.amberLine, borderRadius: 18, padding: 14, gap: 6 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Feather name="zap" size={16} color={colors.amber} />
-        <T w="bold" size={12} color={colors.amber} style={{ letterSpacing: 0.8, textTransform: 'uppercase' }}>Assotsiatsiya</T>
+        <MaterialCommunityIcons name="lightbulb-on-outline" size={18} color={colors.amber} />
+        <T w="extrabold" size={13} color={colors.amber}>Eslab qolish</T>
       </View>
       <T size={15}>
         {word.soundsLike ? <T w="extrabold" size={15}>{word.word} ≈ «{word.soundsLike}» — </T> : null}
@@ -62,16 +65,34 @@ export function Association({ word }: { word: Word }) {
   );
 }
 
-export function Example({ word }: { word: Word }) {
+/** `card` — Tanishish ekranida: alohida oq karta, gap 17, tarjimasi 14 */
+export function Example({ word, card = false }: { word: Word; card?: boolean }) {
   if (!word.example) return null;
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: colors.bg, borderRadius: 18, padding: 14 }}>
-      <View style={{ flex: 1, gap: 4 }}>
-        <T w="bold" size={11} color={colors.muted} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Misol</T>
-        <Highlight text={word.example} word={word.word} size={16} />
+    <View style={card
+      ? { flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: colors.surface, borderRadius: 26, paddingVertical: 16, paddingHorizontal: 18 }
+      : { flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: colors.bg, borderRadius: 18, padding: 14 }}>
+      <View style={{ flex: 1, gap: card ? 6 : 4 }}>
+        {card
+          ? <T w="bold" size={13} color={colors.muted}>Misol</T>
+          : <T w="bold" size={11} color={colors.muted} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Misol</T>}
+        <Highlight text={word.example} word={word.word} size={card ? 17 : 16} />
         {word.exampleUz ? <T size={14} color={colors.muted}>{word.exampleUz}</T> : null}
       </View>
-      <SoundButton text={word.example} label="Misol gapni eshitish" size={44} bg={colors.surface} />
+      <SoundButton text={word.example} label="Misol gapni eshitish" size={card ? 42 : 44} bg={card ? colors.surfaceMuted : colors.surface} />
+    </View>
+  );
+}
+
+/** Otning ko'plik shakli: «ko'plik knives». Sanalmaydigan va ot bo'lmagan so'zlarda chiqmaydi. */
+export function PluralTag({ word }: { word: Word }) {
+  const p = pluralOf(word);
+  if (!p) return null;
+  return (
+    <View style={{ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, height: 30, paddingHorizontal: 10, borderRadius: 10, borderWidth: 1.5, borderColor: colors.line }}
+      accessibilityLabel={`Ko'plik shakli: ${p}`}>
+      <T size={13} color={colors.muted}>ko'plik</T>
+      <T w="extrabold" size={15}>{p}</T>
     </View>
   );
 }

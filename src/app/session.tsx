@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, Modal, Pressable, TextInput, View } from 'react-native';
-import { Association, DiffLetters, Example, SoundButton, WordHead, WordPhoto } from '@/components/WordParts';
+import { Association, DiffLetters, Example, PluralTag, SoundButton, WordHead, WordPhoto } from '@/components/WordParts';
 import { Button, Card, Group, Progress, RoundIconButton, Screen, T, useSheetBottom } from '@/components/ui';
 import { DayGoal, Flame, FreezeChip, WeekStrip } from '@/components/Streak';
 import { DuoIcon, Plant } from '@/components/Art';
@@ -11,7 +11,7 @@ import { Breathe, buzz, Confetti, Flip, Grow, Pop, RollNumber, Shake, SlideUp } 
 import { gardenIndex } from '@/lib/garden';
 import { DAY_GOAL, milestoneLabel, MILESTONES, type StreakInfo } from '@/lib/streak';
 import { buildChoices, groupTimeline, intervalLabel, relativeDay, shuffle, uzDate } from '@/lib/drill';
-import { Word } from '@/data/words';
+import { deckById, Word } from '@/data/words';
 import { EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { clozeOf, clozeParts, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence } from '@/lib/speech';
@@ -77,14 +77,16 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
   const streakBefore = useRef(store.streak);
 
   /** «Yana 5 ta so'z» — kunlik reja bajarilgandan keyingi qo'shimcha guruh */
-  const { extra } = useLocalSearchParams<{ extra?: string }>();
+  /** `deck` — to'plam sahifasidan: faqat shu to'plamdan 5 ta yangi so'z (takrorlashlarsiz) */
+  const { extra, deck } = useLocalSearchParams<{ extra?: string; deck?: string }>();
+  const deckTitle = deck ? deckById(deck)?.title : undefined;
   // Reja mashg'ulot boshida bir marta tuziladi.
   const initial = useMemo(() => {
-    const p = todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: extra ? EXTRA_NEW : undefined, log: state.log, today });
+    const p = todayPlan({ words, cards: state.cards, activeDecks: deck ? [deck] : state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: extra || deck ? EXTRA_NEW : undefined, log: state.log, today });
     return {
       groups: p.groups,
-      reviews: p.reviews.filter((c) => c.state !== 'relearning' && wordById(c.wordId)),
-      pendingRelearn: p.reviews.filter((c) => c.state === 'relearning').map((c) => c.wordId),
+      reviews: deck ? [] : p.reviews.filter((c) => c.state !== 'relearning' && wordById(c.wordId)),
+      pendingRelearn: deck ? [] : p.reviews.filter((c) => c.state === 'relearning').map((c) => c.wordId),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -252,7 +254,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
     const empty = !newCount && !initial.reviews.length && !initial.pendingRelearn.length;
     return (
       <Screen footer={empty ? <Button title="Bosh sahifaga" variant="dark" onPress={close} /> : <Button title={initial.reviews.length ? 'Takrorlashni boshlash' : initial.pendingRelearn.length ? 'Qayta yodlashni boshlash' : '1-guruhni boshlash'} icon="play" onPress={start} />}>
-        <Header onClose={close} title="Bugungi mashg'ulot" />
+        <Header onClose={close} title={deckTitle ?? "Bugungi mashg'ulot"} />
         {empty ? (
           <Card style={{ alignItems: 'center', gap: 10, paddingVertical: 32 }}>
             <Feather name="check-circle" size={40} color={colors.forestText} />
@@ -261,24 +263,31 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
           </Card>
         ) : (
           <>
-            <T size={15} color={colors.inkSoft}>Yangi so'zlar <T w="extrabold" size={15}>5 tadan guruhga</T> bo'linadi. Har bir guruh {planSteps.length} bosqichdan o'tadi.</T>
-            <Card style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              {planSteps.map((x) => (
-                <View key={x.t} style={{ alignItems: 'center', gap: 6, flex: 1 }}>
-                  <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: x.bg, alignItems: 'center', justifyContent: 'center' }}>
-                    <Feather name={x.icon} size={20} color={x.fg} />
+            <T w="extrabold" size={18} accessibilityRole="header">Har bir so'z {planSteps.length} bosqichdan o'tadi</T>
+            <Card style={{ padding: 12, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {planSteps.map((x, i) => (
+                <View key={x.t} style={{ width: '31.5%', flexGrow: 1, alignItems: 'center', gap: 4, paddingTop: 14, paddingBottom: 12, paddingHorizontal: 4, borderRadius: 18, backgroundColor: colors.surfaceMuted }}>
+                  <T w="extrabold" size={11} color={colors.muted} style={{ position: 'absolute', top: 8, left: 10 }}>{i + 1}</T>
+                  <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: x.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 2 }}>
+                    <Feather name={x.icon} size={21} color={x.fg} />
                   </View>
-                  <T w="bold" size={12}>{x.t}</T>
-                  <T size={10} color={colors.muted}>{x.s}</T>
+                  <T w="extrabold" size={14} numberOfLines={1}>{x.t}</T>
+                  <T size={11} color={colors.muted} numberOfLines={1}>{x.s}</T>
                 </View>
               ))}
             </Card>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 4 }}>
+              <T w="extrabold" size={18}>Bugungi reja</T>
+              <T w="bold" size={13} color={colors.muted}>
+                {newCount ? `${newCount} so'z · ` : ''}~{Math.max(1, Math.ceil(newCount * 0.8 + initial.reviews.length * 0.25))} daq
+              </T>
+            </View>
             <Group>
               {[
-                ...(initial.reviews.length ? [{ title: 'Takrorlash', sub: `Vaqti kelgan ${initial.reviews.length} ta so'z · ~${Math.ceil(initial.reviews.length * 0.25)} daq` }] : []),
+                ...(initial.reviews.length ? [{ title: 'Takrorlash', sub: `Vaqti kelgan ${initial.reviews.length} ta so'z · ~${Math.ceil(initial.reviews.length * 0.25)} daqiqa` }] : []),
                 ...(initial.pendingRelearn.length ? [{ title: 'Qayta yodlash', sub: `${initial.pendingRelearn.length} ta unutilgan so'z` }] : []),
-                ...initial.groups.map((g, i) => ({ title: `Yangi so'zlar — ${i + 1}-guruh`, sub: `${g.length} ta so'z · ~${Math.ceil(g.length * 0.8)} daq` })),
-              ].map((r, i) => <PlanRow key={r.title} n={i + 1} title={r.title} sub={r.sub} active={i === 0} />)}
+                ...initial.groups.map((g, i) => ({ title: `${i + 1}-guruh · ${g.length} ta yangi so'z`, sub: `~${Math.ceil(g.length * 0.8)} daqiqa` })),
+              ].map((r, i, a) => <PlanRow key={r.title} n={i + 1} title={r.title} sub={r.sub} active={i === 0} last={i === a.length - 1} />)}
             </Group>
           </>
         )}
@@ -295,15 +304,19 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
       }} />}>
         <Header onClose={close} progress={(idx + 1) / group.length} label={`Tanishish · ${idx + 1}/${group.length}`} seg={seg('Tanishish')} />
         <Pop trigger={w.id} from={0.96}>
-          <Card style={{ borderRadius: 32, padding: w.image ? 12 : 20, gap: 14 }}>
-            <WordPhoto word={w} />
-            <View style={{ paddingHorizontal: w.image ? 8 : 0, paddingBottom: w.image ? 8 : 0, gap: 12 }}>
-              <WordHead word={w} big badge={kind === 'relearn' ? 'Qayta yodlash' : "Yangi so'z"} />
-              <T w="extrabold" size={28} color={colors.forestText} style={{ lineHeight: 34 }}>{w.translation}</T>
-              <Association word={w} />
-              <Example word={w} />
-            </View>
-          </Card>
+          <View style={{ gap: 14 }}>
+            <Card style={{ borderRadius: 30, padding: w.image ? 12 : 18, gap: 12 }}>
+              <WordPhoto word={w} />
+              <View style={{ paddingHorizontal: w.image ? 6 : 0, paddingBottom: w.image ? 6 : 0, gap: 10 }}>
+                <WordHead word={w} big badge={kind === 'relearn' ? 'Qayta yodlash' : "Yangi so'z"} />
+                <View style={{ height: 1, backgroundColor: colors.divider }} />
+                <T w="extrabold" size={30} color={colors.forestText} style={{ lineHeight: 36 }}>{w.translation}</T>
+                <PluralTag word={w} />
+                <Association word={w} />
+              </View>
+            </Card>
+            <Example word={w} card />
+          </View>
         </Pop>
         <SayAloud key={w.id} word={w.word} />
       </Screen>
@@ -382,13 +395,14 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
         word={w}
         mode="write"
         header={<><Header onClose={close} progress={done / group.length} label={`Yozish · ${Math.min(done + 1, group.length)}/${group.length}`} seg={seg('Yozish')} /></>}
-        onDone={(grade) => {
+        onDone={(grade, exact) => {
           turn.current += 1;
           let rest = queue.slice(1);
           const firstAttempt = !writeSeen.current.has(w.id);
           writeSeen.current.add(w.id);
           if (firstAttempt && grade === 'good') stepStats.current.writeOk += 1;
-          if (grade !== 'good' && !writeRetried.current.has(w.id)) {
+          // Yordam bilan to'g'ri yozilgani xato emas — faqat noto'g'ri yozilgani qayta so'raladi
+          if (!exact && !writeRetried.current.has(w.id)) {
             writeRetried.current.add(w.id);
             markWrong(w.id);
             rest = [...rest, w.id]; // xato yozilgan so'z guruh oxirida yana so'raladi
@@ -405,8 +419,8 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
       <ContextStep
         key={group.map((x) => x.id).join()}
         items={contextItems(group)}
-        header={<Header onClose={close} label="Matn" seg={seg('Matn')} />}
-        onMistake={markWrong}
+        group={group}
+        renderHeader={(label) => <Header onClose={close} label={label} seg={seg('Matn')} />}
         onDone={finishWrite}
       />
     );
@@ -771,16 +785,21 @@ export function Header({ onClose, progress, label, title, seg }: { onClose: () =
   );
 }
 
-function PlanRow({ n, title, sub, active }: { n: number; title: string; sub: string; active?: boolean }) {
+function PlanRow({ n, title, sub, active, last }: { n: number; title: string; sub: string; active?: boolean; last?: boolean }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderBottomWidth: 1, borderBottomColor: colors.divider }}>
-      <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: active ? colors.forest : colors.divider, alignItems: 'center', justifyContent: 'center' }}>
-        <T w="bold" size={14} color={active ? '#FFFFFF' : colors.inkSoft}>{n}</T>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderBottomWidth: last ? 0 : 1, borderBottomColor: colors.divider }}>
+      <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: active ? colors.forest : colors.surfaceMuted, alignItems: 'center', justifyContent: 'center' }}>
+        <T w="extrabold" size={15} color={active ? colors.lime : colors.muted}>{n}</T>
       </View>
       <View style={{ flex: 1 }}>
-        <T w="bold" size={15}>{title}</T>
-        <T size={13} color={colors.muted}>{sub}</T>
+        <T w="extrabold" size={16}>{title}</T>
+        <T size={12} color={colors.muted}>{sub}</T>
       </View>
+      {active ? (
+        <View style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: colors.limeSoft }}>
+          <T w="extrabold" size={11} color={colors.forestText}>HOZIR</T>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -881,9 +900,14 @@ function SayAloud({ word }: { word: string }) {
  * Bitta katta yozish maydoni. «Tekshirish» va natija klaviatura ustida chiqadi — klaviatura yopilmaydi,
  * klaviaturadagi ✓ ham tekshiradi, natijadan keyin esa keyingisiga o'tkazadi.
  */
-export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Exclude<ReviewMode, 'recall'>; header: React.ReactNode; onDone: (g: Grade) => void }) {
+/**
+ * Yozish. `onDone(grade, exact)`: exact — so'z aynan to'g'ri yozildi (yordam bilan bo'lsa ham).
+ * Yordam («Keyingi harf») ishlatilib to'g'ri yozilsa — ekranda «To'g'ri!», takrorlash bahosi esa 'hard'.
+ */
+export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Exclude<ReviewMode, 'recall'>; header: React.ReactNode; onDone: (g: Grade, exact: boolean) => void }) {
   const [text, setText] = useState('');
   const [result, setResult] = useState<Grade | null>(null);
+  const [exact, setExact] = useState(false);
   const [submitted, setSubmitted] = useState('');
   const [hint, setHint] = useState(0);
   const target = word.word;
@@ -891,28 +915,31 @@ export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Ex
 
   const check = () => {
     if (!text.trim()) return;
-    const g = hint > 0 && gradeTyped(text, target) === 'good' ? 'hard' : gradeTyped(text, target);
-    buzz(g === 'good' ? 'success' : 'light');
+    const typed = gradeTyped(text, target);
+    const isExact = typed === 'good';
+    const g: Grade = isExact && hint > 0 ? 'hard' : typed;
+    buzz(isExact ? 'success' : 'light');
     setSubmitted(text);
+    setExact(isExact);
     setResult(g);
   };
 
   const clozeSentence = word.example ? clozeOf(word.word, word.example) ?? '' : '';
   const finished = useRef(false);
-  const finish = (g: Grade) => { if (finished.current) return; finished.current = true; onDone(g); };
+  const finish = (g: Grade) => { if (finished.current) return; finished.current = true; onDone(g, exact); };
 
   useEffect(() => {
     if (!result) return;
-    if (result === 'good' ? prefs.autoSpeakCorrect : true) speak(target);
-    if (result !== 'good' || !prefs.autoAdvance) return;
-    const t = setTimeout(() => finish('good'), 1200);
+    if (exact ? prefs.autoSpeakCorrect : true) speak(target);
+    if (!exact || !prefs.autoAdvance) return;
+    const t = setTimeout(() => finish(result), 1200);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
   const parts = target.trim().split(/\s+/).length;
   const sizeHint = parts > 1 ? `${parts} ta so'z` : `${target.length} ta harf`;
-  const ok = result === 'good';
+  const ok = !!result && exact;
   const ring = !result ? colors.forestLine : ok ? colors.lime : colors.wrong;
 
   const footer = !result ? (
@@ -924,7 +951,7 @@ export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Ex
         <View style={{ flex: 1 }}>
           <T w="extrabold" size={22} color={ok ? colors.forestText : colors.wrongInk}>{ok ? "To'g'ri!" : "Noto'g'ri javob"}</T>
           {ok ? (
-            <T size={14} color={colors.forestText}>{word.word} — {word.translation}</T>
+            <T size={14} color={colors.forestText}>{word.word} — {word.translation}{hint > 0 ? ' · yordam bilan' : ''}</T>
           ) : (
             <T size={14} color={colors.inkSoft}>To'g'risi: <T w="extrabold" size={20} color={colors.forestText}>{target}</T></T>
           )}
@@ -1101,87 +1128,119 @@ function contextItems(group: Word[]): CtxItem[] {
 }
 
 /**
- * Oxirgi bosqich — Matnda: guruh so'zlarining misol gaplari bitta qisqa matn bo'lib chiqadi,
- * so'zlar o'rnida bo'sh joy. Pastdagi so'zni bosib bo'sh joyga qo'yadi, keyin tekshiradi.
+ * Oxirgi bosqich — Matn: guruh so'zlarining misol gaplari bittadan. Tepada o'zbekcha tarjimasi,
+ * ostida inglizcha gap va bo'sh joy, pastda 4 ta variant. To'g'ri topilsa — «Gapni eshiting» tugmasi chiqadi;
+ * xato bo'lsa — to'g'risi ko'rsatiladi va gap oxirida yana bir marta chiqadi.
+ * Bu bosqichdagi xatolar «Xatolarim»ga yozilmaydi.
  */
-function ContextStep({ items, header, onMistake, onDone }: { items: CtxItem[]; header: React.ReactNode; onMistake: (wordId: string) => void; onDone: () => void }) {
-  const [chips] = useState(() => shuffle(items.map((x) => x.word)));
-  const [filled, setFilled] = useState<(string | null)[]>(() => items.map(() => null));
+function ContextStep({ items, group, renderHeader, onDone }: { items: CtxItem[]; group: Word[]; renderHeader: (label: string) => React.ReactNode; onDone: () => void }) {
+  const [queue, setQueue] = useState<number[]>(() => items.map((_, i) => i));
+  const [retried] = useState<Set<number>>(() => new Set());
+  const [results, setResults] = useState<Record<number, boolean>>({});
+  const [picked, setPicked] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
-  const active = filled.indexOf(null);
-  const used = new Set(filled.filter(Boolean) as string[]);
-  const results = items.map((x, i) => filled[i] === x.word.id);
-  const wrongCount = results.filter((r) => !r).length;
-  const allOk = checked && wrongCount === 0;
+  const cur = queue[0];
+  const x = items[cur];
+  // Variantlar: to'g'ri so'z + guruhdagi boshqa 3 ta so'z (har gap uchun bir marta aralashtiriladi)
+  const options = useMemo(() => {
+    if (!x) return [];
+    const others = shuffle(group.filter((w) => w.id !== x.word.id && w.word.toLowerCase() !== x.word.word.toLowerCase())).slice(0, 3);
+    return shuffle([x.word, ...others]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cur, queue.length]);
+  if (!x) return null;
 
-  const place = (wordId: string) => {
-    if (checked || active < 0) return;
-    setFilled((f) => f.map((v, i) => (i === active ? wordId : v)));
-  };
-  const clear = (i: number) => { if (!checked && filled[i]) setFilled((f) => f.map((v, j) => (j === i ? null : v))); };
+  const ok = picked === x.word.id;
+  const done = Object.keys(results).length;
   const check = () => {
+    if (!picked) return;
     setChecked(true);
-    items.forEach((x, i) => { if (filled[i] !== x.word.id) onMistake(x.word.id); });
+    setResults((r) => (cur in r ? r : { ...r, [cur]: picked === x.word.id }));
+    buzz(picked === x.word.id ? 'success' : 'light');
   };
+  const next = () => {
+    let rest = queue.slice(1);
+    if (!ok && !retried.has(cur)) { retried.add(cur); rest = [...rest, cur]; }
+    if (!rest.length) { onDone(); return; }
+    setQueue(rest);
+    setPicked(null);
+    setChecked(false);
+  };
+  const chosen = picked ? group.find((w) => w.id === picked) : undefined;
+  // Bo'linmaydigan bo'shliqlar: bo'sh joy qator oxirida ikkiga bo'linib ketmaydi
+  const slotText = checked ? `\u00A0${chosen ? chosen.word : x.match}\u00A0` : '\u00A0'.repeat(20);
 
   return (
     <Screen
-      sheet={checked ? (allOk ? colors.limeSoft : colors.wrongSoft) : undefined}
-      sheetBorder={checked ? (allOk ? colors.lime : colors.wrong) : undefined}
+      sheet={checked ? (ok ? colors.limeSoft : colors.wrongSoft) : undefined}
+      sheetBorder={checked ? (ok ? colors.lime : colors.wrong) : undefined}
       footer={!checked ? (
-        <Button title="Tekshirish" disabled={active >= 0} onPress={check} />
+        <Button title="Tekshirish" disabled={!picked} onPress={check} />
       ) : (
         <SlideUp style={{ gap: 14 }}>
-          <View accessibilityLiveRegion="polite">
-            <T w="extrabold" size={22} color={allOk ? colors.forestText : colors.wrongInk}>{allOk ? 'Barakalla!' : `${wrongCount} ta xato`}</T>
-            <T size={13} color={allOk ? colors.forestText : colors.inkSoft}>{allOk ? "Hamma so'zni matnda to'g'ri topdingiz." : "To'g'ri so'zlar matnda yashil bilan ko'rsatildi."}</T>
+          <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: ok ? colors.forest : colors.wrong, alignItems: 'center', justifyContent: 'center' }}>
+              <Feather name={ok ? 'check' : 'x'} size={20} color="#FFFFFF" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <T w="extrabold" size={20} color={ok ? colors.forestText : colors.wrongInk}>{ok ? "To'g'ri!" : "Noto'g'ri javob"}</T>
+              {!ok && !retried.has(cur) ? <T size={14} color={colors.inkSoft}>Bu gap oxirida yana bir marta chiqadi</T> : null}
+            </View>
           </View>
-          <Button title="Davom etish" variant={allOk ? 'lime' : 'danger'} onPress={onDone} />
+          <Button title={ok ? (queue.length > 1 ? 'Keyingi gap' : 'Tugatish') : 'Davom etish'} variant={ok ? 'lime' : 'danger'} onPress={next} />
         </SlideUp>
       )}>
-      {header}
+      {renderHeader(`Matn · ${Math.min(done + (checked ? 0 : 1), items.length)}/${items.length}`)}
       <View style={{ gap: 2 }}>
-        <T w="bold" size={13} color={colors.muted} style={{ letterSpacing: 0.4 }}>BUGUNGI SO'ZLAR MATNDA</T>
-        <T w="extrabold" size={22}>Bo'sh joylarni to'ldiring</T>
+        <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.6 }}>GAP ICHIDA</T>
+        <T w="extrabold" size={22}>Mos so'zni tanlang</T>
       </View>
-      <Card style={{ borderRadius: 26, padding: 20 }}>
-        <T size={18} style={{ lineHeight: 34 }}>
-          {items.map((x, i) => {
-            const id = filled[i];
-            const w = id ? items.find((y) => y.word.id === id)?.word : undefined;
-            const ok = results[i];
-            const label = checked ? x.match : w ? w.word : '\u2003\u2003\u2003\u2003';
-            const bg = checked ? (ok ? colors.limeSoft : colors.wrongSoft) : w ? colors.limeSoft : i === active ? colors.surface : colors.bg;
-            const fg = checked ? (ok ? colors.forestText : colors.wrongInk) : colors.forestText;
-            return (
-              <T key={x.word.id} size={18}>
-                {x.before}
-                <T w="extrabold" size={18} color={fg} onPress={() => clear(i)} accessibilityRole="button"
-                  accessibilityLabel={w ? `${i + 1}-bo'sh joy: ${w.word}. Olib tashlash uchun bosing` : `${i + 1}-bo'sh joy${i === active ? ', tanlangan' : ''}`}
-                  style={{ backgroundColor: bg, textDecorationLine: !checked && i === active ? 'underline' : 'none', textDecorationColor: colors.forest }}>
-                  {` ${label} `}
-                </T>
-                {checked && !ok && w ? <T size={15} color={colors.muted} style={{ textDecorationLine: 'line-through' }}>{` ${w.word}`}</T> : null}
-                {x.after}{' '}
-              </T>
-            );
-          })}
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6 }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        {items.map((_, i) => (
+          <View key={i} style={{ width: i === cur ? 22 : 8, height: 8, borderRadius: 4,
+            backgroundColor: i in results ? (results[i] ? colors.forest : colors.wrong) : i === cur ? colors.lime : colors.line }} />
+        ))}
+      </View>
+      <Card style={{ borderRadius: 28, paddingVertical: 22, paddingHorizontal: 20, gap: 14 }}>
+        {x.word.exampleUz ? <T size={15} color={colors.muted} style={{ lineHeight: 21 }}>{x.word.exampleUz}</T> : null}
+        <T w="semibold" size={22} style={{ lineHeight: 38 }}>
+          {x.before}
+          <T w="extrabold" size={22} color={checked ? (ok ? colors.forestText : colors.wrongInk) : colors.ink}
+            style={{ backgroundColor: checked ? (ok ? colors.limeSoft : colors.wrongSoft) : colors.bg, textDecorationLine: checked && !ok ? 'line-through' : 'none' }}>
+            {slotText}
+          </T>
+          {x.after}
         </T>
+        {checked && !ok ? <T w="extrabold" size={16} color={colors.forestText}>To'g'risi: {x.match}</T> : null}
+        {checked && ok && x.word.example ? (
+          <Pressable accessibilityRole="button" onPress={() => speak(x.word.example!)}
+            style={({ pressed }) => ({ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8, height: 38, paddingHorizontal: 14, borderRadius: 13, backgroundColor: colors.surfaceMuted, opacity: pressed ? 0.8 : 1 })}>
+            <Feather name="volume-2" size={18} color={colors.forestText} />
+            <T w="extrabold" size={14} color={colors.forestText}>Gapni eshiting</T>
+          </Pressable>
+        ) : null}
       </Card>
-      {!checked ? (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          {chips.map((w) => {
-            const isUsed = used.has(w.id);
-            return (
-              <Pressable key={w.id} accessibilityRole="button" accessibilityState={{ disabled: isUsed }} disabled={isUsed} onPress={() => place(w.id)}
-                style={({ pressed }) => ({ height: 46, paddingHorizontal: 16, borderRadius: 15, justifyContent: 'center', backgroundColor: isUsed ? colors.bg : colors.surface,
-                  opacity: isUsed ? 0.4 : 1, borderBottomWidth: isUsed ? 0 : 3, borderBottomColor: colors.line, transform: [{ scale: pressed ? 0.95 : 1 }] })}>
-                <T w="extrabold" size={16}>{w.word}</T>
-              </Pressable>
-            );
-          })}
-        </View>
-      ) : null}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+        {options.map((w) => {
+          const isPicked = picked === w.id;
+          const isRight = w.id === x.word.id;
+          const st = !checked ? (isPicked ? 'picked' : '') : isRight ? 'ok' : isPicked ? 'bad' : 'dim';
+          return (
+            <Pressable key={w.id} accessibilityRole="button" accessibilityState={{ selected: isPicked, disabled: checked }} disabled={checked}
+              onPress={() => setPicked(w.id)}
+              style={({ pressed }) => ({ width: '48%', flexGrow: 1, height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8,
+                backgroundColor: st === 'ok' ? colors.limeSoft : st === 'bad' ? colors.wrongSoft : colors.surface,
+                borderWidth: st === 'picked' || st === 'ok' || st === 'bad' ? 2 : 0,
+                borderColor: st === 'picked' ? colors.forest : st === 'ok' ? colors.lime : colors.wrong,
+                borderBottomWidth: st === '' ? 3 : st === 'dim' ? 0 : 2, borderBottomColor: st === '' ? colors.line : st === 'picked' ? colors.forest : st === 'ok' ? colors.lime : colors.wrong,
+                transform: [{ scale: pressed ? 0.96 : 1 }] })}>
+              <T w="extrabold" size={18} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}
+                color={st === 'ok' ? colors.forestText : st === 'bad' ? colors.wrongInk : st === 'dim' ? colors.muted : colors.ink}
+                style={{ opacity: st === 'dim' ? 0.55 : 1 }}>{w.word}</T>
+            </Pressable>
+          );
+        })}
+      </View>
     </Screen>
   );
 }
