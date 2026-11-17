@@ -25,13 +25,19 @@ export default function Home() {
   const { state, words, today, streak, repairStreak, dismissBreak, wordById } = useStore();
   const mistakeCount = Object.keys(state.mistakes).filter((id) => !!wordById(id)).length;
   const plan = todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, log: state.log, today });
-  const left = plan.newWords.length + plan.reviews.length;
-  const done = streak.todayCount;
-  const allDone = left === 0;
-  // Reja bajarilgach — yana nechta yangi so'z bor (to'plamlar tugagan bo'lsa tugma chiqmaydi)
-  const more = allDone ? todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: EXTRA_NEW, log: state.log, today }).newWords.length : 0;
+  // Halqa faqat bugungi YANGI so'zlarni sanaydi; takrorlash alohida kartada.
   const newToday = state.log[today]?.newLearned ?? 0;
-  const minutes = Math.max(1, Math.round(plan.newWords.length * 0.8 + plan.reviews.length * 0.25));
+  const newLeft = plan.newWords.length;
+  const newTotal = newToday + newLeft;
+  const newDone = newLeft === 0;
+  // Reja bajarilgach — yana nechta yangi so'z bor (to'plamlar tugagan bo'lsa tugma chiqmaydi)
+  const more = newDone ? todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: EXTRA_NEW, log: state.log, today }).newWords.length : 0;
+  /** Rejadagi to'plamlarda yangi so'z qolmagan — bugungi maqsadga yetilmagan bo'lsa ham */
+  const outOfWords = newDone && !more && newToday < state.dailyNew;
+  const newMinutes = Math.max(1, Math.round(newLeft * 0.8));
+  const reviewsLeft = plan.reviews.length;
+  const reviewedToday = state.log[today]?.reviewed ?? 0;
+  const reviewMinutes = Math.max(1, Math.round(reviewsLeft * 0.25));
   const garden = useMemo(() => gardenStages(state.cards, today), [state.cards, today]);
   const gardenTotal = garden.reduce((n, g) => n + g.ids.length, 0);
 
@@ -57,38 +63,40 @@ export default function Home() {
           </Pressable>
         </View>
 
-        {/* Bugungi mashg'ulot */}
+        {/* Bugungi yangi so'zlar (halqa faqat yangi so'zlarni sanaydi) */}
         <View style={{ backgroundColor: colors.forest, borderRadius: 32, paddingHorizontal: 20, paddingTop: 22, paddingBottom: 20, gap: 16, overflow: 'hidden' }}>
           <View pointerEvents="none" style={{ position: 'absolute', right: -60, top: -50 }}><RingsDecor /></View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-            <View accessible accessibilityLabel={`Bugun ${done} ta bajarildi, jami ${done + left}`} style={{ width: 92, height: 92 }}>
-              <Ring value={allDone ? 1 : done / Math.max(1, done + left)} />
+            <View accessible accessibilityLabel={`Bugun ${newToday} ta yangi so'z o'rganildi, reja ${newTotal}`} style={{ width: 92, height: 92 }}>
+              <Ring value={newDone ? 1 : newToday / Math.max(1, newTotal)} />
               <View style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
-                {allDone ? <Feather name="check" size={34} color={colors.lime} /> : (
+                {newDone && !newToday ? <Feather name={outOfWords ? 'layers' : 'check'} size={34} color={colors.lime} /> : (
                   <>
-                    <T w="extrabold" size={24} color="#FFFFFF" style={{ lineHeight: 26 }}>{done}</T>
-                    <T size={11} color={colors.onForestSoft} style={{ lineHeight: 14 }}>/ {done + left}</T>
+                    <T w="extrabold" size={24} color="#FFFFFF" style={{ lineHeight: 26 }}>{newToday}</T>
+                    <T size={11} color={colors.onForestSoft} style={{ lineHeight: 14 }}>/ {Math.max(newTotal, newToday)}</T>
                   </>
                 )}
               </View>
             </View>
             <View style={{ flex: 1 }}>
-              <T w="extrabold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>{allDone ? 'Bugungi reja bajarildi' : "Bugungi mashg'ulot"}</T>
+              <T w="extrabold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>
+                {outOfWords ? "So'zlar tugadi" : newDone ? 'Reja bajarildi' : "Yangi so'zlar"}
+              </T>
               <T w="extrabold" size={24} color="#FFFFFF" style={{ lineHeight: 28, marginTop: 4 }} accessibilityRole="header">
-                {allDone ? 'Barakalla!' : done > 0 ? `Yana ${left} ta karta` : `${left} ta karta`}
+                {outOfWords ? (newToday ? 'Barakalla!' : "Yangi so'z qolmadi") : newDone ? 'Barakalla!' : newToday > 0 ? `Yana ${newLeft} ta so'z` : `${newLeft} ta yangi so'z`}
               </T>
               <T size={13} color={colors.onForestSoft}>
-                {allDone ? (newToday > state.dailyNew ? `Bugun ${newToday} ta yangi so'z — zo'r!` : "Miya endi bu so'zlarni uyquda mustahkamlaydi") : [plan.reviews.length ? `${plan.reviews.length} takror` : '', plan.newWords.length ? `${plan.newWords.length} yangi` : '', `~${minutes} daq`].filter(Boolean).join(' · ')}
+                {outOfWords
+                  ? "Rejadagi to'plamlarda yangi so'z qolmadi — yangi mavzu qo'shing"
+                  : newDone
+                    ? (newToday > state.dailyNew ? `Bugun ${newToday} ta yangi so'z — zo'r!` : `${newToday} ta yangi so'z o'rganildi`)
+                    : `~${newMinutes} daqiqa`}
               </T>
             </View>
           </View>
-          {!allDone && !streak.todayDone && plan.reviews.length ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 14, backgroundColor: 'rgba(0,0,0,0.22)' }}>
-              <Feather name="clock" size={15} color="#F0A35E" />
-              <T size={13} color="#F6EAD7" style={{ flex: 1 }}>Bugun takrorlamasangiz, <T w="extrabold" size={13} color="#FFFFFF">{plan.reviews.length} ta so'z</T> kechikadi</T>
-            </View>
-          ) : null}
-          {allDone ? (
+          {outOfWords ? (
+            <Button title="Mavzu tanlash" icon="layers" onPress={() => router.push('/decks')} />
+          ) : newDone ? (
             <>
               {more ? <Button title={`Yana ${more} ta so'z o'rganish`} icon="plus" onPress={() => router.push({ pathname: '/session', params: { extra: '1' } })} /> : null}
               <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/add', params: { tab: 'text' } })}
@@ -98,24 +106,23 @@ export default function Home() {
               </Pressable>
             </>
           ) : (
-            <Button title={done > 0 ? 'Davom etish' : 'Boshlash'} iconRight="arrow-right" onPress={() => router.push('/session')} />
+            <Button title={newToday > 0 ? 'Davom etish' : 'Boshlash'} iconRight="arrow-right" onPress={() => router.push({ pathname: '/session', params: { only: 'new' } })} />
           )}
         </View>
 
+        {/* Takrorlash — alohida, ixcham karta */}
+        {reviewsLeft ? (
+          <MiniCard icon="rotate-ccw" tint={colors.blueSoft} ink={colors.blue} title="Takrorlash" sub={`${reviewsLeft} ta so'z vaqti keldi · ~${reviewMinutes} daq`}
+            action="Boshlash" actionBg={colors.blue} actionFg={colors.blueSoft} border={colors.blueSoft}
+            label={`Takrorlash: ${reviewsLeft} ta so'z. Boshlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review' } })} />
+        ) : reviewedToday ? (
+          <MiniCard icon="check" tint={colors.limeSoft} ink={colors.forestText} title="Takrorlash bajarildi" sub={`Bugun ${reviewedToday} ta so'z takrorlandi`} label="Takrorlash bajarildi" />
+        ) : null}
+
         {mistakeCount ? (
-          <Pressable accessibilityRole="button" accessibilityLabel={`Xatolarim: ${mistakeCount} ta so'z. Mashq qilish`} onPress={() => router.push('/mistakes')}
-            style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surface, borderRadius: 22, padding: 14, borderWidth: 2, borderColor: colors.wrongSoft, opacity: pressed ? 0.9 : 1 })}>
-            <View style={{ width: 52, height: 52, borderRadius: 17, backgroundColor: colors.wrongSoft, alignItems: 'center', justifyContent: 'center' }}>
-              <Feather name="alert-circle" size={24} color={colors.wrongInk} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <T w="extrabold" size={16}>Xatolarim</T>
-              <T size={13} color={colors.muted}>{mistakeCount} ta so'z · ko'p adashganlaringiz</T>
-            </View>
-            <View style={{ height: 38, paddingHorizontal: 14, borderRadius: 19, backgroundColor: colors.lime, justifyContent: 'center', borderBottomWidth: 3, borderBottomColor: '#8FBF2E' }}>
-              <T w="extrabold" size={14} color={colors.limeInk}>Mashq</T>
-            </View>
-          </Pressable>
+          <MiniCard icon="alert-circle" tint={colors.wrongSoft} ink={colors.wrongInk} title="Xatolarim" sub={`${mistakeCount} ta so'z · ko'p adashganlaringiz`}
+            action="Mashq" actionBg={colors.lime} actionFg={colors.limeInk} border={colors.wrongSoft}
+            label={`Xatolarim: ${mistakeCount} ta so'z. Mashq qilish`} onPress={() => router.push('/mistakes')} />
         ) : null}
         {streak.offer ? <StreakCard info={streak} today={today} onRepair={repairStreak} onRestart={dismissBreak} /> : <StreakStrip info={streak} today={today} />}
 
@@ -158,5 +165,30 @@ export default function Home() {
         </View>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/** Bosh sahifadagi ixcham karta (Takrorlash, Xatolarim): ikonka, sarlavha, izoh va kichik tugma. */
+function MiniCard({ icon, tint, ink, title, sub, action, actionBg, actionFg, border, label, onPress }: {
+  icon: React.ComponentProps<typeof Feather>['name']; tint: string; ink: string; title: string; sub: string;
+  action?: string; actionBg?: string; actionFg?: string; border?: string; label: string; onPress?: () => void;
+}) {
+  return (
+    <Pressable accessibilityRole={onPress ? 'button' : undefined} accessibilityLabel={label} disabled={!onPress} onPress={onPress}
+      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surface, borderRadius: 20, paddingVertical: 10, paddingHorizontal: 12,
+        borderWidth: border ? 1.5 : 0, borderColor: border, opacity: pressed ? 0.9 : 1 })}>
+      <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: tint, alignItems: 'center', justifyContent: 'center' }}>
+        <Feather name={icon} size={20} color={ink} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <T w="extrabold" size={15} numberOfLines={1}>{title}</T>
+        <T size={12} color={colors.muted} numberOfLines={1}>{sub}</T>
+      </View>
+      {action ? (
+        <View style={{ height: 34, paddingHorizontal: 14, borderRadius: 12, backgroundColor: actionBg, justifyContent: 'center' }}>
+          <T w="extrabold" size={13} color={actionFg}>{action}</T>
+        </View>
+      ) : null}
+    </Pressable>
   );
 }

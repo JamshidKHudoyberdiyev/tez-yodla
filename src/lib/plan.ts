@@ -27,6 +27,12 @@ export interface TodayPlan {
   newLeftToday: number;
 }
 
+/**
+ * Kunlik maqsad uchun taxminiy vaqt (daqiqa): yangi so'zga ~0,8 daq, har yangi so'z keyinchalik
+ * kuniga ~4 ta takror olib keladi (1–3–7–14–30), har biri ~0,25 daq → kuniga ~1,8 daq × so'z.
+ */
+export const dailyMinutes = (dailyNew: number) => Math.round(dailyNew * 1.8);
+
 /** «Yana N ta so'z» tugmasi bir bosishda beradigan qo'shimcha yangi so'zlar */
 export const EXTRA_NEW = 5;
 

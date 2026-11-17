@@ -78,15 +78,17 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
 
   /** «Yana 5 ta so'z» — kunlik reja bajarilgandan keyingi qo'shimcha guruh */
   /** `deck` — to'plam sahifasidan: faqat shu to'plamdan 5 ta yangi so'z (takrorlashlarsiz) */
-  const { extra, deck } = useLocalSearchParams<{ extra?: string; deck?: string }>();
+  /** `only` — bosh sahifadan: 'new' — faqat yangi so'zlar, 'review' — faqat takrorlash */
+  const { extra, deck, only } = useLocalSearchParams<{ extra?: string; deck?: string; only?: 'new' | 'review' }>();
   const deckTitle = deck ? deckById(deck)?.title : undefined;
   // Reja mashg'ulot boshida bir marta tuziladi.
   const initial = useMemo(() => {
     const p = todayPlan({ words, cards: state.cards, activeDecks: deck ? [deck] : state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: extra || deck ? EXTRA_NEW : undefined, log: state.log, today });
+    const noReviews = !!deck || only === 'new';
     return {
-      groups: p.groups,
-      reviews: deck ? [] : p.reviews.filter((c) => c.state !== 'relearning' && wordById(c.wordId)),
-      pendingRelearn: deck ? [] : p.reviews.filter((c) => c.state === 'relearning').map((c) => c.wordId),
+      groups: only === 'review' ? [] : p.groups,
+      reviews: noReviews ? [] : p.reviews.filter((c) => c.state !== 'relearning' && wordById(c.wordId)),
+      pendingRelearn: noReviews ? [] : p.reviews.filter((c) => c.state === 'relearning').map((c) => c.wordId),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -254,7 +256,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
     const empty = !newCount && !initial.reviews.length && !initial.pendingRelearn.length;
     return (
       <Screen footer={empty ? <Button title="Bosh sahifaga" variant="dark" onPress={close} /> : <Button title={initial.reviews.length ? 'Takrorlashni boshlash' : initial.pendingRelearn.length ? 'Qayta yodlashni boshlash' : '1-guruhni boshlash'} icon="play" onPress={start} />}>
-        <Header onClose={close} title={deckTitle ?? "Bugungi mashg'ulot"} />
+        <Header onClose={close} title={deckTitle ?? (only === 'review' ? 'Takrorlash' : only === 'new' ? "Yangi so'zlar" : "Bugungi mashg'ulot")} />
         {empty ? (
           <Card style={{ alignItems: 'center', gap: 10, paddingVertical: 32 }}>
             <Feather name="check-circle" size={40} color={colors.forestText} />
@@ -263,6 +265,8 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
           </Card>
         ) : (
           <>
+            {newCount ? (
+              <>
             <T w="extrabold" size={18} accessibilityRole="header">Har bir so'z {planSteps.length} bosqichdan o'tadi</T>
             <Card style={{ padding: 12, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {planSteps.map((x, i) => (
@@ -276,6 +280,8 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
                 </View>
               ))}
             </Card>
+              </>
+            ) : null}
             <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 4 }}>
               <T w="extrabold" size={18}>Bugungi reja</T>
               <T w="bold" size={13} color={colors.muted}>

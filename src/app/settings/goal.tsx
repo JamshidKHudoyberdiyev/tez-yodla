@@ -1,5 +1,6 @@
 import { Pressable, View } from 'react-native';
 import { BackHeader, Screen, T } from '@/components/ui';
+import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
@@ -10,8 +11,8 @@ const GOALS = [
   { n: 30, name: 'Maksimal', desc: "Ko'p vaqt kerak bo'ladi" },
 ];
 
-/** Taxminiy hisob: yangi so'zga ~1,1 daq; 1 oydan keyin har yangi so'z kuniga ~4 ta takror olib keladi (1–3–7–14–30). */
-const minutes = (n: number) => Math.round(n * 1.15);
+/** Takrorlashlar bilan birga taxminiy kunlik vaqt */
+const minutes = dailyMinutes;
 
 export default function Goal() {
   const { state, setDailyNew } = useStore();

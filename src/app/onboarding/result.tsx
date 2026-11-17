@@ -7,14 +7,12 @@ import { Confetti, Pop } from '@/components/Motion';
 import { Button, IconTile, Screen, SectionLabel, T } from '@/components/ui';
 import { deckById, Level } from '@/data/words';
 import { recommendedDeck } from '@/lib/plan';
+import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
-const GOALS = [
-  { n: 10, time: '~8 daq' },
-  { n: 20, time: '~15 daq' },
-  { n: 30, time: '~25 daq' },
-];
+// Vaqt takrorlashlar bilan birga hisoblanadi
+const GOALS = [10, 20, 30].map((n) => ({ n, time: `~${dailyMinutes(n)} daq` }));
 
 export default function LevelResult() {
   const params = useLocalSearchParams<{ level?: string; knownWords?: string; retake?: string }>();
