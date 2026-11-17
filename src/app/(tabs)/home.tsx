@@ -8,7 +8,7 @@ import { Flame, StreakCard, StreakStrip } from '@/components/Streak';
 import { Avatar } from '@/components/Avatar';
 import { Button, T } from '@/components/ui';
 import { gardenStages } from '@/lib/garden';
-import { capReviews, EXTRA_NEW, todayPlan } from '@/lib/plan';
+import { capReviews, EVENING_FROM_HOUR, EXTRA_NEW, learnedOn, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
@@ -43,6 +43,9 @@ export default function Home() {
   const queued = capped.queued;
   const moreCount = Math.min(cap, queued);
   const reviewMinutes = Math.max(1, Math.round(reviewsLeft * 0.25));
+  // Kechki mustahkamlash: bugun o'rganilgan so'zlar kechqurun bir ko'rib chiqiladi
+  const eveningCount = learnedOn(state.cards, today).length;
+  const eveningOn = eveningCount > 0 && state.evening?.day !== today && new Date().getHours() >= EVENING_FROM_HOUR;
   const garden = useMemo(() => gardenStages(state.cards, today), [state.cards, today]);
   const gardenTotal = garden.reduce((n, g) => n + g.ids.length, 0);
 
@@ -114,6 +117,13 @@ export default function Home() {
             <Button title={newToday > 0 ? 'Davom etish' : 'Boshlash'} iconRight="arrow-right" onPress={() => router.push({ pathname: '/session', params: { only: 'new' } })} />
           )}
         </View>
+
+        {eveningOn ? (
+          <MiniCard icon="moon" tint={colors.nightSoft} ink={colors.night} title="Mustahkamlash"
+            sub={`Kechki · bugungi ${eveningCount} ta so'z · ~${Math.max(1, Math.round(eveningCount * 0.15))} daq`}
+            action="Boshlash" actionBg={colors.night} actionFg="#FFFFFF" border={colors.nightSoft}
+            label={`Kechki mustahkamlash: bugungi ${eveningCount} ta so'z. Boshlash`} onPress={() => router.push('/evening')} />
+        ) : null}
 
         {/* Takrorlash — alohida, ixcham karta */}
         {reviewsLeft ? (

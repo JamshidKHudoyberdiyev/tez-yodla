@@ -1,6 +1,6 @@
 import {
   completeLearning, completeRelearning, dayNumber, diffLetters, gradeCard, gradeTyped,
-  isDue, isHardWord, newCard, quickGrade, reviewModeFor, INTERVALS, MASTERED_INTERVAL,
+  isDue, isHardWord, newCard, reviewModeFor, INTERVALS, EASE_MAX, EASE_MIN, easeOf,
 } from './srs';
 
 const T = 20000;
@@ -13,7 +13,7 @@ describe('srs', () => {
     expect(c.learnedOn).toBe(T);
   });
 
-  test("'Yaxshi' baholar 1 → 3 → 7 → 14 → 30 kun jadvali bo'yicha olib boradi, keyin yodlangan", () => {
+  test("doim to'g'ri topilgan so'z 3 → 7 → 14 → 30 kun jadvalidan biroz uzoqroq oraliqlarda keladi, keyin yodlangan", () => {
     let c = completeLearning(newCard('bear'), T);
     const dues: number[] = [];
     let day = c.due;
@@ -22,8 +22,25 @@ describe('srs', () => {
       dues.push(c.due - day);
       day = c.due;
     }
-    expect(dues).toEqual([3, 7, 14, 30, MASTERED_INTERVAL]);
+    // osonlik: 1.1 → 1.2 → 1.3 (eng ko'pi)
+    expect(dues).toEqual([3, 8, 18, 39, 117]);
     expect(c.state).toBe('mastered');
+    expect(easeOf(c)).toBe(EASE_MAX);
+  });
+
+  test("adashilgan so'zning oraliqlari qisqaradi, osonlik chegaradan tushmaydi", () => {
+    let c = completeLearning(newCard('bear'), T);
+    for (let i = 0; i < 5; i++) c = gradeCard(c, 'again', T + i);
+    expect(easeOf(c)).toBe(EASE_MIN);
+    c = completeRelearning(c, T + 5);
+    c = gradeCard(c, 'good', T + 6); // osonlik 0.7 → 3 × 0.7 ≈ 2 kun
+    expect(c.due - (T + 6)).toBe(2);
+  });
+
+  test("oraliqqa shaxsiy tuzatish (esda qolish past bo'lsa) oraliqni qisqartiradi", () => {
+    const c = { ...completeLearning(newCard('x'), T), stage: 3, ease: 1 };
+    expect(gradeCard(c, 'good', T, () => 1).due - T).toBe(Math.round(30 * 1.1));
+    expect(gradeCard(c, 'good', T, (s) => (s === 4 ? 0.85 : 1)).due - T).toBe(Math.round(30 * 1.1 * 0.85));
   });
 
   test("unutilgan so'z shu kuniyoq qayta yodlashga tushadi va bir bosqich orqaga qaytadi", () => {
@@ -47,13 +64,14 @@ describe('srs', () => {
     c = gradeCard(c, 'good', T + 1); // stage 1 (3 kun)
     const h = gradeCard(c, 'hard', T + 4);
     expect(h.stage).toBe(1);
-    expect(h.due).toBe(T + 4 + Math.round(INTERVALS[1] * 0.5));
+    // osonlik 1.1 → 0.95: 3 × 0.95 ≈ 3, yarmi ≈ 2 kun
+    expect(h.due).toBe(T + 4 + 2);
   });
 
   test("'Oson' bitta bosqichni sakrab o'tadi", () => {
     const c = gradeCard(completeLearning(newCard('bear'), T), 'easy', T + 1);
     expect(c.stage).toBe(2);
-    expect(c.due).toBe(T + 1 + INTERVALS[2]);
+    expect(c.due).toBe(T + 1 + Math.round(INTERVALS[2] * 1.15));
   });
 
   test("4 marta unutilgan so'z qiyin deb belgilanadi", () => {
@@ -63,26 +81,18 @@ describe('srs', () => {
     expect(c.stage).toBe(0);
   });
 
-  test('takrorlash shakli bosqichga qarab almashadi', () => {
+  test("so'z yo'li: har bosqichda qiyinroq shakl, o'zini baholash yo'q", () => {
     const c = completeLearning(newCard('x'), T);
-    expect(reviewModeFor({ ...c, stage: 0 }, true)).toBe('recall');
-    expect(reviewModeFor({ ...c, stage: 1 }, true)).toBe('choice');
-    expect(reviewModeFor({ ...c, stage: 2 }, true)).toBe('cloze');
-    expect(reviewModeFor({ ...c, stage: 2 }, false)).toBe('write');
-    expect(reviewModeFor({ ...c, stage: 3 }, true)).toBe('choice');
+    expect(reviewModeFor({ ...c, stage: 0 }, true)).toBe('reverse');
+    expect(reviewModeFor({ ...c, stage: 1 }, true)).toBe('cloze');
+    expect(reviewModeFor({ ...c, stage: 1 }, false)).toBe('write');
+    expect(reviewModeFor({ ...c, stage: 2 }, true)).toBe('write');
+    expect(reviewModeFor({ ...c, stage: 3 }, true)).toBe('listenChoice');
+    expect(reviewModeFor({ ...c, stage: 4 }, true)).toBe('write');
+    expect(reviewModeFor({ ...c, state: 'mastered', stage: 5 }, true)).toBe('reverse');
     // Ko'p unutilgan so'z ko'proq yozdiriladi
-    expect(reviewModeFor({ ...c, stage: 1, lapses: 2 }, true)).toBe('write');
+    expect(reviewModeFor({ ...c, stage: 0, lapses: 2 }, true)).toBe('write');
     expect(reviewModeFor({ ...c, stage: 3, lapses: 2 }, true)).toBe('listen');
-  });
-
-  test("oson so'z 1 haftalik bosqichni sakraydi, unutilgani — yo'q", () => {
-    const c = { ...completeLearning(newCard('x'), T), stage: 1 };
-    expect(quickGrade(c, 'good')).toBe('easy');
-    expect(gradeCard(c, quickGrade(c, 'good'), T).due).toBe(T + 14);
-    expect(quickGrade({ ...c, lapses: 1 }, 'good')).toBe('good');
-    expect(quickGrade({ ...c, stage: 0 }, 'good')).toBe('good');
-    expect(quickGrade(c, 'again')).toBe('again');
-    expect(quickGrade(c, 'hard')).toBe('hard');
   });
 
   test("yozilgan javob: to'g'ri, bitta harf xato, butunlay xato", () => {

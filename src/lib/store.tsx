@@ -11,6 +11,7 @@ import { snapRate } from './speechRate';
 import { pickExample } from './example';
 import { migrateReminder, type ReminderPrefs } from './reminders';
 import { noteCorrect, noteMistake, type MistakeLog } from './mistakes';
+import { EVENING_BUCKET, pushReview, retentionFactor, type ReviewEntry } from './retention';
 
 const KEY = 'yodla:v1';
 
@@ -38,6 +39,10 @@ export interface AppState {
   mistakes: MistakeLog;
   /** Xatolar mashqi oxirgi marta qilingan kun — o'sha kuni bosh sahifada «Xatolarim» kartasi chiqmaydi */
   mistakesDoneDay?: number;
+  /** Har takrorlash natijasi (oxirgi 90 kun) — «Esda qolish» va oraliqlarni moslash uchun (lib/retention.ts) */
+  reviewLog: ReviewEntry[];
+  /** Kechki mustahkamlash: qaysi kuni qilingan va qaysi so'zlarda adashilgan */
+  evening?: { day: number; missed: string[] };
   prefs: Prefs;
 }
 
@@ -114,6 +119,7 @@ const initialState: AppState = {
   streakRepairs: [],
   streakDismissed: [],
   mistakes: {},
+  reviewLog: [],
   prefs: defaultPrefs,
 };
 
@@ -167,6 +173,8 @@ interface Store {
   noteMistakeCorrect: (wordId: string) => boolean;
   /** Xatolar mashqi tugadi */
   mistakesPracticed: () => void;
+  /** Kechki mustahkamlash tugadi: adashilganlar ertaga birinchi chiqadi, so'z bosqichi o'zgarmaydi */
+  eveningDone: (results: { wordId: string; ok: boolean }[]) => void;
   /** Qayta yodlash tugadi */
   relearned: (wordIds: string[]) => void;
   addCustomWords: (words: Omit<Word, 'id' | 'deckId'>[]) => void;
@@ -294,8 +302,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const card = s.cards[wordId];
         if (!card) return s;
         const ok = grade === 'good' || grade === 'easy';
+        const next = gradeCard(card, grade, today, retentionFactor(s.reviewLog, today));
+        const reviewLog = card.state === 'relearning' ? s.reviewLog : pushReview(s.reviewLog, { d: today, b: card.state === 'mastered' ? 5 : card.stage, ok: grade !== 'again' });
         return withEvent(
-          { ...s, mistakes: grade === 'again' ? noteMistake(s.mistakes, wordId, today) : s.mistakes, cards: { ...s.cards, [wordId]: gradeCard(card, grade, today) }, log: bumpLog(s.log, today, { reviewed: 1, correct: ok ? 1 : 0, total: 1 }) },
+          { ...s, reviewLog, mistakes: grade === 'again' ? noteMistake(s.mistakes, wordId, today) : s.mistakes, cards: { ...s.cards, [wordId]: next }, log: bumpLog(s.log, today, { reviewed: 1, correct: ok ? 1 : 0, total: 1 }) },
           'card_reviewed',
           { grade, stage: card.stage },
         );
@@ -307,6 +317,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return r.cleared;
     },
     mistakesPracticed: () => setState((s) => ({ ...s, mistakesDoneDay: dayNumber() })),
+    eveningDone: (results) =>
+      setState((s) => {
+        let reviewLog = s.reviewLog;
+        let mistakes = s.mistakes;
+        for (const r of results) {
+          reviewLog = pushReview(reviewLog, { d: today, b: EVENING_BUCKET, ok: r.ok });
+          if (!r.ok) mistakes = noteMistake(mistakes, r.wordId, today);
+        }
+        const missed = results.filter((r) => !r.ok).map((r) => r.wordId);
+        return withEvent({ ...s, reviewLog, mistakes, evening: { day: today, missed } }, 'evening_done', { words: results.length, missed: missed.length });
+      }),
     relearned: (ids) =>
       setState((s) => {
         const cards = { ...s.cards };
@@ -341,7 +362,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     restoreBackup: (restored) => setState(withEvent(restored, 'backup_restored', { cards: Object.keys(restored.cards).length })),
     resetProgress: () =>
-      setState((s) => withEvent({ ...s, cards: {}, log: {}, knownLemmas: [], doneDays: [], streakRepairs: [], streakDismissed: [] }, 'progress_reset')),
+      setState((s) => withEvent({ ...s, cards: {}, log: {}, knownLemmas: [], doneDays: [], streakRepairs: [], streakDismissed: [], reviewLog: [], evening: undefined }, 'progress_reset')),
     markDayDone: () =>
       setState((s) => (s.doneDays.includes(today) ? s : { ...s, doneDays: [...s.doneDays.slice(-120), today] })),
     repairStreak: (day) =>

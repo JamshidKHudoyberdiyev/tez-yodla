@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
@@ -6,6 +7,7 @@ import { gardenStages } from '@/lib/garden';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Chip, H1, H2, StatPanel, T } from '@/components/ui';
 import { computeStats } from '@/lib/plan';
+import { retention } from '@/lib/retention';
 import { Flame, FreezeChip } from '@/components/Streak';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
@@ -21,11 +23,60 @@ export default function Stats() {
   const totalInDecks = words.filter((w) => state.activeDecks.includes(w.deckId)).length;
   const fresh = Math.max(0, totalInDecks - s.learned);
   const garden = useMemo(() => gardenStages(state.cards, today), [state.cards, today]);
+  const r = useMemo(() => retention(state.reviewLog ?? [], today), [state.reviewLog, today]);
+  const enough = r.n >= 10;
+  const trend = enough && r.pct !== null && r.prevPct !== null ? r.pct - r.prevPct : null;
+  const buckets = r.buckets.filter((b) => b.n > 0);
+  const shortened = r.buckets.filter((b) => b.shortened);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 32 }}>
         <H1>Statistika</H1>
+
+        {/* Esda qolish: takrorlashlarda to'g'ri topilganlar ulushi (oxirgi 30 kun) */}
+        <Pressable accessibilityRole="button" accessibilityLabel={enough ? `Esda qolish ${r.pct} foiz. So'z yo'li haqida` : "Esda qolish: hali ma'lumot kam. So'z yo'li haqida"} onPress={() => router.push('/word-path')}
+          style={({ pressed }) => ({ backgroundColor: colors.forest, borderRadius: 28, padding: 18, gap: 4, opacity: pressed ? 0.92 : 1 })}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <T w="extrabold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Esda qolish</T>
+            {trend !== null && trend !== 0 ? <Chip label={`${trend > 0 ? '+' : ''}${trend}% ${trend > 0 ? '↑' : '↓'}`} bg={colors.lime} fg={colors.limeInk} /> : null}
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 10 }}>
+            <T w="extrabold" size={48} color="#FFFFFF" style={{ lineHeight: 56 }}>{enough ? `${r.pct}%` : '—'}</T>
+            <T size={14} color={colors.onForestSoft} style={{ flex: 1 }}>{enough ? "so'zlar esda qolmoqda" : "hali ma'lumot kam"}</T>
+          </View>
+          <T size={13} color={colors.onForestSoft} style={{ lineHeight: 18 }}>
+            {enough ? "Oxirgi 30 kun takrorlashlarida to'g'ri topilganlar ulushi. 85–90% — eng yaxshi oraliq." : `${10 - r.n} ta takrorlashdan keyin bu yerda so'zlaringiz qanchalik esda qolayotgani chiqadi.`}
+          </T>
+          <T w="bold" size={12} color={colors.lime} style={{ marginTop: 4 }}>So'z yo'li qanday ishlaydi →</T>
+        </Pressable>
+
+        {enough && buckets.length ? (
+          <Card style={{ gap: 10 }}>
+            <H2>Qaysi oraliqda unutyapsiz</H2>
+            {buckets.map((b) => {
+              const p = b.pct ?? 0;
+              const col = p >= 85 ? colors.forest : p >= 75 ? colors.error : colors.wrong;
+              return (
+                <View key={b.b} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} accessibilityLabel={`${b.label}: ${p} foiz, ${b.n} ta javob`}>
+                  <T w="bold" size={13} color={colors.muted} style={{ width: 82 }}>{b.label}</T>
+                  <View style={{ flex: 1, height: 10, borderRadius: 5, backgroundColor: colors.divider, overflow: 'hidden' }}>
+                    <View style={{ width: `${p}%`, height: 10, borderRadius: 5, backgroundColor: col }} />
+                  </View>
+                  <T w="extrabold" size={13} style={{ width: 40, textAlign: 'right' }}>{p}%</T>
+                </View>
+              );
+            })}
+            {shortened.length ? (
+              <View style={{ flexDirection: 'row', gap: 10, backgroundColor: colors.amberBg, borderWidth: 1, borderColor: colors.amberLine, borderRadius: 14, padding: 10, marginTop: 2 }}>
+                <Feather name="sliders" size={18} color={colors.amber} />
+                <T size={12} color={colors.inkSoft} style={{ flex: 1, lineHeight: 17 }}>
+                  {shortened.map((b) => b.label).join(', ')} oraliqda 80% dan past — ilova bu oraliqni sizga moslab biroz qisqartirdi.
+                </T>
+              </View>
+            ) : null}
+          </Card>
+        ) : null}
 
         <Pressable accessibilityRole="button" accessibilityLabel={`Streak ${streak.current} kun, rekord ${streak.best}`} onPress={() => router.push('/streak')}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: colors.surface, borderRadius: 26, padding: 16 }}>
@@ -53,7 +104,7 @@ export default function Stats() {
           <StatPanel items={[
             { value: s.learned, label: "o'rganilgan", accent: true },
             { value: days, label: 'kun streak' },
-            { value: s.accuracy === null ? '—' : `${s.accuracy}%`, label: "to'g'ri eslash" },
+            { value: s.mastered, label: "to'liq yodlangan" },
           ]} />
         </View>
 

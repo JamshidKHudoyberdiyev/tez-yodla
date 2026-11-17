@@ -5,17 +5,18 @@ import { Association, Example, PluralTag, WordHead, WordPhoto } from '@/componen
 import { Plant } from '@/components/Art';
 import { BackHeader, Card, Chip, Screen, T } from '@/components/ui';
 import { gardenIndex } from '@/lib/garden';
-import { INTERVALS, isHardWord, ReviewMode, reviewModeFor } from '@/lib/srs';
+import { EASE_EASY, EASE_HARD, easeOf, INTERVALS, intervalFor, isHardWord, ReviewMode, reviewModeFor } from '@/lib/srs';
 import { useStore } from '@/lib/store';
 import { exampleHasWord } from '@/lib/text';
 import { colors } from '@/lib/theme';
 
 const MODE_TEXT: Record<ReviewMode, string> = {
-  recall: "Kartochka: ko'rib eslash",
   choice: 'Test: tarjimani tanlash',
+  reverse: "Teskari test: o'zbekchadan inglizchasini tanlash",
   write: 'Yozma: tarjimadan yozish',
   cloze: 'Gap ichida: bo\'sh joyni to\'ldirish',
   listen: 'Eshitib yozish',
+  listenChoice: "Eshitib topish: ma'nosini tanlash",
 };
 const WHEN = ['Ertaga', '3 kundan keyin', '1 haftadan keyin', '2 haftadan keyin', '1 oydan keyin'];
 /** Har bir takrorlashdan keyin so'z qaysi o'simlikka aylanadi */
@@ -39,6 +40,14 @@ export default function WordJourney() {
     next: card ? card.state !== 'mastered' && s === stage : false,
   }));
   const dueIn = card ? card.due - today : null;
+  const ease = card ? easeOf(card) : 1;
+  const tag = !card || card.state === 'new' ? null : ease >= EASE_EASY ? { label: 'Oson', bg: colors.limeSoft, fg: colors.forestText } : ease <= EASE_HARD ? { label: 'Qiyinroq', bg: colors.amberSoft, fg: colors.amber } : null;
+  // Haqiqiy oraliq standartdan farq qilsa — nega, tushuntiriladi
+  const scheduled = card && card.lastReviewed != null && (card.state === 'review' || card.state === 'mastered') ? card.due - card.lastReviewed : null;
+  const standard = card ? intervalFor(card.state === 'mastered' ? INTERVALS.length : card.stage, 1) : null;
+  const why = scheduled !== null && standard !== null && dueIn !== null && dueIn > 0 && scheduled !== standard
+    ? `Oddiy tartibda ${standard} kun edi. ${ease >= EASE_EASY ? "Doim to'g'ri topyapsiz — oraliq uzaytirildi." : ease <= EASE_HARD ? `${card!.lapses ? `${card!.lapses} marta adashgansiz` : 'Qiynalib topyapsiz'} — tezroq qaytadi.` : 'Oraliq natijalaringizga moslandi.'}`
+    : null;
 
   return (
     <Screen>
@@ -60,7 +69,19 @@ export default function WordJourney() {
       </Card>
       <Example word={word} card />
 
-      <T w="extrabold" size={18}>So'zning yodlanish yo'li</T>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <T w="extrabold" size={18} style={{ flex: 1 }}>So'zning yodlanish yo'li</T>
+        {tag ? <Chip label={tag.label} bg={tag.bg} fg={tag.fg} /> : null}
+      </View>
+      {card && dueIn !== null && card.state !== 'new' && card.state !== 'relearning' ? (
+        <Card style={{ flexDirection: 'row', gap: 12, alignItems: 'center', borderWidth: 2, borderColor: tag ? tag.bg : colors.line }}>
+          <Feather name="calendar" size={22} color={tag ? tag.fg : colors.forestText} />
+          <View style={{ flex: 1 }}>
+            <T w="extrabold" size={15}>{dueIn <= 0 ? 'Keyingi takrorlash: bugun' : `Keyingisi: ${dueIn} kundan keyin`}</T>
+            {why ? <T size={12} color={colors.muted} style={{ lineHeight: 17 }}>{why}</T> : null}
+          </View>
+        </Card>
+      ) : null}
       <Card style={{ gap: 0 }}>
         <Step stage={0} done={!!card} title="Urug' ekildi" sub={card?.learnedOn != null ? `Birinchi mashg'ulot · ${today - card.learnedOn === 0 ? 'bugun' : `${today - card.learnedOn} kun oldin`}` : "Hali o'rganilmagan"} />
         {steps.map((x) => (

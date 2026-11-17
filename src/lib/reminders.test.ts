@@ -56,4 +56,13 @@ describe('parseTime / migrateReminder', () => {
       .toEqual({ enabled: true, times: [at(12, 30)], evening: false });
     expect(migrateReminder(undefined, { enabled: false, times: [at(20)], evening: true }).times).toEqual([at(20)]);
   });
+  test("bugun o'rganilgan so'zlar uchun 20:30 da kechki mustahkamlash eslatmasi (kun bajarilgan bo'lsa ham)", () => {
+    const p = planReminders({ ...base, prefs: { enabled: true, times: [at(20)], evening: true }, doneToday: true, days: 1, eveningWords: ['honey', 'forest'] });
+    const r = p.find((n) => n.kind === 'reinforce');
+    expect(r).toBeDefined();
+    expect(new Date(r!.at).getHours()).toBe(20);
+    expect(new Date(r!.at).getMinutes()).toBe(30);
+    expect(r!.body).toContain('honey');
+    expect(planReminders({ ...base, prefs: { enabled: true, times: [at(20)], evening: true }, doneToday: true, days: 1, eveningWords: [] }).some((n) => n.kind === 'reinforce')).toBe(false);
+  });
 });

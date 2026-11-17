@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
 import { applyReminders, initNotifications, notificationsSupported } from '@/lib/notify';
 import { planReminders } from '@/lib/reminders';
+import { learnedOn } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 
 /** Ko'rinmas komponent: holat o'zgarganda (mashg'ulot, sozlama) va ilova ochilganda eslatmalarni qayta rejalashtiradi. */
@@ -19,6 +20,7 @@ export function ReminderSync() {
       streak: streak.current,
       dailyNew: state.dailyNew,
       reviewCap: state.prefs.reviewCap,
+      eveningWords: state.evening?.day === today ? [] : learnedOn(state.cards, today).map((id) => wordById(id)?.word).filter((w): w is string => !!w),
     });
     applyReminders(plan);
   };
@@ -29,7 +31,7 @@ export function ReminderSync() {
     if (!notificationsSupported) return;
     const t = setTimeout(() => latest.current(), 1500);
     return () => clearTimeout(t);
-  }, [state.cards, state.prefs.reminder, streak.todayDone, streak.current, today, state.dailyNew]);
+  }, [state.cards, state.prefs.reminder, streak.todayDone, streak.current, today, state.dailyNew, state.evening]);
 
   useEffect(() => {
     if (!notificationsSupported) return;

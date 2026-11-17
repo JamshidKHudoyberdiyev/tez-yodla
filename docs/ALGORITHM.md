@@ -20,25 +20,48 @@ new ──(guruh tugadi)──▶ review ──(30 kunlikdan o'tdi)──▶ mas
 
 ## Oraliqlar
 
-`INTERVALS = [1, 3, 7, 14, 30]` kun. `stage` — joriy oraliq indeksi.
+`INTERVALS = [1, 3, 7, 14, 30]` kun, `MASTERED_INTERVAL = 90`. `stage` — joriy oraliq indeksi.
+Haqiqiy oraliq = standart × `ease` (so'zning shaxsiy osonligi) × shaxsiy tuzatish (`lib/retention.ts`).
 
-| Bosqich | Keyingi takrorlash | Takrorlash shakli |
+### So'z yo'li — takrorlash shakllari (`reviewModeFor`)
+
+Har takrorlash tekshiriladi — «esladimmi?» deb o'zini baholash yo'q.
+
+| Qachon | Shakl | Ko'p unutilgan so'z (`lapses ≥ 2`) |
 |---|---|---|
-| 0 | 1 kun | Kartochka: ko'rib eslash |
-| 1 | 3 kun | Yozma: tarjimadan yozish |
-| 2 | 7 kun | Gap ichida: bo'sh joyni to'ldirish (misol gap bo'lmasa — yozma) |
-| 3 | 14 kun | Eshitib yozish |
-| 4 | 30 kun | Kartochka: tez eslash |
-| mastered | 90 kun | Kartochka |
+| O'rganilgan kuni kechqurun | Kechki mustahkamlash: test (en → uz), `app/evening.tsx` | — |
+| 1 kun (stage 0) | Teskari test (uz → en tanlash) | Yozma |
+| 3 kun (stage 1) | Gap ichida yozish (misol bo'lmasa — yozma) | — |
+| 1 hafta (stage 2) | Yozma: tarjimadan yozish | — |
+| 2 hafta (stage 3) | Eshitib topish (ovoz → ma'nosini tanlash) | Eshitib yozish |
+| 1 oy (stage 4) | Yozma | — |
+| 3 oy (mastered) | Teskari test | — |
+
+### Osonlik (`ease`)
+
+Boshlang'ich 1. `good` +0.1, `easy` +0.15, `hard` −0.15, `again` −0.2; chegara 0.6…1.3.
+Masalan, doim to'g'ri topilgan so'z: 3 → 8 → 18 → 39 → 117 kun. Ko'p adashilgan so'z tezroq qaytadi.
+
+### Esda qolish va shaxsiy tuzatish
+
+Har takrorlash `reviewLog`ga yoziladi (`{d, b, ok}`, oxirgi 90 kun). Statistikada oxirgi 30 kunlik
+«Esda qolish %» va oraliqlar bo'yicha bo'linma ko'rsatiladi. Biror oraliqda kamida 20 ta javob bo'lib,
+esda qolish 80% dan past bo'lsa, shu oraliq × 0.85 qilinadi.
+
+### Kechki mustahkamlash
+
+18:00 dan keyin bosh sahifada chiqadi (bugun o'rganilgan so'z bo'lsa), eslatma 20:30 da.
+So'z bosqichi va streak o'zgarmaydi; adashilgan so'zlar «Xatolarim»ga tushadi va ertangi takrorlashda
+(qayta yodlanayotganlardan keyin) birinchi chiqadi.
 
 ## Baholar
 
 | Baho | Qachon | Natija |
 |---|---|---|
-| `again` | «Qayta» yoki yozishda 2+ harf xato | `relearning`, `stage − 1`, `lapses + 1`, bugun qayta yodlanadi |
-| `hard` | «Qiyin», yozishda 1 harf xato yoki yordam ishlatildi | `stage` o'zgarmaydi, oraliq × 0.5 (kamida 1 kun) |
-| `good` | «Yaxshi» yoki to'g'ri yozildi | `stage + 1` |
-| `easy` | «Oson» | `stage + 2` |
+| `again` | Testda xato yoki yozishda 2+ harf xato | `relearning`, `stage − 1`, `lapses + 1`, bugun qayta yodlanadi |
+| `hard` | Yozishda 1 harf xato yoki yordam ishlatildi | `stage` o'zgarmaydi, oraliq × 0.5 (kamida 1 kun) |
+| `good` | Testda to'g'ri yoki to'g'ri yozildi | `stage + 1` |
+| `easy` | (hozir ishlatilmaydi) | `stage + 2` |
 
 Yozma javob avtomatik baholanadi (`gradeTyped`): to'liq mos → `good`, Levenshtein masofasi 1 → `hard`, aks holda → `again`.
 

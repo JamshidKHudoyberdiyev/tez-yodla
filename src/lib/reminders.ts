@@ -9,9 +9,11 @@ import type { Card } from './srs';
 export interface ReminderTime { h: number; m: number }
 export interface ReminderPrefs { enabled: boolean; times: ReminderTime[]; evening: boolean }
 
-export interface PlannedNotification { id: string; at: number; title: string; body: string; kind: 'daily' | 'evening' }
+export interface PlannedNotification { id: string; at: number; title: string; body: string; kind: 'daily' | 'evening' | 'reinforce' }
 
 export const EVENING_HOUR = 21;
+/** Kechki mustahkamlash eslatmasi vaqti */
+export const REINFORCE_AT = { h: 20, m: 30 };
 export const PLAN_DAYS = 7;
 export const MAX_TIMES = 6;
 
@@ -78,6 +80,10 @@ export function eveningText(streak: number, isToday: boolean): { title: string; 
     : { title: '🔥 Bugun hali mashq qilinmadi', body: "5 ta so'z yetadi — 3 daqiqada streakni saqlab qoling." };
 }
 
+export function reinforceText(words: string[]): { title: string; body: string } {
+  return { title: `🌙 Bugungi ${words.length} ta so'zni mustahkamlang`, body: `${list(words)} — 2 daqiqa. Uxlashdan oldin ko'rilgan so'z ertaga yaxshiroq esda turadi.` };
+}
+
 export function planReminders(opts: {
   prefs: ReminderPrefs;
   cards: Record<string, Card>;
@@ -90,12 +96,19 @@ export function planReminders(opts: {
   days?: number;
   /** Kunlik takrorlash chegarasi (0 — cheksiz): eslatmada bundan ko'p so'z aytilmaydi */
   reviewCap?: number;
+  /** Bugun o'rganilgan, hali kechqurun mustahkamlanmagan so'zlar */
+  eveningWords?: string[];
 }): PlannedNotification[] {
   const { prefs, cards, wordOf, now, today, doneToday, streak, dailyNew } = opts;
   if (!prefs.enabled || !prefs.times.length) return [];
   const times = sortTimes(prefs.times).slice(0, MAX_TIMES);
   const soon = now.getTime() + 60_000;
   const out: PlannedNotification[] = [];
+  const ew = opts.eveningWords ?? [];
+  const reinforceAt = new Date(now.getFullYear(), now.getMonth(), now.getDate(), REINFORCE_AT.h, REINFORCE_AT.m).getTime();
+  if (ew.length && reinforceAt > soon) {
+    out.push({ id: `tez-reinf-${today}`, at: reinforceAt, kind: 'reinforce', ...reinforceText(ew) });
+  }
   for (let k = 0; k < (opts.days ?? PLAN_DAYS); k++) {
     if (k === 0 && doneToday) continue;
     const day = today + k;

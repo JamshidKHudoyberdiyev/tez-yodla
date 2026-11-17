@@ -1,4 +1,4 @@
-import { capReviews, computeStats, estimateLevel, streak, todayPlan } from './plan';
+import { capReviews, computeStats, estimateLevel, learnedOn, streak, todayPlan } from './plan';
 import { completeLearning, gradeCard, newCard } from './srs';
 import { WORDS } from '../data/words';
 
@@ -20,6 +20,18 @@ describe('plan', () => {
     const b = gradeCard(completeLearning(newCard('b'), T - 1), 'again', T);
     const plan = todayPlan({ words: [], cards: { a, b }, activeDecks: [], knownLemmas: new Set(), dailyNew: 0, log: {}, today: T });
     expect(plan.reviews.map((c) => c.wordId)).toEqual(['b', 'a']);
+  });
+
+  test("kechqurun adashilgan so'zlar ertalab takrorlashda (qayta yodlanayotganlardan keyin) birinchi chiqadi", () => {
+    const a = { ...completeLearning(newCard('a'), T - 3), due: T - 1 };
+    const b = completeLearning(newCard('b'), T - 1);
+    const plan = todayPlan({ words: [], cards: { a, b }, activeDecks: [], knownLemmas: new Set(), dailyNew: 0, log: {}, today: T, first: ['b'] });
+    expect(plan.reviews.map((c) => c.wordId)).toEqual(['b', 'a']);
+  });
+
+  test("kechki mustahkamlash: faqat bugun o'rganilgan so'zlar", () => {
+    const cards = { a: completeLearning(newCard('a'), T), b: completeLearning(newCard('b'), T - 1) };
+    expect(learnedOn(cards, T)).toEqual(['a']);
   });
 
   test("bir xil so'z ikki to'plamda bo'lsa, faqat bir marta o'rgatiladi", () => {

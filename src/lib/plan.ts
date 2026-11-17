@@ -18,6 +18,8 @@ export interface PlanInput {
   extraNew?: number;
   log: Record<number, DayLog>;
   today: number;
+  /** Takrorlashda birinchi chiqadigan so'zlar (kechagi kechki tekshiruvda adashilganlar) */
+  first?: string[];
 }
 
 export interface TodayPlan {
@@ -94,12 +96,22 @@ export function todayPlan(input: PlanInput): TodayPlan {
   }
   const groups: Word[][] = [];
   for (let i = 0; i < newWords.length; i += GROUP_SIZE) groups.push(newWords.slice(i, i + GROUP_SIZE));
+  const first = new Set(input.first ?? []);
+  const rank = (c: Card) => (c.state === 'relearning' ? 0 : first.has(c.wordId) ? 1 : 2);
   const reviews = Object.values(input.cards)
     .filter((c) => isDue(c, input.today))
-    // Qayta yodlanayotganlar birinchi, keyin eng uzoq kutganlar.
-    .sort((a, b) => (a.state === 'relearning' ? -1 : 0) - (b.state === 'relearning' ? -1 : 0) || a.due - b.due);
+    // Qayta yodlanayotganlar birinchi, keyin kechqurun adashilganlar, keyin eng uzoq kutganlar.
+    .sort((a, b) => rank(a) - rank(b) || a.due - b.due);
   return { newWords, groups, reviews, newLeftToday };
 }
+
+/** Bugun birinchi marta o'rganilgan so'zlar — kechki mustahkamlash uchun */
+export function learnedOn(cards: Record<string, Card>, day: number): string[] {
+  return Object.values(cards).filter((c) => c.learnedOn === day && c.state === 'review' && c.stage === 0).map((c) => c.wordId);
+}
+
+/** Kechki mustahkamlash shu soatdan boshlab taklif qilinadi */
+export const EVENING_FROM_HOUR = 18;
 
 /** Ketma-ket shug'ullangan kunlar soni (bugun hali shug'ullanmagan bo'lsa, kechagacha hisoblanadi). */
 export function streak(log: Record<number, DayLog>, today: number): number {

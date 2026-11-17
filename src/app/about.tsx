@@ -9,7 +9,7 @@ const BLOCKS = [
   { t: '4. Moslash', d: "Guruhdagi 5 ta so'zni tarjimalari bilan juftlaysiz." },
   { t: '5. Yozish', d: "Har bir so'zni xotiradan harfma-harf yozasiz. Qiynalsangiz, «Keyingi harf» yordam beradi." },
   { t: '6. Matn', d: "So'zlar gap ichida keladi: tarjimaga qarab, bo'sh joyga mos so'zni tanlaysiz." },
-  { t: 'Takrorlash', d: "So'z 1, 3, 7, 14 va 30 kundan keyin qaytadi — har safar boshqa shaklda: kartochka, yozma, gap ichida, eshitib yozish." },
+  { t: 'Takrorlash', d: "O'rganilgan kuni kechqurun qisqa tekshiruv, keyin so'z 1, 3, 7, 14 va 30 kundan keyin qaytadi — har safar biroz qiyinroq: teskari test, gap ichida, yozma, eshitib topish. Oson so'zlar kamroq, qiyinlari tez-tez chiqadi." },
   { t: 'Unutsangiz', d: "So'z shu kuniyoq qayta yodlashga tushadi va bir bosqich orqaga qaytadi. Ko'p adashgan so'zlaringiz «Xatolarim» bo'limida yig'iladi." },
   { t: 'Yodlangan', d: "30 kunlik takrorlashdan o'tgan so'z yodlangan hisoblanadi va har 3 oyda bir tekshiriladi." },
 ];

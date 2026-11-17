@@ -10,7 +10,13 @@
 
 export type CardState = 'new' | 'learning' | 'review' | 'relearning' | 'mastered';
 export type Grade = 'again' | 'hard' | 'good' | 'easy';
-export type ReviewMode = 'recall' | 'choice' | 'write' | 'cloze' | 'listen';
+/**
+ * Takrorlash shakllari (hammasi tekshiriladi — o'zini o'zi baholash yo'q):
+ * choice — inglizcha → o'zbekcha tanlash, reverse — o'zbekcha → inglizcha tanlash,
+ * cloze — gapdagi bo'sh joyga yozish, write — tarjimadan yozish,
+ * listenChoice — faqat ovoz, ma'nosini tanlash, listen — eshitib yozish.
+ */
+export type ReviewMode = 'choice' | 'reverse' | 'write' | 'cloze' | 'listen' | 'listenChoice';
 
 export interface Card {
   wordId: string;
@@ -24,6 +30,28 @@ export interface Card {
   lastReviewed: number | null;
   /** So'z birinchi marta o'rganilgan kun */
   learnedOn: number | null;
+  /**
+   * So'zning shaxsiy «osonligi» (1 — oddiy). Doim to'g'ri topilgan so'zda oshadi (oraliq uzayadi),
+   * adashilganda kamayadi (oraliq qisqaradi). Eski kartalarda yo'q — 1 deb olinadi.
+   */
+  ease?: number;
+}
+
+export const EASE_MIN = 0.6;
+export const EASE_MAX = 1.3;
+/** «Oson» / «Qiyinroq» belgilari chegarasi */
+export const EASE_EASY = 1.15;
+export const EASE_HARD = 0.85;
+const clampEase = (e: number) => Math.round(Math.min(EASE_MAX, Math.max(EASE_MIN, e)) * 100) / 100;
+export const easeOf = (c: Pick<Card, 'ease'>) => c.ease ?? 1;
+export function nextEase(card: Pick<Card, 'ease'>, grade: Grade): number {
+  const d = grade === 'easy' ? 0.15 : grade === 'good' ? 0.1 : grade === 'hard' ? -0.15 : -0.2;
+  return clampEase(easeOf(card) + d);
+}
+/** Bosqich oralig'i shu so'z uchun: standart × osonlik × (shu oraliq bo'yicha shaxsiy tuzatish) */
+export function intervalFor(stage: number, ease: number, factor = 1): number {
+  const base = stage >= INTERVALS.length ? MASTERED_INTERVAL : INTERVALS[stage];
+  return Math.max(1, Math.round(base * ease * factor));
 }
 
 /** Bosqichlar bo'yicha oraliqlar (kun) */
@@ -65,9 +93,13 @@ export function completeLearning(card: Card, today: number): Card {
   };
 }
 
-/** Takrorlashdagi baho bo'yicha keyingi holat. */
-export function gradeCard(card: Card, grade: Grade, today: number): Card {
-  const base = { ...card, reviews: card.reviews + 1, lastReviewed: today };
+/**
+ * Takrorlashdagi baho bo'yicha keyingi holat.
+ * `factor(stage)` — foydalanuvchining shu oraliqdagi esda qolish ko'rsatkichiga qarab tuzatish (lib/retention.ts), odatda 1.
+ */
+export function gradeCard(card: Card, grade: Grade, today: number, factor: (stage: number) => number = () => 1): Card {
+  const ease = nextEase(card, grade);
+  const base = { ...card, ease, reviews: card.reviews + 1, lastReviewed: today };
 
   if (grade === 'again') {
     // Unutildi: shu kuniyoq qayta yodlashga tushadi, bir bosqich orqaga qaytadi.
@@ -76,16 +108,16 @@ export function gradeCard(card: Card, grade: Grade, today: number): Card {
 
   if (grade === 'hard') {
     // Qiyin esladi: bosqich o'zgarmaydi, oraliq qisqaradi.
-    const interval = card.state === 'mastered' ? INTERVALS[INTERVALS.length - 1] : INTERVALS[card.stage];
-    return { ...base, state: card.state === 'mastered' ? 'mastered' : 'review', due: today + Math.max(1, Math.round(interval * 0.5)) };
+    const stage = card.state === 'mastered' ? INTERVALS.length - 1 : card.stage;
+    return { ...base, state: card.state === 'mastered' ? 'mastered' : 'review', due: today + Math.max(1, Math.round(intervalFor(stage, ease, factor(stage)) * 0.5)) };
   }
 
   const step = grade === 'easy' ? 2 : 1;
   const nextStage = card.stage + step;
   if (nextStage >= INTERVALS.length) {
-    return { ...base, state: 'mastered', stage: INTERVALS.length, due: today + MASTERED_INTERVAL };
+    return { ...base, state: 'mastered', stage: INTERVALS.length, due: today + intervalFor(INTERVALS.length, ease) };
   }
-  return { ...base, state: 'review', stage: nextStage, due: today + INTERVALS[nextStage] };
+  return { ...base, state: 'review', stage: nextStage, due: today + intervalFor(nextStage, ease, factor(nextStage)) };
 }
 
 /** Qayta yodlash (Tanishish → Eslash → Yozish) shu kuni tugagandan keyin: ertaga yana tekshiriladi. */
@@ -102,30 +134,22 @@ export function isHardWord(card: Card): boolean {
 }
 
 /**
- * Takrorlash shakli bosqichga qarab almashadi. Takrorlash tez bo'lishi uchun yozish kam:
- * hech unutilmagan so'z butun yo'lida faqat bir marta yoziladi (1 haftadan keyin, gap ichida).
- *   ertaga — kartochka, 3 kundan keyin — variant tanlash, 1 haftadan keyin — yozish,
- *   2 haftadan keyin — variant tanlash, 1 oydan keyin — kartochka.
- * Ko'p unutilgan so'z (TYPING_LAPSES va undan ko'p) eski, og'irroq tartibda qoladi: yozma, gap ichida, eshitib yozish.
+ * «So'z yo'li»: har takrorlashda so'z biroz qiyinroq shaklda so'raladi va har safar tekshiriladi.
+ *   ertaga — teskari test, 3 kundan keyin — gap ichida, 1 haftadan keyin — yozish,
+ *   2 haftadan keyin — eshitib topish, 1 oydan keyin — yozish, 3 oylik nazorat — teskari test.
+ * (Kechki mustahkamlash — o'rganilgan kuni kechqurun oddiy test — bu yerga kirmaydi: app/evening.tsx.)
+ * Ko'p unutilgan so'z (TYPING_LAPSES va undan ko'p) og'irroq: ertaga ham yoziladi, 2 haftada eshitib yoziladi.
  */
 export function reviewModeFor(card: Card, hasExample: boolean): ReviewMode {
-  if (card.state === 'mastered') return 'recall';
+  if (card.state === 'mastered') return 'reverse';
   const hard = card.lapses >= TYPING_LAPSES;
   switch (card.stage) {
-    case 0: return 'recall';
-    case 1: return hard ? 'write' : 'choice';
-    case 2: return hasExample ? 'cloze' : 'write';
-    case 3: return hard ? 'listen' : 'choice';
-    default: return 'recall';
+    case 0: return hard ? 'write' : 'reverse';
+    case 1: return hasExample ? 'cloze' : 'write';
+    case 2: return 'write';
+    case 3: return hard ? 'listen' : 'listenChoice';
+    default: return 'write';
   }
-}
-
-/**
- * Oson so'z tezroq uzoqlashadi: hech unutilmagan so'z 3 kunlik takrorlashda to'g'ri topilsa,
- * 1 haftalik bosqichni sakrab, to'g'ri 2 haftaga o'tadi (takrorlashlar soni kamayadi).
- */
-export function quickGrade(card: Card, grade: Grade): Grade {
-  return grade === 'good' && card.lapses === 0 && card.state === 'review' && card.stage === 1 ? 'easy' : grade;
 }
 
 /** Yozilgan javobni baholash: to'g'ri → good, bitta harf xato → hard, aks holda → again. */

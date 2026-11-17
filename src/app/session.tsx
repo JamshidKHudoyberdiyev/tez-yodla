@@ -15,7 +15,8 @@ import { deckById, Word } from '@/data/words';
 import { capReviews, EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { clozeOf, clozeParts, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence } from '@/lib/speech';
-import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT, quickGrade } from '@/lib/srs';
+import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
+import { retentionFactor } from '@/lib/retention';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
@@ -83,7 +84,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
   const deckTitle = deck ? deckById(deck)?.title : undefined;
   // Reja mashg'ulot boshida bir marta tuziladi.
   const initial = useMemo(() => {
-    const p = todayPlan({ words, cards: state.cards, activeDecks: deck ? [deck] : state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: extra || deck ? EXTRA_NEW : undefined, log: state.log, today });
+    const p = todayPlan({ words, cards: state.cards, activeDecks: deck ? [deck] : state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: extra || deck ? EXTRA_NEW : undefined, log: state.log, today, first: state.evening?.day === today - 1 ? state.evening.missed : undefined });
     const noReviews = !!deck || only === 'new';
     // Kunlik takrorlash chegarasi: ortig'i navbatda qoladi (`more` — «Yana N ta» bosilgan)
     const due = capReviews(p.reviews.filter((c) => wordById(c.wordId)), state.prefs.reviewCap, state.log[today]?.reviewed ?? 0, !!more).today;
@@ -509,9 +510,8 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
   if (phase === 'review') {
     const card = initial.reviews[reviewIdx];
     const w = wordById(card.wordId)!;
-    const next = (raw: Grade) => {
+    const next = (g: Grade) => {
       const live = state.cards[card.wordId] ?? card;
-      const g = quickGrade(live, raw);
       const from = gardenIndex(live);
       const to = gardenIndex(gradeCard(live, g, today));
       if (to > from) grown.current.push({ word: w.word, from, to });
@@ -527,20 +527,17 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
     };
     const mode = reviewModeFor(card, !!w.example && exampleHasWord(w.word, w.example));
     const header = <Header onClose={close} progress={reviewIdx / initial.reviews.length} label={`Takrorlash · ${reviewIdx + 1}/${initial.reviews.length}`} />;
-    if (mode === 'recall') {
+    if (mode === 'choice' || mode === 'reverse' || mode === 'listenChoice') {
+      const live = state.cards[card.wordId] ?? card;
+      const gap = gradeCard(live, 'good', today, retentionFactor(state.reviewLog, today)).due - today;
+      const others = initial.reviews.filter((c) => c.wordId !== card.wordId).map((c) => wordById(c.wordId)).filter(Boolean) as Word[];
+      const reverse = mode === 'reverse';
       return (
-        <Screen footer={revealed ? <GradeButtons onGrade={next} card={state.cards[card.wordId] ?? card} today={today} /> : <Button title="Javobni ko'rsatish" variant="dark" onPress={() => setRevealed(true)} />}>
-          {header}
-          <ModeBadge mode={mode} />
-          <RecallCard key={`${card.wordId}-${reviewIdx}`} word={w} revealed={revealed} />
-        </Screen>
-      );
-    }
-    if (mode === 'choice') {
-      return (
-        <TestStep key={card.wordId + reviewIdx} word={w} header={header}
-          groupOthers={initial.reviews.filter((c) => c.wordId !== card.wordId).map((c) => wordById(c.wordId)?.translation).filter(Boolean) as string[]}
-          pool={words.map((x) => x.translation)} retryNote={false}
+        <TestStep key={card.wordId + reviewIdx} word={w} header={<>{header}<ModeBadge mode={mode} /></>}
+          variant={reverse ? 'reverse' : mode === 'listenChoice' ? 'audio' : 'word'}
+          groupOthers={others.map((x) => (reverse ? x.word : x.translation))}
+          pool={words.map((x) => (reverse ? x.word : x.translation))} retryNote={false}
+          note={`Keyingi safar: ${gapLabel(gap)}dan keyin`}
           onDone={(ok) => next(ok ? 'good' : 'again')} />
       );
     }
@@ -857,7 +854,7 @@ function GradeButtons({ onGrade, card, today }: { onGrade: (g: Grade) => void; c
   const grades: Grade[] = ['again', 'good'];
   const sub = (g: Grade) => {
     if (!card || today === undefined) return g === 'again' ? "yana ko'rsatiladi" : 'keyingisiga';
-    return gapLabel(gradeCard(card, quickGrade(card, g), today).due - today);
+    return gapLabel(gradeCard(card, g, today).due - today);
   };
   return (
     <View style={{ gap: 8 }}>
@@ -886,7 +883,7 @@ function GradeButtons({ onGrade, card, today }: { onGrade: (g: Grade) => void; c
 }
 
 function ModeBadge({ mode }: { mode: ReviewMode }) {
-  const map: Record<ReviewMode, string> = { recall: "Kartochka: ko'rib eslang", choice: "To'g'ri tarjimani tanlang", write: 'Yozma: tarjimadan yozing', cloze: "Gap ichida: bo'sh joyni to'ldiring", listen: 'Eshitib yozing' };
+  const map: Record<ReviewMode, string> = { choice: "Test: tarjimasini toping", reverse: 'Teskari test: inglizchasini toping', write: 'Yozma: tarjimadan yozing', cloze: "Gap ichida: bo'sh joyni to'ldiring", listen: 'Eshitib yozing', listenChoice: "Eshitib toping: ma'nosini tanlang" };
   return <T w="bold" size={13} color={colors.muted} style={{ textTransform: 'uppercase', letterSpacing: 0.8 }}>{map[mode]}</T>;
 }
 
@@ -922,7 +919,7 @@ function SayAloud({ word }: { word: string }) {
  * Yozish. `onDone(grade, exact)`: exact — so'z aynan to'g'ri yozildi (yordam bilan bo'lsa ham).
  * Yordam («Keyingi harf») ishlatilib to'g'ri yozilsa — ekranda «To'g'ri!», takrorlash bahosi esa 'hard'.
  */
-export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Exclude<ReviewMode, 'recall'>; header: React.ReactNode; onDone: (g: Grade, exact: boolean) => void }) {
+export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Exclude<ReviewMode, 'choice' | 'reverse' | 'listenChoice'>; header: React.ReactNode; onDone: (g: Grade, exact: boolean) => void }) {
   const [text, setText] = useState('');
   const [result, setResult] = useState<Grade | null>(null);
   const [exact, setExact] = useState(false);
@@ -1046,12 +1043,20 @@ function HintChip({ icon, label, onPress, disabled }: { icon: React.ComponentPro
 }
 
 /** 3-bosqich — Test: so'z tepada, pastda 4 ta tarjima varianti. */
-export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = true }: { word: Word; groupOthers: string[]; pool: string[]; header: React.ReactNode; onDone: (correct: boolean) => void; /** «guruh oxirida yana so'raladi» yozuvi (takrorlashda kerak emas) */ retryNote?: boolean }) {
+/**
+ * Variantli test. `variant`: 'word' — inglizcha so'z ko'rsatiladi, o'zbekchasi tanlanadi;
+ * 'reverse' — o'zbekchasi ko'rsatiladi, inglizchasi tanlanadi; 'audio' — faqat ovoz, ma'nosi tanlanadi.
+ * `groupOthers` va `pool` javob turida bo'lishi kerak (reverse — inglizcha so'zlar, qolganlari — tarjimalar).
+ */
+export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = true, variant = 'word', note }: { word: Word; groupOthers: string[]; pool: string[]; header: React.ReactNode; onDone: (correct: boolean) => void; /** «guruh oxirida yana so'raladi» yozuvi (takrorlashda kerak emas) */ retryNote?: boolean; variant?: 'word' | 'reverse' | 'audio'; /** To'g'ri javobdan keyin ko'rsatiladigan qo'shimcha yozuv */ note?: string }) {
   const { state } = useStore();
   const prefs = state.prefs;
-  const [choices] = useState(() => buildChoices(word.translation, groupOthers, pool, prefs.testOptions));
+  const answer = variant === 'reverse' ? word.word : word.translation;
+  const [choices] = useState(() => buildChoices(answer, groupOthers, pool, prefs.testOptions));
   const [picked, setPicked] = useState<string | null>(null);
-  const correct = picked === word.translation;
+  const correct = picked === answer;
+  // «Eshitib toping»: so'z ekran ochilganda o'qiladi
+  useEffect(() => { if (variant === 'audio') { const t = setTimeout(() => speak(word.word), 350); return () => clearTimeout(t); } }, [variant, word.word]);
 
   const finished = useRef(false);
   const finish = (ok: boolean) => { if (finished.current) return; finished.current = true; onDone(ok); };
@@ -1059,7 +1064,7 @@ export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = 
   const pick = (c: string) => {
     if (picked) return;
     setPicked(c);
-    if (c === word.translation) {
+    if (c === answer) {
       buzz('success');
       if (prefs.autoSpeakCorrect) speak(word.word);
     } else buzz('light');
@@ -1067,7 +1072,7 @@ export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = 
 
   // Sozlamada «O'zi o'tsin» yoqilgan bo'lsa — to'g'ri javobdan 1,2 s keyin keyingisiga.
   useEffect(() => {
-    if (!prefs.autoAdvance || picked !== word.translation) return;
+    if (!prefs.autoAdvance || picked !== answer) return;
     const t = setTimeout(() => finish(true), 1200);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1087,7 +1092,9 @@ export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = 
                 <T w="bold" size={13} color={colors.wrongInk}>To'g'ri javob</T>
               )}
               {!correct ? <T w="extrabold" size={22} color={colors.ink} style={{ lineHeight: 27 }}>{word.word} — <T w="extrabold" size={22} color={colors.forestText}>{word.translation}</T></T> : null}
-              {correct && word.example ? <T size={13} color={colors.forestText} numberOfLines={2}>{word.example}{word.exampleUz ? ` — ${word.exampleUz}` : ''}</T> : null}
+              {correct && variant !== 'word' ? <T w="extrabold" size={17} color={colors.ink}>{word.word} — <T w="extrabold" size={17} color={colors.forestText}>{word.translation}</T></T> : null}
+              {correct && word.example && variant === 'word' ? <T size={13} color={colors.forestText} numberOfLines={2}>{word.example}{word.exampleUz ? ` — ${word.exampleUz}` : ''}</T> : null}
+              {correct && note ? <T size={13} color={colors.forestText}>{note}</T> : null}
             </View>
           </View>
           {!correct && word.example ? (
@@ -1098,17 +1105,34 @@ export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = 
         </SlideUp>
       ) : undefined}>
       {header}
-      <Card style={{ borderRadius: 32, paddingVertical: 24, alignItems: 'center', gap: 6 }}>
-        <T w="bold" size={13} color={colors.muted}>To'g'ri tarjimani tanlang</T>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <T w="extrabold" size={46} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 54, letterSpacing: -1, flexShrink: 1 }} accessibilityRole="header">{word.word}</T>
-          <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(word.word)} />
-        </View>
-        {word.ipa ? <T size={15} color={colors.muted}>{word.ipa}</T> : null}
-      </Card>
+      {variant === 'reverse' ? (
+        <Card style={{ borderRadius: 32, paddingVertical: 24, alignItems: 'center', gap: 4 }}>
+          <T w="bold" size={13} color={colors.muted}>Inglizchasini tanlang</T>
+          <T w="extrabold" size={40} color={colors.forestText} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 48, textAlign: 'center' }} accessibilityRole="header">{word.translation}</T>
+          {picked ? <T size={15} color={colors.muted}>{word.word}{word.ipa ? ` · ${word.ipa}` : ''}</T> : null}
+        </Card>
+      ) : variant === 'audio' ? (
+        <Card style={{ borderRadius: 32, paddingVertical: 24, alignItems: 'center', gap: 10 }}>
+          <T w="bold" size={13} color={colors.muted}>Eshiting va ma'nosini tanlang</T>
+          <Pressable accessibilityRole="button" accessibilityLabel="Yana eshitish" onPress={() => speak(word.word)}
+            style={({ pressed }) => ({ width: 84, height: 84, borderRadius: 42, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center', transform: [{ scale: pressed ? 0.95 : 1 }] })}>
+            <Feather name="volume-2" size={38} color={colors.lime} />
+          </Pressable>
+          {picked ? <T w="extrabold" size={26}>{word.word}</T> : <T size={13} color={colors.muted}>Yana eshitish uchun bosing</T>}
+        </Card>
+      ) : (
+        <Card style={{ borderRadius: 32, paddingVertical: 24, alignItems: 'center', gap: 6 }}>
+          <T w="bold" size={13} color={colors.muted}>To'g'ri tarjimani tanlang</T>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <T w="extrabold" size={46} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 54, letterSpacing: -1, flexShrink: 1 }} accessibilityRole="header">{word.word}</T>
+            <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(word.word)} />
+          </View>
+          {word.ipa ? <T size={15} color={colors.muted}>{word.ipa}</T> : null}
+        </Card>
+      )}
       <View accessibilityRole="radiogroup" style={{ gap: 10 }}>
         {choices.map((c, i) => {
-          const isAnswer = c === word.translation;
+          const isAnswer = c === answer;
           const state = !picked ? 'idle' : isAnswer ? 'right' : c === picked ? 'wrong' : 'dim';
           const bg = state === 'right' ? colors.limeSoft : colors.surface;
           const border = state === 'right' ? colors.forest : state === 'wrong' ? colors.wrong : 'transparent';
