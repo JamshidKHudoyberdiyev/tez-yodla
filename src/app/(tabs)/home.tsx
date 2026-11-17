@@ -8,7 +8,7 @@ import { Flame, StreakCard, StreakStrip } from '@/components/Streak';
 import { Avatar } from '@/components/Avatar';
 import { Button, T } from '@/components/ui';
 import { gardenStages } from '@/lib/garden';
-import { EXTRA_NEW, todayPlan } from '@/lib/plan';
+import { capReviews, EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
@@ -35,8 +35,13 @@ export default function Home() {
   /** Rejadagi to'plamlarda yangi so'z qolmagan — bugungi maqsadga yetilmagan bo'lsa ham */
   const outOfWords = newDone && !more && newToday < state.dailyNew;
   const newMinutes = Math.max(1, Math.round(newLeft * 0.8));
-  const reviewsLeft = plan.reviews.length;
+  // Kunlik takrorlash chegarasi: bugun ko'pi bilan `cap` ta, qolgani navbatda
+  const cap = state.prefs.reviewCap;
   const reviewedToday = state.log[today]?.reviewed ?? 0;
+  const capped = capReviews(plan.reviews, cap, reviewedToday);
+  const reviewsLeft = capped.today.length;
+  const queued = capped.queued;
+  const moreCount = Math.min(cap, queued);
   const reviewMinutes = Math.max(1, Math.round(reviewsLeft * 0.25));
   const garden = useMemo(() => gardenStages(state.cards, today), [state.cards, today]);
   const gardenTotal = garden.reduce((n, g) => n + g.ids.length, 0);
@@ -112,14 +117,17 @@ export default function Home() {
 
         {/* Takrorlash — alohida, ixcham karta */}
         {reviewsLeft ? (
-          <MiniCard icon="rotate-ccw" tint={colors.blueSoft} ink={colors.blue} title="Takrorlash" sub={`${reviewsLeft} ta so'z vaqti keldi · ~${reviewMinutes} daq`}
+          <MiniCard icon="rotate-ccw" tint={colors.blueSoft} ink={colors.blue} title={`Takrorlash · ${reviewsLeft} ta`}
+            sub={`~${reviewMinutes} daq${queued ? ` · navbatda yana ${queued} ta` : ''}`}
             action="Boshlash" actionBg={colors.blue} actionFg={colors.blueSoft} border={colors.blueSoft}
             label={`Takrorlash: ${reviewsLeft} ta so'z. Boshlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review' } })} />
-        ) : reviewedToday ? (
-          <MiniCard icon="check" tint={colors.limeSoft} ink={colors.forestText} title="Takrorlash bajarildi" sub={`Bugun ${reviewedToday} ta so'z takrorlandi`} label="Takrorlash bajarildi" />
+        ) : queued ? (
+          <MiniCard icon="rotate-ccw" tint={colors.blueSoft} ink={colors.blue} title={`${reviewedToday} ta takrorlandi`} sub={`Navbatda yana ${queued} ta`}
+            action={`Yana ${moreCount} ta`} actionBg={colors.blueSoft} actionFg={colors.blue} border={colors.blueSoft}
+            label={`Bugungi takrorlash bajarildi. Yana ${moreCount} ta takrorlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review', more: '1' } })} />
         ) : null}
 
-        {mistakeCount ? (
+        {mistakeCount && state.mistakesDoneDay !== today ? (
           <MiniCard icon="alert-circle" tint={colors.wrongSoft} ink={colors.wrongInk} title="Xatolarim" sub={`${mistakeCount} ta so'z · ko'p adashganlaringiz`}
             action="Mashq" actionBg={colors.lime} actionFg={colors.limeInk} border={colors.wrongSoft}
             label={`Xatolarim: ${mistakeCount} ta so'z. Mashq qilish`} onPress={() => router.push('/mistakes')} />

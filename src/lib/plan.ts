@@ -33,6 +33,22 @@ export interface TodayPlan {
  */
 export const dailyMinutes = (dailyNew: number) => Math.round(dailyNew * 1.8);
 
+/** Kunlik takrorlash chegarasi variantlari; 0 — cheksiz */
+export const REVIEW_CAPS = [20, 30, 50, 0] as const;
+export const DEFAULT_REVIEW_CAP = 30;
+
+/**
+ * Kunlik takrorlash chegarasi: vaqti kelgan so'zlardan bugun nechtasi beriladi.
+ * `reviews` allaqachon muhimligi bo'yicha saralangan (qayta yodlanayotganlar, keyin eng kechikkanlar).
+ * `more` — foydalanuvchi «Yana N ta»ni bosdi: bugungi hisobdan qat'i nazar yana bir chegara miqdori beriladi.
+ */
+export function capReviews<C>(reviews: C[], cap: number, reviewedToday: number, more = false): { today: C[]; queued: number } {
+  if (!cap || cap <= 0) return { today: reviews, queued: 0 };
+  const allowed = more ? cap : Math.max(0, cap - reviewedToday);
+  const today = reviews.slice(0, allowed);
+  return { today, queued: reviews.length - today.length };
+}
+
 /** «Yana N ta so'z» tugmasi bir bosishda beradigan qo'shimcha yangi so'zlar */
 export const EXTRA_NEW = 5;
 

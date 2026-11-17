@@ -36,6 +36,8 @@ export interface AppState {
   streakDismissed: number[];
   /** «Xatolarim»: adashilgan so'zlar (lib/mistakes.ts) */
   mistakes: MistakeLog;
+  /** Xatolar mashqi oxirgi marta qilingan kun — o'sha kuni bosh sahifada «Xatolarim» kartasi chiqmaydi */
+  mistakesDoneDay?: number;
   prefs: Prefs;
 }
 
@@ -44,6 +46,8 @@ export interface Prefs {
   /** Guruh bosqichlari (Tanishish doim yoqiq) */
   steps: { recall: boolean; test: boolean; match: boolean; write: boolean; context: boolean };
   testOptions: 4 | 6;
+  /** Kunlik takrorlash chegarasi (0 — cheksiz) */
+  reviewCap: number;
   /** To'g'ri javobdan keyin o'zi keyingisiga o'tsinmi */
   autoAdvance: boolean;
   /** Yozishda harf kataklari */
@@ -77,6 +81,7 @@ export const defaultPrefs: Prefs = {
   gameBest: {},
   theme: 'system',
   testOptions: 4,
+  reviewCap: 30,
   autoAdvance: false,
   letterBoxes: true,
   accent: 'us',
@@ -160,6 +165,8 @@ interface Store {
   noteMistake: (wordId: string) => void;
   /** Xatolar mashqidagi to'g'ri javob; so'z ro'yxatdan chiqsa — true */
   noteMistakeCorrect: (wordId: string) => boolean;
+  /** Xatolar mashqi tugadi */
+  mistakesPracticed: () => void;
   /** Qayta yodlash tugadi */
   relearned: (wordIds: string[]) => void;
   addCustomWords: (words: Omit<Word, 'id' | 'deckId'>[]) => void;
@@ -299,6 +306,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setState((s) => ({ ...s, mistakes: noteCorrect(s.mistakes, wordId).log }));
       return r.cleared;
     },
+    mistakesPracticed: () => setState((s) => ({ ...s, mistakesDoneDay: dayNumber() })),
     relearned: (ids) =>
       setState((s) => {
         const cards = { ...s.cards };

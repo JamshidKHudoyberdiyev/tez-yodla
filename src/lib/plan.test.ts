@@ -1,4 +1,4 @@
-import { computeStats, estimateLevel, streak, todayPlan } from './plan';
+import { capReviews, computeStats, estimateLevel, streak, todayPlan } from './plan';
 import { completeLearning, gradeCard, newCard } from './srs';
 import { WORDS } from '../data/words';
 
@@ -49,6 +49,16 @@ describe('plan', () => {
     const extra = todayPlan({ words: WORDS, cards: {}, activeDecks: ['travel'], knownLemmas: new Set(), dailyNew: 5, extraNew: 5, log, today: T });
     expect(extra.newWords).toHaveLength(5);
     expect(extra.groups).toHaveLength(1);
+  });
+
+  test('kunlik takrorlash chegarasi: ortig\'i navbatga o\'tadi', () => {
+    const due = Array.from({ length: 115 }, (_, i) => i);
+    expect(capReviews(due, 30, 0)).toEqual({ today: due.slice(0, 30), queued: 85 });
+    expect(capReviews(due.slice(0, 100), 30, 12).today).toHaveLength(18); // bugun 12 tasi takrorlangan
+    expect(capReviews(due.slice(0, 85), 30, 30)).toEqual({ today: [], queued: 85 }); // bugungi chegara tugadi
+    expect(capReviews(due.slice(0, 85), 30, 30, true).today).toHaveLength(30); // «Yana 30 ta»
+    expect(capReviews(due, 0, 500)).toEqual({ today: due, queued: 0 }); // cheksiz
+    expect(capReviews(due.slice(0, 7), 30, 0)).toEqual({ today: due.slice(0, 7), queued: 0 });
   });
 
   test('streak bugun yoki kechadan boshlab hisoblanadi', () => {

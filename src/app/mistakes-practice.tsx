@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { Button, Screen, T } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
@@ -53,6 +53,8 @@ export default function MistakesPractice() {
     if (rest.length) setQueue(rest);
     else next();
   };
+  // Xatolar mashqi tugagach — bugun bosh sahifada «Xatolarim» kartasi qayta chiqmaydi
+  useEffect(() => { if (phase === 'done' && !deck && list.length) store.mistakesPracticed(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [phase]);
 
   if (phase === 'done') {
     const n = cleared.current.size;

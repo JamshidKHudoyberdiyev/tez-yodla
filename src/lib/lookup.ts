@@ -37,12 +37,22 @@ export function cyrToLat(s: string): string {
   return out;
 }
 
+const ENTITIES: Record<string, string> = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>', nbsp: ' ' };
+/** Tarjima xizmati qaytaradigan HTML belgilarini ochadi: «tug&#39;ilgan» → «tug'ilgan» */
+export function decodeEntities(s: string): string {
+  return s
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&([a-z]+);/gi, (m, n) => ENTITIES[n.toLowerCase()] ?? m)
+    .replace(/[\u2018\u2019\u02BB\u02BC`]/g, "'");
+}
+
 export function parseMyMemory(json: unknown, query: string): string | null {
   const j = json as { responseStatus?: number | string; responseData?: { translatedText?: string } };
   if (!j || Number(j.responseStatus) !== 200) return null;
   let t = j.responseData?.translatedText?.trim();
   if (!t || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID/i.test(t)) return null;
-  t = cyrToLat(t).replace(/\s+/g, ' ').replace(/[.!]$/, '').trim();
+  t = cyrToLat(decodeEntities(t)).replace(/\s+/g, ' ').replace(/[.!]$/, '').trim();
   if (t.toLowerCase() === query.trim().toLowerCase()) return null; // tarjima qilinmagan
   return t.charAt(0) === t.charAt(0).toUpperCase() && query.charAt(0) === query.charAt(0).toLowerCase() ? t.charAt(0).toLowerCase() + t.slice(1) : t;
 }
@@ -74,6 +84,8 @@ export async function lookupWord(word: string, signal?: AbortSignal): Promise<Lo
   const translation = tr.status === 'fulfilled' ? tr.value ?? undefined : undefined;
   const info = dict.status === 'fulfilled' ? dict.value : null;
   if (!translation && !info) return null;
+  // Misol gapda so'zning o'zi bo'lmasa (lug'at boshqa shaklini bergan: born → «bearing») — misolni olmaymiz
+  if (info?.example && !new RegExp(`\\b${q.toLowerCase().replace(/[^a-z' -]/g, '')}`, 'i').test(info.example)) info.example = undefined;
   return { translation, ...(info ?? {}) };
 }
 
@@ -84,7 +96,7 @@ export function parseEnglishOptions(json: unknown, query: string, max = 3): stri
   const raw = [j.responseData?.translatedText, ...(j.matches ?? []).filter((m) => Number(m.quality ?? 0) >= 50).map((m) => m.translation)];
   const out: string[] = [];
   for (const r of raw) {
-    let t = (r ?? '').trim().replace(/[.!?,;:]+$/, '');
+    let t = decodeEntities(r ?? '').trim().replace(/[.!?,;:]+$/, '');
     if (!t || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID/i.test(t)) continue;
     if (!/^[a-z][a-z' -]*$/i.test(t) || t.split(' ').length > 3) continue; // faqat qisqa inglizcha so'z
     t = t.toLowerCase();

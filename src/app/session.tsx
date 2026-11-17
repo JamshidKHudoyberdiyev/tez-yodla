@@ -12,7 +12,7 @@ import { gardenIndex } from '@/lib/garden';
 import { DAY_GOAL, milestoneLabel, MILESTONES, type StreakInfo } from '@/lib/streak';
 import { buildChoices, groupTimeline, intervalLabel, relativeDay, shuffle, uzDate } from '@/lib/drill';
 import { deckById, Word } from '@/data/words';
-import { EXTRA_NEW, todayPlan } from '@/lib/plan';
+import { capReviews, EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { clozeOf, clozeParts, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence } from '@/lib/speech';
 import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
@@ -79,16 +79,18 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
   /** «Yana 5 ta so'z» — kunlik reja bajarilgandan keyingi qo'shimcha guruh */
   /** `deck` — to'plam sahifasidan: faqat shu to'plamdan 5 ta yangi so'z (takrorlashlarsiz) */
   /** `only` — bosh sahifadan: 'new' — faqat yangi so'zlar, 'review' — faqat takrorlash */
-  const { extra, deck, only } = useLocalSearchParams<{ extra?: string; deck?: string; only?: 'new' | 'review' }>();
+  const { extra, deck, only, more } = useLocalSearchParams<{ extra?: string; deck?: string; only?: 'new' | 'review'; more?: string }>();
   const deckTitle = deck ? deckById(deck)?.title : undefined;
   // Reja mashg'ulot boshida bir marta tuziladi.
   const initial = useMemo(() => {
     const p = todayPlan({ words, cards: state.cards, activeDecks: deck ? [deck] : state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: extra || deck ? EXTRA_NEW : undefined, log: state.log, today });
     const noReviews = !!deck || only === 'new';
+    // Kunlik takrorlash chegarasi: ortig'i navbatda qoladi (`more` — «Yana N ta» bosilgan)
+    const due = capReviews(p.reviews.filter((c) => wordById(c.wordId)), state.prefs.reviewCap, state.log[today]?.reviewed ?? 0, !!more).today;
     return {
       groups: only === 'review' ? [] : p.groups,
-      reviews: noReviews ? [] : p.reviews.filter((c) => c.state !== 'relearning' && wordById(c.wordId)),
-      pendingRelearn: noReviews ? [] : p.reviews.filter((c) => c.state === 'relearning').map((c) => c.wordId),
+      reviews: noReviews ? [] : due.filter((c) => c.state !== 'relearning'),
+      pendingRelearn: noReviews ? [] : due.filter((c) => c.state === 'relearning').map((c) => c.wordId),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -742,7 +744,7 @@ function RecallCard({ word: w, revealed, showIpa }: { word: Word; revealed: bool
       front={
         <Card style={[shell, { justifyContent: 'center' }]}>
           <View style={{ alignItems: 'center', gap: 14 }}>
-            <T w="extrabold" size={52} style={{ lineHeight: 60, textAlign: 'center' }}>{w.word}</T>
+            <T w="extrabold" size={52} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 60, textAlign: 'center', alignSelf: 'stretch' }}>{w.word}</T>
             {showIpa && w.ipa ? <T size={17} color={colors.muted}>{w.ipa}</T> : null}
             <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(w.word)} />
           </View>
@@ -1089,7 +1091,7 @@ export function TestStep({ word, groupOthers, pool, header, onDone }: { word: Wo
       <Card style={{ borderRadius: 32, paddingVertical: 24, alignItems: 'center', gap: 6 }}>
         <T w="bold" size={13} color={colors.muted}>To'g'ri tarjimani tanlang</T>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <T w="extrabold" size={46} style={{ lineHeight: 54, letterSpacing: -1 }} accessibilityRole="header">{word.word}</T>
+          <T w="extrabold" size={46} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 54, letterSpacing: -1, flexShrink: 1 }} accessibilityRole="header">{word.word}</T>
           <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(word.word)} />
         </View>
         {word.ipa ? <T size={15} color={colors.muted}>{word.ipa}</T> : null}
@@ -1257,7 +1259,31 @@ type Side = 'L' | 'R';
 /** Topilgan juft ko'rinishi: hammasi yashil (boshqa rang «xato qildimmi?» degan taassurot beradi), farqi — raqamda. */
 const PAIR_LOOK = () => [{ bg: colors.limeSoft, fg: colors.forestText, ring: colors.lime }];
 
+/** Bir ekranga sig'adigan juftlar soni — ko'p bo'lsa, Moslash bir necha sahifaga bo'linadi (aylantirish kerak bo'lmasin) */
+export const MATCH_PAGE = 5;
+export function matchPages<X>(items: X[], size = MATCH_PAGE): X[][] {
+  const pages = Math.ceil(items.length / size);
+  const out: X[][] = [];
+  for (let i = 0, at = 0; i < pages; i++) {
+    const n = Math.ceil((items.length - at) / (pages - i));
+    out.push(items.slice(at, at + n));
+    at += n;
+  }
+  return out;
+}
+
 function MatchStep({ group, header, onMistake, onDone }: { group: Word[]; header: (found: number) => React.ReactNode; onMistake: (wordId: string) => void; onDone: () => void }) {
+  const pages = useMemo(() => matchPages(group), [group]);
+  const [page, setPage] = useState(0);
+  const before = pages.slice(0, page).reduce((n, p) => n + p.length, 0);
+  return (
+    <MatchPage key={page} group={pages[page]} header={(found) => header(before + found)} onMistake={onMistake}
+      pageLabel={pages.length > 1 ? `${page + 1} / ${pages.length}` : undefined}
+      onDone={() => (page + 1 < pages.length ? setPage(page + 1) : onDone())} />
+  );
+}
+
+function MatchPage({ group, header, onMistake, onDone, pageLabel }: { group: Word[]; header: (found: number) => React.ReactNode; onMistake: (wordId: string) => void; onDone: () => void; pageLabel?: string }) {
   const left = group;
   const [right] = useState(() => {
     let r = shuffle(group);
@@ -1339,7 +1365,10 @@ function MatchStep({ group, header, onMistake, onDone }: { group: Word[]; header
     <Screen footer={<Button title={allDone ? 'Davom etish' : `Yana ${group.length - found.length} juft`} disabled={!allDone} onPress={onDone} />}>
       {header(found.length)}
       <View style={{ gap: 2 }}>
-        <T w="extrabold" size={24} accessibilityRole="header">Juftini toping</T>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <T w="extrabold" size={24} accessibilityRole="header">Juftini toping</T>
+          {pageLabel ? <T w="bold" size={13} color={colors.muted}>{pageLabel}-sahifa</T> : null}
+        </View>
         <T size={14} color={colors.muted}>So'zni bosing, keyin uning tarjimasini</T>
       </View>
       <View style={{ flexDirection: 'row', gap: 12 }}>

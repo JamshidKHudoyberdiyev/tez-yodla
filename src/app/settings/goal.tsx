@@ -1,8 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import { Pressable, View } from 'react-native';
-import { CountStepper } from '@/components/SettingsUI';
+import { CountStepper, Segmented } from '@/components/SettingsUI';
 import { BackHeader, Screen, T } from '@/components/ui';
-import { dailyMinutes } from '@/lib/plan';
+import { dailyMinutes, DEFAULT_REVIEW_CAP, REVIEW_CAPS } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
@@ -19,7 +19,8 @@ const minutes = dailyMinutes;
 const presetNext = (n: number) => (GOALS.some((g) => g.n === n + 5) ? n + 6 : n + 5);
 
 export default function Goal() {
-  const { state, setDailyNew } = useStore();
+  const { state, setDailyNew, setPrefs } = useStore();
+  const cap = REVIEW_CAPS.includes(state.prefs.reviewCap as never) ? state.prefs.reviewCap : DEFAULT_REVIEW_CAP;
   const n = state.dailyNew;
   /** Tayyor variantlardan biri emas — «O'zim belgilayman» tanlangan */
   const custom = !GOALS.some((g) => g.n === n);
@@ -62,6 +63,24 @@ export default function Goal() {
           </View>
           {custom ? <CountStepper value={n} unit="so'z" label="Kunlik yangi so'zlar soni" onChange={setDailyNew} /> : null}
         </Pressable>
+      </View>
+
+      <View style={{ backgroundColor: colors.surface, borderRadius: 24, padding: 16, gap: 12, borderWidth: 2, borderColor: colors.blueSoft }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: colors.blueSoft, alignItems: 'center', justifyContent: 'center' }}>
+            <Feather name="rotate-ccw" size={18} color={colors.blue} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <T w="extrabold" size={16}>Kunlik takrorlash chegarasi</T>
+            <T size={13} color={colors.muted}>Bir kunda ko'pi bilan nechta so'z takrorlanadi</T>
+          </View>
+        </View>
+        <Segmented options={REVIEW_CAPS.map((c) => ({ value: c as number, label: c ? String(c) : 'Cheksiz' }))} value={cap} onChange={(v) => setPrefs({ reviewCap: v })} />
+        <T size={13} color={colors.muted} style={{ lineHeight: 19 }}>
+          {cap
+            ? <>Kuniga ko'pi bilan <T w="extrabold" size={13}>{cap} ta</T> — taxminan {Math.round(cap * 0.25)} daqiqa. Eng kechikkan va ko'p unutilgan so'zlar birinchi chiqadi, qolgani ertaga o'tadi.</>
+            : "Vaqti kelgan hamma so'z shu kuni chiqadi. Bir necha kun kirmasangiz, yuzlab so'z yig'ilib qolishi mumkin."}
+        </T>
       </View>
 
       <View style={{ backgroundColor: colors.surface, borderRadius: 24, padding: 16, gap: 12 }}>

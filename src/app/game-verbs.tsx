@@ -83,7 +83,7 @@ function Round({ onAgain }: { onAgain: () => void }) {
         <View style={{ alignItems: 'center', gap: 6, paddingVertical: 26, borderRadius: 32, backgroundColor: colors.surface }}>
           <T w="bold" size={13} color={colors.muted}>Ikki shaklini yozing</T>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            <T w="extrabold" size={46} style={{ lineHeight: 54, letterSpacing: -1 }} accessibilityRole="header">{base}</T>
+            <T w="extrabold" size={46} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 54, letterSpacing: -1, flexShrink: 1 }} accessibilityRole="header">{base}</T>
             <RoundIconButton icon="volume-2" label="Eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speakSequence([base])} />
           </View>
           <T w="extrabold" size={18} color={colors.forestText}>{uz}</T>

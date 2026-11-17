@@ -68,7 +68,7 @@ export default function LevelTest() {
       <Pop key={i} from={0.94}>
         <View style={{ backgroundColor: colors.surface, borderRadius: 32, paddingVertical: 30, alignItems: 'center', gap: 10 }}>
           <T w="bold" size={13} color={colors.muted}>Tarjimasini tanlang</T>
-          <T w="extrabold" size={46} style={{ lineHeight: 54, letterSpacing: -1 }} accessibilityRole="header">{q.word.word}</T>
+          <T w="extrabold" size={46} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 54, letterSpacing: -1, alignSelf: 'stretch', textAlign: 'center' }} accessibilityRole="header">{q.word.word}</T>
           <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(q.word.word)} />
         </View>
       </Pop>

@@ -1,4 +1,4 @@
-import { parseEnglishOptions, cyrToLat, parseDictionary, parseMyMemory } from './lookup';
+import { decodeEntities, parseEnglishOptions, cyrToLat, parseDictionary, parseMyMemory } from './lookup';
 
 describe('lookup', () => {
   it('transliterates Uzbek Cyrillic', () => {
@@ -30,4 +30,10 @@ describe('parseEnglishOptions', () => {
     expect(parseEnglishOptions({ responseStatus: 200, responseData: { translatedText: 'kitobxon' } }, 'kitobxon')).toEqual([]);
     expect(parseEnglishOptions({ responseStatus: 403 }, 'x')).toEqual([]);
   });
+});
+
+test("HTML belgilari ochiladi: tutuq belgisi to'g'ri chiqadi", () => {
+  expect(decodeEntities('tug&#39;ilgan')).toBe("tug'ilgan");
+  expect(decodeEntities('o&#x27;qimoq &amp; yozmoq')).toBe("o'qimoq & yozmoq");
+  expect(parseMyMemory({ responseStatus: 200, responseData: { translatedText: 'tug&#39;ilgan' } }, 'born')).toBe("tug'ilgan");
 });

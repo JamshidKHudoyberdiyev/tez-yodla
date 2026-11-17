@@ -89,7 +89,7 @@ function Run({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
       <GameHeader progress={left / SECONDS} label={`0:${String(left).padStart(2, '0')}`} score={score} />
       <Pop key={n} from={0.92}>
         <View style={{ alignItems: 'center', paddingVertical: 34, borderRadius: 32, backgroundColor: colors.surface, borderWidth: 2, borderColor: low ? colors.error : 'transparent' }}>
-          <T w="extrabold" size={44} style={{ lineHeight: 52, letterSpacing: -1, textAlign: 'center' }} accessibilityRole="header">{w.word}</T>
+          <T w="extrabold" size={44} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 52, letterSpacing: -1, textAlign: 'center', alignSelf: 'stretch' }} accessibilityRole="header">{w.word}</T>
         </View>
       </Pop>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>

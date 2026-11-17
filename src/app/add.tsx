@@ -50,6 +50,7 @@ function WriteTab() {
   const [picked, setPicked] = useState<Word | null>(null);
   const [translation, setTranslation] = useState('');
   const [recent, setRecent] = useState<string[]>([]);
+  const [own, setOwn] = useState('');
   // Lug'atda yo'q so'z: internetdan tarjima, talaffuz va misol.
   const [auto, setAuto] = useState<{ q: string; state: 'loading' | 'done' | 'fail'; data?: LookupResult } | null>(null);
   /** O'zbekcha yozilgan so'zning inglizcha variantlari (internetdan) */
@@ -106,7 +107,9 @@ function WriteTab() {
     setTranslation(next.filter((m) => m.on).map((m) => m.text).join('; '));
   };
 
-  const manual = !picked && query.trim().length >= 2 && !suggestions.length;
+  /** Takliflar orasida kerakli so'z yo'q — foydalanuvchi yozganining o'zini qo'shadi («ski», «suit») */
+  const forced = own === query.trim() && !exact;
+  const manual = !picked && query.trim().length >= 2 && (!suggestions.length || forced);
   // Lug'atda yo'q so'z: o'zbekchaga o'xshasa — inglizchasini qidiramiz, aks holda — tarjimasini.
   const uzQ = manual && looksUzbek(query) ? query.trim() : '';
   const lookupQ = manual && !uzQ && /^[a-z][a-z' -]*$/i.test(query.trim()) ? query.trim() : '';
@@ -209,7 +212,7 @@ function WriteTab() {
         </Pressable>
       ) : null}
 
-      {suggestions.length ? (
+      {suggestions.length && !forced ? (
         <View accessibilityRole="list" style={{ backgroundColor: colors.surface, borderRadius: 20, overflow: 'hidden' }}>
           {suggestions[0]?.by === 'uz' ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 2 }}>
@@ -228,6 +231,16 @@ function WriteTab() {
               <Feather name="plus-circle" size={22} color={colors.forestText} />
             </Pressable>
           ))}
+          {!exact && query.trim().length >= 2 ? (
+            <Pressable accessibilityRole="button" accessibilityLabel={`${query.trim()} so'zining o'zini qo'shish`} onPress={() => setOwn(query.trim())}
+              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.divider, backgroundColor: pressed ? colors.limeSoft : colors.surfaceMuted })}>
+              <View style={{ flex: 1 }}>
+                <T w="extrabold" size={16} numberOfLines={1}>«{query.trim()}»</T>
+                <T size={13} color={colors.muted}>Kerakli so'z yuqorida yo'qmi? Shu so'zning o'zini qo'shing</T>
+              </View>
+              <Feather name="arrow-right" size={20} color={colors.forestText} />
+            </Pressable>
+          ) : null}
         </View>
       ) : null}
 
