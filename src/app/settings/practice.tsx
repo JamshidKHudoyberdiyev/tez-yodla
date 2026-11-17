@@ -5,11 +5,12 @@ import { Prefs, useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
 const STEPS: { key: keyof Prefs['steps'] | 'learn'; title: string; sub: string }[] = [
-  { key: 'learn', title: 'Tanishish', sub: "Flesh-karta: so'z, tarjima, assotsiatsiya" },
+  { key: 'learn', title: 'Tanishish', sub: "So'z, tarjima, misol, eslab qolish" },
   { key: 'recall', title: 'Eslash', sub: "O'zingiz eslab, javobni ochasiz" },
   { key: 'test', title: 'Test', sub: "So'z tepada, tarjima variantlari" },
   { key: 'match', title: 'Moslash', sub: "5 so'z ↔ 5 aralash tarjima" },
   { key: 'write', title: 'Yozish', sub: "Har so'zni xotiradan yozasiz" },
+  { key: 'context', title: 'Matn', sub: "Gap ichida mos so'zni tanlaysiz" },
 ];
 
 export default function Practice() {

@@ -42,7 +42,7 @@ export interface AppState {
 /** Foydalanuvchi sozlamalari */
 export interface Prefs {
   /** Guruh bosqichlari (Tanishish doim yoqiq) */
-  steps: { recall: boolean; test: boolean; match: boolean; write: boolean };
+  steps: { recall: boolean; test: boolean; match: boolean; write: boolean; context: boolean };
   testOptions: 4 | 6;
   /** To'g'ri javobdan keyin o'zi keyingisiga o'tsinmi */
   autoAdvance: boolean;
@@ -71,7 +71,7 @@ export interface Prefs {
 }
 
 export const defaultPrefs: Prefs = {
-  steps: { recall: true, test: true, match: true, write: true },
+  steps: { recall: true, test: true, match: true, write: true, context: true },
   reminder: { enabled: false, times: [{ h: 20, m: 0 }], evening: true },
   reminderAsked: false,
   gameBest: {},
@@ -148,7 +148,7 @@ interface Store {
   wordById: (id: string) => Word | undefined;
   /** Streak holati (qoidalar: lib/streak.ts) */
   streak: StreakInfo;
-  finishOnboarding: (p: { name: string; level: Level; dailyNew: number; deckId: string }) => void;
+  finishOnboarding: (p: { name: string; level: Level; dailyNew: number; deckId: string; topics?: string[] }) => void;
   setDailyNew: (n: number) => void;
   setName: (n: string) => void;
   toggleDeck: (deckId: string) => void;
@@ -262,8 +262,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     words,
     streak,
     wordById: (id) => byId.get(id),
-    finishOnboarding: ({ name, level, dailyNew, deckId }) =>
-      setState((s) => withEvent({ ...s, onboarded: true, name, level, dailyNew, activeDecks: Array.from(new Set([deckId, 'mine'])) }, 'onboarding_completed', { level, dailyNew, deckId })),
+    finishOnboarding: ({ name, level, dailyNew, deckId, topics = [] }) =>
+      setState((s) => withEvent({ ...s, onboarded: true, name, level, dailyNew, activeDecks: Array.from(new Set([deckId, ...topics, 'mine'])) }, 'onboarding_completed', { level, dailyNew, deckId, topics: topics.join(',') })),
     setDailyNew: (n) => setState((s) => withEvent({ ...s, dailyNew: n }, 'daily_goal_changed', { dailyNew: n })),
     setName: (name) => setState((s) => ({ ...s, name })),
     toggleDeck: (deckId) =>

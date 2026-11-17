@@ -50,7 +50,7 @@ export function dailyText(dueWords: string[], newCount: number, streak: number, 
   if (later) {
     return n
       ? { title: `🌱 ${n} ta so'z hali ham kutyapti`, body: `${list(dueWords)} — ${mins} daqiqa yetadi.${streak ? ` Streak: ${streak} kun 🔥` : ''}` }
-      : { title: "📚 Bugungi so'zlar hali ochilmadi", body: "10 daqiqa — va bog'ingizda yangi urug'lar paydo bo'ladi." };
+      : { title: "📚 Bugungi so'zlar hali ochilmadi", body: "15 daqiqa — va bog'ingizda yangi urug'lar paydo bo'ladi." };
   }
   if (n) {
     const first = dueWords[0];
@@ -65,9 +65,9 @@ export function dailyText(dueWords: string[], newCount: number, streak: number, 
     return options[Math.abs(variant) % options.length];
   }
   const options = [
-    { title: newCount ? `✨ Bugun ${newCount} ta yangi so'z` : "✨ Bugun so'zlarni bir ko'rib chiqing", body: "10 daqiqa — va bog'ingizda yangi urug'lar." },
+    { title: newCount ? `✨ Bugun ${newCount} ta yangi so'z` : "✨ Bugun so'zlarni bir ko'rib chiqing", body: "15 daqiqa — va bog'ingizda yangi urug'lar." },
     { title: "📚 Yangi so'zlar kutyapti", body: streak > 0 ? `${streak} kunlik streakni davom ettiramizmi? 🔥` : "Bugun boshlasangiz — ertaga birinchi takrorlash." },
-    { title: "🌱 Bog'ingizga yangi urug' ekamizmi?", body: `${newCount || 5} ta so'z, 10 daqiqa. Kichik qadam — katta natija.` },
+    { title: "🌱 Bog'ingizga yangi urug' ekamizmi?", body: `${newCount || 5} ta so'z, bir necha daqiqa. Kichik qadam — katta natija.` },
   ];
   return options[Math.abs(variant) % options.length];
 }

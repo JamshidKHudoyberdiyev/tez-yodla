@@ -1,4 +1,6 @@
+import { Feather } from '@expo/vector-icons';
 import { Pressable, View } from 'react-native';
+import { CountStepper } from '@/components/SettingsUI';
 import { BackHeader, Screen, T } from '@/components/ui';
 import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
@@ -13,13 +15,17 @@ const GOALS = [
 
 /** Takrorlashlar bilan birga taxminiy kunlik vaqt */
 const minutes = dailyMinutes;
+/** «O'zim belgilayman» bosilganda: tayyor variant bilan ustma-ust tushmaydigan eng yaqin son */
+const presetNext = (n: number) => (GOALS.some((g) => g.n === n + 5) ? n + 6 : n + 5);
 
 export default function Goal() {
   const { state, setDailyNew } = useStore();
   const n = state.dailyNew;
+  /** Tayyor variantlardan biri emas — «O'zim belgilayman» tanlangan */
+  const custom = !GOALS.some((g) => g.n === n);
 
   return (
-    <Screen>
+    <Screen avoidKeyboard>
       <BackHeader title="Kunlik maqsad" />
       <T size={14} color={colors.inkSoft} style={{ lineHeight: 21 }}>
         Har kuni nechta <T w="extrabold" size={14}>yangi</T> so'z o'rganasiz? Takrorlash bunga qo'shimcha — u o'z vaqtida avtomatik keladi.
@@ -45,6 +51,17 @@ export default function Goal() {
             </Pressable>
           );
         })}
+        <Pressable accessibilityRole="radio" accessibilityState={{ checked: custom }} accessibilityLabel="O'zim belgilayman" onPress={() => { if (!custom) setDailyNew(Math.min(100, presetNext(n))); }}
+          style={{ padding: 14, gap: 12, borderRadius: 20, borderWidth: 2, borderColor: custom ? colors.forestLine : 'transparent', backgroundColor: custom ? colors.limeSoft : colors.surface }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View>
+              <T w="extrabold" size={16}>O'zim belgilayman</T>
+              <T size={13} color={colors.muted}>1 dan 100 gacha</T>
+            </View>
+            {custom ? <T w="bold" size={13} color={colors.forestText}>~{minutes(n)} daq kuniga</T> : <Feather name="edit-2" size={18} color={colors.muted} />}
+          </View>
+          {custom ? <CountStepper value={n} unit="so'z" label="Kunlik yangi so'zlar soni" onChange={setDailyNew} /> : null}
+        </Pressable>
       </View>
 
       <View style={{ backgroundColor: colors.surface, borderRadius: 24, padding: 16, gap: 12 }}>

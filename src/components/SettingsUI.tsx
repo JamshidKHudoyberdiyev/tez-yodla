@@ -1,8 +1,8 @@
 import { Feather } from '@expo/vector-icons';
-import type { ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Platform, Pressable, TextInput, View } from 'react-native';
 import { IconName, T } from '@/components/ui';
-import { colors } from '@/lib/theme';
+import { colors, font } from '@/lib/theme';
 
 export type Tone = 'green' | 'amber' | 'blue' | 'gray' | 'danger';
 const TONES = (): Record<Tone, { bg: string; fg: string }> => ({
@@ -120,3 +120,35 @@ export function StepSlider<V extends number>({ values, value, onChange, labels }
 
 /** Ismning bosh harflari: «Jamshid Xudoyberdiyev» → «JX» */
 export const initialsOf = (name: string) => (name.trim().split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2) || 'Y').toUpperCase();
+
+/** Son tanlash: − / + tugmalari va o'rtada klaviaturadan yoziladigan maydon. */
+export function CountStepper({ value, min = 1, max = 100, unit, label, onChange }: { value: number; min?: number; max?: number; unit?: string; label: string; onChange: (n: number) => void }) {
+  const [text, setText] = useState(String(value));
+  useEffect(() => { setText(String(value)); }, [value]);
+  const clamp = (n: number) => Math.max(min, Math.min(max, Math.round(n)));
+  const commit = (t: string) => {
+    const n = parseInt(t.replace(/[^0-9]/g, ''), 10);
+    if (Number.isFinite(n)) onChange(clamp(n)); else setText(String(value));
+  };
+  const btn = (sign: -1 | 1) => {
+    const off = sign < 0 ? value <= min : value >= max;
+    return (
+      <Pressable accessibilityRole="button" accessibilityLabel={sign < 0 ? 'Kamaytirish' : "Ko'paytirish"} disabled={off} onPress={() => onChange(clamp(value + sign))}
+        style={({ pressed }) => ({ width: 48, height: 48, borderRadius: 16, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', borderBottomWidth: 3, borderBottomColor: colors.line, opacity: off ? 0.4 : pressed ? 0.8 : 1 })}>
+        <Feather name={sign < 0 ? 'minus' : 'plus'} size={22} color={colors.forestText} />
+      </Pressable>
+    );
+  };
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      {btn(-1)}
+      <View style={{ flex: 1, height: 56, borderRadius: 18, backgroundColor: colors.surface, borderWidth: 2, borderColor: colors.forestLine, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+        <TextInput value={text} onChangeText={(t) => setText(t.replace(/[^0-9]/g, '').slice(0, 3))} onBlur={() => commit(text)} onSubmitEditing={() => commit(text)}
+          keyboardType="number-pad" returnKeyType="done" selectTextOnFocus maxLength={3} accessibilityLabel={label}
+          style={[{ width: 64, flexGrow: 0, textAlign: 'center', fontFamily: font.extrabold, fontSize: 28, color: colors.ink, padding: 0 }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as object)]} />
+        {unit ? <T size={14} color={colors.muted}>{unit}</T> : null}
+      </View>
+      {btn(1)}
+    </View>
+  );
+}

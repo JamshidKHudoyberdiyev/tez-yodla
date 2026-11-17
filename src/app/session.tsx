@@ -133,7 +133,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
     ...(on.test ? (['Test'] as const) : []),
     ...(on.match && group.length >= MIN_MATCH ? (['Moslash'] as const) : []),
     ...(on.write ? (['Yozish'] as const) : []),
-    ...(kind === 'new' && contextItems(group).length >= MIN_CONTEXT ? (['Matn'] as const) : []),
+    ...(on.context && kind === 'new' && contextItems(group).length >= MIN_CONTEXT ? (['Matn'] as const) : []),
   ];
   const seg = (name: StepName): Seg => ({ count: steps.length, index: steps.indexOf(name), toast: stageToast });
   const PHASE_STEP: Partial<Record<Phase, StepName>> = { learn: 'Tanishish', recall: 'Eslash', test: 'Test', match: 'Moslash', write: 'Yozish', context: 'Matn' };
@@ -250,7 +250,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
       { icon: 'check-square' as const, t: 'Test', s: '4 variant', bg: colors.limeSoft, fg: colors.forestText, on: on.test },
       { icon: 'link' as const, t: 'Moslash', s: 'juftlar', bg: colors.blueSoft, fg: colors.blue, on: on.match },
       { icon: 'edit-3' as const, t: 'Yozish', s: 'yozasiz', bg: colors.amberSoft, fg: colors.amber, on: on.write },
-      { icon: 'align-left' as const, t: 'Matn', s: "gap ichida", bg: colors.blueSoft, fg: colors.blue, on: !!initial.groups[0] && contextItems(initial.groups[0]).length >= MIN_CONTEXT },
+      { icon: 'align-left' as const, t: 'Matn', s: "gap ichida", bg: colors.blueSoft, fg: colors.blue, on: on.context && !!initial.groups[0] && contextItems(initial.groups[0]).length >= MIN_CONTEXT },
     ].filter((x) => x.on);
     const newCount = initial.groups.reduce((n, g) => n + g.length, 0);
     const empty = !newCount && !initial.reviews.length && !initial.pendingRelearn.length;

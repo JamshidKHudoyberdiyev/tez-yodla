@@ -5,6 +5,7 @@ import { SettingGroup, SettingRow } from '@/components/SettingsUI';
 import { BackHeader, Screen, T } from '@/components/ui';
 import { appVersion } from '@/lib/monitoring';
 import { timeLabel } from '@/lib/reminders';
+import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
@@ -34,8 +35,8 @@ export default function Settings() {
       </Pressable>
 
       <SettingGroup label="O'rganish">
-        <SettingRow icon="target" title="Kunlik maqsad" sub={`~${Math.round(state.dailyNew * 1.15)} daqiqa kuniga`} value={`${state.dailyNew} ta so'z`} onPress={() => router.push('/settings/goal')} />
-        <SettingRow icon="list" title="Mashq bosqichlari" sub={stepCount === 5 ? 'Tanishish → … → Yozish' : `${stepCount} ta bosqich yoqilgan`} value={`${stepCount} ta`} onPress={() => router.push('/settings/practice')} />
+        <SettingRow icon="target" title="Kunlik maqsad" sub={`~${dailyMinutes(state.dailyNew)} daqiqa kuniga`} value={`${state.dailyNew} ta so'z`} onPress={() => router.push('/settings/goal')} />
+        <SettingRow icon="list" title="Mashq bosqichlari" sub={stepCount === 6 ? 'Tanishish → … → Matn' : `${stepCount} ta bosqich yoqilgan`} value={`${stepCount} ta`} onPress={() => router.push('/settings/practice')} />
         <SettingRow icon="layers" title="To'plamlar" value={`${state.activeDecks.length} ta faol`} onPress={() => router.push('/decks')} />
         <SettingRow icon="award" title="Darajam" value={state.level} onPress={() => router.push('/settings/profile')} last />
       </SettingGroup>

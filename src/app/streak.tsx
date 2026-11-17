@@ -4,20 +4,22 @@ import { Pressable, View } from 'react-native';
 import { DayGoal, Flame, FreezeChip, StreakCard, WeekStrip } from '@/components/Streak';
 import { SnowArt } from '@/components/Art';
 import { Button, Screen, T } from '@/components/ui';
-import { computeStats } from '@/lib/plan';
+import { computeStats, todayPlan } from '@/lib/plan';
 import { DAY_GOAL, FREEZE_EVERY, MAX_FREEZES, milestoneLabel, MILESTONES } from '@/lib/streak';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
 export default function StreakScreen() {
-  const { state, today, streak: s, repairStreak, dismissBreak } = useStore();
+  const { state, words, today, streak: s, repairStreak, dismissBreak } = useStore();
   const stats = computeStats(state.cards, state.log, today);
+  // Bosh sahifadagidek: avval yangi so'zlar, ular tugagan bo'lsa — takrorlash
+  const hasNew = todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, log: state.log, today }).newWords.length > 0;
   const prevMilestone = [...MILESTONES].reverse().find((m) => m <= s.current) ?? 0;
   const next = s.nextMilestone;
   const progress = next ? (s.current - prevMilestone) / (next - prevMilestone) : 1;
 
   return (
-    <Screen footer={!s.todayDone ? <Button title={s.todayCount ? `Davom etish · yana ${DAY_GOAL - s.todayCount} ta so'z` : "Bugungi mashg'ulot"} icon="play" onPress={() => router.push('/session')} /> : undefined}>
+    <Screen footer={!s.todayDone ? <Button title={s.todayCount ? `Davom etish · yana ${DAY_GOAL - s.todayCount} ta so'z` : "Bugungi mashg'ulot"} icon="play" onPress={() => router.push({ pathname: '/session', params: { only: hasNew ? 'new' : 'review' } })} /> : undefined}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <Pressable accessibilityRole="button" accessibilityLabel="Yopish" onPress={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
           style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>

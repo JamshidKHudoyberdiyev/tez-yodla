@@ -56,7 +56,7 @@ export default function Welcome() {
             So'zni tez yodlang.{'\n'}<T w="extrabold" size={34} color={colors.lime} style={{ lineHeight: 38 }}>Umrbod eslab qoling.</T>
           </T>
           <T size={15} color={colors.onForestSoft} style={{ lineHeight: 22 }}>
-            Har bir so'z urug'dan mevagacha o'sadi: o'z vaqtida takrorlash, yozib mashq qilish va kuniga atigi 10 daqiqa.
+            Har bir so'z urug'dan mevagacha o'sadi: o'z vaqtida takrorlash, yozib mashq qilish va kuniga 15–20 daqiqa.
           </T>
         </View>
       </Screen>

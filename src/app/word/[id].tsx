@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
-import { Association, Example, WordHead, WordPhoto } from '@/components/WordParts';
+import { Association, Example, PluralTag, WordHead, WordPhoto } from '@/components/WordParts';
 import { Plant } from '@/components/Art';
 import { BackHeader, Card, Chip, Screen, T } from '@/components/ui';
 import { gardenIndex } from '@/lib/garden';
@@ -47,19 +47,21 @@ export default function WordJourney() {
           <T w="extrabold" size={13} color={card.state === 'relearning' ? colors.amber : colors.ink}>{card.state === 'relearning' ? 'Qayta' : STAGE_NAMES[gardenIndex(card)]}</T>
         </View>
       ) : <Chip label="Yangi" bg={colors.blueSoft} fg={colors.blue} />} />
-      <Card style={{ padding: word.image ? 12 : 18, gap: 12 }}>
+      <Card style={{ borderRadius: 30, padding: word.image ? 12 : 18, gap: 12 }}>
         <WordPhoto word={word} />
-        <View style={{ paddingHorizontal: word.image ? 6 : 0, paddingBottom: word.image ? 6 : 0, gap: 12 }}>
-          <WordHead word={word} />
-          <T w="extrabold" size={24} color={colors.forestText}>{word.translation}</T>
+        <View style={{ paddingHorizontal: word.image ? 6 : 0, paddingBottom: word.image ? 6 : 0, gap: 10 }}>
+          <WordHead word={word} big />
+          <View style={{ height: 1, backgroundColor: colors.divider }} />
+          <T w="extrabold" size={30} color={colors.forestText} style={{ lineHeight: 36 }}>{word.translation}</T>
+          <PluralTag word={word} />
           <Association word={word} />
-          <Example word={word} />
         </View>
       </Card>
+      <Example word={word} card />
 
       <T w="extrabold" size={18}>So'zning yodlanish yo'li</T>
       <Card style={{ gap: 0 }}>
-        <Step stage={0} done={!!card} title="Urug' ekildi" sub={card?.learnedOn != null ? `Tanishish → Eslash → Yozish · ${today - card.learnedOn === 0 ? 'bugun' : `${today - card.learnedOn} kun oldin`}` : "Hali o'rganilmagan"} />
+        <Step stage={0} done={!!card} title="Urug' ekildi" sub={card?.learnedOn != null ? `Birinchi mashg'ulot · ${today - card.learnedOn === 0 ? 'bugun' : `${today - card.learnedOn} kun oldin`}` : "Hali o'rganilmagan"} />
         {steps.map((x) => (
           <Step key={x.s} stage={x.s + 1} done={x.done} next={x.next} last={x.s === steps.length - 1}
             title={`${x.next && dueIn !== null ? (dueIn <= 0 ? 'Bugun' : `${dueIn} kundan keyin`) : x.title} → ${GROWS[x.s]}`}
