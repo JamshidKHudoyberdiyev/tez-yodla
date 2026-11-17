@@ -88,6 +88,8 @@ export function planReminders(opts: {
   streak: number;
   dailyNew: number;
   days?: number;
+  /** Kunlik takrorlash chegarasi (0 — cheksiz): eslatmada bundan ko'p so'z aytilmaydi */
+  reviewCap?: number;
 }): PlannedNotification[] {
   const { prefs, cards, wordOf, now, today, doneToday, streak, dailyNew } = opts;
   if (!prefs.enabled || !prefs.times.length) return [];
@@ -97,7 +99,8 @@ export function planReminders(opts: {
   for (let k = 0; k < (opts.days ?? PLAN_DAYS); k++) {
     if (k === 0 && doneToday) continue;
     const day = today + k;
-    const due = dueWordsOn(cards, day).map(wordOf).filter((w): w is string => !!w);
+    const dueAll = dueWordsOn(cards, day).map(wordOf).filter((w): w is string => !!w);
+    const due = opts.reviewCap ? dueAll.slice(0, opts.reviewCap) : dueAll;
     times.forEach((t, i) => {
       const at = new Date(now.getFullYear(), now.getMonth(), now.getDate() + k, t.h, t.m).getTime();
       if (at <= soon) return;

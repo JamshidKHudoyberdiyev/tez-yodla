@@ -189,8 +189,8 @@ function MiniCard({ icon, tint, ink, title, sub, action, actionBg, actionFg, bor
         <Feather name={icon} size={20} color={ink} />
       </View>
       <View style={{ flex: 1 }}>
-        <T w="extrabold" size={15} numberOfLines={1}>{title}</T>
-        <T size={12} color={colors.muted} numberOfLines={1}>{sub}</T>
+        <T w="extrabold" size={15} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{title}</T>
+        <T size={12} color={colors.muted} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>{sub}</T>
       </View>
       {action ? (
         <View style={{ height: 34, paddingHorizontal: 14, borderRadius: 12, backgroundColor: actionBg, justifyContent: 'center' }}>

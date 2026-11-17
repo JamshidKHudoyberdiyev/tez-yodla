@@ -7,6 +7,7 @@ import { Plant } from '@/components/Art';
 import { Button, Screen, T } from '@/components/ui';
 import { relativeDay, uzDate } from '@/lib/drill';
 import { gardenStages, overdue, type GardenStage } from '@/lib/garden';
+import { capReviews } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
@@ -17,14 +18,16 @@ export default function Garden() {
   const { state, today, wordById } = useStore();
   const stages = useMemo(() => gardenStages(state.cards, today), [state.cards, today]);
   const late = useMemo(() => overdue(state.cards, today), [state.cards, today]);
-  const dueTotal = stages.reduce((n, s) => n + s.dueIds.length, 0);
+  const dueAll = stages.reduce((n, s) => n + s.dueIds.length, 0);
+  // Tugma kunlik takrorlash chegarasini hisobga oladi (bosh sahifadagidek)
+  const dueTotal = capReviews(Array.from({ length: dueAll }), state.prefs.reviewCap, state.log[today]?.reviewed ?? 0).today.length;
   const total = stages.reduce((n, s) => n + s.ids.length, 0);
   const next = stages.map((s) => s.nextDue).filter((d): d is number => d !== null && d > today).sort((a, b) => a - b)[0];
   const [open, setOpen] = useState<string | null>(null);
   const [width, setWidth] = useState(0);
 
   return (
-    <Screen edges={['top']} footer={dueTotal ? <Button title={`${dueTotal} ta so'zni sug'orish`} onPress={() => router.push('/session')} /> : undefined}>
+    <Screen edges={['top']} footer={dueTotal ? <Button title={`${dueTotal} ta so'zni sug'orish`} onPress={() => router.push({ pathname: '/session', params: { only: 'review' } })} /> : undefined}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <T w="extrabold" size={24} style={{ flex: 1 }} accessibilityRole="header">So'zlar bog'i</T>
         <T w="extrabold" size={15} color={colors.forestText}>{total} so'z</T>

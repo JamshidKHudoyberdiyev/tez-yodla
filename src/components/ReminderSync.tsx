@@ -18,6 +18,7 @@ export function ReminderSync() {
       doneToday: streak.todayDone,
       streak: streak.current,
       dailyNew: state.dailyNew,
+      reviewCap: state.prefs.reviewCap,
     });
     applyReminders(plan);
   };

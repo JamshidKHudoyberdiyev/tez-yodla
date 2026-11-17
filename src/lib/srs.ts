@@ -10,7 +10,7 @@
 
 export type CardState = 'new' | 'learning' | 'review' | 'relearning' | 'mastered';
 export type Grade = 'again' | 'hard' | 'good' | 'easy';
-export type ReviewMode = 'recall' | 'write' | 'cloze' | 'listen';
+export type ReviewMode = 'recall' | 'choice' | 'write' | 'cloze' | 'listen';
 
 export interface Card {
   wordId: string;
@@ -32,6 +32,8 @@ export const INTERVALS = [1, 3, 7, 14, 30];
 export const MASTERED_INTERVAL = 90;
 /** Shuncha marta unutilgan so'z "qiyin" deb belgilanadi */
 export const HARD_WORD_LAPSES = 4;
+/** Shuncha marta unutilgan so'z takrorlashda ko'proq yozdiriladi (qolganlari yengilroq shaklda takrorlanadi) */
+export const TYPING_LAPSES = 2;
 /** Yangi so'zlar shuncha so'zdan iborat guruhlarda o'rganiladi */
 export const GROUP_SIZE = 5;
 
@@ -100,18 +102,30 @@ export function isHardWord(card: Card): boolean {
 }
 
 /**
- * Takrorlash shakli bosqichga qarab almashadi, shunda so'z har tomondan mustahkamlanadi:
- * ertaga kartochka, 3 kundan keyin yozma, 1 haftadan keyin gap ichida, 2 haftadan keyin eshitib yozish.
+ * Takrorlash shakli bosqichga qarab almashadi. Takrorlash tez bo'lishi uchun yozish kam:
+ * hech unutilmagan so'z butun yo'lida faqat bir marta yoziladi (1 haftadan keyin, gap ichida).
+ *   ertaga — kartochka, 3 kundan keyin — variant tanlash, 1 haftadan keyin — yozish,
+ *   2 haftadan keyin — variant tanlash, 1 oydan keyin — kartochka.
+ * Ko'p unutilgan so'z (TYPING_LAPSES va undan ko'p) eski, og'irroq tartibda qoladi: yozma, gap ichida, eshitib yozish.
  */
 export function reviewModeFor(card: Card, hasExample: boolean): ReviewMode {
   if (card.state === 'mastered') return 'recall';
+  const hard = card.lapses >= TYPING_LAPSES;
   switch (card.stage) {
     case 0: return 'recall';
-    case 1: return 'write';
+    case 1: return hard ? 'write' : 'choice';
     case 2: return hasExample ? 'cloze' : 'write';
-    case 3: return 'listen';
+    case 3: return hard ? 'listen' : 'choice';
     default: return 'recall';
   }
+}
+
+/**
+ * Oson so'z tezroq uzoqlashadi: hech unutilmagan so'z 3 kunlik takrorlashda to'g'ri topilsa,
+ * 1 haftalik bosqichni sakrab, to'g'ri 2 haftaga o'tadi (takrorlashlar soni kamayadi).
+ */
+export function quickGrade(card: Card, grade: Grade): Grade {
+  return grade === 'good' && card.lapses === 0 && card.state === 'review' && card.stage === 1 ? 'easy' : grade;
 }
 
 /** Yozilgan javobni baholash: to'g'ri → good, bitta harf xato → hard, aks holda → again. */

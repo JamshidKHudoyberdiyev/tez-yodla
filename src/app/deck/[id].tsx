@@ -15,6 +15,9 @@ const STATUS: Record<WordStatus, { label: string; bg: () => string; fg: () => st
   new: { label: 'Yangi', bg: () => colors.bg, fg: () => colors.muted },
 };
 
+/** Ro'yxatda bir yo'la ko'rsatiladigan so'zlar soni */
+const PAGE = 40;
+
 /** To'plam sahifasi: progress, «Kunlik rejada» tugmachasi, so'zlar ro'yxati va shu mavzudan o'rganish. */
 export default function DeckScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,6 +25,8 @@ export default function DeckScreen() {
   const deck = deckById(id);
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState('');
+  // Katta to'plam (1000 so'z) birdaniga chizilsa ekran qotadi — ro'yxat bo'lib-bo'lib ko'rsatiladi
+  const [limit, setLimit] = useState(PAGE);
 
   const ws = useMemo(() => words.filter((w) => w.deckId === id), [words, id]);
   if (!deck) return <Screen><BackHeader title="To'plam topilmadi" /></Screen>;
@@ -34,6 +39,7 @@ export default function DeckScreen() {
   const pct = p.total ? Math.round((p.started / p.total) * 100) : 0;
   const query = q.trim().toLowerCase();
   const list = query ? ws.filter((w) => w.word.toLowerCase().includes(query) || w.translation.toLowerCase().includes(query)) : ws;
+  const shown = list.slice(0, limit);
 
   const footer = fresh || practice ? (
     <View style={{ gap: 10 }}>
@@ -42,9 +48,20 @@ export default function DeckScreen() {
     </View>
   ) : undefined;
 
+  const header = (
+    <>
+      <BackHeader title={deck.title} right={<RoundIconButton icon={search ? 'x' : 'search'} label={search ? 'Qidiruvni yopish' : "So'z qidirish"} onPress={() => { setSearch(!search); setQ(''); }} />} />
+      {search ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 48, paddingHorizontal: 16, backgroundColor: colors.surface, borderRadius: 16 }}>
+          <Feather name="search" size={18} color={colors.muted} />
+          <TextInput autoFocus value={q} onChangeText={(t) => { setQ(t); setLimit(PAGE); }} placeholder="So'z yoki tarjima" placeholderTextColor={colors.muted} accessibilityLabel="So'z qidirish"
+            style={[{ flex: 1, fontFamily: font.medium, fontSize: 15, color: colors.ink }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as object)]} />
+        </View>
+      ) : null}
+    </>
+  );
   return (
-    <Screen footer={footer} avoidKeyboard>
-      <BackHeader right={<RoundIconButton icon={search ? 'x' : 'search'} label={search ? 'Qidiruvni yopish' : "So'z qidirish"} onPress={() => { setSearch(!search); setQ(''); }} />} />
+    <Screen footer={footer} header={header} avoidKeyboard>
 
       <View style={{ backgroundColor: colors.surface, borderRadius: 26, padding: 18, gap: 14 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
@@ -77,20 +94,13 @@ export default function DeckScreen() {
         </Pressable>
       </View>
 
-      {search ? (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 48, paddingHorizontal: 16, backgroundColor: colors.surface, borderRadius: 16 }}>
-          <Feather name="search" size={18} color={colors.muted} />
-          <TextInput autoFocus value={q} onChangeText={setQ} placeholder="So'z yoki tarjima" placeholderTextColor={colors.muted} accessibilityLabel="So'z qidirish"
-            style={[{ flex: 1, fontFamily: font.medium, fontSize: 15, color: colors.ink }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as object)]} />
-        </View>
-      ) : null}
 
       <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 4 }}>
         <T w="extrabold" size={18}>So'zlar</T>
         <T w="bold" size={13} color={colors.muted}>{list.length} ta</T>
       </View>
       <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
-        {list.length ? list.map((w, i) => {
+        {list.length ? shown.map((w, i) => {
           const s = STATUS[wordStatus(state.cards[w.id])];
           return (
             <Pressable key={w.id} accessibilityRole="button" accessibilityLabel={`${w.word}, ${w.translation}, ${s.label}`} onPress={() => router.push({ pathname: '/word/[id]', params: { id: w.id } })}
@@ -106,6 +116,12 @@ export default function DeckScreen() {
           );
         }) : <T size={14} color={colors.muted} style={{ padding: 16 }}>Hech narsa topilmadi</T>}
       </View>
+      {list.length > shown.length ? (
+        <Pressable accessibilityRole="button" onPress={() => setLimit(limit + PAGE * 2)}
+          style={({ pressed }) => ({ height: 48, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 })}>
+          <T w="extrabold" size={14} color={colors.forestText}>Yana ko'rsatish · {list.length - shown.length} ta qoldi</T>
+        </Pressable>
+      ) : null}
       {!fresh && !practice ? null : !fresh ? (
         <T size={13} color={colors.muted} style={{ textAlign: 'center' }}>Bu mavzudagi barcha so'zlarni o'rganishni boshladingiz.</T>
       ) : null}

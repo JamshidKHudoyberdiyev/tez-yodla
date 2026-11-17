@@ -12,6 +12,7 @@ import { colors } from '@/lib/theme';
 
 const MODE_TEXT: Record<ReviewMode, string> = {
   recall: "Kartochka: ko'rib eslash",
+  choice: 'Test: tarjimani tanlash',
   write: 'Yozma: tarjimadan yozish',
   cloze: 'Gap ichida: bo\'sh joyni to\'ldirish',
   listen: 'Eshitib yozish',

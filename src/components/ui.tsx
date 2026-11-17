@@ -1,6 +1,6 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { Children, isValidElement, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Modal, Pressable, ScrollView, type ScrollViewInstance, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, font, FontScaleContext, radius, themed, ThemeContext } from '../lib/theme';
@@ -113,8 +113,10 @@ function useKeyboardOverlap(enabled: boolean) {
   return { ref, overlap, onLayout: measure };
 }
 
-export function Screen({ children, scroll = true, bg = colors.bg, padded = true, footer, edges, sheet, sheetBorder, avoidKeyboard }: {
+export function Screen({ children, scroll = true, bg = colors.bg, padded = true, footer, header, edges, sheet, sheetBorder, avoidKeyboard }: {
   children: ReactNode;
+  /** Tepada qotib turadigan sarlavha (aylantirilganda ham ko'rinadi). Berilmasa — birinchi bola `BackHeader` bo'lsa, o'zi tepaga qotiriladi. */
+  header?: ReactNode;
   scroll?: boolean;
   bg?: string;
   padded?: boolean;
@@ -137,11 +139,20 @@ export function Screen({ children, scroll = true, bg = colors.bg, padded = true,
         shadowColor: '#121820', shadowOpacity: 0.12, shadowRadius: 18, shadowOffset: { width: 0, height: -6 }, elevation: 16 }
     : { paddingHorizontal: 20, paddingBottom: kb ? 10 : 16, paddingTop: 8, gap: 8 };
   const safeEdges = edges ?? ['top', 'bottom', 'left', 'right'];
+  // «Orqaga» sarlavhasi aylantirilganda yo'qolib ketmasin: ro'yxat uzun bo'lsa ham doim tepada turadi.
+  let pinned = header;
+  let rest = children;
+  if (!pinned && scroll && padded) {
+    const kids = Children.toArray(children);
+    const first = kids[0];
+    if (isValidElement(first) && first.type === BackHeader) { pinned = first; rest = kids.slice(1); }
+  }
   const body = (
     <SafeAreaView style={{ flex: 1, backgroundColor: bg }} edges={(sheet && footer) || kb ? safeEdges.filter((e) => e !== 'bottom') : safeEdges}>
+      {pinned ? <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10, gap: 10, backgroundColor: bg, zIndex: 1 }}>{pinned}</View> : null}
       {scroll ? (
-        <ScrollView contentContainerStyle={[content, { flexGrow: 1 }]} keyboardShouldPersistTaps="handled">
-          {children}
+        <ScrollView contentContainerStyle={[content, pinned ? { paddingTop: 6 } : null, { flexGrow: 1 }]} keyboardShouldPersistTaps="handled">
+          {rest}
         </ScrollView>
       ) : (
         <View style={[{ flex: 1 }, content]}>{children}</View>

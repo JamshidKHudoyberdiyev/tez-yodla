@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { BackHandler, Modal, Pressable, TextInput, View } from 'react-native';
+import { BackHandler, Modal, Pressable, TextInput, View, useWindowDimensions } from 'react-native';
 import { Association, DiffLetters, Example, PluralTag, SoundButton, WordHead, WordPhoto } from '@/components/WordParts';
 import { Button, Card, Group, Progress, RoundIconButton, Screen, T, useSheetBottom } from '@/components/ui';
 import { DayGoal, Flame, FreezeChip, WeekStrip } from '@/components/Streak';
@@ -15,7 +15,7 @@ import { deckById, Word } from '@/data/words';
 import { capReviews, EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { clozeOf, clozeParts, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence } from '@/lib/speech';
-import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
+import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT, quickGrade } from '@/lib/srs';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
@@ -129,7 +129,8 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
   };
 
   const on = state.prefs.steps;
-  const steps: StepName[] = [
+  // Unutilgan so'zlarni qayta yodlash qisqa: kartani ko'rish va test (yozish va moslashsiz).
+  const steps: StepName[] = kind === 'relearn' ? ['Tanishish', 'Test'] : [
     'Tanishish',
     ...(on.recall ? (['Eslash'] as const) : []),
     ...(on.test ? (['Test'] as const) : []),
@@ -272,7 +273,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
             <T w="extrabold" size={18} accessibilityRole="header">Har bir so'z {planSteps.length} bosqichdan o'tadi</T>
             <Card style={{ padding: 12, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {planSteps.map((x, i) => (
-                <View key={x.t} style={{ width: '31.5%', flexGrow: 1, alignItems: 'center', gap: 4, paddingTop: 14, paddingBottom: 12, paddingHorizontal: 4, borderRadius: 18, backgroundColor: colors.surfaceMuted }}>
+                <View key={x.t} style={{ width: '30%', flexGrow: 1, alignItems: 'center', gap: 4, paddingTop: 14, paddingBottom: 12, paddingHorizontal: 4, borderRadius: 18, backgroundColor: colors.surfaceMuted }}>
                   <T w="extrabold" size={11} color={colors.muted} style={{ position: 'absolute', top: 8, left: 10 }}>{i + 1}</T>
                   <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: x.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 2 }}>
                     <Feather name={x.icon} size={21} color={x.fg} />
@@ -508,8 +509,9 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
   if (phase === 'review') {
     const card = initial.reviews[reviewIdx];
     const w = wordById(card.wordId)!;
-    const next = (g: Grade) => {
+    const next = (raw: Grade) => {
       const live = state.cards[card.wordId] ?? card;
+      const g = quickGrade(live, raw);
       const from = gardenIndex(live);
       const to = gardenIndex(gradeCard(live, g, today));
       if (to > from) grown.current.push({ word: w.word, from, to });
@@ -534,6 +536,14 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
         </Screen>
       );
     }
+    if (mode === 'choice') {
+      return (
+        <TestStep key={card.wordId + reviewIdx} word={w} header={header}
+          groupOthers={initial.reviews.filter((c) => c.wordId !== card.wordId).map((c) => wordById(c.wordId)?.translation).filter(Boolean) as string[]}
+          pool={words.map((x) => x.translation)} retryNote={false}
+          onDone={(ok) => next(ok ? 'good' : 'again')} />
+      );
+    }
     return <WriteStep key={card.wordId + reviewIdx} word={w} mode={mode} header={<>{header}<ModeBadge mode={mode} /></>} onDone={next} />;
   }
 
@@ -545,7 +555,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
         <Card style={{ gap: 10, backgroundColor: colors.amberBg, borderWidth: 1, borderColor: colors.amberLine }}>
           <Feather name="rotate-ccw" size={28} color={colors.amber} />
           <T w="extrabold" size={20}>{ws.length} ta so'z unutildi</T>
-          <T size={15} color={colors.inkSoft}>Bu normal holat. Ularni hozir qisqa qilib qayta yodlaymiz: ko'rish → eslash → test → yozish. Ertaga yana tekshiramiz.</T>
+          <T size={15} color={colors.inkSoft}>Bu normal holat. Ularni hozir qisqa qilib qayta yodlaymiz: kartani ko'rib chiqasiz, keyin kichik test. Ertaga yana tekshiramiz.</T>
         </Card>
         <Group>
           {ws.map((w, i) => (
@@ -847,7 +857,7 @@ function GradeButtons({ onGrade, card, today }: { onGrade: (g: Grade) => void; c
   const grades: Grade[] = ['again', 'good'];
   const sub = (g: Grade) => {
     if (!card || today === undefined) return g === 'again' ? "yana ko'rsatiladi" : 'keyingisiga';
-    return gapLabel(gradeCard(card, g, today).due - today);
+    return gapLabel(gradeCard(card, quickGrade(card, g), today).due - today);
   };
   return (
     <View style={{ gap: 8 }}>
@@ -876,7 +886,7 @@ function GradeButtons({ onGrade, card, today }: { onGrade: (g: Grade) => void; c
 }
 
 function ModeBadge({ mode }: { mode: ReviewMode }) {
-  const map: Record<ReviewMode, string> = { recall: "Kartochka: ko'rib eslang", write: 'Yozma: tarjimadan yozing', cloze: "Gap ichida: bo'sh joyni to'ldiring", listen: 'Eshitib yozing' };
+  const map: Record<ReviewMode, string> = { recall: "Kartochka: ko'rib eslang", choice: "To'g'ri tarjimani tanlang", write: 'Yozma: tarjimadan yozing', cloze: "Gap ichida: bo'sh joyni to'ldiring", listen: 'Eshitib yozing' };
   return <T w="bold" size={13} color={colors.muted} style={{ textTransform: 'uppercase', letterSpacing: 0.8 }}>{map[mode]}</T>;
 }
 
@@ -1036,7 +1046,7 @@ function HintChip({ icon, label, onPress, disabled }: { icon: React.ComponentPro
 }
 
 /** 3-bosqich — Test: so'z tepada, pastda 4 ta tarjima varianti. */
-export function TestStep({ word, groupOthers, pool, header, onDone }: { word: Word; groupOthers: string[]; pool: string[]; header: React.ReactNode; onDone: (correct: boolean) => void }) {
+export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = true }: { word: Word; groupOthers: string[]; pool: string[]; header: React.ReactNode; onDone: (correct: boolean) => void; /** «guruh oxirida yana so'raladi» yozuvi (takrorlashda kerak emas) */ retryNote?: boolean }) {
   const { state } = useStore();
   const prefs = state.prefs;
   const [choices] = useState(() => buildChoices(word.translation, groupOthers, pool, prefs.testOptions));
@@ -1083,7 +1093,7 @@ export function TestStep({ word, groupOthers, pool, header, onDone }: { word: Wo
           {!correct && word.example ? (
             <T size={13} color={colors.inkSoft} style={{ lineHeight: 19 }}>{word.example}{word.exampleUz ? ` — ${word.exampleUz}` : ''}</T>
           ) : null}
-          {!correct ? <T size={12} color={colors.muted}>Bu so'z guruh oxirida yana so'raladi.</T> : null}
+          {!correct && retryNote ? <T size={12} color={colors.muted}>Bu so'z guruh oxirida yana so'raladi.</T> : null}
           <Button title="Davom etish" variant={correct ? 'lime' : 'danger'} onPress={() => finish(correct)} />
         </SlideUp>
       ) : undefined}>
@@ -1273,7 +1283,10 @@ export function matchPages<X>(items: X[], size = MATCH_PAGE): X[][] {
 }
 
 function MatchStep({ group, header, onMistake, onDone }: { group: Word[]; header: (found: number) => React.ReactNode; onMistake: (wordId: string) => void; onDone: () => void }) {
-  const pages = useMemo(() => matchPages(group), [group]);
+  // Past bo'yli ekranda bir sahifaga kamroq juft qo'yiladi — aylantirish kerak bo'lmasin
+  const { height } = useWindowDimensions();
+  const size = height < 620 ? 3 : height < 740 ? 4 : MATCH_PAGE;
+  const pages = useMemo(() => matchPages(group, size), [group, size]);
   const [page, setPage] = useState(0);
   const before = pages.slice(0, page).reduce((n, p) => n + p.length, 0);
   return (
@@ -1349,7 +1362,7 @@ function MatchPage({ group, header, onMistake, onDone, pageLabel }: { group: Wor
             <T w="extrabold" size={10} color={look.bg}>{order + 1}</T>
           </View>
         ) : null}
-        <T w="extrabold" size={17} numberOfLines={2} style={{ textAlign: 'center', flexShrink: 1 }} color={fg}>{label}</T>
+        <T w="extrabold" size={17} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.75} style={{ textAlign: 'center', flexShrink: 1 }} color={fg}>{label}</T>
         {side === 'L' && !look ? <Feather name="volume-2" size={14} color={isSel ? colors.limeInk : colors.muted} /> : null}
       </Pressable>
       </Pop>

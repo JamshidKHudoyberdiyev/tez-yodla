@@ -33,7 +33,7 @@ function TabBar({ state, navigateToTab }: BottomTabBarProps) {
         style={{ flex: 1, alignItems: 'center', gap: 3, paddingTop: 4, minHeight: 48 }}
       >
         <DuoIcon name={meta.icon} size={24} fill={focused ? colors.duoFill : 'transparent'} stroke={focused ? colors.duoStroke : colors.faint} />
-        <T w={focused ? 'extrabold' : 'semibold'} size={11} color={focused ? colors.forestText : colors.faint} numberOfLines={1}>{meta.label}</T>
+        <T w={focused ? 'extrabold' : 'semibold'} size={11} color={focused ? colors.forestText : colors.faint} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{meta.label}</T>
       </Pressable>
     );
   });
