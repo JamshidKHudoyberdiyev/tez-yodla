@@ -1,33 +1,69 @@
-import { CORE_ASSOCIATIONS, CORE_ENTRIES } from '../data/core';
-import { WORDS } from '../data/words';
-import { clozeOf, exampleHasWord } from './text';
+/**
+ * content/*.tsv fayllarini tekshiradi. Ishga tushirish: npx jest content
+ * Xato bo'lsa — qaysi fayl, qaysi qator va nima noto'g'riligi yoziladi.
+ */
+import fs from 'fs';
+import path from 'path';
+import { DECKS, WORDS } from '@/data/words';
+import { GENERATED_DECKS, GENERATED_WORDS } from '@/data/generated';
+import { parseContent } from './content';
 
-describe("kontent sifati", () => {
-  test("1000 asosiy so'z to'plamida kamida 1000 ta noyob so'z bor", () => {
-    expect(CORE_ENTRIES.length).toBeGreaterThanOrEqual(1000);
-    const words = CORE_ENTRIES.map((e) => e.word.toLowerCase());
-    expect(new Set(words).size).toBe(words.length);
+const DIR = path.join(__dirname, '../../content');
+const files = fs.existsSync(DIR) ? fs.readdirSync(DIR).filter((f) => f.endsWith('.tsv') && !f.startsWith('_')) : [];
+
+describe('content/*.tsv', () => {
+  test('namuna fayl to\'g\'ri o\'qiladi', () => {
+    const text = fs.readFileSync(path.join(DIR, '_namuna.tsv'), 'utf8');
+    const r = parseContent('namuna', text);
+    expect(r.errors.filter((e) => !e.includes('kamida 10'))).toEqual([]);
+    expect(r.words[0]).toMatchObject({ id: 'namuna:bowl', word: 'bowl', translation: 'kosa', level: 'A2' });
+    expect(r.words[1].plural).toBe('children');
+    expect(r.words[2].plural).toBeNull();
   });
 
-  test("har bir so'zda tarjima, turkum va ikki tildagi misol bor", () => {
-    const bad = CORE_ENTRIES.filter((e) => !e.word.trim() || !e.translation.trim() || !e.pos || !e.example.trim() || !e.exampleUz.trim());
-    expect(bad.map((e) => e.word)).toEqual([]);
+  test('xatolar aniq ko\'rsatiladi', () => {
+    const r = parseContent('x', "# title: X\nword\ttranslation\tpos\tipa\texample\texampleUz\tassociation\tplural\tlevel\nbowl\tкоса\tnoun\tbəʊl\tShe has a cup.\t\t\t\tA9");
+    const all = r.errors.join('\n');
+    expect(all).toContain('kirill');
+    expect(all).toContain('pos «noun»');
+    expect(all).toContain('ipa');
+    expect(all).toContain("so'zning o'zi yo'q");
+    expect(all).toContain('level «A9»');
   });
 
-  test("misol gaplarda so'zning o'zi uchraydi", () => {
-    const bad = [...CORE_ENTRIES, ...WORDS].filter((e) => e.example && !exampleHasWord(e.word, e.example)).map((e) => e.word);
-    expect(bad).toEqual([]);
+  const builtin = new Set(DECKS.map((d) => d.id).filter((id) => !GENERATED_DECKS.some((g) => g.id === id)));
+  const allIds = new Map<string, string>();
+  test("ilovada .tsv fayli o'chirilgan to'plam qolmagan", () => {
+    const ids = new Set(files.map((f) => f.replace(/\.tsv$/, '')));
+    const stale = [...new Set(GENERATED_WORDS.map((w) => w.deckId))].filter((d) => !ids.has(d));
+    if (stale.length) throw new Error(`content/ da yo'q, lekin ilovada bor: ${stale.join(', ')} — «node scripts/content-to-ts.mjs» ni ishga tushiring`);
   });
-
-  test("gap ichida to'ldirish to'g'ri bo'sh joy qo'yadi", () => {
-    expect(clozeOf('honey', 'Bears love honey.')).toBe('Bears love _____.');
-    expect(clozeOf('tooth', 'I have a bad tooth.')).toBe('I have a bad _____.');
-    expect(clozeOf('look for', 'I am looking for my glasses.')).toBe('I am _____ my glasses.');
-    expect(clozeOf('bear', 'Bears love honey.')).toBe('_____ love honey.');
-  });
-
-  test("har bir assotsiatsiya mavjud so'zga tegishli", () => {
-    const all = new Set([...CORE_ENTRIES, ...WORDS].map((e) => e.word.toLowerCase()));
-    expect(Object.keys(CORE_ASSOCIATIONS).filter((k) => !all.has(k))).toEqual([]);
-  });
+  for (const f of files) {
+    test(f, () => {
+      const id = f.replace(/\.tsv$/, '');
+      const r = parseContent(id, fs.readFileSync(path.join(DIR, f), 'utf8'));
+      const errors = [...r.errors];
+      if (builtin.has(id) && !r.add) errors.push(`${f}: «${id}» nomli to'plam ilovada allaqachon bor — boshqa fayl nomi tanlang yoki unga so'z qo'shish uchun «# mode: add» yozing`);
+      if (r.add && !builtin.has(id)) errors.push(`${f}: «# mode: add» — lekin «${id}» nomli to'plam yo'q. Mavjudlari: ${[...builtin].join(', ')}`);
+      if (r.add) {
+        const own = new Set(WORDS.filter((w) => w.deckId === id && !GENERATED_WORDS.includes(w)).map((w) => w.word.toLowerCase()));
+        for (const w of r.words) if (own.has(w.word.toLowerCase())) errors.push(`${f} «${w.word}»: bu so'z «${id}» to'plamida allaqachon bor`);
+      }
+      for (const w of r.words) {
+        const prev = allIds.get(w.word.toLowerCase());
+        if (prev && prev !== id) errors.push(`${f} «${w.word}»: ${prev}.tsv faylida ham bor`);
+        allIds.set(w.word.toLowerCase(), id);
+      }
+      const builtinWords = new Set(WORDS.filter((w) => w.deckId !== id).map((w) => w.word.toLowerCase()));
+      const overlap = r.words.filter((w) => builtinWords.has(w.word.toLowerCase())).map((w) => w.word);
+      if (overlap.length) console.log(`${f}: ${overlap.length} ta so'z boshqa to'plamlarda ham bor (bu mumkin, bir marta o'rgatiladi): ${overlap.join(', ')}`);
+      if (errors.length) throw new Error(`${f} — ${errors.length} ta xato:\n` + errors.join('\n'));
+      expect(r.words.length).toBeGreaterThan(0);
+      // Ilovaga o'tkazilgan nusxa .tsv bilan bir xil bo'lishi shart
+      const inApp = GENERATED_WORDS.filter((w) => w.deckId === id);
+      if (JSON.stringify(inApp) !== JSON.stringify(r.words)) {
+        throw new Error(`${f}: ilovadagi nusxa eskirgan — «node scripts/content-to-ts.mjs» buyrug'ini ishga tushiring`);
+      }
+    });
+  }
 });

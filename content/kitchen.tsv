@@ -1,0 +1,44 @@
+# Oshxona va ovqat — mavjud «kitchen» to'plamiga qo'shimcha so'zlar
+# mode: add
+# manba: Gemini Pro (2026-11-19), Claude tekshirdi; o'qituvchi tekshiruvi kutilmoqda
+word	translation	pos	ipa	example	exampleUz	association	plural	level
+bread	non	ot	/bred/	I buy fresh bread every single morning.	Men har kuni ertalab yangi non sotib olaman.		-	A1
+butter	sariyog'	ot	/ˈbʌtə/	Please put some butter on my toast.	Iltimos, qizartirilgan nonimga biroz sariyog' surting.	"Botir" sariyog'ni juda yaxshi ko'radi	-	A1
+cheese	pishloq	ot	/tʃiːz/	She likes cheese on her pasta.	U makaroni ustiga pishloq solishni yoqtiradi.	Rasmga tushganda "chiiz" deb pishloq yeymiz	-	A1
+meat	go'sht	ot	/miːt/	We do not eat meat at night.	Biz kechasi go'sht yemaymiz.		-	A1
+chicken	tovuq, tovuq go'shti	ot	/ˈtʃɪkɪn/	My mother cooks chicken for Sunday dinner.	Oyim yakshanba kungi kechki ovqatga tovuq pishiradi.	«Chekin! Tovuq cho'qib oladi!»		A1
+fish	baliq	ot	/fɪʃ/	They catch fresh fish from the river.	Ular daryodan yangi baliq tutishadi.			A1
+egg	tuxum	ot	/eɡ/	He cooks one egg for his breakfast.	U nonushtasi uchun bitta tuxum pishiradi.			A1
+rice	guruch	ot	/raɪs/	We need white rice for this dish.	Bizga bu taom uchun oq guruch kerak.	"Rais" buva guruchdan osh damladi	-	A1
+soup	sho'rva	ot	/suːp/	Hot soup is great on cold days.	Sovuq kunlarda issiq sho'rva juda ajoyib.		-	A1
+salad	salat	ot	/ˈsæləd/	I want a green salad with tomatoes.	Men pomidorli yashil salat xohlayman.			A1
+salt	tuz	ot	/sɒlt/	Do not add too much salt here.	Bu yerga juda ko'p tuz qo'shmang.	Ovqatga tuz "sol"	-	A1
+sugar	shakar, qand	ot	/ˈʃʊɡə/	He drinks black tea without any sugar.	U qora choyni umuman shakarsiz ichadi.	"Shukur", uyda shakar bor ekan	-	A1
+milk	sut	ot	/mɪlk/	Warm milk helps the little baby sleep.	Iliq sut kichkina chaqaloqqa uxlashga yordam beradi.	Sigir bizning "mulk", sut beradi	-	A1
+juice	sharbat	ot	/dʒuːs/	She drinks cold orange juice every morning.	U har kuni ertalab sovuq apelsin sharbati ichadi.		-	A1
+apple	olma	ot	/ˈæpl/	An apple a day keeps you healthy.	Kuniga bitta olma sizni sog'lom saqlaydi.			A1
+potato	kartoshka	ot	/pəˈteɪtəʊ/	You need one big potato for soup.	Sho'rva uchun sizga bitta katta kartoshka kerak.		potatoes	A1
+tomato	pomidor	ot	/təˈmɑːtəʊ/	Cut the red tomato into small pieces.	Qizil pomidorni kichik bo'laklarga kesing.	«Tomat» pastasi pomidordan tayyorlanadi	tomatoes	A1
+onion	piyoz	ot	/ˈʌnjən/	Cutting a raw onion makes me cry.	Xom piyozni to'g'rash meni yig'latadi.			A1
+carrot	sabzi	ot	/ˈkærət/	The white rabbit is eating a carrot.	Oq quyon sabzi yemoqda.			A1
+kitchen	oshxona	ot	/ˈkɪtʃɪn/	Our new kitchen is bright and clean.	Bizning yangi oshxonamiz yorug' va toza.	"Kichkina" bo'lsa ham o'z oshxonam		A1
+fork	sanchqi, vilka	ot	/fɔːk/	Put the silver fork on the table.	Kumush sanchqini stol ustiga qo'ying.			A1
+plate	likopcha, tarelka	ot	/pleɪt/	There is some food on your plate.	Sizning likopchangizda biroz ovqat bor.	"Plita" ustida likopcha turibdi		A1
+cup	finjon, piyola, chashka	ot	/kʌp/	Would you like a cup of coffee?	Bir finjon qahva ichasizmi?	"Ko'p" choyni bitta piyolaga quyma		A1
+glass	stakan, qadah	ot	/ɡlɑːs/	Please give me a glass of water.	Iltimos, menga bir stakan suv bering.			A1
+fridge	muzlatkich, xolodilnik	ot	/frɪdʒ/	Keep the cold milk in the fridge.	Sovuq sutni muzlatkich ichida saqlang.			A2
+breakfast	nonushta	ot	/ˈbrekfəst/	Breakfast is the most important meal of the day.	Nonushta kunning eng muhim ovqati.			A1
+lunch	tushlik	ot	/lʌntʃ/	We usually have lunch at one o'clock.	Biz odatda soat birda tushlik qilamiz.			A1
+dinner	kechki ovqat	ot	/ˈdɪnə/	What are we having for dinner tonight?	Bugun kechki ovqatga nima yeymiz?			A1
+meal	taom, ovqatlanish vaqti	ot	/miːl/	Enjoy your warm meal with the family.	Oila a'zolaringiz bilan issiq taomdan bahramand bo'ling.	«Mil»liy taom — eng mazali meal		A1
+dish	taom, idish	ot	/dɪʃ/	Plov is a very famous Uzbek dish.	Osh juda mashhur o'zbek taomidir.			A2
+cook	pishirmoq, ovqat tayyorlamoq	fe'l	/kʊk/	I like to cook for my family.	Men oilam uchun ovqat pishirishni yaxshi ko'raman.	"Ko'k" choy damlab, ovqat pishir		A1
+bake	pishirmoq (pechda), yopmoq	fe'l	/beɪk/	We always bake bread on Saturday morning.	Biz har doim shanba kuni ertalab non yopamiz.	"Bek" aka tandirda non yopdi		A2
+cut	kesmoq, to'g'ramoq	fe'l	/kʌt/	Please cut the fresh cake into pieces.	Iltimos, yangi tortni bo'laklarga kesing.	Nonni "kat"ta-katta kesma		A1
+mix	aralashtirmoq	fe'l	/mɪks/	Now mix the eggs with white flour.	Endi tuxumlarni oq un bilan aralashtiring.	"Mikser" hamma narsani aralashtiradi		A2
+wash	yuvmoq	fe'l	/wɒʃ/	Always wash your hands before every meal.	Har bir ovqatlanishdan oldin qo'llaringizni doim yuving.			A1
+hungry	och, qorni och	sifat	/ˈhʌŋɡri/	I am very hungry after the game.	O'yindan keyin qornim juda och.			A1
+thirsty	chanqagan, tashna	sifat	/ˈθɜːsti/	Running in the sun makes me thirsty.	Quyoshda yugurish meni chanqatadi.			A1
+delicious	mazali, lazzatli	sifat	/dɪˈlɪʃəs/	Your mother makes very delicious apple pies.	Oyingiz juda mazali olmali piroglar tayyorlaydi.			A2
+sweet	shirin	sifat	/swiːt/	This ripe red watermelon is very sweet.	Bu pishgan qizil tarvuz juda shirin.			A1
+fresh	yangi, barra	sifat	/freʃ/	We buy fresh vegetables at the market.	Biz bozordan barra sabzavotlar sotib olamiz.			A2

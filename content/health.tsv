@@ -1,0 +1,45 @@
+# title: Sog'liq va shifoxona
+# subtitle: A2–B1
+# group: daily
+# icon: hospital-box
+word	translation	pos	ipa	example	exampleUz	association	plural	level
+patient	bemor	ot	/ˈpeɪʃnt/	The patient is waiting for the doctor.	Bemor shifokorni kutmoqda.			A2
+fever	isitma, harorat	ot	/ˈfiːvə/	She has a high fever today.	Bugun uning isitmasi baland.			A2
+headache	bosh og'rig'i	ot	/ˈhedeɪk/	I have a bad headache this morning.	Bugun ertalab boshim qattiq og'riyapti.			A2
+stomachache	qorin og'rig'i	ot	/ˈstʌməkeɪk/	He got a stomachache after eating too much.	U ko'p ovqat yegandan keyin qorni og'ridi.			A2
+toothache	tish og'rig'i	ot	/ˈtuːθeɪk/	A toothache can keep you awake at night.	Tish og'rig'i kechasi uxlatmasligi mumkin.			A2
+sore throat	tomoq og'rig'i	ibora	/sɔː θrəʊt/	I cannot sing because of my sore throat.	Tomoq og'rig'im tufayli qo'shiq ayta olmayman.			A2
+ambulance	tez yordam mashinasi	ot	/ˈæmbjələns/	The ambulance arrived in five minutes.	Tez yordam mashinasi besh daqiqada yetib keldi.			B1
+surgeon	jarroh	ot	/ˈsɜːdʒən/	The surgeon will do the operation tomorrow.	Jarroh ertaga operatsiya qiladi.			B1
+dentist	tish shifokori	ot	/ˈdentɪst/	I visit the dentist every six months.	Men har olti oyda tish shifokoriga boraman.			A2
+symptom	belgi, alomat	ot	/ˈsɪmptəm/	A cough is a common symptom of a cold.	Yo'tal shamollashning keng tarqalgan alomati.			B1
+prescription	retsept	ot	/prɪˈskrɪpʃn/	The doctor gave me a prescription for pills.	Shifokor menga tabletka uchun retsept yozdi.			B1
+treatment	davolash	ot	/ˈtriːtmənt/	Early treatment helps the patient recover faster.	Erta davolash bemorning tezroq tuzalishiga yordam beradi.			B1
+injection	ukol	ot	/ɪnˈdʒekʃn/	The nurse gave the child an injection.	Hamshira bolaga ukol qildi.			B1
+bandage	bint, bog'lam	ot	/ˈbændɪdʒ/	She put a clean bandage on the wound.	U yaraga toza bint bog'ladi.	«Bandi»ning qo'liga bandage o'rab qo'yishdi		B1
+wound	yara, jarohat	ot	/wuːnd/	The wound on his arm is almost healed.	Uning qo'lidagi yara deyarli bitdi.			B1
+pill	tabletka, dori	ot	/pɪl/	Take one pill after every meal.	Har ovqatdan keyin bitta tabletka oling.			A2
+vaccine	vaksina, emlash	ot	/ˈvæksiːn/	Children need a vaccine against measles.	Bolalarga qizamiq kasalligiga qarshi vaksina kerak.			B1
+allergy	allergiya	ot	/ˈælədʒi/	He has a serious allergy to nuts.	Uning yong'oqqa kuchli allergiyasi bor.			B1
+infection	infeksiya, yuqumli kasallik	ot	/ɪnˈfekʃn/	Wash your hands to prevent any infection.	Infeksiyaning oldini olish uchun qo'llaringizni yuving.			B1
+surgery	jarrohlik operatsiyasi	ot	/ˈsɜːdʒəri/	He needs surgery on his right knee.	Uning o'ng tizzasiga operatsiya kerak.			B1
+recovery	tuzalish, tiklanish	ot	/rɪˈkʌvəri/	Her recovery after the surgery was very fast.	Uning operatsiyadan keyingi tuzalishi juda tez bo'ldi.			B1
+appointment	qabul, uchrashuv (oldindan belgilangan)	ot	/əˈpɔɪntmənt/	I have an appointment at three o'clock.	Soat uchda shifokor qabuliga yozilganman.			B1
+emergency	favqulodda holat	ot	/ɪˈmɜːdʒənsi/	Call the hospital in case of emergency.	Favqulodda holatda shifoxonaga qo'ng'iroq qiling.			B1
+thermometer	termometr, gradusnik	ot	/θəˈmɒmɪtə/	The thermometer shows thirty-eight degrees today.	Termometr bugun o'ttiz sakkiz darajani ko'rsatyapti.			B1
+diagnosis	tashxis	ot	/ˌdaɪəɡˈnəʊsɪs/	The doctor gave a clear diagnosis after tests.	Shifokor tahlillardan keyin aniq tashxis qo'ydi.		diagnoses	B1
+therapy	terapiya, davolash	ot	/ˈθerəpi/	She goes to therapy twice a week.	U haftasiga ikki marta terapiyaga boradi.			B1
+chest	ko'krak qafasi	ot	/tʃest/	He felt a sharp pain in his chest.	U ko'krak qafasida keskin og'riq sezdi.			A2
+lung	o'pka	ot	/lʌŋ/	Smoking is very bad for your lung health.	Chekish o'pka salomatligi uchun juda zararli.			B1
+heal	tuzalmoq, bitmoq (yara)	fe'l	/hiːl/	Small cuts usually heal in a few days.	Kichik kesiklar odatda bir necha kunda tuzaladi.			B1
+swallow	yutmoq	fe'l	/ˈswɒləʊ/	Swallow this pill with a glass of water.	Bu tabletkani bir stakan suv bilan yuting.			A2
+breathe	nafas olmoq	fe'l	/briːð/	Open the window so we can breathe freely.	Derazani oching, erkin nafas olaylik.			A2
+sneeze	aksirmoq	fe'l	/sniːz/	He started to sneeze because of the dust.	U chang tufayli aksira boshladi.			A2
+bleed	qon oqmoq	fe'l	/bliːd/	The small cut on her finger started to bleed.	Uning barmog'idagi kichik kesikdan qon oqa boshladi.			B1
+examine	tekshirmoq, ko'rikdan o'tkazmoq	fe'l	/ɪɡˈzæmɪn/	The doctor will examine you right now.	Shifokor hozir sizni tekshiradi.	«Ekzamen» ham tekshiruv — examine ham tekshirmoq		B1
+prescribe	retsept yozmoq, buyurmoq	fe'l	/prɪˈskraɪb/	The doctor will prescribe the right medicine.	Shifokor sizga to'g'ri dorini buyuradi.			B1
+recover	tuzalmoq, tiklanmoq	fe'l	/rɪˈkʌvə/	It takes time to recover from a cold.	Shamollashdan tuzalish vaqt oladi.			B1
+sore	og'riqli, yallig'langan	sifat	/sɔː/	My legs are sore after the long run.	Uzoq yugurgandan keyin oyoqlarim og'riyapti.			A2
+dizzy	boshi aylanayotgan	sifat	/ˈdɪzi/	She felt dizzy and sat down quickly.	Boshi aylanib, tezda o'tirib oldi.			B1
+swollen	shishgan	sifat	/ˈswəʊlən/	His ankle was red and swollen after falling.	Yiqilgandan keyin to'pig'i qizarib shishdi.			B1
+painful	og'riqli, azobli	sifat	/ˈpeɪnfl/	The injection was quick but a little painful.	Ukol tez bo'ldi, lekin biroz og'riqli edi.			A2

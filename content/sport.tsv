@@ -1,0 +1,45 @@
+# title: Sport va o'yinlar
+# subtitle: A1–B1
+# group: daily
+# icon: soccer
+word	translation	pos	ipa	example	exampleUz	association	plural	level
+athlete	sportchi	ot	/ˈæθliːt/	The young athlete won three gold medals.	Yosh sportchi uchta oltin medal qo'lga kiritdi.			A2
+coach	murabbiy	ot	/kəʊtʃ/	Our coach told us to practise every day.	Murabbiyimiz har kuni mashq qilishimizni aytdi.	«Ko'ch» oldinga! — murabbiy buyurdi		A2
+referee	hakam	ot	/ˌrefəˈriː/	The referee stopped the game after the foul.	Hakam fol bo'lgandan keyin o'yinni to'xtatdi.			B1
+tournament	turnir, musobaqa	ot	/ˈtʊənəmənt/	Eight teams will play in this tournament.	Bu turnirda sakkizta jamoa o'ynaydi.			B1
+championship	chempionat	ot	/ˈtʃæmpiənʃɪp/	She won the national championship last year.	U o'tgan yili milliy chempionatda g'olib bo'ldi.			B1
+medal	medal	ot	/ˈmedl/	He dreams of winning a gold medal.	U oltin medal yutishni orzu qiladi.			A2
+pitch	o'yin maydoni	ot	/pɪtʃ/	The players ran onto the green pitch.	O'yinchilar yashil maydonga yugurib chiqishdi.			B1
+track	yugurish yo'lagi	ot	/træk/	She runs five laps around the track.	U yugurish yo'lagida besh aylana yuguradi.			B1
+gym	sport zal	ot	/dʒɪm/	I go to the gym three times a week.	Men haftasiga uch marta sport zalga boraman.	«Jim» bo'lib, sport zalda mashq qil		A2
+exercise	mashq, jismoniy mashq	ot, fe'l	/ˈeksəsaɪz/	Daily exercise keeps your body strong and healthy.	Har kungi jismoniy mashq tanangizni baquvvat saqlaydi.			A2
+fitness	jismoniy tayyorgarlik	ot	/ˈfɪtnəs/	Swimming is great for your overall fitness.	Suzish umumiy jismoniy tayyorgarligingiz uchun juda foydali.		-	B1
+workout	mashg'ulot	ot	/ˈwɜːkaʊt/	She does a one-hour workout every morning.	U har kuni ertalab bir soatlik mashg'ulot qiladi.			B1
+stretch	cho'zmoq, cho'zilmoq	fe'l	/stretʃ/	Always stretch your muscles before you run.	Yugurish oldidan doim mushklaringizni cho'zing.			A2
+warm up	isinib olmoq	ibora	/wɔːm ʌp/	You should warm up before playing football.	Futbol o'ynashdan oldin isinib olish kerak.			A2
+defeat	mag'lubiyat; yengmoq	ot, fe'l	/dɪˈfiːt/	Our team suffered a painful defeat yesterday.	Jamoamiz kecha alamli mag'lubiyatga uchradi.			B1
+league	liga	ot	/liːɡ/	His team plays in the top league.	Uning jamoasi eng yuqori ligada o'ynaydi.			B1
+opponent	raqib	ot	/əˈpəʊnənt/	She beat her opponent in the final.	U finalda raqibini yengdi.			B1
+champion	chempion, g'olib	ot	/ˈtʃæmpiən/	He became the world champion at twenty.	U yigirma yoshida jahon chempioni bo'ldi.			A2
+record	rekord	ot	/ˈrekɔːd/	She broke the world record in swimming.	U suzishda jahon rekordini yangiladi.			A2
+fan	muxlis, ishqiboz	ot	/fæn/	The fans cheered loudly for their team.	Muxlislar o'z jamoasi uchun baland ovozda qichqirishdi.			A2
+whistle	hushtak	ot	/ˈwɪsl/	The referee blew the whistle to start.	Hakam o'yinni boshlash uchun hushtak chaldi.			B1
+sprint	qisqa masofaga yugurish	ot	/sprɪnt/	He won the hundred-metre sprint easily.	U yuz metrlik sprintni osonlik bilan yutdi.		-	B1
+marathon	marafon	ot	/ˈmærəθən/	She finished her first marathon in four hours.	U birinchi marafonini to'rt soatda tugatdi.			B1
+boxing	boks	ot	/ˈbɒksɪŋ/	Boxing requires both strength and quick thinking.	Boks ham kuch, ham tezkor fikrlashni talab qiladi.		-	B1
+wrestling	kurash	ot	/ˈreslɪŋ/	Wrestling is a very popular sport here.	Kurash bu yerda juda mashhur sport turi.		-	B1
+tennis	tennis	ot	/ˈtenɪs/	They play tennis together every Saturday morning.	Ular har shanba ertalab birga tennis o'ynashadi.		-	A1
+football	futbol	ot	/ˈfʊtbɔːl/	Football is the most popular sport worldwide.	Futbol dunyodagi eng mashhur sport turi.		-	A1
+basketball	basketbol	ot	/ˈbɑːskɪtbɔːl/	He plays basketball for the school team.	U maktab jamoasi uchun basketbol o'ynaydi.		-	A1
+volleyball	voleybol	ot	/ˈvɒlibɔːl/	We play volleyball on the beach in summer.	Yozda biz plyajda voleybol o'ynaymiz.		-	A2
+foul	fol, qoidabuzarlik	ot	/faʊl/	The player committed a serious foul today.	O'yinchi bugun jiddiy qoidabuzarlik qildi.			B1
+penalty	penalti, jarima zarba	ot	/ˈpenəlti/	The referee gave a penalty for the foul.	Hakam qoidabuzarlik uchun penalti berdi.			B1
+trophy	kubok	ot	/ˈtrəʊfi/	The captain lifted the trophy with both hands.	Kapitan kubokni ikki qo'li bilan ko'tardi.			B1
+net	to'r	ot	/net/	The ball hit the back of the net.	To'p to'rning orqasiga tegdi.			A2
+racket	raketka	ot	/ˈrækɪt/	She bought a new tennis racket yesterday.	U kecha yangi tennis raketkasi sotib oldi.			A2
+helmet	dubulg'a, kaska	ot	/ˈhelmɪt/	Always wear a helmet when riding a bike.	Velosiped minganingizda doim dubulg'a kiying.			B1
+kick	tepmoq	fe'l	/kɪk/	He can kick the ball very hard.	U to'pni juda kuchli tepa oladi.			A2
+defend	himoya qilmoq	fe'l	/dɪˈfend/	The team must defend their lead right now.	Jamoa hozir ustunligini himoya qilishi kerak.			B1
+attack	hujum; hujum qilmoq	ot, fe'l	/əˈtæk/	The team started to attack from the left.	Jamoa chap tomondan hujum boshladi.			B1
+compete	raqobatlashmoq, bellashmoq	fe'l	/kəmˈpiːt/	Athletes from forty countries will compete here.	Qirqta mamlakatdan sportchilar bu yerda bellashadi.			B1
+tackle	to'pni olib qo'yish; to'pni olib qo'ymoq	ot, fe'l	/ˈtækl/	The defender made a great tackle on him.	Himoyachi unga ajoyib to'siq qo'ydi.			B1

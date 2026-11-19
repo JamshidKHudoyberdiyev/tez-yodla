@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Platform, Pressable, TextInput, View } from 'react-native';
 import { BackHeader, Button, IconTile, RoundIconButton, Screen, T } from '@/components/ui';
 import { deckById } from '@/data/words';
-import { DECK_PRACTICE_SIZE, deckProgress, wordStatus, type WordStatus } from '@/lib/decks';
+import { cardOf, cardsByWord, DECK_PRACTICE_SIZE, deckProgress, wordStatus, type WordStatus } from '@/lib/decks';
 import { EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
@@ -29,9 +29,10 @@ export default function DeckScreen() {
   const [limit, setLimit] = useState(PAGE);
 
   const ws = useMemo(() => words.filter((w) => w.deckId === id), [words, id]);
+  const byWord = useMemo(() => cardsByWord(words, state.cards), [words, state.cards]);
   if (!deck) return <Screen><BackHeader title="To'plam topilmadi" /></Screen>;
 
-  const p = deckProgress(ws, state.cards);
+  const p = deckProgress(ws, state.cards, byWord);
   const active = state.activeDecks.includes(deck.id);
   // Shu to'plamdan hozir nechta yangi so'z berish mumkin (bilgan va boshqa to'plamda o'rganilganlar hisobga olinadi)
   const fresh = todayPlan({ words, cards: state.cards, activeDecks: [deck.id], knownLemmas: new Set(state.knownLemmas), dailyNew: 0, extraNew: EXTRA_NEW, log: state.log, today }).newWords.length;
@@ -101,7 +102,7 @@ export default function DeckScreen() {
       </View>
       <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
         {list.length ? shown.map((w, i) => {
-          const s = STATUS[wordStatus(state.cards[w.id])];
+          const s = STATUS[wordStatus(cardOf(w, state.cards, byWord))];
           return (
             <Pressable key={w.id} accessibilityRole="button" accessibilityLabel={`${w.word}, ${w.translation}, ${s.label}`} onPress={() => router.push({ pathname: '/word/[id]', params: { id: w.id } })}
               style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>

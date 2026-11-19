@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Button, Screen, T } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
 import { deckById, type Word } from '@/data/words';
-import { DECK_PRACTICE_SIZE } from '@/lib/decks';
+import { cardOf, cardsByWord, DECK_PRACTICE_SIZE } from '@/lib/decks';
 import { MISTAKE_PRACTICE_SIZE, mistakeList } from '@/lib/mistakes';
 import { shuffle } from '@/lib/drill';
 import { useStore } from '@/lib/store';
@@ -28,7 +28,11 @@ export default function MistakesPractice() {
   const deckTitle = deck ? deckById(deck)?.title : undefined;
   const list = useMemo<Word[]>(
     () => deck
-      ? shuffle(words.filter((w) => w.deckId === deck && state.cards[w.id] && state.cards[w.id].state !== 'new')).slice(0, DECK_PRACTICE_SIZE)
+      ? (() => {
+          // Boshqa to'plamda o'rganilgan bir xil so'z ham shu mavzu mashqiga kiradi
+          const byWord = cardsByWord(words, state.cards);
+          return shuffle(words.filter((w) => { const c = cardOf(w, state.cards, byWord); return w.deckId === deck && !!c && c.state !== 'new'; })).slice(0, DECK_PRACTICE_SIZE);
+        })()
       : mistakeList(state.mistakes, (id) => !!wordById(id)).slice(0, MISTAKE_PRACTICE_SIZE).map((x) => wordById(x.wordId)!),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],

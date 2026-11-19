@@ -1,4 +1,4 @@
-import { deckProgress, wordStatus } from './decks';
+import { cardsByWord, deckProgress, wordStatus } from './decks';
 import { completeLearning, gradeCard, newCard } from './srs';
 
 const T = 20000;
@@ -19,5 +19,13 @@ describe("to'plam holati", () => {
     const words = ['a', 'b', 'c'].map((id) => ({ id, word: id, translation: id, deckId: 'd', level: 'A1' as const }));
     const p = deckProgress(words as never, { a: completeLearning(newCard('a'), T) });
     expect(p).toEqual({ total: 3, learned: 0, learning: 1, started: 1 });
+  });
+
+  test("boshqa to'plamda o'rganilgan bir xil so'z ham hisobga olinadi", () => {
+    const core = { id: 'core:bread', word: 'bread', translation: 'non', deckId: 'core' };
+    const kit = { id: 'kitchen:bread', word: 'bread', translation: 'non', deckId: 'kitchen' };
+    const cards = { 'core:bread': completeLearning(newCard('core:bread'), T) };
+    expect(deckProgress([kit], cards).started).toBe(0);
+    expect(deckProgress([kit], cards, cardsByWord([core, kit], cards)).started).toBe(1);
   });
 });

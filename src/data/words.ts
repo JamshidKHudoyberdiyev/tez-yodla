@@ -9,6 +9,7 @@
 
 import { CORE_ENTRIES } from './core';
 import { FAMILY, SCHOOL, TRAVEL, WORK } from './topics';
+import { GENERATED_DECKS, GENERATED_WORDS } from './generated';
 
 export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
 
@@ -73,11 +74,12 @@ export const DECKS: Deck[] = [
   { id: 'core', title: "1000 asosiy so'z", subtitle: "A1–A2 · eng ko'p ishlatiladigan", badge: '1K', tint: '#E6F4CC', ink: '#17461F', group: 'level' },
   { id: 'b1', title: 'CEFR B1', subtitle: "O'rta daraja", badge: 'B1', tint: '#F1E8FB', ink: '#6B3FA8', group: 'level' },
   { id: 'ielts', title: 'IELTS Academic', subtitle: "B2–C1 · akademik so'zlar", badge: 'IE', tint: '#E4EDFB', ink: '#1F55A8', group: 'level' },
-  { id: 'kitchen', title: 'Oshxona va ovqat', subtitle: 'A2', badge: 'OV', tint: '#F6EAD7', ink: '#8F4A12', topic: true, icon: 'pot-steam', group: 'daily' },
+  { id: 'kitchen', title: 'Oshxona va ovqat', subtitle: 'A1–A2', badge: 'OV', tint: '#F6EAD7', ink: '#8F4A12', topic: true, icon: 'pot-steam', group: 'daily' },
   { id: 'school', title: "Maktab va ta'lim", subtitle: 'A1–A2', badge: 'MT', tint: '#E4EDFB', ink: '#1F55A8', topic: true, icon: 'school', group: 'study' },
   { id: 'work', title: 'Ish va ofis', subtitle: 'A2–B1', badge: 'IS', tint: '#F1E8FB', ink: '#6B3FA8', topic: true, icon: 'briefcase', group: 'study' },
   { id: 'travel', title: 'Sayohat', subtitle: 'A1–B1', badge: 'SY', tint: '#DDF1F2', ink: '#14707A', topic: true, icon: 'airplane', group: 'travel' },
   { id: 'family', title: "Oila va do'stlar", subtitle: 'A1–A2', badge: 'OL', tint: '#FBE4EC', ink: '#B02F5C', topic: true, icon: 'account-group', group: 'daily' },
+  ...GENERATED_DECKS,
   { id: 'mine', title: "Mening so'zlarim", subtitle: "O'qiganlaringizdan saqlangan", badge: '★', tint: '#1F5A2E', ink: '#B6E44E', custom: true },
 ];
 
@@ -93,6 +95,7 @@ export const WORDS: Word[] = [
   ...WORK,
   ...TRAVEL,
   ...FAMILY,
+  ...GENERATED_WORDS,
   ...w('b1', 'B1', [
     { word: 'although', translation: 'garchi, ...ga qaramay', ipa: '/ɔːlˈðəʊ/', pos: "bog'lovchi", example: 'Although it was cold, we went out.', exampleUz: 'Sovuq bo\'lishiga qaramay, tashqariga chiqdik.' },
     { word: 'improve', translation: 'yaxshilamoq', ipa: '/ɪmˈpruːv/', pos: "fe'l", example: 'I want to improve my English.', exampleUz: 'Ingliz tilimni yaxshilamoqchiman.' },

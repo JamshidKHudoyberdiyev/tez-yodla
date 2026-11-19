@@ -1,12 +1,12 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DuoIcon } from '@/components/Art';
 import { Card, H1, IconTile, T } from '@/components/ui';
 import { DECK_GROUPS, DECKS, type Deck } from '@/data/words';
-import { deckProgress } from '@/lib/decks';
+import { cardsByWord, deckProgress } from '@/lib/decks';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
@@ -15,9 +15,10 @@ export default function Decks() {
   const [q, setQ] = useState('');
   const query = q.trim().toLowerCase();
 
+  const byWord = useMemo(() => cardsByWord(words, state.cards), [words, state.cards]);
   const info = DECKS.map((d) => {
     const ws = words.filter((w) => w.deckId === d.id);
-    const p = deckProgress(ws, state.cards);
+    const p = deckProgress(ws, state.cards, byWord);
     const due = ws.filter((w) => state.cards[w.id] && state.cards[w.id].state !== 'new' && state.cards[w.id].due <= today).length;
     return { d, ...p, due, active: state.activeDecks.includes(d.id) };
   });
