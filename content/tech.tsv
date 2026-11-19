@@ -3,17 +3,17 @@
 # group: daily
 # icon: laptop
 word	translation	pos	ipa	example	exampleUz	association	plural	level
-laptop	noutbuk	ot	/ˈlæptɒp/	My laptop is very light and easy to carry.	Noutbukimni olib yurish juda yengil va qulay.	«Lap» (tizza usti) + «top» — tizzangiz ustida turadi		A2
+laptop	noutbuk	ot	/ˈlæptɒp/	My laptop is very light and easy to carry.	Noutbukim juda yengil, olib yurish oson.	«Lap» (tizza usti) + «top» — tizzangiz ustida turadi		A2
 tablet	planshet	ot	/ˈtæblɪt/	The child watches cartoons on a tablet.	Bola planshetda multfilm ko'radi.			A2
 smartphone	smartfon	ot	/ˈsmɑːtfəʊn/	Almost everyone has a smartphone these days.	Hozirda deyarli har kimda smartfon bor.			A2
 screen	ekran	ot	/skriːn/	Do not sit too close to the screen.	Ekranga juda yaqin o'tirmang.			A2
 keyboard	klaviatura	ot	/ˈkiːbɔːd/	She types very fast on the keyboard.	U klaviaturada juda tez yozadi.			A2
 password	parol, maxfiy so'z	ot	/ˈpɑːswɜːd/	Never share your password with anyone else.	Parolingizni hech kimga bermang.			A2
 website	veb-sayt	ot	/ˈwebsaɪt/	You can find the information on our website.	Ma'lumotni bizning veb-saytda topishingiz mumkin.			A2
-browser	brauzer	ot	/ˈbraʊzə/	Open a new tab in your browser.	Brauzeringizda yangi oyna oching.			B1
+browser	brauzer	ot	/ˈbraʊzə/	Open a new tab in your browser.	Brauzeringizda yangi tab oching.			B1
 software	dasturiy ta'minot	ot	/ˈsɒftweə/	This software helps you edit photos easily.	Bu dastur rasmlarni oson tahrirlashga yordam beradi.		-	B1
 battery	batareya, quvvat	ot	/ˈbætəri/	My phone battery dies very quickly now.	Telefonimning batareyasi hozir juda tez tugaydi.			A2
-charger	zaryadka, quvvatlantkich	ot	/ˈtʃɑːdʒə/	I forgot my charger at home today.	Bugun zaryadkamni uyda unutib qoldirdim.			A2
+charger	zaryadlovchi, zaryadka	ot	/ˈtʃɑːdʒə/	I forgot my charger at home today.	Bugun zaryadkamni uyda unutib qoldirdim.			A2
 update	yangilash; yangilanish	fe'l, ot	/ʌpˈdeɪt/	You should update your phone software regularly.	Telefon dasturini muntazam yangilab turing.			A2
 install	o'rnatmoq	fe'l	/ɪnˈstɔːl/	Please install this app on your phone.	Iltimos, bu ilovani telefoningizga o'rnating.			B1
 delete	o'chirmoq	fe'l	/dɪˈliːt/	She decided to delete all the old photos.	U barcha eski rasmlarni o'chirishga qaror qildi.			A2
@@ -22,11 +22,11 @@ backup	zaxira nusxa	ot	/ˈbækʌp/	Always make a backup of important files.	Muhi
 file	fayl	ot	/faɪl/	Save the file before you close the program.	Dasturni yopishdan oldin faylni saqlang.			A2
 folder	papka, jild	ot	/ˈfəʊldə/	Put all the photos in one folder.	Barcha rasmlarni bitta papkaga joylashtiring.			A2
 link	havola	ot	/lɪŋk/	Click the link to open the web page.	Veb-sahifani ochish uchun havolani bosing.			A2
-click	bosmoq, chertimoq	fe'l	/klɪk/	Just click the button to start the game.	O'yinni boshlash uchun tugmani bosing.			A2
-scroll	aylantirmoq	fe'l	/skrəʊl/	Scroll down to read the full article.	To'liq maqolani o'qish uchun pastga aylantiring.			B1
+click	bosmoq, chertmoq	fe'l	/klɪk/	Just click the button to start the game.	O'yinni boshlash uchun tugmani bosing.			A2
+scroll	surmoq, aylantirmoq (ekranda)	fe'l	/skrəʊl/	Scroll down to read the full article.	To'liq maqolani o'qish uchun pastga suring.			B1
 log in	tizimga kirmoq	ibora	/lɒɡ ɪn/	You need to log in with your password.	Parolingiz bilan tizimga kirishingiz kerak.			A2
 sign up	ro'yxatdan o'tmoq	ibora	/saɪn ʌp/	You can sign up for free on the website.	Veb-saytda bepul ro'yxatdan o'tishingiz mumkin.			A2
-server	server	ot	/ˈsɜːvə/	The server is down and nothing works now.	Server ishlamayapti va hech narsa ishlamaydi.			B1
+server	server	ot	/ˈsɜːvə/	The server is down and nothing works now.	Server ishlamayapti, shuning uchun hech narsa ochilmayapti.			B1
 network	tarmoq	ot	/ˈnetwɜːk/	Our home network is slow this evening.	Uy tarmog'imiz bugun kechqurun sekin ishlayapti.			B1
 cable	kabel, sim	ot	/ˈkeɪbl/	Connect the cable to the back of the screen.	Kabelni ekranning orqasiga ulang.			A2
 speaker	karnay, dinamik	ot	/ˈspiːkə/	Turn up the speaker so we can hear.	Eshitishimiz uchun karnayni balandroq qiling.			A2
@@ -36,7 +36,7 @@ camera	kamera	ot	/ˈkæmərə/	The camera on this phone takes great photos.	Bu t
 online	onlayn	sifat, ravish	/ˌɒnˈlaɪn/	You can buy this book online for less.	Bu kitobni onlayn arzonroq sotib olishingiz mumkin.			A2
 offline	oflayn	sifat, ravish	/ˌɒfˈlaɪn/	This app works offline without any internet.	Bu ilova internetsiz ham oflayn ishlaydi.			A2
 digital	raqamli	sifat	/ˈdɪdʒɪtl/	We live in a fast digital world today.	Biz hozir tez rivojlanayotgan raqamli dunyoda yashaymiz.			B1
-virus	virus	ot	/ˈvaɪrəs/	A virus can destroy all your important files.	Virus barcha muhim fayllaringizni yo'q qilishi mumkin.		-	B1
+virus	virus	ot	/ˈvaɪrəs/	A virus can destroy all your important files.	Virus barcha muhim fayllaringizni yo'q qilishi mumkin.			B1
 code	kod, dastur kodi	ot	/kəʊd/	He is learning to write computer code.	U kompyuter kodi yozishni o'rganmoqda.			B1
 program	dastur	ot	/ˈprəʊɡræm/	This program helps students learn English faster.	Bu dastur talabalarga ingliz tilini tezroq o'rganishga yordam beradi.			A2
 notification	bildirishnoma	ot	/ˌnəʊtɪfɪˈkeɪʃn/	I got a notification about the new update.	Yangi yangilanish haqida bildirishnoma oldim.			B1
