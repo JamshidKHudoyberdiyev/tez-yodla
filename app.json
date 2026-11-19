@@ -52,7 +52,8 @@
         {
           "disableAutoUpload": true
         }
-      ]
+      ],
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true

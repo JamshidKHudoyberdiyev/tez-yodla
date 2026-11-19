@@ -58,6 +58,8 @@ export interface Prefs {
   /** Yozishda harf kataklari */
   letterBoxes: boolean;
   accent: 'us' | 'uk';
+  /** Tabiiy studiya ovozi (MP3) orqali so'zlarni o'qish (yo'q bo'lsa expo-speech) */
+  naturalVoice: boolean;
   /** Ovoz tezligi: 0.7 (sekin) … 1.2 (tez) */
   rate: number;
   autoSpeakNew: boolean;
@@ -90,6 +92,7 @@ export const defaultPrefs: Prefs = {
   autoAdvance: false,
   letterBoxes: true,
   accent: 'us',
+  naturalVoice: true,
   rate: 1,
   autoSpeakNew: true,
   autoSpeakCorrect: true,
@@ -241,10 +244,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     AsyncStorage.setItem(KEY, JSON.stringify(state)).catch(() => undefined);
   }, [state]);
 
-  // Ovoz sozlamalari: talaffuz va tezlik
+  // Ovoz sozlamalari: talaffuz, tezlik va tabiiy studiya ovozi
   useEffect(() => {
-    configureSpeech({ accent: state.prefs.accent, rate: state.prefs.rate });
-  }, [state.prefs.accent, state.prefs.rate]);
+    configureSpeech({ accent: state.prefs.accent, rate: state.prefs.rate, naturalVoice: state.prefs.naturalVoice });
+  }, [state.prefs.accent, state.prefs.rate, state.prefs.naturalVoice]);
 
   // Foydalanuvchi o'zi saqlagan so'zlar birinchi o'rganiladi.
   const words = useMemo(() => [...state.customWords, ...WORDS], [state.customWords]);
