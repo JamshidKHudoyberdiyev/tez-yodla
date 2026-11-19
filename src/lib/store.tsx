@@ -124,7 +124,7 @@ const initialState: AppState = {
 };
 
 /** Saqlangan (yoki zaxiradan kelgan) holatni joriy formatga keltiradi: yangi maydonlar standart qiymat oladi. */
-function hydrate(raw: Partial<AppState>): AppState {
+export function hydrate(raw: Partial<AppState>): AppState {
   const prefs = { ...defaultPrefs, ...(raw.prefs ?? {}) };
   prefs.steps = { ...defaultPrefs.steps, ...(raw.prefs?.steps ?? {}) };
   prefs.reminder = migrateReminder(raw.prefs?.reminder, defaultPrefs.reminder);

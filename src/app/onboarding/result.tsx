@@ -23,12 +23,13 @@ export default function LevelResult() {
   const retake = params.retake === '1';
   const level = (params.level as Level) ?? 'A1';
   const deck = deckById(recommendedDeck(level))!;
-  const { finishOnboarding, setLevel } = useStore();
+  const { state, finishOnboarding, setLevel } = useStore();
   const [goal, setGoal] = useState(10);
   const [custom, setCustom] = useState(false);
   const [topics, setTopics] = useState<string[]>([]);
   const toggleTopic = (id: string) => setTopics((t) => (t.includes(id) ? t.filter((x) => x !== id) : [...t, id]));
-  const [name, setName] = useState('');
+  // Google'dan kelgan ism (bo'lsa) oldindan yozilgan bo'ladi
+  const [name, setName] = useState(state.name);
 
   const start = () => {
     if (retake) { setLevel(level); router.replace('/settings/profile'); return; }

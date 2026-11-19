@@ -1,8 +1,11 @@
 import { router } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { useState } from 'react';
+import { Modal, Pressable, View } from 'react-native';
 import { Avatar } from '@/components/Avatar';
 import { SettingGroup, SettingRow } from '@/components/SettingsUI';
-import { BackHeader, Screen, T } from '@/components/ui';
+import { BackHeader, Button, Screen, T } from '@/components/ui';
+import { AUTH_REQUIRED, useAuth } from '@/lib/auth';
+import { agoLabel } from '@/lib/cloud';
 import { appVersion } from '@/lib/monitoring';
 import { timeLabel } from '@/lib/reminders';
 import { dailyMinutes } from '@/lib/plan';
@@ -13,7 +16,11 @@ const GOAL_LABEL: Record<string, string> = { ielts: 'IELTS', work: 'Ish', travel
 
 export default function Settings() {
   const { state, streak } = useStore();
+  const auth = useAuth();
+  const [askOut, setAskOut] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const p = state.prefs;
+  const saved = auth.status === 'saving' ? 'saqlanmoqda…' : auth.status === 'error' ? 'internet yo\'q' : agoLabel(auth.lastSavedAt);
   const stepCount = 1 + Object.values(p.steps).filter(Boolean).length;
   const backupDays = p.lastBackupAt ? Math.floor((Date.now() - p.lastBackupAt) / 86_400_000) : null;
   const fontLabel = p.fontScale < 1 ? 'Kichik' : p.fontScale === 1 ? "O'rta" : p.fontScale < 1.2 ? 'Katta' : 'Juda katta';
@@ -33,6 +40,15 @@ export default function Settings() {
         </View>
         <T w="bold" size={13} color={colors.lime}>Profil</T>
       </Pressable>
+
+      {AUTH_REQUIRED && auth.session ? (
+        <SettingGroup label="Hisob">
+          <SettingRow icon="user" tone="gray" title="Google hisobi" sub={auth.email ?? ''} />
+          <SettingRow icon={auth.status === 'error' ? 'cloud-off' : 'cloud'} tone={auth.status === 'error' ? 'amber' : 'green'} title="Saqlangan"
+            sub="Har mashqdan keyin avtomatik" value={saved} onPress={() => auth.saveNow()} />
+          <SettingRow icon="log-out" tone="gray" title="Chiqish" onPress={() => setAskOut(true)} last />
+        </SettingGroup>
+      ) : null}
 
       <SettingGroup label="O'rganish">
         <SettingRow icon="target" title="Kunlik maqsad" sub={`~${dailyMinutes(state.dailyNew)} daqiqa kuniga`} value={`${state.dailyNew} ta so'z`} onPress={() => router.push('/settings/goal')} />
@@ -63,6 +79,17 @@ export default function Settings() {
       </SettingGroup>
 
       <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Tez Yodla {appVersion()} · ma'lumotlar faqat telefoningizda</T>
+      <Modal visible={askOut} transparent animationType="slide" onRequestClose={() => setAskOut(false)}>
+        <Pressable accessibilityLabel="Yopish" onPress={() => setAskOut(false)} style={{ flex: 1, backgroundColor: 'rgba(19,26,21,0.45)' }} />
+        <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 20, paddingBottom: 30, gap: 14 }}>
+          <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: 'center' }} />
+          <T w="extrabold" size={24} accessibilityRole="header">Hisobdan chiqasizmi?</T>
+          <T size={15} color={colors.muted} style={{ lineHeight: 22 }}>Progressingiz bulutda saqlangan. Qayta kirsangiz — hammasi joyida bo'ladi.</T>
+          <Button title={leaving ? 'Chiqilmoqda…' : 'Chiqish'} variant="dangerOutline" disabled={leaving}
+            onPress={async () => { setLeaving(true); try { await auth.signOut(); } finally { setLeaving(false); setAskOut(false); } }} />
+          <Button title="Bekor qilish" variant="white" onPress={() => setAskOut(false)} />
+        </View>
+      </Modal>
     </Screen>
   );
 }

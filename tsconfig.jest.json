@@ -5,9 +5,19 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["jest", "node"],
+    "types": [
+      "jest",
+      "node"
+    ],
     "baseUrl": ".",
-    "paths": { "@/*": ["./src/*"] }
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "jsx": "react-jsx"
   },
-  "include": ["src/lib/**/*.ts"]
+  "include": [
+    "src/lib/**/*.ts"
+  ]
 }
