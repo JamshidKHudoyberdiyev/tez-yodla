@@ -1,0 +1,5846 @@
+[
+  {
+    "word": "time",
+    "translation": "vaqt"
+  },
+  {
+    "word": "year",
+    "translation": "yil"
+  },
+  {
+    "word": "people",
+    "translation": "odamlar"
+  },
+  {
+    "word": "way",
+    "translation": "yo'l; usul"
+  },
+  {
+    "word": "day",
+    "translation": "kun"
+  },
+  {
+    "word": "man",
+    "translation": "erkak, kishi"
+  },
+  {
+    "word": "thing",
+    "translation": "narsa"
+  },
+  {
+    "word": "woman",
+    "translation": "ayol"
+  },
+  {
+    "word": "life",
+    "translation": "hayot"
+  },
+  {
+    "word": "child",
+    "translation": "bola"
+  },
+  {
+    "word": "world",
+    "translation": "dunyo"
+  },
+  {
+    "word": "school",
+    "translation": "maktab"
+  },
+  {
+    "word": "family",
+    "translation": "oila"
+  },
+  {
+    "word": "student",
+    "translation": "talaba, o'quvchi"
+  },
+  {
+    "word": "group",
+    "translation": "guruh"
+  },
+  {
+    "word": "country",
+    "translation": "mamlakat"
+  },
+  {
+    "word": "problem",
+    "translation": "muammo"
+  },
+  {
+    "word": "hand",
+    "translation": "qo'l (kaft)"
+  },
+  {
+    "word": "part",
+    "translation": "qism"
+  },
+  {
+    "word": "place",
+    "translation": "joy"
+  },
+  {
+    "word": "week",
+    "translation": "hafta"
+  },
+  {
+    "word": "company",
+    "translation": "kompaniya, firma"
+  },
+  {
+    "word": "question",
+    "translation": "savol"
+  },
+  {
+    "word": "work",
+    "translation": "ish; ishlamoq"
+  },
+  {
+    "word": "night",
+    "translation": "tun, kecha"
+  },
+  {
+    "word": "point",
+    "translation": "nuqta; fikr"
+  },
+  {
+    "word": "home",
+    "translation": "uy (oila maskani)"
+  },
+  {
+    "word": "water",
+    "translation": "suv"
+  },
+  {
+    "word": "room",
+    "translation": "xona"
+  },
+  {
+    "word": "mother",
+    "translation": "ona"
+  },
+  {
+    "word": "area",
+    "translation": "hudud, maydon"
+  },
+  {
+    "word": "money",
+    "translation": "pul"
+  },
+  {
+    "word": "story",
+    "translation": "hikoya"
+  },
+  {
+    "word": "fact",
+    "translation": "fakt, dalil"
+  },
+  {
+    "word": "month",
+    "translation": "oy (vaqt)"
+  },
+  {
+    "word": "book",
+    "translation": "kitob"
+  },
+  {
+    "word": "eye",
+    "translation": "ko'z"
+  },
+  {
+    "word": "job",
+    "translation": "ish (lavozim)"
+  },
+  {
+    "word": "word",
+    "translation": "so'z"
+  },
+  {
+    "word": "business",
+    "translation": "biznes, tadbirkorlik"
+  },
+  {
+    "word": "side",
+    "translation": "tomon"
+  },
+  {
+    "word": "kind",
+    "translation": "xil, tur; mehribon"
+  },
+  {
+    "word": "head",
+    "translation": "bosh"
+  },
+  {
+    "word": "house",
+    "translation": "uy (bino)"
+  },
+  {
+    "word": "friend",
+    "translation": "do'st"
+  },
+  {
+    "word": "father",
+    "translation": "ota"
+  },
+  {
+    "word": "hour",
+    "translation": "soat (60 daqiqa)"
+  },
+  {
+    "word": "game",
+    "translation": "o'yin"
+  },
+  {
+    "word": "line",
+    "translation": "chiziq; navbat"
+  },
+  {
+    "word": "end",
+    "translation": "oxir, tugash"
+  },
+  {
+    "word": "member",
+    "translation": "a'zo"
+  },
+  {
+    "word": "law",
+    "translation": "qonun"
+  },
+  {
+    "word": "car",
+    "translation": "mashina"
+  },
+  {
+    "word": "city",
+    "translation": "shahar"
+  },
+  {
+    "word": "name",
+    "translation": "ism"
+  },
+  {
+    "word": "president",
+    "translation": "prezident"
+  },
+  {
+    "word": "team",
+    "translation": "jamoa"
+  },
+  {
+    "word": "minute",
+    "translation": "daqiqa"
+  },
+  {
+    "word": "idea",
+    "translation": "g'oya, fikr"
+  },
+  {
+    "word": "kid",
+    "translation": "bola (so'zlashuvda)"
+  },
+  {
+    "word": "body",
+    "translation": "tana"
+  },
+  {
+    "word": "information",
+    "translation": "ma'lumot"
+  },
+  {
+    "word": "back",
+    "translation": "orqa; qaytib"
+  },
+  {
+    "word": "parent",
+    "translation": "ota yoki ona"
+  },
+  {
+    "word": "face",
+    "translation": "yuz, bet"
+  },
+  {
+    "word": "level",
+    "translation": "daraja"
+  },
+  {
+    "word": "office",
+    "translation": "ofis, idora"
+  },
+  {
+    "word": "door",
+    "translation": "eshik"
+  },
+  {
+    "word": "health",
+    "translation": "sog'liq"
+  },
+  {
+    "word": "person",
+    "translation": "shaxs, odam"
+  },
+  {
+    "word": "art",
+    "translation": "san'at"
+  },
+  {
+    "word": "war",
+    "translation": "urush"
+  },
+  {
+    "word": "history",
+    "translation": "tarix"
+  },
+  {
+    "word": "party",
+    "translation": "bayram, kecha; partiya"
+  },
+  {
+    "word": "result",
+    "translation": "natija"
+  },
+  {
+    "word": "change",
+    "translation": "o'zgarish; o'zgartirmoq"
+  },
+  {
+    "word": "morning",
+    "translation": "ertalab"
+  },
+  {
+    "word": "reason",
+    "translation": "sabab"
+  },
+  {
+    "word": "research",
+    "translation": "tadqiqot"
+  },
+  {
+    "word": "girl",
+    "translation": "qiz"
+  },
+  {
+    "word": "guy",
+    "translation": "yigit (so'zlashuvda)"
+  },
+  {
+    "word": "moment",
+    "translation": "lahza, payt"
+  },
+  {
+    "word": "air",
+    "translation": "havo"
+  },
+  {
+    "word": "teacher",
+    "translation": "o'qituvchi"
+  },
+  {
+    "word": "force",
+    "translation": "kuch; majburlamoq"
+  },
+  {
+    "word": "education",
+    "translation": "ta'lim"
+  },
+  {
+    "word": "foot",
+    "translation": "oyoq (panja)"
+  },
+  {
+    "word": "boy",
+    "translation": "o'g'il bola"
+  },
+  {
+    "word": "age",
+    "translation": "yosh"
+  },
+  {
+    "word": "music",
+    "translation": "musiqa"
+  },
+  {
+    "word": "food",
+    "translation": "ovqat"
+  },
+  {
+    "word": "road",
+    "translation": "yo'l (ko'cha)"
+  },
+  {
+    "word": "phone",
+    "translation": "telefon"
+  },
+  {
+    "word": "love",
+    "translation": "sevgi; sevmoq"
+  },
+  {
+    "word": "market",
+    "translation": "bozor"
+  },
+  {
+    "word": "price",
+    "translation": "narx"
+  },
+  {
+    "word": "language",
+    "translation": "til"
+  },
+  {
+    "word": "heart",
+    "translation": "yurak"
+  },
+  {
+    "word": "street",
+    "translation": "ko'cha"
+  },
+  {
+    "word": "answer",
+    "translation": "javob; javob bermoq"
+  },
+  {
+    "word": "news",
+    "translation": "yangilik"
+  },
+  {
+    "word": "girlfriend",
+    "translation": "qiz do'st"
+  },
+  {
+    "word": "plan",
+    "translation": "reja"
+  },
+  {
+    "word": "test",
+    "translation": "test, sinov"
+  },
+  {
+    "word": "class",
+    "translation": "sinf, dars"
+  },
+  {
+    "word": "dog",
+    "translation": "it"
+  },
+  {
+    "word": "tree",
+    "translation": "daraxt"
+  },
+  {
+    "word": "sun",
+    "translation": "quyosh"
+  },
+  {
+    "word": "bread",
+    "translation": "non"
+  },
+  {
+    "word": "brother",
+    "translation": "aka, uka"
+  },
+  {
+    "word": "sister",
+    "translation": "opa, singil"
+  },
+  {
+    "word": "son",
+    "translation": "o'g'il"
+  },
+  {
+    "word": "daughter",
+    "translation": "qiz (farzand)"
+  },
+  {
+    "word": "baby",
+    "translation": "chaqaloq"
+  },
+  {
+    "word": "be",
+    "translation": "bo'lmoq"
+  },
+  {
+    "word": "have",
+    "translation": "ega bo'lmoq, bor bo'lmoq"
+  },
+  {
+    "word": "do",
+    "translation": "qilmoq"
+  },
+  {
+    "word": "say",
+    "translation": "aytmoq"
+  },
+  {
+    "word": "get",
+    "translation": "olmoq; yetib kelmoq"
+  },
+  {
+    "word": "make",
+    "translation": "qilmoq, yasamoq"
+  },
+  {
+    "word": "go",
+    "translation": "bormoq"
+  },
+  {
+    "word": "know",
+    "translation": "bilmoq"
+  },
+  {
+    "word": "take",
+    "translation": "olmoq; olib ketmoq"
+  },
+  {
+    "word": "see",
+    "translation": "ko'rmoq"
+  },
+  {
+    "word": "come",
+    "translation": "kelmoq"
+  },
+  {
+    "word": "think",
+    "translation": "o'ylamoq"
+  },
+  {
+    "word": "look",
+    "translation": "qaramoq"
+  },
+  {
+    "word": "want",
+    "translation": "xohlamoq"
+  },
+  {
+    "word": "give",
+    "translation": "bermoq"
+  },
+  {
+    "word": "use",
+    "translation": "ishlatmoq"
+  },
+  {
+    "word": "find",
+    "translation": "topmoq"
+  },
+  {
+    "word": "tell",
+    "translation": "aytib bermoq"
+  },
+  {
+    "word": "ask",
+    "translation": "so'ramoq"
+  },
+  {
+    "word": "seem",
+    "translation": "tuyulmoq, ko'rinmoq"
+  },
+  {
+    "word": "feel",
+    "translation": "his qilmoq"
+  },
+  {
+    "word": "try",
+    "translation": "harakat qilmoq; tatib ko'rmoq"
+  },
+  {
+    "word": "leave",
+    "translation": "ketmoq; qoldirmoq"
+  },
+  {
+    "word": "call",
+    "translation": "qo'ng'iroq qilmoq; chaqirmoq"
+  },
+  {
+    "word": "need",
+    "translation": "muhtoj bo'lmoq, kerak bo'lmoq"
+  },
+  {
+    "word": "become",
+    "translation": "bo'lib qolmoq, aylanmoq"
+  },
+  {
+    "word": "put",
+    "translation": "qo'ymoq"
+  },
+  {
+    "word": "mean",
+    "translation": "anglatmoq"
+  },
+  {
+    "word": "keep",
+    "translation": "saqlamoq, ushlab turmoq"
+  },
+  {
+    "word": "let",
+    "translation": "ruxsat bermoq"
+  },
+  {
+    "word": "begin",
+    "translation": "boshlamoq"
+  },
+  {
+    "word": "help",
+    "translation": "yordam bermoq"
+  },
+  {
+    "word": "talk",
+    "translation": "gaplashmoq"
+  },
+  {
+    "word": "turn",
+    "translation": "burilmoq; navbat"
+  },
+  {
+    "word": "start",
+    "translation": "boshlamoq"
+  },
+  {
+    "word": "show",
+    "translation": "ko'rsatmoq"
+  },
+  {
+    "word": "hear",
+    "translation": "eshitmoq"
+  },
+  {
+    "word": "play",
+    "translation": "o'ynamoq; chalmoq"
+  },
+  {
+    "word": "run",
+    "translation": "yugurmoq"
+  },
+  {
+    "word": "move",
+    "translation": "ko'chmoq; harakatlanmoq"
+  },
+  {
+    "word": "like",
+    "translation": "yoqtirmoq"
+  },
+  {
+    "word": "live",
+    "translation": "yashamoq"
+  },
+  {
+    "word": "believe",
+    "translation": "ishonmoq"
+  },
+  {
+    "word": "hold",
+    "translation": "ushlamoq"
+  },
+  {
+    "word": "bring",
+    "translation": "olib kelmoq"
+  },
+  {
+    "word": "happen",
+    "translation": "sodir bo'lmoq"
+  },
+  {
+    "word": "write",
+    "translation": "yozmoq"
+  },
+  {
+    "word": "sit",
+    "translation": "o'tirmoq"
+  },
+  {
+    "word": "stand",
+    "translation": "turmoq (oyoqda)"
+  },
+  {
+    "word": "lose",
+    "translation": "yo'qotmoq; yutqazmoq"
+  },
+  {
+    "word": "pay",
+    "translation": "to'lamoq"
+  },
+  {
+    "word": "meet",
+    "translation": "uchrashmoq, tanishmoq"
+  },
+  {
+    "word": "include",
+    "translation": "o'z ichiga olmoq"
+  },
+  {
+    "word": "continue",
+    "translation": "davom ettirmoq"
+  },
+  {
+    "word": "learn",
+    "translation": "o'rganmoq"
+  },
+  {
+    "word": "lead",
+    "translation": "boshqarmoq, yetaklamoq"
+  },
+  {
+    "word": "understand",
+    "translation": "tushunmoq"
+  },
+  {
+    "word": "watch",
+    "translation": "tomosha qilmoq"
+  },
+  {
+    "word": "follow",
+    "translation": "ergashmoq, kuzatmoq"
+  },
+  {
+    "word": "stop",
+    "translation": "to'xtamoq"
+  },
+  {
+    "word": "create",
+    "translation": "yaratmoq"
+  },
+  {
+    "word": "speak",
+    "translation": "gapirmoq"
+  },
+  {
+    "word": "read",
+    "translation": "o'qimoq"
+  },
+  {
+    "word": "spend",
+    "translation": "sarflamoq; o'tkazmoq"
+  },
+  {
+    "word": "grow",
+    "translation": "o'smoq; o'stirmoq"
+  },
+  {
+    "word": "open",
+    "translation": "ochmoq"
+  },
+  {
+    "word": "walk",
+    "translation": "yurmoq, piyoda yurmoq"
+  },
+  {
+    "word": "win",
+    "translation": "yutmoq, g'alaba qozonmoq"
+  },
+  {
+    "word": "offer",
+    "translation": "taklif qilmoq"
+  },
+  {
+    "word": "remember",
+    "translation": "eslamoq, yodda tutmoq"
+  },
+  {
+    "word": "consider",
+    "translation": "ko'rib chiqmoq, hisoblamoq"
+  },
+  {
+    "word": "appear",
+    "translation": "paydo bo'lmoq"
+  },
+  {
+    "word": "buy",
+    "translation": "sotib olmoq"
+  },
+  {
+    "word": "wait",
+    "translation": "kutmoq"
+  },
+  {
+    "word": "serve",
+    "translation": "xizmat qilmoq; tortmoq (ovqat)"
+  },
+  {
+    "word": "die",
+    "translation": "o'lmoq"
+  },
+  {
+    "word": "send",
+    "translation": "jo'natmoq"
+  },
+  {
+    "word": "expect",
+    "translation": "kutmoq (umid qilmoq)"
+  },
+  {
+    "word": "build",
+    "translation": "qurmoq"
+  },
+  {
+    "word": "stay",
+    "translation": "qolmoq"
+  },
+  {
+    "word": "fall",
+    "translation": "yiqilmoq, tushmoq"
+  },
+  {
+    "word": "cut",
+    "translation": "kesmoq"
+  },
+  {
+    "word": "reach",
+    "translation": "yetmoq, yetib bormoq"
+  },
+  {
+    "word": "kill",
+    "translation": "o'ldirmoq"
+  },
+  {
+    "word": "remain",
+    "translation": "qolmoq (saqlanib)"
+  },
+  {
+    "word": "suggest",
+    "translation": "taklif qilmoq, maslahat bermoq"
+  },
+  {
+    "word": "raise",
+    "translation": "ko'tarmoq"
+  },
+  {
+    "word": "pass",
+    "translation": "o'tmoq; uzatmoq"
+  },
+  {
+    "word": "sell",
+    "translation": "sotmoq"
+  },
+  {
+    "word": "decide",
+    "translation": "qaror qilmoq"
+  },
+  {
+    "word": "return",
+    "translation": "qaytmoq; qaytarmoq"
+  },
+  {
+    "word": "explain",
+    "translation": "tushuntirmoq"
+  },
+  {
+    "word": "hope",
+    "translation": "umid qilmoq"
+  },
+  {
+    "word": "develop",
+    "translation": "rivojlantirmoq"
+  },
+  {
+    "word": "carry",
+    "translation": "ko'tarib yurmoq, tashimoq"
+  },
+  {
+    "word": "break",
+    "translation": "sindirmoq"
+  },
+  {
+    "word": "receive",
+    "translation": "qabul qilmoq, olmoq"
+  },
+  {
+    "word": "agree",
+    "translation": "rozi bo'lmoq"
+  },
+  {
+    "word": "eat",
+    "translation": "yemoq"
+  },
+  {
+    "word": "drink",
+    "translation": "ichmoq"
+  },
+  {
+    "word": "sleep",
+    "translation": "uxlamoq"
+  },
+  {
+    "word": "cook",
+    "translation": "ovqat pishirmoq"
+  },
+  {
+    "word": "wash",
+    "translation": "yuvmoq"
+  },
+  {
+    "word": "close",
+    "translation": "yopmoq"
+  },
+  {
+    "word": "good",
+    "translation": "yaxshi"
+  },
+  {
+    "word": "new",
+    "translation": "yangi"
+  },
+  {
+    "word": "first",
+    "translation": "birinchi"
+  },
+  {
+    "word": "last",
+    "translation": "oxirgi; o'tgan"
+  },
+  {
+    "word": "long",
+    "translation": "uzun"
+  },
+  {
+    "word": "great",
+    "translation": "ajoyib; buyuk"
+  },
+  {
+    "word": "little",
+    "translation": "kichkina; ozgina"
+  },
+  {
+    "word": "own",
+    "translation": "o'z, shaxsiy"
+  },
+  {
+    "word": "other",
+    "translation": "boshqa"
+  },
+  {
+    "word": "old",
+    "translation": "eski; qari"
+  },
+  {
+    "word": "right",
+    "translation": "to'g'ri; o'ng"
+  },
+  {
+    "word": "big",
+    "translation": "katta"
+  },
+  {
+    "word": "high",
+    "translation": "baland"
+  },
+  {
+    "word": "different",
+    "translation": "boshqacha, turli"
+  },
+  {
+    "word": "small",
+    "translation": "kichik"
+  },
+  {
+    "word": "large",
+    "translation": "katta, keng"
+  },
+  {
+    "word": "next",
+    "translation": "keyingi"
+  },
+  {
+    "word": "early",
+    "translation": "erta"
+  },
+  {
+    "word": "young",
+    "translation": "yosh"
+  },
+  {
+    "word": "important",
+    "translation": "muhim"
+  },
+  {
+    "word": "bad",
+    "translation": "yomon"
+  },
+  {
+    "word": "same",
+    "translation": "bir xil"
+  },
+  {
+    "word": "able",
+    "translation": "qodir, qila oladigan"
+  },
+  {
+    "word": "happy",
+    "translation": "baxtli, xursand"
+  },
+  {
+    "word": "easy",
+    "translation": "oson"
+  },
+  {
+    "word": "hard",
+    "translation": "qiyin; qattiq"
+  },
+  {
+    "word": "really",
+    "translation": "haqiqatan, rostdan"
+  },
+  {
+    "word": "always",
+    "translation": "doim"
+  },
+  {
+    "word": "never",
+    "translation": "hech qachon"
+  },
+  {
+    "word": "often",
+    "translation": "tez-tez, ko'pincha"
+  },
+  {
+    "word": "I",
+    "translation": "men"
+  },
+  {
+    "word": "you",
+    "translation": "sen, siz"
+  },
+  {
+    "word": "he",
+    "translation": "u (erkak)"
+  },
+  {
+    "word": "she",
+    "translation": "u (ayol)"
+  },
+  {
+    "word": "it",
+    "translation": "u (narsa, hayvon)"
+  },
+  {
+    "word": "we",
+    "translation": "biz"
+  },
+  {
+    "word": "they",
+    "translation": "ular"
+  },
+  {
+    "word": "this",
+    "translation": "bu"
+  },
+  {
+    "word": "that",
+    "translation": "u, ana u"
+  },
+  {
+    "word": "what",
+    "translation": "nima"
+  },
+  {
+    "word": "who",
+    "translation": "kim"
+  },
+  {
+    "word": "where",
+    "translation": "qayerda, qayerga"
+  },
+  {
+    "word": "when",
+    "translation": "qachon"
+  },
+  {
+    "word": "why",
+    "translation": "nega, nima uchun"
+  },
+  {
+    "word": "how",
+    "translation": "qanday, qanaqa"
+  },
+  {
+    "word": "which",
+    "translation": "qaysi"
+  },
+  {
+    "word": "all",
+    "translation": "hamma, barcha"
+  },
+  {
+    "word": "some",
+    "translation": "bir oz, ba'zi"
+  },
+  {
+    "word": "every",
+    "translation": "har bir"
+  },
+  {
+    "word": "many",
+    "translation": "ko'p (sanaladigan)"
+  },
+  {
+    "word": "much",
+    "translation": "ko'p (sanalmaydigan)"
+  },
+  {
+    "word": "nothing",
+    "translation": "hech narsa"
+  },
+  {
+    "word": "something",
+    "translation": "nimadir"
+  },
+  {
+    "word": "everyone",
+    "translation": "hamma (odamlar)"
+  },
+  {
+    "word": "someone",
+    "translation": "kimdir"
+  },
+  {
+    "word": "in",
+    "translation": "ichida, -da"
+  },
+  {
+    "word": "on",
+    "translation": "ustida"
+  },
+  {
+    "word": "under",
+    "translation": "ostida"
+  },
+  {
+    "word": "with",
+    "translation": "bilan"
+  },
+  {
+    "word": "without",
+    "translation": "siz, -siz"
+  },
+  {
+    "word": "for",
+    "translation": "uchun"
+  },
+  {
+    "word": "from",
+    "translation": "-dan"
+  },
+  {
+    "word": "to",
+    "translation": "-ga"
+  },
+  {
+    "word": "about",
+    "translation": "haqida"
+  },
+  {
+    "word": "before",
+    "translation": "oldin"
+  },
+  {
+    "word": "after",
+    "translation": "keyin"
+  },
+  {
+    "word": "between",
+    "translation": "o'rtasida"
+  },
+  {
+    "word": "near",
+    "translation": "yaqinida"
+  },
+  {
+    "word": "behind",
+    "translation": "orqasida"
+  },
+  {
+    "word": "next to",
+    "translation": "yonida"
+  },
+  {
+    "word": "and",
+    "translation": "va"
+  },
+  {
+    "word": "but",
+    "translation": "lekin, ammo"
+  },
+  {
+    "word": "or",
+    "translation": "yoki"
+  },
+  {
+    "word": "because",
+    "translation": "chunki"
+  },
+  {
+    "word": "if",
+    "translation": "agar"
+  },
+  {
+    "word": "so",
+    "translation": "shuning uchun"
+  },
+  {
+    "word": "also",
+    "translation": "ham"
+  },
+  {
+    "word": "very",
+    "translation": "juda"
+  },
+  {
+    "word": "now",
+    "translation": "hozir"
+  },
+  {
+    "word": "here",
+    "translation": "bu yerda"
+  },
+  {
+    "word": "there",
+    "translation": "u yerda"
+  },
+  {
+    "word": "today",
+    "translation": "bugun"
+  },
+  {
+    "word": "tomorrow",
+    "translation": "ertaga"
+  },
+  {
+    "word": "yesterday",
+    "translation": "kecha"
+  },
+  {
+    "word": "again",
+    "translation": "yana, qaytadan"
+  },
+  {
+    "word": "still",
+    "translation": "hali ham"
+  },
+  {
+    "word": "already",
+    "translation": "allaqachon"
+  },
+  {
+    "word": "soon",
+    "translation": "tez orada"
+  },
+  {
+    "word": "together",
+    "translation": "birga"
+  },
+  {
+    "word": "only",
+    "translation": "faqat"
+  },
+  {
+    "word": "maybe",
+    "translation": "balki"
+  },
+  {
+    "word": "sometimes",
+    "translation": "ba'zan"
+  },
+  {
+    "word": "usually",
+    "translation": "odatda"
+  },
+  {
+    "word": "quickly",
+    "translation": "tez"
+  },
+  {
+    "word": "slowly",
+    "translation": "sekin"
+  },
+  {
+    "word": "one",
+    "translation": "bir"
+  },
+  {
+    "word": "two",
+    "translation": "ikki"
+  },
+  {
+    "word": "three",
+    "translation": "uch"
+  },
+  {
+    "word": "four",
+    "translation": "to'rt"
+  },
+  {
+    "word": "five",
+    "translation": "besh"
+  },
+  {
+    "word": "six",
+    "translation": "olti"
+  },
+  {
+    "word": "seven",
+    "translation": "yetti"
+  },
+  {
+    "word": "eight",
+    "translation": "sakkiz"
+  },
+  {
+    "word": "nine",
+    "translation": "to'qqiz"
+  },
+  {
+    "word": "ten",
+    "translation": "o'n"
+  },
+  {
+    "word": "hundred",
+    "translation": "yuz (son)"
+  },
+  {
+    "word": "thousand",
+    "translation": "ming"
+  },
+  {
+    "word": "second",
+    "translation": "ikkinchi; soniya"
+  },
+  {
+    "word": "half",
+    "translation": "yarim"
+  },
+  {
+    "word": "red",
+    "translation": "qizil"
+  },
+  {
+    "word": "blue",
+    "translation": "ko'k, moviy"
+  },
+  {
+    "word": "green",
+    "translation": "yashil"
+  },
+  {
+    "word": "yellow",
+    "translation": "sariq"
+  },
+  {
+    "word": "black",
+    "translation": "qora"
+  },
+  {
+    "word": "white",
+    "translation": "oq"
+  },
+  {
+    "word": "brown",
+    "translation": "jigarrang"
+  },
+  {
+    "word": "grey",
+    "translation": "kulrang"
+  },
+  {
+    "word": "pink",
+    "translation": "pushti"
+  },
+  {
+    "word": "orange",
+    "translation": "to'q sariq; apelsin"
+  },
+  {
+    "word": "colour",
+    "translation": "rang"
+  },
+  {
+    "word": "hot",
+    "translation": "issiq"
+  },
+  {
+    "word": "cold",
+    "translation": "sovuq"
+  },
+  {
+    "word": "warm",
+    "translation": "iliq"
+  },
+  {
+    "word": "cheap",
+    "translation": "arzon"
+  },
+  {
+    "word": "expensive",
+    "translation": "qimmat"
+  },
+  {
+    "word": "beautiful",
+    "translation": "go'zal"
+  },
+  {
+    "word": "clean",
+    "translation": "toza"
+  },
+  {
+    "word": "dirty",
+    "translation": "iflos"
+  },
+  {
+    "word": "full",
+    "translation": "to'la; to'q"
+  },
+  {
+    "word": "empty",
+    "translation": "bo'sh"
+  },
+  {
+    "word": "fast",
+    "translation": "tez"
+  },
+  {
+    "word": "slow",
+    "translation": "sekin"
+  },
+  {
+    "word": "strong",
+    "translation": "kuchli"
+  },
+  {
+    "word": "weak",
+    "translation": "kuchsiz"
+  },
+  {
+    "word": "rich",
+    "translation": "boy"
+  },
+  {
+    "word": "poor",
+    "translation": "kambag'al"
+  },
+  {
+    "word": "tired",
+    "translation": "charchagan"
+  },
+  {
+    "word": "hungry",
+    "translation": "och (qorni)"
+  },
+  {
+    "word": "busy",
+    "translation": "band"
+  },
+  {
+    "word": "free",
+    "translation": "bo'sh; tekin"
+  },
+  {
+    "word": "sure",
+    "translation": "ishonchli, aniq"
+  },
+  {
+    "word": "ready",
+    "translation": "tayyor"
+  },
+  {
+    "word": "nice",
+    "translation": "yoqimli"
+  },
+  {
+    "word": "real",
+    "translation": "haqiqiy"
+  },
+  {
+    "word": "true",
+    "translation": "to'g'ri, rost"
+  },
+  {
+    "word": "sick",
+    "translation": "kasal"
+  },
+  {
+    "word": "angry",
+    "translation": "jahli chiqqan"
+  },
+  {
+    "word": "sad",
+    "translation": "g'amgin, xafa"
+  },
+  {
+    "word": "afraid",
+    "translation": "qo'rqqan"
+  },
+  {
+    "word": "quiet",
+    "translation": "tinch, jim"
+  },
+  {
+    "word": "loud",
+    "translation": "baland (ovoz)"
+  },
+  {
+    "word": "dark",
+    "translation": "qorong'i"
+  },
+  {
+    "word": "tea",
+    "translation": "choy"
+  },
+  {
+    "word": "coffee",
+    "translation": "qahva"
+  },
+  {
+    "word": "milk",
+    "translation": "sut"
+  },
+  {
+    "word": "meat",
+    "translation": "go'sht"
+  },
+  {
+    "word": "rice",
+    "translation": "guruch"
+  },
+  {
+    "word": "egg",
+    "translation": "tuxum"
+  },
+  {
+    "word": "fruit",
+    "translation": "meva"
+  },
+  {
+    "word": "apple",
+    "translation": "olma"
+  },
+  {
+    "word": "vegetable",
+    "translation": "sabzavot"
+  },
+  {
+    "word": "potato",
+    "translation": "kartoshka"
+  },
+  {
+    "word": "onion",
+    "translation": "piyoz"
+  },
+  {
+    "word": "carrot",
+    "translation": "sabzi"
+  },
+  {
+    "word": "salt",
+    "translation": "tuz"
+  },
+  {
+    "word": "sugar",
+    "translation": "shakar"
+  },
+  {
+    "word": "soup",
+    "translation": "sho'rva"
+  },
+  {
+    "word": "breakfast",
+    "translation": "nonushta"
+  },
+  {
+    "word": "lunch",
+    "translation": "tushlik"
+  },
+  {
+    "word": "dinner",
+    "translation": "kechki ovqat"
+  },
+  {
+    "word": "cake",
+    "translation": "tort"
+  },
+  {
+    "word": "table",
+    "translation": "stol"
+  },
+  {
+    "word": "chair",
+    "translation": "stul"
+  },
+  {
+    "word": "bed",
+    "translation": "karavot"
+  },
+  {
+    "word": "window",
+    "translation": "deraza"
+  },
+  {
+    "word": "wall",
+    "translation": "devor"
+  },
+  {
+    "word": "floor",
+    "translation": "pol; qavat"
+  },
+  {
+    "word": "kitchen",
+    "translation": "oshxona"
+  },
+  {
+    "word": "bathroom",
+    "translation": "hammom, yuvinish xonasi"
+  },
+  {
+    "word": "garden",
+    "translation": "bog'"
+  },
+  {
+    "word": "key",
+    "translation": "kalit"
+  },
+  {
+    "word": "bag",
+    "translation": "sumka"
+  },
+  {
+    "word": "box",
+    "translation": "quti"
+  },
+  {
+    "word": "cup",
+    "translation": "piyola, finjon"
+  },
+  {
+    "word": "glass",
+    "translation": "stakan; shisha"
+  },
+  {
+    "word": "plate",
+    "translation": "likopcha, tarelka"
+  },
+  {
+    "word": "clock",
+    "translation": "soat (devor soati)"
+  },
+  {
+    "word": "picture",
+    "translation": "rasm"
+  },
+  {
+    "word": "computer",
+    "translation": "kompyuter"
+  },
+  {
+    "word": "television",
+    "translation": "televizor"
+  },
+  {
+    "word": "clothes",
+    "translation": "kiyim"
+  },
+  {
+    "word": "shirt",
+    "translation": "ko'ylak (erkaklar)"
+  },
+  {
+    "word": "dress",
+    "translation": "ko'ylak (ayollar)"
+  },
+  {
+    "word": "shoe",
+    "translation": "oyoq kiyim, tufli"
+  },
+  {
+    "word": "hat",
+    "translation": "shapka, qalpoq"
+  },
+  {
+    "word": "coat",
+    "translation": "palto"
+  },
+  {
+    "word": "nose",
+    "translation": "burun"
+  },
+  {
+    "word": "ear",
+    "translation": "quloq"
+  },
+  {
+    "word": "mouth",
+    "translation": "og'iz"
+  },
+  {
+    "word": "tooth",
+    "translation": "tish"
+  },
+  {
+    "word": "hair",
+    "translation": "soch"
+  },
+  {
+    "word": "arm",
+    "translation": "qo'l (yelkadan)"
+  },
+  {
+    "word": "leg",
+    "translation": "oyoq"
+  },
+  {
+    "word": "finger",
+    "translation": "barmoq"
+  },
+  {
+    "word": "blood",
+    "translation": "qon"
+  },
+  {
+    "word": "sky",
+    "translation": "osmon"
+  },
+  {
+    "word": "moon",
+    "translation": "oy (osmondagi)"
+  },
+  {
+    "word": "star",
+    "translation": "yulduz"
+  },
+  {
+    "word": "rain",
+    "translation": "yomg'ir"
+  },
+  {
+    "word": "snow",
+    "translation": "qor"
+  },
+  {
+    "word": "wind",
+    "translation": "shamol"
+  },
+  {
+    "word": "weather",
+    "translation": "ob-havo"
+  },
+  {
+    "word": "river",
+    "translation": "daryo"
+  },
+  {
+    "word": "lake",
+    "translation": "ko'l"
+  },
+  {
+    "word": "sea",
+    "translation": "dengiz"
+  },
+  {
+    "word": "mountain",
+    "translation": "tog'"
+  },
+  {
+    "word": "flower",
+    "translation": "gul"
+  },
+  {
+    "word": "grass",
+    "translation": "o't, maysa"
+  },
+  {
+    "word": "animal",
+    "translation": "hayvon"
+  },
+  {
+    "word": "cat",
+    "translation": "mushuk"
+  },
+  {
+    "word": "horse",
+    "translation": "ot"
+  },
+  {
+    "word": "cow",
+    "translation": "sigir"
+  },
+  {
+    "word": "sheep",
+    "translation": "qo'y"
+  },
+  {
+    "word": "bird",
+    "translation": "qush"
+  },
+  {
+    "word": "fish",
+    "translation": "baliq"
+  },
+  {
+    "word": "bus",
+    "translation": "avtobus"
+  },
+  {
+    "word": "train",
+    "translation": "poyezd"
+  },
+  {
+    "word": "plane",
+    "translation": "samolyot"
+  },
+  {
+    "word": "taxi",
+    "translation": "taksi"
+  },
+  {
+    "word": "bike",
+    "translation": "velosiped"
+  },
+  {
+    "word": "ticket",
+    "translation": "chipta"
+  },
+  {
+    "word": "station",
+    "translation": "bekat, vokzal"
+  },
+  {
+    "word": "airport",
+    "translation": "aeroport"
+  },
+  {
+    "word": "hospital",
+    "translation": "kasalxona"
+  },
+  {
+    "word": "shop",
+    "translation": "do'kon"
+  },
+  {
+    "word": "bank",
+    "translation": "bank"
+  },
+  {
+    "word": "park",
+    "translation": "bog', istirohat bog'i"
+  },
+  {
+    "word": "village",
+    "translation": "qishloq"
+  },
+  {
+    "word": "town",
+    "translation": "shaharcha"
+  },
+  {
+    "word": "hotel",
+    "translation": "mehmonxona"
+  },
+  {
+    "word": "restaurant",
+    "translation": "restoran"
+  },
+  {
+    "word": "library",
+    "translation": "kutubxona"
+  },
+  {
+    "word": "university",
+    "translation": "universitet"
+  },
+  {
+    "word": "map",
+    "translation": "xarita"
+  },
+  {
+    "word": "letter",
+    "translation": "xat; harf"
+  },
+  {
+    "word": "paper",
+    "translation": "qog'oz"
+  },
+  {
+    "word": "pen",
+    "translation": "ruchka"
+  },
+  {
+    "word": "film",
+    "translation": "film"
+  },
+  {
+    "word": "song",
+    "translation": "qo'shiq"
+  },
+  {
+    "word": "photo",
+    "translation": "surat, foto"
+  },
+  {
+    "word": "gift",
+    "translation": "sovg'a"
+  },
+  {
+    "word": "holiday",
+    "translation": "bayram; ta'til"
+  },
+  {
+    "word": "birthday",
+    "translation": "tug'ilgan kun"
+  },
+  {
+    "word": "wedding",
+    "translation": "to'y"
+  },
+  {
+    "word": "guest",
+    "translation": "mehmon"
+  },
+  {
+    "word": "neighbour",
+    "translation": "qo'shni"
+  },
+  {
+    "word": "husband",
+    "translation": "er (turmush o'rtog'i)"
+  },
+  {
+    "word": "wife",
+    "translation": "xotin, rafiqa"
+  },
+  {
+    "word": "grandmother",
+    "translation": "buvi"
+  },
+  {
+    "word": "grandfather",
+    "translation": "bobo"
+  },
+  {
+    "word": "uncle",
+    "translation": "amaki, tog'a"
+  },
+  {
+    "word": "aunt",
+    "translation": "xola, amma"
+  },
+  {
+    "word": "doctor",
+    "translation": "shifokor"
+  },
+  {
+    "word": "driver",
+    "translation": "haydovchi"
+  },
+  {
+    "word": "police",
+    "translation": "politsiya"
+  },
+  {
+    "word": "boss",
+    "translation": "boshliq, rahbar"
+  },
+  {
+    "word": "spring",
+    "translation": "bahor"
+  },
+  {
+    "word": "summer",
+    "translation": "yoz"
+  },
+  {
+    "word": "autumn",
+    "translation": "kuz"
+  },
+  {
+    "word": "winter",
+    "translation": "qish"
+  },
+  {
+    "word": "evening",
+    "translation": "kechqurun"
+  },
+  {
+    "word": "afternoon",
+    "translation": "tushdan keyin"
+  },
+  {
+    "word": "weekend",
+    "translation": "dam olish kunlari"
+  },
+  {
+    "word": "wake",
+    "translation": "uyg'onmoq"
+  },
+  {
+    "word": "wear",
+    "translation": "kiymoq (kiyib yurmoq)"
+  },
+  {
+    "word": "brush",
+    "translation": "cho'tkalamoq"
+  },
+  {
+    "word": "fix",
+    "translation": "tuzatmoq, ta'mirlamoq"
+  },
+  {
+    "word": "draw",
+    "translation": "rasm chizmoq"
+  },
+  {
+    "word": "sing",
+    "translation": "qo'shiq aytmoq"
+  },
+  {
+    "word": "dance",
+    "translation": "raqs tushmoq"
+  },
+  {
+    "word": "swim",
+    "translation": "suzmoq"
+  },
+  {
+    "word": "jump",
+    "translation": "sakramoq"
+  },
+  {
+    "word": "climb",
+    "translation": "tirmashib chiqmoq"
+  },
+  {
+    "word": "ride",
+    "translation": "minmoq (ot, velosiped)"
+  },
+  {
+    "word": "drive",
+    "translation": "mashina haydamoq"
+  },
+  {
+    "word": "fly",
+    "translation": "uchmoq"
+  },
+  {
+    "word": "travel",
+    "translation": "sayohat qilmoq"
+  },
+  {
+    "word": "visit",
+    "translation": "tashrif buyurmoq, borib kelmoq"
+  },
+  {
+    "word": "arrive",
+    "translation": "yetib kelmoq"
+  },
+  {
+    "word": "enter",
+    "translation": "kirmoq"
+  },
+  {
+    "word": "throw",
+    "translation": "otmoq, tashlamoq"
+  },
+  {
+    "word": "catch",
+    "translation": "tutmoq, ushlamoq"
+  },
+  {
+    "word": "push",
+    "translation": "itarmoq"
+  },
+  {
+    "word": "pull",
+    "translation": "tortmoq"
+  },
+  {
+    "word": "hit",
+    "translation": "urmoq"
+  },
+  {
+    "word": "touch",
+    "translation": "tegmoq"
+  },
+  {
+    "word": "smell",
+    "translation": "hidlamoq; hid kelmoq"
+  },
+  {
+    "word": "taste",
+    "translation": "ta'mini ko'rmoq"
+  },
+  {
+    "word": "listen",
+    "translation": "tinglamoq"
+  },
+  {
+    "word": "laugh",
+    "translation": "kulmoq"
+  },
+  {
+    "word": "smile",
+    "translation": "jilmaymoq"
+  },
+  {
+    "word": "cry",
+    "translation": "yig'lamoq"
+  },
+  {
+    "word": "shout",
+    "translation": "baqirmoq"
+  },
+  {
+    "word": "worry",
+    "translation": "xavotir olmoq"
+  },
+  {
+    "word": "forget",
+    "translation": "unutmoq"
+  },
+  {
+    "word": "study",
+    "translation": "o'qimoq, o'rganmoq"
+  },
+  {
+    "word": "teach",
+    "translation": "o'rgatmoq, dars bermoq"
+  },
+  {
+    "word": "practise",
+    "translation": "mashq qilmoq"
+  },
+  {
+    "word": "repeat",
+    "translation": "takrorlamoq"
+  },
+  {
+    "word": "spell",
+    "translation": "harflab aytmoq"
+  },
+  {
+    "word": "count",
+    "translation": "sanamoq"
+  },
+  {
+    "word": "check",
+    "translation": "tekshirmoq"
+  },
+  {
+    "word": "choose",
+    "translation": "tanlamoq"
+  },
+  {
+    "word": "prefer",
+    "translation": "afzal ko'rmoq"
+  },
+  {
+    "word": "hate",
+    "translation": "yomon ko'rmoq"
+  },
+  {
+    "word": "enjoy",
+    "translation": "zavqlanmoq"
+  },
+  {
+    "word": "invite",
+    "translation": "taklif qilmoq (mehmonga)"
+  },
+  {
+    "word": "thank",
+    "translation": "rahmat aytmoq"
+  },
+  {
+    "word": "share",
+    "translation": "bo'lishmoq"
+  },
+  {
+    "word": "borrow",
+    "translation": "qarzga olmoq"
+  },
+  {
+    "word": "lend",
+    "translation": "qarzga bermoq"
+  },
+  {
+    "word": "save",
+    "translation": "saqlamoq; tejamoq"
+  },
+  {
+    "word": "cost",
+    "translation": "turmoq (narx)"
+  },
+  {
+    "word": "order",
+    "translation": "buyurtma bermoq"
+  },
+  {
+    "word": "rent",
+    "translation": "ijaraga olmoq"
+  },
+  {
+    "word": "fill",
+    "translation": "to'ldirmoq"
+  },
+  {
+    "word": "drop",
+    "translation": "tushirib yubormoq"
+  },
+  {
+    "word": "pick",
+    "translation": "tanlamoq; uzmoq"
+  },
+  {
+    "word": "hide",
+    "translation": "yashirmoq, berkinmoq"
+  },
+  {
+    "word": "look for",
+    "translation": "qidirmoq"
+  },
+  {
+    "word": "look after",
+    "translation": "g'amxo'rlik qilmoq"
+  },
+  {
+    "word": "get up",
+    "translation": "turmoq (o'rindan)"
+  },
+  {
+    "word": "give up",
+    "translation": "taslim bo'lmoq, tashlamoq"
+  },
+  {
+    "word": "turn on",
+    "translation": "yoqmoq"
+  },
+  {
+    "word": "turn off",
+    "translation": "o'chirmoq"
+  },
+  {
+    "word": "put on",
+    "translation": "kiymoq (ustiga)"
+  },
+  {
+    "word": "take off",
+    "translation": "yechmoq; uchib ketmoq"
+  },
+  {
+    "word": "find out",
+    "translation": "bilib olmoq"
+  },
+  {
+    "word": "grow up",
+    "translation": "voyaga yetmoq, katta bo'lmoq"
+  },
+  {
+    "word": "set",
+    "translation": "o'rnatmoq, qo'ymoq"
+  },
+  {
+    "word": "join",
+    "translation": "qo'shilmoq"
+  },
+  {
+    "word": "allow",
+    "translation": "ruxsat bermoq"
+  },
+  {
+    "word": "add",
+    "translation": "qo'shmoq"
+  },
+  {
+    "word": "describe",
+    "translation": "tasvirlamoq"
+  },
+  {
+    "word": "prepare",
+    "translation": "tayyorlamoq"
+  },
+  {
+    "word": "finish",
+    "translation": "tugatmoq"
+  },
+  {
+    "word": "improve",
+    "translation": "yaxshilamoq"
+  },
+  {
+    "word": "protect",
+    "translation": "himoya qilmoq"
+  },
+  {
+    "word": "measure",
+    "translation": "o'lchamoq"
+  },
+  {
+    "word": "mix",
+    "translation": "aralashtirmoq"
+  },
+  {
+    "word": "boil",
+    "translation": "qaynatmoq"
+  },
+  {
+    "word": "bake",
+    "translation": "pishirmoq (pechda)"
+  },
+  {
+    "word": "burn",
+    "translation": "yonmoq, kuydirmoq"
+  },
+  {
+    "word": "shake",
+    "translation": "silkitmoq"
+  },
+  {
+    "word": "shut",
+    "translation": "yopmoq"
+  },
+  {
+    "word": "lock",
+    "translation": "qulflamoq"
+  },
+  {
+    "word": "knock",
+    "translation": "taqillatmoq"
+  },
+  {
+    "word": "ring",
+    "translation": "jiringlamoq; qo'ng'iroq qilmoq"
+  },
+  {
+    "word": "print",
+    "translation": "chop etmoq"
+  },
+  {
+    "word": "type",
+    "translation": "terib yozmoq"
+  },
+  {
+    "word": "download",
+    "translation": "yuklab olmoq"
+  },
+  {
+    "word": "search",
+    "translation": "qidirmoq"
+  },
+  {
+    "word": "post",
+    "translation": "jo'natmoq; joylamoq"
+  },
+  {
+    "word": "marry",
+    "translation": "turmush qurmoq"
+  },
+  {
+    "word": "cross",
+    "translation": "kesib o'tmoq"
+  },
+  {
+    "word": "feed",
+    "translation": "boqmoq, ovqatlantirmoq"
+  },
+  {
+    "word": "kiss",
+    "translation": "o'pmoq"
+  },
+  {
+    "word": "hug",
+    "translation": "quchoqlamoq"
+  },
+  {
+    "word": "fight",
+    "translation": "urishmoq"
+  },
+  {
+    "word": "shoot",
+    "translation": "otmoq (o'q, to'p)"
+  },
+  {
+    "word": "steal",
+    "translation": "o'g'irlamoq"
+  },
+  {
+    "word": "lie",
+    "translation": "yolg'on gapirmoq; yotmoq"
+  },
+  {
+    "word": "promise",
+    "translation": "va'da bermoq"
+  },
+  {
+    "word": "guess",
+    "translation": "taxmin qilmoq"
+  },
+  {
+    "word": "imagine",
+    "translation": "tasavvur qilmoq"
+  },
+  {
+    "word": "dream",
+    "translation": "tush ko'rmoq; orzu qilmoq"
+  },
+  {
+    "word": "notice",
+    "translation": "payqamoq"
+  },
+  {
+    "word": "mind",
+    "translation": "qarshi bo'lmoq"
+  },
+  {
+    "word": "matter",
+    "translation": "ahamiyatga ega bo'lmoq"
+  },
+  {
+    "word": "miss",
+    "translation": "sog'inmoq; o'tkazib yubormoq"
+  },
+  {
+    "word": "hurt",
+    "translation": "og'rimoq; jarohatlamoq"
+  },
+  {
+    "word": "rest",
+    "translation": "dam olmoq"
+  },
+  {
+    "word": "relax",
+    "translation": "bo'shashmoq, hordiq chiqarmoq"
+  },
+  {
+    "word": "celebrate",
+    "translation": "nishonlamoq"
+  },
+  {
+    "word": "clap",
+    "translation": "qarsak chalmoq"
+  },
+  {
+    "word": "hang",
+    "translation": "osmoq"
+  },
+  {
+    "word": "tie",
+    "translation": "bog'lamoq"
+  },
+  {
+    "word": "fold",
+    "translation": "buklamoq"
+  },
+  {
+    "word": "pour",
+    "translation": "quymoq"
+  },
+  {
+    "word": "lesson",
+    "translation": "dars"
+  },
+  {
+    "word": "homework",
+    "translation": "uy vazifasi"
+  },
+  {
+    "word": "exam",
+    "translation": "imtihon"
+  },
+  {
+    "word": "subject",
+    "translation": "fan, mavzu"
+  },
+  {
+    "word": "mistake",
+    "translation": "xato"
+  },
+  {
+    "word": "example",
+    "translation": "misol"
+  },
+  {
+    "word": "sentence",
+    "translation": "gap"
+  },
+  {
+    "word": "page",
+    "translation": "sahifa"
+  },
+  {
+    "word": "knowledge",
+    "translation": "bilim"
+  },
+  {
+    "word": "skill",
+    "translation": "ko'nikma, mahorat"
+  },
+  {
+    "word": "experience",
+    "translation": "tajriba"
+  },
+  {
+    "word": "meeting",
+    "translation": "yig'ilish, uchrashuv"
+  },
+  {
+    "word": "salary",
+    "translation": "maosh"
+  },
+  {
+    "word": "service",
+    "translation": "xizmat"
+  },
+  {
+    "word": "customer",
+    "translation": "mijoz"
+  },
+  {
+    "word": "product",
+    "translation": "mahsulot"
+  },
+  {
+    "word": "project",
+    "translation": "loyiha"
+  },
+  {
+    "word": "report",
+    "translation": "hisobot"
+  },
+  {
+    "word": "email",
+    "translation": "elektron xat"
+  },
+  {
+    "word": "message",
+    "translation": "xabar"
+  },
+  {
+    "word": "number",
+    "translation": "raqam, son"
+  },
+  {
+    "word": "address",
+    "translation": "manzil"
+  },
+  {
+    "word": "internet",
+    "translation": "internet"
+  },
+  {
+    "word": "app",
+    "translation": "ilova"
+  },
+  {
+    "word": "government",
+    "translation": "hukumat"
+  },
+  {
+    "word": "society",
+    "translation": "jamiyat"
+  },
+  {
+    "word": "culture",
+    "translation": "madaniyat"
+  },
+  {
+    "word": "tradition",
+    "translation": "an'ana"
+  },
+  {
+    "word": "religion",
+    "translation": "din"
+  },
+  {
+    "word": "peace",
+    "translation": "tinchlik"
+  },
+  {
+    "word": "freedom",
+    "translation": "erkinlik"
+  },
+  {
+    "word": "power",
+    "translation": "kuch; hokimiyat; elektr"
+  },
+  {
+    "word": "rule",
+    "translation": "qoida"
+  },
+  {
+    "word": "truth",
+    "translation": "haqiqat"
+  },
+  {
+    "word": "secret",
+    "translation": "sir"
+  },
+  {
+    "word": "choice",
+    "translation": "tanlov"
+  },
+  {
+    "word": "chance",
+    "translation": "imkoniyat"
+  },
+  {
+    "word": "luck",
+    "translation": "omad"
+  },
+  {
+    "word": "success",
+    "translation": "muvaffaqiyat"
+  },
+  {
+    "word": "goal",
+    "translation": "maqsad; gol"
+  },
+  {
+    "word": "future",
+    "translation": "kelajak"
+  },
+  {
+    "word": "past",
+    "translation": "o'tmish"
+  },
+  {
+    "word": "memory",
+    "translation": "xotira"
+  },
+  {
+    "word": "feeling",
+    "translation": "his, tuyg'u"
+  },
+  {
+    "word": "fear",
+    "translation": "qo'rquv"
+  },
+  {
+    "word": "joy",
+    "translation": "quvonch"
+  },
+  {
+    "word": "pain",
+    "translation": "og'riq"
+  },
+  {
+    "word": "solution",
+    "translation": "yechim"
+  },
+  {
+    "word": "advice",
+    "translation": "maslahat"
+  },
+  {
+    "word": "opinion",
+    "translation": "fikr, nuqtai nazar"
+  },
+  {
+    "word": "difference",
+    "translation": "farq"
+  },
+  {
+    "word": "size",
+    "translation": "o'lcham"
+  },
+  {
+    "word": "shape",
+    "translation": "shakl"
+  },
+  {
+    "word": "amount",
+    "translation": "miqdor"
+  },
+  {
+    "word": "piece",
+    "translation": "bo'lak"
+  },
+  {
+    "word": "list",
+    "translation": "ro'yxat"
+  },
+  {
+    "word": "date",
+    "translation": "sana; uchrashuv"
+  },
+  {
+    "word": "century",
+    "translation": "asr"
+  },
+  {
+    "word": "season",
+    "translation": "fasl, mavsum"
+  },
+  {
+    "word": "nature",
+    "translation": "tabiat"
+  },
+  {
+    "word": "earth",
+    "translation": "yer (sayyora)"
+  },
+  {
+    "word": "land",
+    "translation": "yer, quruqlik"
+  },
+  {
+    "word": "field",
+    "translation": "dala; soha"
+  },
+  {
+    "word": "forest",
+    "translation": "o'rmon"
+  },
+  {
+    "word": "desert",
+    "translation": "cho'l"
+  },
+  {
+    "word": "island",
+    "translation": "orol"
+  },
+  {
+    "word": "fire",
+    "translation": "olov; yong'in"
+  },
+  {
+    "word": "stone",
+    "translation": "tosh"
+  },
+  {
+    "word": "wood",
+    "translation": "yog'och"
+  },
+  {
+    "word": "gold",
+    "translation": "oltin"
+  },
+  {
+    "word": "oil",
+    "translation": "yog'; neft"
+  },
+  {
+    "word": "energy",
+    "translation": "energiya, kuch-quvvat"
+  },
+  {
+    "word": "light",
+    "translation": "yorug'lik; chiroq"
+  },
+  {
+    "word": "sound",
+    "translation": "tovush"
+  },
+  {
+    "word": "noise",
+    "translation": "shovqin"
+  },
+  {
+    "word": "voice",
+    "translation": "ovoz"
+  },
+  {
+    "word": "sport",
+    "translation": "sport"
+  },
+  {
+    "word": "ball",
+    "translation": "to'p"
+  },
+  {
+    "word": "match",
+    "translation": "o'yin, uchrashuv; gugurt"
+  },
+  {
+    "word": "race",
+    "translation": "poyga"
+  },
+  {
+    "word": "hobby",
+    "translation": "sevimli mashg'ulot"
+  },
+  {
+    "word": "trip",
+    "translation": "safar"
+  },
+  {
+    "word": "journey",
+    "translation": "sayohat (uzoq)"
+  },
+  {
+    "word": "accident",
+    "translation": "baxtsiz hodisa, avariya"
+  },
+  {
+    "word": "danger",
+    "translation": "xavf"
+  },
+  {
+    "word": "medicine",
+    "translation": "dori"
+  },
+  {
+    "word": "illness",
+    "translation": "kasallik"
+  },
+  {
+    "word": "bottle",
+    "translation": "shisha, butilka"
+  },
+  {
+    "word": "card",
+    "translation": "karta, otkritka"
+  },
+  {
+    "word": "bill",
+    "translation": "hisob (to'lov)"
+  },
+  {
+    "word": "flat",
+    "translation": "kvartira"
+  },
+  {
+    "word": "building",
+    "translation": "bino"
+  },
+  {
+    "word": "corner",
+    "translation": "burchak"
+  },
+  {
+    "word": "bridge",
+    "translation": "ko'prik"
+  },
+  {
+    "word": "centre",
+    "translation": "markaz"
+  },
+  {
+    "word": "north",
+    "translation": "shimol"
+  },
+  {
+    "word": "south",
+    "translation": "janub"
+  },
+  {
+    "word": "east",
+    "translation": "sharq"
+  },
+  {
+    "word": "west",
+    "translation": "g'arb"
+  },
+  {
+    "word": "top",
+    "translation": "tepa, cho'qqi"
+  },
+  {
+    "word": "bottom",
+    "translation": "pastki qism, tub"
+  },
+  {
+    "word": "middle",
+    "translation": "o'rta"
+  },
+  {
+    "word": "front",
+    "translation": "old tomon"
+  },
+  {
+    "word": "inside",
+    "translation": "ichki tomon; ichkarida"
+  },
+  {
+    "word": "outside",
+    "translation": "tashqari; tashqarida"
+  },
+  {
+    "word": "interesting",
+    "translation": "qiziqarli"
+  },
+  {
+    "word": "boring",
+    "translation": "zerikarli"
+  },
+  {
+    "word": "difficult",
+    "translation": "qiyin"
+  },
+  {
+    "word": "simple",
+    "translation": "oddiy"
+  },
+  {
+    "word": "possible",
+    "translation": "mumkin"
+  },
+  {
+    "word": "impossible",
+    "translation": "imkonsiz"
+  },
+  {
+    "word": "necessary",
+    "translation": "zarur"
+  },
+  {
+    "word": "popular",
+    "translation": "mashhur, ommabop"
+  },
+  {
+    "word": "famous",
+    "translation": "mashhur, taniqli"
+  },
+  {
+    "word": "special",
+    "translation": "maxsus, alohida"
+  },
+  {
+    "word": "normal",
+    "translation": "oddiy, normal"
+  },
+  {
+    "word": "public",
+    "translation": "ommaviy, jamoat"
+  },
+  {
+    "word": "private",
+    "translation": "shaxsiy, xususiy"
+  },
+  {
+    "word": "national",
+    "translation": "milliy"
+  },
+  {
+    "word": "international",
+    "translation": "xalqaro"
+  },
+  {
+    "word": "local",
+    "translation": "mahalliy"
+  },
+  {
+    "word": "main",
+    "translation": "asosiy"
+  },
+  {
+    "word": "whole",
+    "translation": "butun"
+  },
+  {
+    "word": "certain",
+    "translation": "aniq, ma'lum"
+  },
+  {
+    "word": "clear",
+    "translation": "aniq, tiniq"
+  },
+  {
+    "word": "short",
+    "translation": "qisqa; past (bo'y)"
+  },
+  {
+    "word": "tall",
+    "translation": "baland bo'yli"
+  },
+  {
+    "word": "heavy",
+    "translation": "og'ir"
+  },
+  {
+    "word": "wide",
+    "translation": "keng"
+  },
+  {
+    "word": "narrow",
+    "translation": "tor"
+  },
+  {
+    "word": "deep",
+    "translation": "chuqur"
+  },
+  {
+    "word": "thick",
+    "translation": "qalin"
+  },
+  {
+    "word": "thin",
+    "translation": "yupqa; ozg'in"
+  },
+  {
+    "word": "fat",
+    "translation": "semiz"
+  },
+  {
+    "word": "soft",
+    "translation": "yumshoq"
+  },
+  {
+    "word": "dry",
+    "translation": "quruq"
+  },
+  {
+    "word": "wet",
+    "translation": "ho'l"
+  },
+  {
+    "word": "fresh",
+    "translation": "yangi, toza"
+  },
+  {
+    "word": "sweet",
+    "translation": "shirin"
+  },
+  {
+    "word": "delicious",
+    "translation": "mazali"
+  },
+  {
+    "word": "healthy",
+    "translation": "sog'lom, foydali"
+  },
+  {
+    "word": "safe",
+    "translation": "xavfsiz"
+  },
+  {
+    "word": "dangerous",
+    "translation": "xavfli"
+  },
+  {
+    "word": "friendly",
+    "translation": "xushmuomala, do'stona"
+  },
+  {
+    "word": "polite",
+    "translation": "odobli"
+  },
+  {
+    "word": "funny",
+    "translation": "kulgili"
+  },
+  {
+    "word": "clever",
+    "translation": "aqlli"
+  },
+  {
+    "word": "stupid",
+    "translation": "ahmoqona"
+  },
+  {
+    "word": "lazy",
+    "translation": "dangasa"
+  },
+  {
+    "word": "brave",
+    "translation": "jasur"
+  },
+  {
+    "word": "honest",
+    "translation": "halol"
+  },
+  {
+    "word": "careful",
+    "translation": "ehtiyotkor"
+  },
+  {
+    "word": "calm",
+    "translation": "xotirjam, sokin"
+  },
+  {
+    "word": "nervous",
+    "translation": "hayajonlangan, asabiy"
+  },
+  {
+    "word": "proud",
+    "translation": "faxrlangan"
+  },
+  {
+    "word": "surprised",
+    "translation": "hayron"
+  },
+  {
+    "word": "excited",
+    "translation": "hayajonlangan (quvonchdan)"
+  },
+  {
+    "word": "bored",
+    "translation": "zerikkan"
+  },
+  {
+    "word": "lonely",
+    "translation": "yolg'iz (his)"
+  },
+  {
+    "word": "alone",
+    "translation": "yolg'iz, yakka"
+  },
+  {
+    "word": "alive",
+    "translation": "tirik"
+  },
+  {
+    "word": "dead",
+    "translation": "o'lik, qurigan"
+  },
+  {
+    "word": "ill",
+    "translation": "kasal"
+  },
+  {
+    "word": "well",
+    "translation": "yaxshi, sog'"
+  },
+  {
+    "word": "fine",
+    "translation": "yaxshi, joyida"
+  },
+  {
+    "word": "perfect",
+    "translation": "mukammal"
+  },
+  {
+    "word": "wrong",
+    "translation": "noto'g'ri"
+  },
+  {
+    "word": "correct",
+    "translation": "to'g'ri"
+  },
+  {
+    "word": "late",
+    "translation": "kech, kechikkan"
+  },
+  {
+    "word": "modern",
+    "translation": "zamonaviy"
+  },
+  {
+    "word": "ancient",
+    "translation": "qadimiy"
+  },
+  {
+    "word": "foreign",
+    "translation": "chet, xorijiy"
+  },
+  {
+    "word": "native",
+    "translation": "ona (til), tug'ma"
+  },
+  {
+    "word": "enough",
+    "translation": "yetarli"
+  },
+  {
+    "word": "few",
+    "translation": "kam, bir nechta"
+  },
+  {
+    "word": "several",
+    "translation": "bir nechta"
+  },
+  {
+    "word": "each",
+    "translation": "har bir"
+  },
+  {
+    "word": "both",
+    "translation": "ikkalasi"
+  },
+  {
+    "word": "favourite",
+    "translation": "sevimli"
+  },
+  {
+    "word": "comfortable",
+    "translation": "qulay"
+  },
+  {
+    "word": "quick",
+    "translation": "tez"
+  },
+  {
+    "word": "lucky",
+    "translation": "omadli"
+  },
+  {
+    "word": "crazy",
+    "translation": "aqldan ozgan, telba"
+  },
+  {
+    "word": "strange",
+    "translation": "g'alati"
+  },
+  {
+    "word": "usual",
+    "translation": "odatiy"
+  },
+  {
+    "word": "similar",
+    "translation": "o'xshash"
+  },
+  {
+    "word": "huge",
+    "translation": "ulkan"
+  },
+  {
+    "word": "tiny",
+    "translation": "jajji, mitti"
+  },
+  {
+    "word": "ugly",
+    "translation": "xunuk"
+  },
+  {
+    "word": "pretty",
+    "translation": "chiroyli"
+  },
+  {
+    "word": "handsome",
+    "translation": "kelishgan (erkak)"
+  },
+  {
+    "word": "cute",
+    "translation": "yoqimtoy"
+  },
+  {
+    "word": "wonderful",
+    "translation": "ajoyib"
+  },
+  {
+    "word": "terrible",
+    "translation": "dahshatli"
+  },
+  {
+    "word": "awful",
+    "translation": "juda yomon"
+  },
+  {
+    "word": "excellent",
+    "translation": "a'lo"
+  },
+  {
+    "word": "fantastic",
+    "translation": "ajoyib, zo'r"
+  },
+  {
+    "word": "noisy",
+    "translation": "shovqinli"
+  },
+  {
+    "word": "bright",
+    "translation": "yorqin, yorug'"
+  },
+  {
+    "word": "sunny",
+    "translation": "quyoshli"
+  },
+  {
+    "word": "cloudy",
+    "translation": "bulutli"
+  },
+  {
+    "word": "rainy",
+    "translation": "yomg'irli"
+  },
+  {
+    "word": "windy",
+    "translation": "shamolli"
+  },
+  {
+    "word": "ago",
+    "translation": "oldin (vaqt)"
+  },
+  {
+    "word": "later",
+    "translation": "keyinroq"
+  },
+  {
+    "word": "almost",
+    "translation": "deyarli"
+  },
+  {
+    "word": "just",
+    "translation": "faqat; hozirgina"
+  },
+  {
+    "word": "even",
+    "translation": "hatto"
+  },
+  {
+    "word": "ever",
+    "translation": "qachondir"
+  },
+  {
+    "word": "once",
+    "translation": "bir marta"
+  },
+  {
+    "word": "twice",
+    "translation": "ikki marta"
+  },
+  {
+    "word": "too",
+    "translation": "ham; haddan tashqari"
+  },
+  {
+    "word": "quite",
+    "translation": "ancha, juda"
+  },
+  {
+    "word": "probably",
+    "translation": "ehtimol"
+  },
+  {
+    "word": "perhaps",
+    "translation": "balki"
+  },
+  {
+    "word": "actually",
+    "translation": "aslida"
+  },
+  {
+    "word": "especially",
+    "translation": "ayniqsa"
+  },
+  {
+    "word": "suddenly",
+    "translation": "to'satdan"
+  },
+  {
+    "word": "finally",
+    "translation": "nihoyat"
+  },
+  {
+    "word": "immediately",
+    "translation": "darhol"
+  },
+  {
+    "word": "carefully",
+    "translation": "diqqat bilan, ehtiyotkorlik bilan"
+  },
+  {
+    "word": "easily",
+    "translation": "osongina"
+  },
+  {
+    "word": "away",
+    "translation": "uzoqqa, nari"
+  },
+  {
+    "word": "abroad",
+    "translation": "chet elda"
+  },
+  {
+    "word": "everywhere",
+    "translation": "hamma joyda"
+  },
+  {
+    "word": "somewhere",
+    "translation": "qayerdadir"
+  },
+  {
+    "word": "nowhere",
+    "translation": "hech qayerda"
+  },
+  {
+    "word": "upstairs",
+    "translation": "yuqori qavatda"
+  },
+  {
+    "word": "downstairs",
+    "translation": "pastki qavatda"
+  },
+  {
+    "word": "tonight",
+    "translation": "bugun kechqurun"
+  },
+  {
+    "word": "please",
+    "translation": "iltimos"
+  },
+  {
+    "word": "yes",
+    "translation": "ha"
+  },
+  {
+    "word": "no",
+    "translation": "yo'q"
+  },
+  {
+    "word": "hello",
+    "translation": "salom"
+  },
+  {
+    "word": "goodbye",
+    "translation": "xayr"
+  },
+  {
+    "word": "sorry",
+    "translation": "kechirasiz"
+  },
+  {
+    "word": "thanks",
+    "translation": "rahmat"
+  },
+  {
+    "word": "melon",
+    "translation": "qovun"
+  },
+  {
+    "word": "grape",
+    "translation": "uzum"
+  },
+  {
+    "word": "tomato",
+    "translation": "pomidor"
+  },
+  {
+    "word": "cheese",
+    "translation": "pishloq"
+  },
+  {
+    "word": "butter",
+    "translation": "sariyog'"
+  },
+  {
+    "word": "chicken",
+    "translation": "tovuq"
+  },
+  {
+    "word": "juice",
+    "translation": "sharbat"
+  },
+  {
+    "word": "ice",
+    "translation": "muz"
+  },
+  {
+    "word": "knife",
+    "translation": "pichoq"
+  },
+  {
+    "word": "spoon",
+    "translation": "qoshiq"
+  },
+  {
+    "word": "fork",
+    "translation": "sanchqi"
+  },
+  {
+    "word": "nurse",
+    "translation": "hamshira"
+  },
+  {
+    "word": "engineer",
+    "translation": "muhandis"
+  },
+  {
+    "word": "farmer",
+    "translation": "dehqon, fermer"
+  },
+  {
+    "word": "worker",
+    "translation": "ishchi"
+  },
+  {
+    "word": "pilot",
+    "translation": "uchuvchi"
+  },
+  {
+    "word": "lawyer",
+    "translation": "huquqshunos, advokat"
+  },
+  {
+    "word": "artist",
+    "translation": "rassom"
+  },
+  {
+    "word": "writer",
+    "translation": "yozuvchi"
+  },
+  {
+    "word": "singer",
+    "translation": "xonanda"
+  },
+  {
+    "word": "player",
+    "translation": "o'yinchi"
+  },
+  {
+    "word": "manager",
+    "translation": "menejer, boshqaruvchi"
+  },
+  {
+    "word": "seller",
+    "translation": "sotuvchi"
+  },
+  {
+    "word": "soldier",
+    "translation": "askar"
+  },
+  {
+    "word": "scientist",
+    "translation": "olim"
+  },
+  {
+    "word": "king",
+    "translation": "qirol, podshoh"
+  },
+  {
+    "word": "adult",
+    "translation": "katta yoshli"
+  },
+  {
+    "word": "teenager",
+    "translation": "o'smir"
+  },
+  {
+    "word": "stranger",
+    "translation": "notanish odam"
+  },
+  {
+    "word": "crowd",
+    "translation": "olomon"
+  },
+  {
+    "word": "pocket",
+    "translation": "cho'ntak"
+  },
+  {
+    "word": "wallet",
+    "translation": "hamyon"
+  },
+  {
+    "word": "umbrella",
+    "translation": "soyabon"
+  },
+  {
+    "word": "glasses",
+    "translation": "ko'zoynak"
+  },
+  {
+    "word": "towel",
+    "translation": "sochiq"
+  },
+  {
+    "word": "soap",
+    "translation": "sovun"
+  },
+  {
+    "word": "mirror",
+    "translation": "ko'zgu"
+  },
+  {
+    "word": "carpet",
+    "translation": "gilam"
+  },
+  {
+    "word": "blanket",
+    "translation": "ko'rpa, adyol"
+  },
+  {
+    "word": "pillow",
+    "translation": "yostiq"
+  },
+  {
+    "word": "sofa",
+    "translation": "divan"
+  },
+  {
+    "word": "fridge",
+    "translation": "muzlatgich"
+  },
+  {
+    "word": "oven",
+    "translation": "pech, duxovka"
+  },
+  {
+    "word": "pot",
+    "translation": "qozon, kastryul"
+  },
+  {
+    "word": "bowl",
+    "translation": "kosa"
+  },
+  {
+    "word": "kettle",
+    "translation": "choynak (elektr)"
+  },
+  {
+    "word": "lamp",
+    "translation": "chiroq"
+  },
+  {
+    "word": "roof",
+    "translation": "tom"
+  },
+  {
+    "word": "stairs",
+    "translation": "zinapoya"
+  },
+  {
+    "word": "gate",
+    "translation": "darvoza"
+  },
+  {
+    "word": "yard",
+    "translation": "hovli"
+  },
+  {
+    "word": "toy",
+    "translation": "o'yinchoq"
+  },
+  {
+    "word": "hole",
+    "translation": "teshik"
+  },
+  {
+    "word": "rope",
+    "translation": "arqon"
+  },
+  {
+    "word": "tool",
+    "translation": "asbob"
+  },
+  {
+    "word": "machine",
+    "translation": "mashina, uskuna"
+  },
+  {
+    "word": "engine",
+    "translation": "dvigatel"
+  },
+  {
+    "word": "wheel",
+    "translation": "g'ildirak"
+  },
+  {
+    "word": "road sign",
+    "translation": "yo'l belgisi"
+  },
+  {
+    "word": "traffic",
+    "translation": "tirbandlik; transport oqimi"
+  },
+  {
+    "word": "corner shop",
+    "translation": "mahalla do'koni"
+  },
+  {
+    "word": "supermarket",
+    "translation": "supermarket"
+  },
+  {
+    "word": "pharmacy",
+    "translation": "dorixona"
+  },
+  {
+    "word": "post office",
+    "translation": "pochta"
+  },
+  {
+    "word": "museum",
+    "translation": "muzey"
+  },
+  {
+    "word": "cinema",
+    "translation": "kinoteatr"
+  },
+  {
+    "word": "theatre",
+    "translation": "teatr"
+  },
+  {
+    "word": "stadium",
+    "translation": "stadion"
+  },
+  {
+    "word": "mosque",
+    "translation": "masjid"
+  },
+  {
+    "word": "factory",
+    "translation": "zavod"
+  },
+  {
+    "word": "farm",
+    "translation": "ferma, xo'jalik"
+  },
+  {
+    "word": "beach",
+    "translation": "plyaj, sohil"
+  },
+  {
+    "word": "hill",
+    "translation": "tepalik"
+  },
+  {
+    "word": "leaf",
+    "translation": "barg"
+  },
+  {
+    "word": "plant",
+    "translation": "o'simlik"
+  },
+  {
+    "word": "seed",
+    "translation": "urug'"
+  },
+  {
+    "word": "insect",
+    "translation": "hasharot"
+  },
+  {
+    "word": "goat",
+    "translation": "echki"
+  },
+  {
+    "word": "camel",
+    "translation": "tuya"
+  },
+  {
+    "word": "lion",
+    "translation": "sher"
+  },
+  {
+    "word": "wolf",
+    "translation": "bo'ri"
+  },
+  {
+    "word": "mouse",
+    "translation": "sichqon"
+  },
+  {
+    "word": "bear",
+    "translation": "ayiq"
+  },
+  {
+    "word": "honey",
+    "translation": "asal"
+  },
+  {
+    "word": "nut",
+    "translation": "yong'oq"
+  },
+  {
+    "word": "flour",
+    "translation": "un"
+  },
+  {
+    "word": "pepper",
+    "translation": "qalampir"
+  },
+  {
+    "word": "plov",
+    "translation": "osh, palov"
+  },
+  {
+    "word": "sweets",
+    "translation": "shirinliklar"
+  },
+  {
+    "word": "dish",
+    "translation": "taom; idish"
+  },
+  {
+    "word": "menu",
+    "translation": "menyu"
+  },
+  {
+    "word": "waiter",
+    "translation": "ofitsiant"
+  },
+  {
+    "word": "discount",
+    "translation": "chegirma"
+  },
+  {
+    "word": "tax",
+    "translation": "soliq"
+  },
+  {
+    "word": "cash",
+    "translation": "naqd pul"
+  },
+  {
+    "word": "interview",
+    "translation": "suhbat (ishga), intervyu"
+  },
+  {
+    "word": "document",
+    "translation": "hujjat"
+  },
+  {
+    "word": "passport",
+    "translation": "pasport"
+  },
+  {
+    "word": "visa",
+    "translation": "viza"
+  },
+  {
+    "word": "luggage",
+    "translation": "yuk, bagaj"
+  },
+  {
+    "word": "seat",
+    "translation": "o'rindiq, joy"
+  },
+  {
+    "word": "queue",
+    "translation": "navbat"
+  },
+  {
+    "word": "way out",
+    "translation": "chiqish joyi"
+  },
+  {
+    "word": "entrance",
+    "translation": "kirish joyi"
+  },
+  {
+    "word": "view",
+    "translation": "manzara; nuqtai nazar"
+  },
+  {
+    "word": "speech",
+    "translation": "nutq"
+  },
+  {
+    "word": "joke",
+    "translation": "hazil, latifa"
+  },
+  {
+    "word": "fun",
+    "translation": "qiziqarli vaqt, maroq"
+  },
+  {
+    "word": "habit",
+    "translation": "odat"
+  },
+  {
+    "word": "activity",
+    "translation": "faoliyat, mashg'ulot"
+  },
+  {
+    "word": "effort",
+    "translation": "harakat, kuch"
+  },
+  {
+    "word": "progress",
+    "translation": "yutuq, rivojlanish"
+  },
+  {
+    "word": "score",
+    "translation": "hisob, ball"
+  },
+  {
+    "word": "prize",
+    "translation": "mukofot, sovrin"
+  },
+  {
+    "word": "enemy",
+    "translation": "dushman"
+  },
+  {
+    "word": "weapon",
+    "translation": "qurol"
+  },
+  {
+    "word": "army",
+    "translation": "armiya, qo'shin"
+  },
+  {
+    "word": "border",
+    "translation": "chegara"
+  },
+  {
+    "word": "capital",
+    "translation": "poytaxt"
+  },
+  {
+    "word": "population",
+    "translation": "aholi"
+  },
+  {
+    "word": "citizen",
+    "translation": "fuqaro"
+  },
+  {
+    "word": "election",
+    "translation": "saylov"
+  },
+  {
+    "word": "court",
+    "translation": "sud"
+  },
+  {
+    "word": "crime",
+    "translation": "jinoyat"
+  },
+  {
+    "word": "science",
+    "translation": "fan, ilm"
+  },
+  {
+    "word": "technology",
+    "translation": "texnologiya"
+  },
+  {
+    "word": "environment",
+    "translation": "atrof-muhit"
+  },
+  {
+    "word": "pollution",
+    "translation": "ifloslanish"
+  },
+  {
+    "word": "climate",
+    "translation": "iqlim"
+  },
+  {
+    "word": "temperature",
+    "translation": "harorat"
+  },
+  {
+    "word": "degree",
+    "translation": "daraja; diplom"
+  },
+  {
+    "word": "metre",
+    "translation": "metr"
+  },
+  {
+    "word": "kilo",
+    "translation": "kilogramm"
+  },
+  {
+    "word": "dollar",
+    "translation": "dollar"
+  },
+  {
+    "word": "hurry",
+    "translation": "shoshilmoq"
+  },
+  {
+    "word": "fail",
+    "translation": "muvaffaqiyatsizlikka uchramoq; yiqilmoq (imtihondan)"
+  },
+  {
+    "word": "solve",
+    "translation": "yechmoq, hal qilmoq"
+  },
+  {
+    "word": "compare",
+    "translation": "solishtirmoq"
+  },
+  {
+    "word": "discuss",
+    "translation": "muhokama qilmoq"
+  },
+  {
+    "word": "argue",
+    "translation": "bahslashmoq"
+  },
+  {
+    "word": "complain",
+    "translation": "shikoyat qilmoq"
+  },
+  {
+    "word": "apologise",
+    "translation": "kechirim so'ramoq"
+  },
+  {
+    "word": "forgive",
+    "translation": "kechirmoq"
+  },
+  {
+    "word": "trust",
+    "translation": "ishonmoq"
+  },
+  {
+    "word": "support",
+    "translation": "qo'llab-quvvatlamoq"
+  },
+  {
+    "word": "respect",
+    "translation": "hurmat qilmoq"
+  },
+  {
+    "word": "care",
+    "translation": "g'amxo'rlik qilmoq; qayg'urmoq"
+  },
+  {
+    "word": "belong",
+    "translation": "tegishli bo'lmoq"
+  },
+  {
+    "word": "contain",
+    "translation": "o'z ichiga olmoq"
+  },
+  {
+    "word": "depend",
+    "translation": "bog'liq bo'lmoq"
+  },
+  {
+    "word": "exist",
+    "translation": "mavjud bo'lmoq"
+  },
+  {
+    "word": "produce",
+    "translation": "ishlab chiqarmoq"
+  },
+  {
+    "word": "provide",
+    "translation": "ta'minlamoq"
+  },
+  {
+    "word": "reduce",
+    "translation": "kamaytirmoq"
+  },
+  {
+    "word": "increase",
+    "translation": "oshirmoq, ko'paymoq"
+  },
+  {
+    "word": "tidy",
+    "translation": "yig'ishtirmoq, tartibga keltirmoq"
+  },
+  {
+    "word": "cough",
+    "translation": "yo'tal; yo'talmoq"
+  },
+  {
+    "word": "shy",
+    "translation": "uyatchan"
+  },
+  {
+    "word": "cheek",
+    "translation": "yonoq"
+  },
+  {
+    "word": "knee",
+    "translation": "tizza"
+  },
+  {
+    "word": "classroom",
+    "translation": "sinf xonasi"
+  },
+  {
+    "word": "desk",
+    "translation": "parta, yozuv stoli"
+  },
+  {
+    "word": "pencil",
+    "translation": "qalam"
+  },
+  {
+    "word": "notebook",
+    "translation": "daftar"
+  },
+  {
+    "word": "mark",
+    "translation": "baho"
+  },
+  {
+    "word": "board",
+    "translation": "doska"
+  },
+  {
+    "word": "ruler",
+    "translation": "chizg'ich"
+  },
+  {
+    "word": "eraser",
+    "translation": "o'chirg'ich"
+  },
+  {
+    "word": "timetable",
+    "translation": "dars jadvali"
+  },
+  {
+    "word": "grade",
+    "translation": "sinf (bosqich)"
+  },
+  {
+    "word": "classmate",
+    "translation": "sinfdosh"
+  },
+  {
+    "word": "uniform",
+    "translation": "forma"
+  },
+  {
+    "word": "colleague",
+    "translation": "hamkasb"
+  },
+  {
+    "word": "contract",
+    "translation": "shartnoma"
+  },
+  {
+    "word": "deadline",
+    "translation": "oxirgi muddat"
+  },
+  {
+    "word": "task",
+    "translation": "vazifa"
+  },
+  {
+    "word": "schedule",
+    "translation": "jadval, reja"
+  },
+  {
+    "word": "career",
+    "translation": "martaba, kasb yo'li"
+  },
+  {
+    "word": "hire",
+    "translation": "ishga olmoq"
+  },
+  {
+    "word": "earn",
+    "translation": "(pul) ishlab topmoq"
+  },
+  {
+    "word": "retire",
+    "translation": "nafaqaga chiqmoq"
+  },
+  {
+    "word": "department",
+    "translation": "bo'lim"
+  },
+  {
+    "word": "printer",
+    "translation": "printer"
+  },
+  {
+    "word": "shift",
+    "translation": "smena"
+  },
+  {
+    "word": "promotion",
+    "translation": "lavozim ko'tarilishi"
+  },
+  {
+    "word": "sign",
+    "translation": "imzolamoq, imzo qo'ymoq"
+  },
+  {
+    "word": "flight",
+    "translation": "parvoz, reys"
+  },
+  {
+    "word": "booking",
+    "translation": "bron"
+  },
+  {
+    "word": "suitcase",
+    "translation": "chamadon"
+  },
+  {
+    "word": "tourist",
+    "translation": "sayyoh"
+  },
+  {
+    "word": "departure",
+    "translation": "jo'nash"
+  },
+  {
+    "word": "arrival",
+    "translation": "yetib kelish"
+  },
+  {
+    "word": "delay",
+    "translation": "kechikish"
+  },
+  {
+    "word": "guide",
+    "translation": "gid, yo'lboshchi"
+  },
+  {
+    "word": "souvenir",
+    "translation": "esdalik sovg'a"
+  },
+  {
+    "word": "sightseeing",
+    "translation": "diqqatga sazovor joylarni ko'rish"
+  },
+  {
+    "word": "currency",
+    "translation": "valyuta"
+  },
+  {
+    "word": "backpack",
+    "translation": "ryukzak"
+  },
+  {
+    "word": "reception",
+    "translation": "qabulxona (mehmonxonada)"
+  },
+  {
+    "word": "return ticket",
+    "translation": "borib-kelish chiptasi"
+  },
+  {
+    "word": "pack",
+    "translation": "(yuk) yig'moq"
+  },
+  {
+    "word": "parents",
+    "translation": "ota-ona"
+  },
+  {
+    "word": "cousin",
+    "translation": "amakivachcha, xolavachcha"
+  },
+  {
+    "word": "relative",
+    "translation": "qarindosh"
+  },
+  {
+    "word": "married",
+    "translation": "oilali, uylangan"
+  },
+  {
+    "word": "twins",
+    "translation": "egizaklar"
+  },
+  {
+    "word": "get on",
+    "translation": "chiqishmoq (yaxshi munosabatda)"
+  },
+  {
+    "word": "friendship",
+    "translation": "do'stlik"
+  },
+  {
+    "word": "tiger",
+    "translation": "yo'lbars"
+  },
+  {
+    "word": "elephant",
+    "translation": "fil"
+  },
+  {
+    "word": "monkey",
+    "translation": "maymun"
+  },
+  {
+    "word": "fox",
+    "translation": "tulki"
+  },
+  {
+    "word": "rabbit",
+    "translation": "quyon"
+  },
+  {
+    "word": "donkey",
+    "translation": "eshak"
+  },
+  {
+    "word": "snake",
+    "translation": "ilon"
+  },
+  {
+    "word": "frog",
+    "translation": "baqa, qurbaqa"
+  },
+  {
+    "word": "turtle",
+    "translation": "toshbaqa"
+  },
+  {
+    "word": "duck",
+    "translation": "o'rdak"
+  },
+  {
+    "word": "eagle",
+    "translation": "burgut"
+  },
+  {
+    "word": "owl",
+    "translation": "boyo'g'li"
+  },
+  {
+    "word": "dolphin",
+    "translation": "delfin"
+  },
+  {
+    "word": "shark",
+    "translation": "akula"
+  },
+  {
+    "word": "whale",
+    "translation": "kit"
+  },
+  {
+    "word": "crocodile",
+    "translation": "timsoh"
+  },
+  {
+    "word": "giraffe",
+    "translation": "jirafa"
+  },
+  {
+    "word": "deer",
+    "translation": "kiyik, bug'u"
+  },
+  {
+    "word": "bat",
+    "translation": "ko'rshapalak"
+  },
+  {
+    "word": "ant",
+    "translation": "chumoli"
+  },
+  {
+    "word": "bee",
+    "translation": "asalari"
+  },
+  {
+    "word": "butterfly",
+    "translation": "kapalak"
+  },
+  {
+    "word": "spider",
+    "translation": "o'rgimchak"
+  },
+  {
+    "word": "tail",
+    "translation": "dum"
+  },
+  {
+    "word": "wing",
+    "translation": "qanot"
+  },
+  {
+    "word": "fur",
+    "translation": "mo'yna, yung"
+  },
+  {
+    "word": "feather",
+    "translation": "pat"
+  },
+  {
+    "word": "claw",
+    "translation": "tirnoq, panja"
+  },
+  {
+    "word": "jungle",
+    "translation": "changalzor, chakalakzor"
+  },
+  {
+    "word": "cave",
+    "translation": "g'or"
+  },
+  {
+    "word": "waterfall",
+    "translation": "sharshara"
+  },
+  {
+    "word": "valley",
+    "translation": "vodiy"
+  },
+  {
+    "word": "cliff",
+    "translation": "qoya, tik qoya"
+  },
+  {
+    "word": "coast",
+    "translation": "sohil, qirg'oq"
+  },
+  {
+    "word": "branch",
+    "translation": "shox (daraxt shoxi)"
+  },
+  {
+    "word": "root",
+    "translation": "ildiz"
+  },
+  {
+    "word": "bark",
+    "translation": "po'stloq; akillamoq"
+  },
+  {
+    "word": "wild",
+    "translation": "yovvoyi"
+  },
+  {
+    "word": "hunt",
+    "translation": "ov qilmoq; ov"
+  },
+  {
+    "word": "pavement",
+    "translation": "piyodalar yo'lkasi, trotuar"
+  },
+  {
+    "word": "crossroads",
+    "translation": "chorraha"
+  },
+  {
+    "word": "traffic lights",
+    "translation": "svetofor"
+  },
+  {
+    "word": "roundabout",
+    "translation": "aylanma yo'l"
+  },
+  {
+    "word": "zebra crossing",
+    "translation": "piyodalar o'tish yo'lagi"
+  },
+  {
+    "word": "underground",
+    "translation": "metro"
+  },
+  {
+    "word": "bus stop",
+    "translation": "avtobus bekati"
+  },
+  {
+    "word": "lorry",
+    "translation": "yuk mashinasi"
+  },
+  {
+    "word": "motorway",
+    "translation": "avtomagistral, tezyurar yo'l"
+  },
+  {
+    "word": "car park",
+    "translation": "avtoturargoh"
+  },
+  {
+    "word": "petrol",
+    "translation": "benzin"
+  },
+  {
+    "word": "petrol station",
+    "translation": "yoqilg'i quyish shoxobchasi"
+  },
+  {
+    "word": "pedestrian",
+    "translation": "piyoda"
+  },
+  {
+    "word": "tunnel",
+    "translation": "tunnel"
+  },
+  {
+    "word": "fountain",
+    "translation": "favvora"
+  },
+  {
+    "word": "square",
+    "translation": "maydon"
+  },
+  {
+    "word": "passenger",
+    "translation": "yo'lovchi"
+  },
+  {
+    "word": "route",
+    "translation": "yo'nalish, marshrut"
+  },
+  {
+    "word": "fare",
+    "translation": "yo'lkira"
+  },
+  {
+    "word": "commute",
+    "translation": "qatnamoq (ishga har kuni)"
+  },
+  {
+    "word": "lane",
+    "translation": "harakat bo'lagi"
+  },
+  {
+    "word": "junction",
+    "translation": "yo'llar tutashgan joy"
+  },
+  {
+    "word": "avenue",
+    "translation": "shohko'cha"
+  },
+  {
+    "word": "skyscraper",
+    "translation": "osmono'par bino"
+  },
+  {
+    "word": "suburb",
+    "translation": "shahar chekkasi"
+  },
+  {
+    "word": "footpath",
+    "translation": "piyodalar so'qmog'i"
+  },
+  {
+    "word": "rubbish bin",
+    "translation": "axlat qutisi"
+  },
+  {
+    "word": "street lamp",
+    "translation": "ko'cha chirog'i"
+  },
+  {
+    "word": "monument",
+    "translation": "haykal, yodgorlik"
+  },
+  {
+    "word": "district",
+    "translation": "tuman, hudud"
+  },
+  {
+    "word": "neighbourhood",
+    "translation": "mahalla, atrof"
+  },
+  {
+    "word": "traffic jam",
+    "translation": "yo'l tirbandligi, probka"
+  },
+  {
+    "word": "rush hour",
+    "translation": "tig'iz payt"
+  },
+  {
+    "word": "bypass",
+    "translation": "aylanma yo'l"
+  },
+  {
+    "word": "overtake",
+    "translation": "quvib o'tmoq"
+  },
+  {
+    "word": "reverse",
+    "translation": "orqaga harakatlanmoq"
+  },
+  {
+    "word": "destination",
+    "translation": "manzil"
+  },
+  {
+    "word": "jacket",
+    "translation": "kurtka, nimcha"
+  },
+  {
+    "word": "trousers",
+    "translation": "shim"
+  },
+  {
+    "word": "jeans",
+    "translation": "jinsi shim"
+  },
+  {
+    "word": "suit",
+    "translation": "kostyum-shim, kostyum"
+  },
+  {
+    "word": "skirt",
+    "translation": "yubka"
+  },
+  {
+    "word": "sweater",
+    "translation": "sviter, jemper"
+  },
+  {
+    "word": "hoodie",
+    "translation": "kapyushonli jemper"
+  },
+  {
+    "word": "scarf",
+    "translation": "sharf, bo'yinbog'"
+  },
+  {
+    "word": "gloves",
+    "translation": "qo'lqop"
+  },
+  {
+    "word": "socks",
+    "translation": "paypoq"
+  },
+  {
+    "word": "boots",
+    "translation": "botinka, etik"
+  },
+  {
+    "word": "sneakers",
+    "translation": "krossovka"
+  },
+  {
+    "word": "slippers",
+    "translation": "uy shippagi"
+  },
+  {
+    "word": "sandals",
+    "translation": "sandal, yozgi poyabzal"
+  },
+  {
+    "word": "belt",
+    "translation": "kamar, tasma"
+  },
+  {
+    "word": "cap",
+    "translation": "kepka"
+  },
+  {
+    "word": "sunglasses",
+    "translation": "quyosh ko'zoynagi"
+  },
+  {
+    "word": "sleeve",
+    "translation": "yeng"
+  },
+  {
+    "word": "collar",
+    "translation": "yoqa"
+  },
+  {
+    "word": "button",
+    "translation": "tugma"
+  },
+  {
+    "word": "zipper",
+    "translation": "fermuar, zamok"
+  },
+  {
+    "word": "fabric",
+    "translation": "mato, gazlama"
+  },
+  {
+    "word": "cotton",
+    "translation": "paxta, ip gazlama"
+  },
+  {
+    "word": "wool",
+    "translation": "jun, jun gazlama"
+  },
+  {
+    "word": "silk",
+    "translation": "ipak"
+  },
+  {
+    "word": "leather",
+    "translation": "charm, teri"
+  },
+  {
+    "word": "tight",
+    "translation": "tor, siqib turadigan"
+  },
+  {
+    "word": "loose",
+    "translation": "keng, bo'sh"
+  },
+  {
+    "word": "fashionable",
+    "translation": "zamonaviy, urfdagi"
+  },
+  {
+    "word": "stylish",
+    "translation": "didli, xushbichim"
+  },
+  {
+    "word": "necklace",
+    "translation": "marjon, bo'yinbog' bezagi"
+  },
+  {
+    "word": "bracelet",
+    "translation": "bilaguzuk"
+  },
+  {
+    "word": "earring",
+    "translation": "zirak"
+  },
+  {
+    "word": "handbag",
+    "translation": "ayollar sumkasi"
+  },
+  {
+    "word": "try on",
+    "translation": "kiyib ko'rmoq"
+  },
+  {
+    "word": "fit",
+    "translation": "yarashmoq, mos kelmoq"
+  },
+  {
+    "word": "curious",
+    "translation": "qiziquvchan"
+  },
+  {
+    "word": "confident",
+    "translation": "o'ziga ishongan"
+  },
+  {
+    "word": "jealous",
+    "translation": "hasadgo'y, rashkchi"
+  },
+  {
+    "word": "generous",
+    "translation": "saxiy, ochiqko'ngil"
+  },
+  {
+    "word": "greedy",
+    "translation": "ochko'z, xasis"
+  },
+  {
+    "word": "stubborn",
+    "translation": "o'jar, qaysar"
+  },
+  {
+    "word": "cheerful",
+    "translation": "quvnoq, xushchaqchaq"
+  },
+  {
+    "word": "anxious",
+    "translation": "xavotirli, bezovta"
+  },
+  {
+    "word": "guilty",
+    "translation": "aybdor"
+  },
+  {
+    "word": "innocent",
+    "translation": "aybsiz, begunoh"
+  },
+  {
+    "word": "furious",
+    "translation": "qahrli, qattiq g'azablangan"
+  },
+  {
+    "word": "grateful",
+    "translation": "minnatdor"
+  },
+  {
+    "word": "selfish",
+    "translation": "xudbin"
+  },
+  {
+    "word": "rude",
+    "translation": "qo'pol, odobsiz"
+  },
+  {
+    "word": "gentle",
+    "translation": "muloyim, yuvosh"
+  },
+  {
+    "word": "modest",
+    "translation": "kamtarin"
+  },
+  {
+    "word": "ambitious",
+    "translation": "intiluvchan, maqsad sari dadil"
+  },
+  {
+    "word": "sensitive",
+    "translation": "ta'sirchan, nozik ko'ngil"
+  },
+  {
+    "word": "sensible",
+    "translation": "oqil, mulohazali"
+  },
+  {
+    "word": "reliable",
+    "translation": "ishonchli"
+  },
+  {
+    "word": "upset",
+    "translation": "xafa, dili og'rigan"
+  },
+  {
+    "word": "embarrassed",
+    "translation": "xijolat bo'lgan, uyalgan"
+  },
+  {
+    "word": "exhausted",
+    "translation": "charchagan, holdan toygan"
+  },
+  {
+    "word": "relaxed",
+    "translation": "xotirjam, orom olgan"
+  },
+  {
+    "word": "disappointed",
+    "translation": "hafsalasi pir bo'lgan"
+  },
+  {
+    "word": "clumsy",
+    "translation": "beso'naqay, noo'quv"
+  },
+  {
+    "word": "bold",
+    "translation": "dovyurak, botir"
+  },
+  {
+    "word": "cruel",
+    "translation": "shafqatsiz, zolim"
+  },
+  {
+    "word": "mood",
+    "translation": "kayfiyat"
+  },
+  {
+    "word": "panic",
+    "translation": "vahima"
+  },
+  {
+    "word": "relief",
+    "translation": "yengillik, taskin"
+  },
+  {
+    "word": "pity",
+    "translation": "achinish, rahm"
+  },
+  {
+    "word": "envy",
+    "translation": "hasad qilmoq; hasad"
+  },
+  {
+    "word": "regret",
+    "translation": "afsuslanmoq; afsus"
+  },
+  {
+    "word": "admire",
+    "translation": "qoyil qolmoq, havas qilmoq"
+  },
+  {
+    "word": "inspire",
+    "translation": "ilhomlantirmoq"
+  },
+  {
+    "word": "ignore",
+    "translation": "e'tiborsiz qoldirmoq"
+  },
+  {
+    "word": "appreciate",
+    "translation": "qadrlamoq, minnatdor bo'lmoq"
+  },
+  {
+    "word": "calm down",
+    "translation": "tinchlanmoq"
+  },
+  {
+    "word": "patient",
+    "translation": "bemor"
+  },
+  {
+    "word": "fever",
+    "translation": "isitma, harorat"
+  },
+  {
+    "word": "headache",
+    "translation": "bosh og'rig'i"
+  },
+  {
+    "word": "stomachache",
+    "translation": "qorin og'rig'i"
+  },
+  {
+    "word": "toothache",
+    "translation": "tish og'rig'i"
+  },
+  {
+    "word": "sore throat",
+    "translation": "tomoq og'rig'i"
+  },
+  {
+    "word": "ambulance",
+    "translation": "tez yordam mashinasi"
+  },
+  {
+    "word": "surgeon",
+    "translation": "jarroh"
+  },
+  {
+    "word": "dentist",
+    "translation": "tish shifokori"
+  },
+  {
+    "word": "symptom",
+    "translation": "belgi, alomat"
+  },
+  {
+    "word": "prescription",
+    "translation": "retsept"
+  },
+  {
+    "word": "treatment",
+    "translation": "davolash"
+  },
+  {
+    "word": "injection",
+    "translation": "ukol"
+  },
+  {
+    "word": "bandage",
+    "translation": "bint, bog'lam"
+  },
+  {
+    "word": "wound",
+    "translation": "yara, jarohat"
+  },
+  {
+    "word": "pill",
+    "translation": "tabletka, dori"
+  },
+  {
+    "word": "vaccine",
+    "translation": "vaksina, emlash"
+  },
+  {
+    "word": "allergy",
+    "translation": "allergiya"
+  },
+  {
+    "word": "infection",
+    "translation": "infeksiya, yuqumli kasallik"
+  },
+  {
+    "word": "surgery",
+    "translation": "jarrohlik operatsiyasi"
+  },
+  {
+    "word": "recovery",
+    "translation": "tuzalish, tiklanish"
+  },
+  {
+    "word": "appointment",
+    "translation": "qabul, uchrashuv (oldindan belgilangan)"
+  },
+  {
+    "word": "emergency",
+    "translation": "favqulodda holat"
+  },
+  {
+    "word": "thermometer",
+    "translation": "termometr, gradusnik"
+  },
+  {
+    "word": "diagnosis",
+    "translation": "tashxis"
+  },
+  {
+    "word": "therapy",
+    "translation": "terapiya, davolash"
+  },
+  {
+    "word": "chest",
+    "translation": "ko'krak qafasi"
+  },
+  {
+    "word": "lung",
+    "translation": "o'pka"
+  },
+  {
+    "word": "heal",
+    "translation": "tuzalmoq, bitmoq (yara)"
+  },
+  {
+    "word": "swallow",
+    "translation": "yutmoq"
+  },
+  {
+    "word": "breathe",
+    "translation": "nafas olmoq"
+  },
+  {
+    "word": "sneeze",
+    "translation": "aksirmoq"
+  },
+  {
+    "word": "bleed",
+    "translation": "qon oqmoq"
+  },
+  {
+    "word": "examine",
+    "translation": "tekshirmoq, ko'rikdan o'tkazmoq"
+  },
+  {
+    "word": "prescribe",
+    "translation": "retsept yozmoq, buyurmoq"
+  },
+  {
+    "word": "recover",
+    "translation": "tuzalmoq, tiklanmoq"
+  },
+  {
+    "word": "sore",
+    "translation": "og'riqli, yallig'langan"
+  },
+  {
+    "word": "dizzy",
+    "translation": "boshi aylanayotgan"
+  },
+  {
+    "word": "swollen",
+    "translation": "shishgan"
+  },
+  {
+    "word": "painful",
+    "translation": "og'riqli, azobli"
+  },
+  {
+    "word": "balcony",
+    "translation": "balkon"
+  },
+  {
+    "word": "basement",
+    "translation": "yerto'la, podval"
+  },
+  {
+    "word": "ceiling",
+    "translation": "shift, tom shifti"
+  },
+  {
+    "word": "curtain",
+    "translation": "parda"
+  },
+  {
+    "word": "wardrobe",
+    "translation": "kiyim javoni, shkaf"
+  },
+  {
+    "word": "shelf",
+    "translation": "tokcha, javon"
+  },
+  {
+    "word": "armchair",
+    "translation": "kreslo, suyanchiq stul"
+  },
+  {
+    "word": "cushion",
+    "translation": "yostiqcha, divan yostig'i"
+  },
+  {
+    "word": "drawer",
+    "translation": "tortma"
+  },
+  {
+    "word": "vacuum cleaner",
+    "translation": "changyutgich"
+  },
+  {
+    "word": "iron",
+    "translation": "dazmol; dazmollamoq"
+  },
+  {
+    "word": "washing machine",
+    "translation": "kir yuvish mashinasi"
+  },
+  {
+    "word": "broom",
+    "translation": "supurgi"
+  },
+  {
+    "word": "dustpan",
+    "translation": "kurakcha (supirindi uchun)"
+  },
+  {
+    "word": "mop",
+    "translation": "pol yuvgich, shvabra"
+  },
+  {
+    "word": "bucket",
+    "translation": "chelak"
+  },
+  {
+    "word": "bin",
+    "translation": "axlat qutisi"
+  },
+  {
+    "word": "tap",
+    "translation": "jo'mrak, kran"
+  },
+  {
+    "word": "sink",
+    "translation": "rakovina, chanoq"
+  },
+  {
+    "word": "rug",
+    "translation": "gilamcha, palos"
+  },
+  {
+    "word": "hanger",
+    "translation": "kiyim ilgich"
+  },
+  {
+    "word": "fireplace",
+    "translation": "kamin, o'choq"
+  },
+  {
+    "word": "chimney",
+    "translation": "mo'ri"
+  },
+  {
+    "word": "fence",
+    "translation": "panjara, devor-to'siq"
+  },
+  {
+    "word": "garage",
+    "translation": "garaj"
+  },
+  {
+    "word": "corridor",
+    "translation": "yo'lak, koridor"
+  },
+  {
+    "word": "attic",
+    "translation": "chordoq"
+  },
+  {
+    "word": "doorstep",
+    "translation": "bo'sag'a, ostonadagi zina"
+  },
+  {
+    "word": "doorknob",
+    "translation": "eshik tutqichi"
+  },
+  {
+    "word": "socket",
+    "translation": "rozetka"
+  },
+  {
+    "word": "plug",
+    "translation": "elektr vilkasi; tiqin"
+  },
+  {
+    "word": "radiator",
+    "translation": "radiator, isitish batareyasi"
+  },
+  {
+    "word": "tile",
+    "translation": "koshin, plitka"
+  },
+  {
+    "word": "doorbell",
+    "translation": "eshik qo'ng'irog'i"
+  },
+  {
+    "word": "mattress",
+    "translation": "matras, to'shak"
+  },
+  {
+    "word": "sheet",
+    "translation": "choyshab"
+  },
+  {
+    "word": "sweep",
+    "translation": "supurmoq"
+  },
+  {
+    "word": "wipe",
+    "translation": "artmoq"
+  },
+  {
+    "word": "salad",
+    "translation": "salat"
+  },
+  {
+    "word": "meal",
+    "translation": "taom, ovqatlanish vaqti"
+  },
+  {
+    "word": "thirsty",
+    "translation": "chanqagan, tashna"
+  },
+  {
+    "word": "cashier",
+    "translation": "kassir"
+  },
+  {
+    "word": "receipt",
+    "translation": "chek, kvitansiya"
+  },
+  {
+    "word": "purse",
+    "translation": "ayollar hamyoni"
+  },
+  {
+    "word": "trolley",
+    "translation": "aravacha (do'kondagi)"
+  },
+  {
+    "word": "basket",
+    "translation": "savatcha, savat"
+  },
+  {
+    "word": "coin",
+    "translation": "tanga pul"
+  },
+  {
+    "word": "banknote",
+    "translation": "qog'oz pul"
+  },
+  {
+    "word": "bargain",
+    "translation": "arzon xarid; savdolashmoq"
+  },
+  {
+    "word": "refund",
+    "translation": "pulni qaytarish"
+  },
+  {
+    "word": "exchange",
+    "translation": "almashtirmoq; almashtirish"
+  },
+  {
+    "word": "sale",
+    "translation": "arzonlashtirilgan savdo"
+  },
+  {
+    "word": "afford",
+    "translation": "qurbi yetmoq"
+  },
+  {
+    "word": "reasonable",
+    "translation": "maqbul narxli, o'rtacha"
+  },
+  {
+    "word": "overpriced",
+    "translation": "haddan tashqari qimmat"
+  },
+  {
+    "word": "purchase",
+    "translation": "xarid; xarid qilmoq"
+  },
+  {
+    "word": "debt",
+    "translation": "qarz"
+  },
+  {
+    "word": "tip",
+    "translation": "choypuli"
+  },
+  {
+    "word": "luxury",
+    "translation": "hashamat, dabdaba"
+  },
+  {
+    "word": "wealthy",
+    "translation": "badavlat, boy"
+  },
+  {
+    "word": "broke",
+    "translation": "pulsiz, bir tiyinsiz"
+  },
+  {
+    "word": "invest",
+    "translation": "sarmoya kiritmoq"
+  },
+  {
+    "word": "profit",
+    "translation": "foyda, daromad"
+  },
+  {
+    "word": "loss",
+    "translation": "zarar, yo'qotish"
+  },
+  {
+    "word": "donate",
+    "translation": "ehson qilmoq"
+  },
+  {
+    "word": "charity",
+    "translation": "xayriya, ehson"
+  },
+  {
+    "word": "coupon",
+    "translation": "kupon, chegirma qog'ozi"
+  },
+  {
+    "word": "fitting room",
+    "translation": "kiyim o'lchash xonasi"
+  },
+  {
+    "word": "showcase",
+    "translation": "vitrina"
+  },
+  {
+    "word": "aisle",
+    "translation": "qatorlar oralig'i (do'konda)"
+  },
+  {
+    "word": "label",
+    "translation": "yorliq, etiketka"
+  },
+  {
+    "word": "wrap",
+    "translation": "o'ramoq"
+  },
+  {
+    "word": "customer service",
+    "translation": "mijozlarga xizmat"
+  },
+  {
+    "word": "value",
+    "translation": "qiymat, qadr"
+  },
+  {
+    "word": "athlete",
+    "translation": "sportchi"
+  },
+  {
+    "word": "coach",
+    "translation": "murabbiy"
+  },
+  {
+    "word": "referee",
+    "translation": "hakam"
+  },
+  {
+    "word": "tournament",
+    "translation": "turnir, musobaqa"
+  },
+  {
+    "word": "championship",
+    "translation": "chempionat"
+  },
+  {
+    "word": "medal",
+    "translation": "medal"
+  },
+  {
+    "word": "pitch",
+    "translation": "o'yin maydoni"
+  },
+  {
+    "word": "track",
+    "translation": "yugurish yo'lagi"
+  },
+  {
+    "word": "gym",
+    "translation": "sport zal"
+  },
+  {
+    "word": "exercise",
+    "translation": "mashq, jismoniy mashq"
+  },
+  {
+    "word": "fitness",
+    "translation": "jismoniy tayyorgarlik"
+  },
+  {
+    "word": "workout",
+    "translation": "mashg'ulot"
+  },
+  {
+    "word": "stretch",
+    "translation": "cho'zmoq, cho'zilmoq"
+  },
+  {
+    "word": "warm up",
+    "translation": "isinib olmoq"
+  },
+  {
+    "word": "defeat",
+    "translation": "mag'lubiyat; yengmoq"
+  },
+  {
+    "word": "league",
+    "translation": "liga"
+  },
+  {
+    "word": "opponent",
+    "translation": "raqib"
+  },
+  {
+    "word": "champion",
+    "translation": "chempion, g'olib"
+  },
+  {
+    "word": "record",
+    "translation": "rekord"
+  },
+  {
+    "word": "fan",
+    "translation": "muxlis, ishqiboz"
+  },
+  {
+    "word": "whistle",
+    "translation": "hushtak"
+  },
+  {
+    "word": "sprint",
+    "translation": "qisqa masofaga yugurish"
+  },
+  {
+    "word": "marathon",
+    "translation": "marafon"
+  },
+  {
+    "word": "boxing",
+    "translation": "boks"
+  },
+  {
+    "word": "wrestling",
+    "translation": "kurash"
+  },
+  {
+    "word": "tennis",
+    "translation": "tennis"
+  },
+  {
+    "word": "football",
+    "translation": "futbol"
+  },
+  {
+    "word": "basketball",
+    "translation": "basketbol"
+  },
+  {
+    "word": "volleyball",
+    "translation": "voleybol"
+  },
+  {
+    "word": "foul",
+    "translation": "fol, qoidabuzarlik"
+  },
+  {
+    "word": "penalty",
+    "translation": "penalti, jarima zarba"
+  },
+  {
+    "word": "trophy",
+    "translation": "kubok"
+  },
+  {
+    "word": "net",
+    "translation": "to'r"
+  },
+  {
+    "word": "racket",
+    "translation": "raketka"
+  },
+  {
+    "word": "helmet",
+    "translation": "dubulg'a, kaska"
+  },
+  {
+    "word": "kick",
+    "translation": "tepmoq"
+  },
+  {
+    "word": "defend",
+    "translation": "himoya qilmoq"
+  },
+  {
+    "word": "attack",
+    "translation": "hujum; hujum qilmoq"
+  },
+  {
+    "word": "compete",
+    "translation": "raqobatlashmoq, bellashmoq"
+  },
+  {
+    "word": "tackle",
+    "translation": "to'pni olib qo'yish; to'pni olib qo'ymoq"
+  },
+  {
+    "word": "laptop",
+    "translation": "noutbuk"
+  },
+  {
+    "word": "tablet",
+    "translation": "planshet"
+  },
+  {
+    "word": "smartphone",
+    "translation": "smartfon"
+  },
+  {
+    "word": "screen",
+    "translation": "ekran"
+  },
+  {
+    "word": "keyboard",
+    "translation": "klaviatura"
+  },
+  {
+    "word": "password",
+    "translation": "parol, maxfiy so'z"
+  },
+  {
+    "word": "website",
+    "translation": "veb-sayt"
+  },
+  {
+    "word": "browser",
+    "translation": "brauzer"
+  },
+  {
+    "word": "software",
+    "translation": "dasturiy ta'minot"
+  },
+  {
+    "word": "battery",
+    "translation": "batareya, quvvat"
+  },
+  {
+    "word": "charger",
+    "translation": "zaryadlovchi, zaryadka"
+  },
+  {
+    "word": "update",
+    "translation": "yangilash; yangilanish"
+  },
+  {
+    "word": "install",
+    "translation": "o'rnatmoq"
+  },
+  {
+    "word": "delete",
+    "translation": "o'chirmoq"
+  },
+  {
+    "word": "upload",
+    "translation": "yuklash, yuklamoq"
+  },
+  {
+    "word": "backup",
+    "translation": "zaxira nusxa"
+  },
+  {
+    "word": "file",
+    "translation": "fayl"
+  },
+  {
+    "word": "folder",
+    "translation": "papka, jild"
+  },
+  {
+    "word": "link",
+    "translation": "havola"
+  },
+  {
+    "word": "click",
+    "translation": "bosmoq, chertmoq"
+  },
+  {
+    "word": "scroll",
+    "translation": "surmoq, aylantirmoq (ekranda)"
+  },
+  {
+    "word": "log in",
+    "translation": "tizimga kirmoq"
+  },
+  {
+    "word": "sign up",
+    "translation": "ro'yxatdan o'tmoq"
+  },
+  {
+    "word": "server",
+    "translation": "server"
+  },
+  {
+    "word": "network",
+    "translation": "tarmoq"
+  },
+  {
+    "word": "cable",
+    "translation": "kabel, sim"
+  },
+  {
+    "word": "speaker",
+    "translation": "karnay, dinamik"
+  },
+  {
+    "word": "headphones",
+    "translation": "quloqchin"
+  },
+  {
+    "word": "microphone",
+    "translation": "mikrofon"
+  },
+  {
+    "word": "camera",
+    "translation": "kamera"
+  },
+  {
+    "word": "online",
+    "translation": "onlayn"
+  },
+  {
+    "word": "offline",
+    "translation": "oflayn"
+  },
+  {
+    "word": "digital",
+    "translation": "raqamli"
+  },
+  {
+    "word": "virus",
+    "translation": "virus"
+  },
+  {
+    "word": "code",
+    "translation": "kod, dastur kodi"
+  },
+  {
+    "word": "program",
+    "translation": "dastur"
+  },
+  {
+    "word": "notification",
+    "translation": "bildirishnoma"
+  },
+  {
+    "word": "storage",
+    "translation": "xotira, saqlash joyi"
+  },
+  {
+    "word": "device",
+    "translation": "qurilma"
+  },
+  {
+    "word": "crash",
+    "translation": "ishdan chiqmoq; nosozlik"
+  },
+  {
+    "word": "fog",
+    "translation": "tuman"
+  },
+  {
+    "word": "mist",
+    "translation": "mayin tuman, g'ubor"
+  },
+  {
+    "word": "storm",
+    "translation": "bo'ron, to'fon"
+  },
+  {
+    "word": "thunder",
+    "translation": "momaqaldiroq"
+  },
+  {
+    "word": "lightning",
+    "translation": "chaqmoq"
+  },
+  {
+    "word": "hail",
+    "translation": "do'l"
+  },
+  {
+    "word": "drought",
+    "translation": "qurg'oqchilik"
+  },
+  {
+    "word": "flood",
+    "translation": "toshqin, sel"
+  },
+  {
+    "word": "freeze",
+    "translation": "muzlamoq, qotmoq"
+  },
+  {
+    "word": "melt",
+    "translation": "erimoq"
+  },
+  {
+    "word": "breeze",
+    "translation": "mayin shabada"
+  },
+  {
+    "word": "humid",
+    "translation": "nam, havosi dim"
+  },
+  {
+    "word": "humidity",
+    "translation": "namlik"
+  },
+  {
+    "word": "forecast",
+    "translation": "ob-havo ma'lumoti"
+  },
+  {
+    "word": "rainbow",
+    "translation": "kamalak"
+  },
+  {
+    "word": "frost",
+    "translation": "qirov, ayoz"
+  },
+  {
+    "word": "puddle",
+    "translation": "ko'lmak"
+  },
+  {
+    "word": "heatwave",
+    "translation": "jazirama, anomal issiq"
+  },
+  {
+    "word": "chilly",
+    "translation": "salqin, etni junjitadigan"
+  },
+  {
+    "word": "shade",
+    "translation": "soya"
+  },
+  {
+    "word": "shadow",
+    "translation": "ko'lanka, sharpa"
+  },
+  {
+    "word": "overcast",
+    "translation": "butunlay bulutli"
+  },
+  {
+    "word": "drizzle",
+    "translation": "maydalab yog'moq"
+  },
+  {
+    "word": "shower",
+    "translation": "qisqa kuchli yomg'ir"
+  },
+  {
+    "word": "gale",
+    "translation": "qattiq shamol, po'rtana"
+  },
+  {
+    "word": "blizzard",
+    "translation": "qorbo'ron"
+  },
+  {
+    "word": "icicle",
+    "translation": "muz sumalak, muz qandil"
+  },
+  {
+    "word": "sunrise",
+    "translation": "quyosh chiqishi"
+  },
+  {
+    "word": "sunset",
+    "translation": "quyosh botishi"
+  },
+  {
+    "word": "twilight",
+    "translation": "shom, g'ira-shira payt"
+  },
+  {
+    "word": "dew",
+    "translation": "shudring"
+  },
+  {
+    "word": "damp",
+    "translation": "zax, nam"
+  },
+  {
+    "word": "mild",
+    "translation": "mo'tadil, yumshoq"
+  },
+  {
+    "word": "earthquake",
+    "translation": "zilzila"
+  },
+  {
+    "word": "avalanche",
+    "translation": "qor ko'chkisi"
+  },
+  {
+    "word": "mud",
+    "translation": "loy, balchiq"
+  },
+  {
+    "word": "barometer",
+    "translation": "barometr, havo o'lchagich"
+  },
+  {
+    "word": "blow",
+    "translation": "esmoq (shamol)"
+  },
+  {
+    "word": "shine",
+    "translation": "porlamoq, charaqlamoq"
+  },
+  {
+    "word": "although",
+    "translation": "garchi, ...ga qaramay"
+  },
+  {
+    "word": "achieve",
+    "translation": "erishmoq"
+  },
+  {
+    "word": "wise",
+    "translation": "dono"
+  },
+  {
+    "word": "pale",
+    "translation": "rangpar, oqargan"
+  },
+  {
+    "word": "mend",
+    "translation": "ta'mirlamoq, yamamoq"
+  },
+  {
+    "word": "dawn",
+    "translation": "tong"
+  },
+  {
+    "word": "harbour",
+    "translation": "port, bandargoh"
+  },
+  {
+    "word": "gaze",
+    "translation": "tikilib qarash"
+  },
+  {
+    "word": "doubt",
+    "translation": "shubha"
+  },
+  {
+    "word": "behaviour",
+    "translation": "xulq, xatti-harakat"
+  },
+  {
+    "word": "thorough",
+    "translation": "puxta, sinchkov"
+  },
+  {
+    "word": "significant",
+    "translation": "muhim, sezilarli"
+  },
+  {
+    "word": "evidence",
+    "translation": "dalil"
+  },
+  {
+    "word": "assess",
+    "translation": "baholamoq"
+  },
+  {
+    "word": "approach",
+    "translation": "yondashuv"
+  },
+  {
+    "word": "consequence",
+    "translation": "oqibat"
+  },
+  {
+    "word": "decline",
+    "translation": "kamaymoq, pasaymoq"
+  },
+  {
+    "word": "crucial",
+    "translation": "hal qiluvchi, juda muhim"
+  },
+  {
+    "word": "obtain",
+    "translation": "qo'lga kiritmoq, olmoq"
+  },
+  {
+    "word": "vast",
+    "translation": "ulkan, keng"
+  },
+  {
+    "word": "contribute",
+    "translation": "hissa qo'shmoq"
+  },
+  {
+    "word": "sustainable",
+    "translation": "barqaror"
+  },
+  {
+    "word": "pan",
+    "translation": "tova"
+  },
+  {
+    "word": "fry",
+    "translation": "qovurmoq"
+  },
+  {
+    "word": "stir",
+    "translation": "aralashtirmoq"
+  }
+]

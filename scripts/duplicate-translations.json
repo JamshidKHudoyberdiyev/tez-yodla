@@ -1,0 +1,262 @@
+[
+  {
+    "word": "student",
+    "first": "talaba, o'quvchi",
+    "other": "o'quvchi, talaba"
+  },
+  {
+    "word": "subject",
+    "first": "fan, mavzu",
+    "other": "fan (o'quv fani)"
+  },
+  {
+    "word": "break",
+    "first": "sindirmoq",
+    "other": "tanaffus"
+  },
+  {
+    "word": "study",
+    "first": "o'qimoq, o'rganmoq",
+    "other": "o'qimoq, shug'ullanmoq"
+  },
+  {
+    "word": "teach",
+    "first": "o'rgatmoq, dars bermoq",
+    "other": "o'qitmoq, dars bermoq"
+  },
+  {
+    "word": "answer",
+    "first": "javob; javob bermoq",
+    "other": "javob"
+  },
+  {
+    "word": "pass",
+    "first": "o'tmoq; uzatmoq",
+    "other": "(imtihondan) o'tmoq"
+  },
+  {
+    "word": "fail",
+    "first": "muvaffaqiyatsizlikka uchramoq; yiqilmoq (imtihondan)",
+    "other": "(imtihondan) yiqilmoq"
+  },
+  {
+    "word": "job",
+    "first": "ish (lavozim)",
+    "other": "ish"
+  },
+  {
+    "word": "boss",
+    "first": "boshliq, rahbar",
+    "other": "boshliq"
+  },
+  {
+    "word": "manager",
+    "first": "menejer, boshqaruvchi",
+    "other": "menejer, rahbar"
+  },
+  {
+    "word": "interview",
+    "first": "suhbat (ishga), intervyu",
+    "other": "suhbat (ishga kirishda)"
+  },
+  {
+    "word": "holiday",
+    "first": "bayram; ta'til",
+    "other": "ta'til, dam olish"
+  },
+  {
+    "word": "trip",
+    "first": "safar",
+    "other": "safar, sayohat"
+  },
+  {
+    "word": "gate",
+    "first": "darvoza",
+    "other": "chiqish eshigi (aeroportda)"
+  },
+  {
+    "word": "seat",
+    "first": "o'rindiq, joy",
+    "other": "o'rindiq"
+  },
+  {
+    "word": "abroad",
+    "first": "chet elda",
+    "other": "chet elda, chet elga"
+  },
+  {
+    "word": "land",
+    "first": "yer, quruqlik",
+    "other": "qo'nmoq (samolyot)"
+  },
+  {
+    "word": "journey",
+    "first": "sayohat (uzoq)",
+    "other": "yo'l, safar"
+  },
+  {
+    "word": "view",
+    "first": "manzara; nuqtai nazar",
+    "other": "manzara"
+  },
+  {
+    "word": "husband",
+    "first": "er (turmush o'rtog'i)",
+    "other": "er"
+  },
+  {
+    "word": "aunt",
+    "first": "xola, amma",
+    "other": "amma, xola"
+  },
+  {
+    "word": "grow up",
+    "first": "voyaga yetmoq, katta bo'lmoq",
+    "other": "katta bo'lmoq, ulg'aymoq"
+  },
+  {
+    "word": "look after",
+    "first": "g'amxo'rlik qilmoq",
+    "other": "qarab turmoq, g'amxo'rlik qilmoq"
+  },
+  {
+    "word": "feed",
+    "first": "boqmoq, ovqatlantirmoq",
+    "other": "ovqatlantirmoq, boqmoq"
+  },
+  {
+    "word": "crowd",
+    "first": "olomon",
+    "other": "olomon, tiqilinch"
+  },
+  {
+    "word": "fine",
+    "first": "yaxshi, joyida",
+    "other": "jarima"
+  },
+  {
+    "word": "tie",
+    "first": "bog'lamoq",
+    "other": "galstuk"
+  },
+  {
+    "word": "size",
+    "first": "o'lcham",
+    "other": "o'lcham, razmer"
+  },
+  {
+    "word": "take off",
+    "first": "yechmoq; uchib ketmoq",
+    "other": "yechmoq (kiyimni)"
+  },
+  {
+    "word": "lazy",
+    "first": "dangasa",
+    "other": "dangasa, yalqov"
+  },
+  {
+    "word": "mirror",
+    "first": "ko'zgu",
+    "other": "ko'zgu, oyna"
+  },
+  {
+    "word": "chicken",
+    "first": "tovuq",
+    "other": "tovuq, tovuq go'shti"
+  },
+  {
+    "word": "sugar",
+    "first": "shakar",
+    "other": "shakar, qand"
+  },
+  {
+    "word": "fork",
+    "first": "sanchqi",
+    "other": "sanchqi, vilka"
+  },
+  {
+    "word": "cup",
+    "first": "piyola, finjon",
+    "other": "finjon, piyola, chashka"
+  },
+  {
+    "word": "glass",
+    "first": "stakan; shisha",
+    "other": "stakan, qadah"
+  },
+  {
+    "word": "fridge",
+    "first": "muzlatgich",
+    "other": "muzlatkich, xolodilnik"
+  },
+  {
+    "word": "dish",
+    "first": "taom; idish",
+    "other": "taom, idish"
+  },
+  {
+    "word": "cook",
+    "first": "ovqat pishirmoq",
+    "other": "pishirmoq, ovqat tayyorlamoq"
+  },
+  {
+    "word": "bake",
+    "first": "pishirmoq (pechda)",
+    "other": "pishirmoq (pechda), yopmoq"
+  },
+  {
+    "word": "cut",
+    "first": "kesmoq",
+    "other": "kesmoq, to'g'ramoq"
+  },
+  {
+    "word": "hungry",
+    "first": "och (qorni)",
+    "other": "och, qorni och"
+  },
+  {
+    "word": "delicious",
+    "first": "mazali",
+    "other": "mazali, lazzatli"
+  },
+  {
+    "word": "fresh",
+    "first": "yangi, toza",
+    "other": "yangi, barra"
+  },
+  {
+    "word": "borrow",
+    "first": "qarzga olmoq",
+    "other": "qarzga olib turmoq"
+  },
+  {
+    "word": "lend",
+    "first": "qarzga bermoq",
+    "other": "qarzga berib turmoq"
+  },
+  {
+    "word": "save",
+    "first": "saqlamoq; tejamoq",
+    "other": "tejamoq, jamg'armoq"
+  },
+  {
+    "word": "spend",
+    "first": "sarflamoq; o'tkazmoq",
+    "other": "sarflamoq"
+  },
+  {
+    "word": "clear",
+    "first": "aniq, tiniq",
+    "other": "musaffo, ochiq"
+  },
+  {
+    "word": "sore",
+    "first": "og'riqli, yallig'langan",
+    "other": "og'riyotgan"
+  },
+  {
+    "word": "kettle",
+    "first": "choynak (elektr)",
+    "other": "choynak (suv qaynatadigan)"
+  }
+]
