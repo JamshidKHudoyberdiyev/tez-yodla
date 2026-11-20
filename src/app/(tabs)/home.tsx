@@ -10,6 +10,7 @@ import { Button, T } from '@/components/ui';
 import { gardenStages } from '@/lib/garden';
 import { capReviews, EVENING_FROM_HOUR, EXTRA_NEW, learnedOn, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
+import { activeDraft, draftMinutes, type SessionDraft } from '@/lib/draft';
 import { colors } from '@/lib/theme';
 
 
@@ -22,7 +23,9 @@ function greeting(d = new Date()) {
 }
 
 export default function Home() {
-  const { state, words, today, streak, repairStreak, dismissBreak, wordById } = useStore();
+  const { state, words, today, streak, repairStreak, dismissBreak, wordById, setDraft } = useStore();
+  // Mashg'ulot o'rtada qolgan bo'lsa — asosiy karta o'rnida «Davom ettirish»
+  const draft = activeDraft(state.draft, today, state.cards, (id) => !!wordById(id));
   const mistakeCount = Object.keys(state.mistakes).filter((id) => !!wordById(id)).length;
   const plan = todayPlan({ words, cards: state.cards, activeDecks: state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, log: state.log, today });
   // Halqa faqat bugungi YANGI so'zlarni sanaydi; takrorlash alohida kartada.
@@ -71,7 +74,12 @@ export default function Home() {
           </Pressable>
         </View>
 
-        {/* Bugungi yangi so'zlar (halqa faqat yangi so'zlarni sanaydi) */}
+        {draft ? (
+          <ResumeCard draft={draft}
+            onResume={() => router.push({ pathname: '/session', params: { resume: '1', ...(draft.deck ? { deck: draft.deck } : {}), ...(draft.extra ? { extra: '1' } : {}) } })}
+            onRestart={() => { setDraft(null); router.push({ pathname: '/session', params: draft.deck ? { deck: draft.deck } : draft.extra ? { extra: '1' } : { only: 'new' } }); }} />
+        ) : (
+        /* Bugungi yangi so'zlar (halqa faqat yangi so'zlarni sanaydi) */
         <View style={{ backgroundColor: colors.forest, borderRadius: 32, paddingHorizontal: 20, paddingTop: 22, paddingBottom: 20, gap: 16, overflow: 'hidden' }}>
           <View pointerEvents="none" style={{ position: 'absolute', right: -60, top: -50 }}><RingsDecor /></View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
@@ -117,6 +125,7 @@ export default function Home() {
             <Button title={newToday > 0 ? 'Davom etish' : 'Boshlash'} iconRight="arrow-right" onPress={() => router.push({ pathname: '/session', params: { only: 'new' } })} />
           )}
         </View>
+        )}
 
         {eveningOn ? (
           <MiniCard icon="moon" tint={colors.nightSoft} ink={colors.night} title="Mustahkamlash"
@@ -183,6 +192,36 @@ export default function Home() {
         </View>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/** To'xtatilgan mashg'ulot: qaysi guruh va bosqichda qolgani, «Davom ettirish». */
+function ResumeCard({ draft, onResume, onRestart }: { draft: SessionDraft; onResume: () => void; onRestart: () => void }) {
+  const at = draft.steps.indexOf(draft.step);
+  return (
+    <View style={{ backgroundColor: colors.forest, borderRadius: 32, paddingHorizontal: 20, paddingTop: 22, paddingBottom: 16, gap: 16, overflow: 'hidden' }}>
+      <View pointerEvents="none" style={{ position: 'absolute', right: -60, top: -50 }}><RingsDecor /></View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.lime }} />
+        <T w="extrabold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>To'xtatilgan mashg'ulot</T>
+      </View>
+      <View style={{ gap: 4 }}>
+        <T w="extrabold" size={24} color="#FFFFFF" style={{ lineHeight: 28 }} accessibilityRole="header">{draft.groupIndex + 1}-guruh · {draft.step} bosqichi</T>
+        <T size={13} color={colors.onForestSoft}>{draft.wordIds.length} ta yangi so'z · ~{draftMinutes(draft)} daqiqa qoldi</T>
+      </View>
+      <View accessible accessibilityLabel={`${draft.steps.length} bosqichdan ${at + 1}-bosqich: ${draft.step}`} style={{ gap: 6 }}>
+        <View style={{ flexDirection: 'row', gap: 4 }}>
+          {draft.steps.map((s, i) => <View key={s} style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: i < at ? colors.lime : i === at ? 'rgba(182,228,78,0.45)' : 'rgba(255,255,255,0.18)' }} />)}
+        </View>
+        <View style={{ flexDirection: 'row', gap: 4 }}>
+          {draft.steps.map((s, i) => <T key={s} w={i === at ? 'extrabold' : 'medium'} size={10} numberOfLines={1} color={i === at ? colors.lime : colors.onForestSoft} style={{ flex: 1, textAlign: 'center' }}>{s}</T>)}
+        </View>
+      </View>
+      <Button title="Davom ettirish" iconRight="arrow-right" onPress={onResume} />
+      <Pressable accessibilityRole="button" onPress={onRestart} hitSlop={8} style={{ alignSelf: 'center', paddingVertical: 2 }}>
+        <T w="bold" size={14} color={colors.onForestSoft}>Boshidan boshlash</T>
+      </Pressable>
+    </View>
   );
 }
 

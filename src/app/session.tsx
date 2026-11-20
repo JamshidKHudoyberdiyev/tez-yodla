@@ -18,6 +18,7 @@ import { speak, speakSequence } from '@/lib/speech';
 import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
 import { retentionFactor } from '@/lib/retention';
 import { useStore } from '@/lib/store';
+import { activeDraft, type SessionDraft } from '@/lib/draft';
 import { colors, font } from '@/lib/theme';
 
 type Phase = 'plan' | 'learn' | 'recall' | 'test' | 'match' | 'write' | 'context' | 'groupDone' | 'review' | 'relearnIntro' | 'done';
@@ -30,40 +31,42 @@ type GroupKind = 'new' | 'relearn';
 
 
 type ExitKind = 'group' | 'relearn' | 'review';
+const PHASE_STEP: Partial<Record<Phase, StepName>> = { learn: 'Tanishish', recall: 'Eslash', test: 'Test', match: 'Moslash', write: 'Yozish', context: 'Matn' };
+const STEP_PHASE: Record<StepName, Phase> = { Tanishish: 'learn', Eslash: 'recall', Test: 'test', Moslash: 'match', Yozish: 'write', Matn: 'context' };
 
 const leave = () => (router.canGoBack() ? router.back() : router.replace('/home'));
 
 /** Mashg'ulot: o'rtada ✕ (yoki Android «orqaga») bosilsa, avval tasdiqlash so'raladi. */
 export default function Session() {
-  const [confirm, setConfirm] = useState<ExitKind | null>(null);
+  const [confirm, setConfirm] = useState<{ kind: ExitKind; where?: string } | null>(null);
   return (
     <View style={{ flex: 1 }}>
-      <SessionBody askExit={setConfirm} />
-      <ExitConfirm kind={confirm} onStay={() => setConfirm(null)} onLeave={() => { setConfirm(null); leave(); }} />
+      <SessionBody askExit={(kind, where) => setConfirm({ kind, where })} />
+      <ExitConfirm kind={confirm?.kind ?? null} where={confirm?.where} onStay={() => setConfirm(null)} onLeave={() => { setConfirm(null); leave(); }} />
     </View>
   );
 }
 
-function ExitConfirm({ kind, onStay, onLeave }: { kind: ExitKind | null; onStay: () => void; onLeave: () => void }) {
+function ExitConfirm({ kind, where, onStay, onLeave }: { kind: ExitKind | null; where?: string; onStay: () => void; onLeave: () => void }) {
   const text = kind === 'review'
     ? "Shu paytgacha takrorlagan so'zlaringiz saqlandi. Qolganlari bosh sahifada kutib turadi."
     : kind === 'relearn'
       ? "Unutilgan so'zlar hali qayta yodlanmadi — keyingi safar shu yerdan boshlaysiz."
-      : "Bu guruhdagi 5 ta so'z hali saqlanmadi. Chiqsangiz, keyingi safar ularni boshidan o'rganasiz.";
+      : `Joyingiz saqlanadi — keyin ${where ?? 'shu'} bosqichidan davom etasiz. Takrorlagan so'zlaringiz allaqachon saqlangan.`;
   const bottom = useSheetBottom(28);
   return (
     <Modal visible={!!kind} transparent animationType="fade" onRequestClose={onStay} statusBarTranslucent navigationBarTranslucent>
       <Pressable accessibilityLabel="Yopish" onPress={onStay} style={{ flex: 1, backgroundColor: 'rgba(18,26,21,0.55)', justifyContent: 'flex-end' }}>
         <Pressable onPress={() => {}} accessibilityViewIsModal style={{ backgroundColor: colors.bg, borderTopLeftRadius: 30, borderTopRightRadius: 30, padding: 22, paddingBottom: bottom, gap: 14 }}>
           <View style={{ alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line }} />
-          <View style={{ width: 56, height: 56, borderRadius: 20, backgroundColor: colors.amberSoft, alignItems: 'center', justifyContent: 'center' }}>
-            <Feather name="log-out" size={26} color={colors.amber} />
+          <View style={{ width: 56, height: 56, borderRadius: 20, backgroundColor: kind === 'group' ? colors.limeSoft : colors.amberSoft, alignItems: 'center', justifyContent: 'center' }}>
+            <Feather name={kind === 'group' ? 'bookmark' : 'log-out'} size={26} color={kind === 'group' ? colors.forestText : colors.amber} />
           </View>
           <T w="extrabold" size={22} accessibilityRole="header">Mashg'ulotdan chiqasizmi?</T>
           <T size={15} color={colors.inkSoft}>{text}</T>
           <View style={{ gap: 8, marginTop: 6 }}>
             <Button title="Davom etish" onPress={onStay} />
-            <Button title="Chiqish" variant="dangerOutline" onPress={onLeave} />
+            <Button title="Chiqish" variant="white" onPress={onLeave} />
           </View>
         </Pressable>
       </Pressable>
@@ -71,7 +74,7 @@ function ExitConfirm({ kind, onStay, onLeave }: { kind: ExitKind | null; onStay:
   );
 }
 
-function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
+function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => void }) {
   const store = useStore();
   const { state, words, today, wordById } = store;
   /** Mashg'ulot boshidagi streak — oxirida «+1 kun», marra va muzlatishni aniqlash uchun */
@@ -80,11 +83,18 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
   /** «Yana 5 ta so'z» — kunlik reja bajarilgandan keyingi qo'shimcha guruh */
   /** `deck` — to'plam sahifasidan: faqat shu to'plamdan 5 ta yangi so'z (takrorlashlarsiz) */
   /** `only` — bosh sahifadan: 'new' — faqat yangi so'zlar, 'review' — faqat takrorlash */
-  const { extra, deck, only, more } = useLocalSearchParams<{ extra?: string; deck?: string; only?: 'new' | 'review'; more?: string }>();
+  /** `resume` — bosh sahifadagi «Davom ettirish»: to'xtatilgan guruh o'sha bosqichdan */
+  const { extra, deck, only, more, resume } = useLocalSearchParams<{ extra?: string; deck?: string; only?: 'new' | 'review'; more?: string; resume?: string }>();
   const deckTitle = deck ? deckById(deck)?.title : undefined;
   // Reja mashg'ulot boshida bir marta tuziladi.
   const initial = useMemo(() => {
     const p = todayPlan({ words, cards: state.cards, activeDecks: deck ? [deck] : state.activeDecks, knownLemmas: new Set(state.knownLemmas), dailyNew: state.dailyNew, extraNew: extra || deck ? EXTRA_NEW : undefined, log: state.log, today, first: state.evening?.day === today - 1 ? state.evening.missed : undefined });
+    const d = resume ? activeDraft(state.draft, today, state.cards, (id) => !!wordById(id)) : null;
+    if (d) {
+      const ids = new Set(d.wordIds);
+      const rest = p.groups.map((g) => g.filter((w) => !ids.has(w.id))).filter((g) => g.length);
+      return { groups: [d.wordIds.map((id) => wordById(id)!), ...rest], reviews: [] as CardT[], pendingRelearn: [] as string[], resume: d as SessionDraft | null };
+    }
     const noReviews = !!deck || only === 'new';
     // Kunlik takrorlash chegarasi: ortig'i navbatda qoladi (`more` — «Yana N ta» bosilgan)
     const due = capReviews(p.reviews.filter((c) => wordById(c.wordId)), state.prefs.reviewCap, state.log[today]?.reviewed ?? 0, !!more).today;
@@ -92,19 +102,23 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
       groups: only === 'review' ? [] : p.groups,
       reviews: noReviews ? [] : due.filter((c) => c.state !== 'relearning'),
       pendingRelearn: noReviews ? [] : due.filter((c) => c.state === 'relearning').map((c) => c.wordId),
+      resume: null as SessionDraft | null,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [phase, setPhase] = useState<Phase>('plan');
+  const r0 = initial.resume;
+  /** Davom ettirilgan guruhning tartibi (masalan 2-guruh) — keyingi guruhlar shundan sanaladi */
+  const groupBase = r0?.groupIndex ?? 0;
+  const [phase, setPhase] = useState<Phase>(r0 ? STEP_PHASE[r0.step] : 'plan');
   const [groupIndex, setGroupIndex] = useState(0);
-  const [group, setGroup] = useState<Word[]>([]);
+  const [group, setGroup] = useState<Word[]>(r0 ? initial.groups[0] : []);
   const [kind, setKind] = useState<GroupKind>('new');
   const [idx, setIdx] = useState(0);
-  const [queue, setQueue] = useState<string[]>([]);
+  const [queue, setQueue] = useState<string[]>(() => (r0 ? (r0.step === 'Test' ? shuffle(r0.wordIds) : [...r0.wordIds]) : []));
   const [revealed, setRevealed] = useState(false);
-  const firstTryWrong = useRef<Set<string>>(new Set());
-  const stepStats = useRef({ testOk: 0, matchErrors: 0, writeOk: 0 });
+  const firstTryWrong = useRef<Set<string>>(new Set(r0?.wrong ?? []));
+  const stepStats = useRef(r0?.stats ? { ...r0.stats } : { testOk: 0, matchErrors: 0, writeOk: 0 });
   const testRetried = useRef<Set<string>>(new Set());
   /** Har bir javobdan keyin oshadi: bir xil so'z qayta so'ralganda ham ekran yangidan ochiladi. */
   const turn = useRef(0);
@@ -140,8 +154,10 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
     ...(on.context && kind === 'new' && contextItems(group).length >= MIN_CONTEXT ? (['Matn'] as const) : []),
   ];
   const seg = (name: StepName): Seg => ({ count: steps.length, index: steps.indexOf(name), toast: stageToast });
-  const PHASE_STEP: Partial<Record<Phase, StepName>> = { learn: 'Tanishish', recall: 'Eslash', test: 'Test', match: 'Moslash', write: 'Yozish', context: 'Matn' };
   const currentStep = PHASE_STEP[phase];
+  const groupLabel = kind === 'relearn' ? 'Qayta' : `${groupIndex + groupBase + 1}-guruh`;
+  /** Chiqish oynasi uchun: «1-guruh · Test» */
+  const exitWhere = currentStep ? `${groupLabel} · ${currentStep}` : undefined;
   // Bosqich almashganda o'rtada qisqa yozuv: «1-guruh · 3-bosqich: Test».
   useEffect(() => {
     if (!currentStep) return;
@@ -151,16 +167,23 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep, group]);
 
+  // Yangi so'zlar guruhida har bosqich boshida joy saqlanadi — chiqib ketilsa, shu yerdan davom etiladi.
+  useEffect(() => {
+    if (!currentStep || kind !== 'new' || !group.length) return;
+    store.setDraft({ day: today, groupIndex: groupIndex + groupBase, wordIds: group.map((w) => w.id), step: currentStep, steps, wrong: [...firstTryWrong.current], stats: { ...stepStats.current }, deck, extra: !!extra || undefined });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, group, kind]);
+
   // Android «orqaga» tugmasi ham ✕ kabi: o'rtada bo'lsa — tasdiqlash.
   const inProgress = phase === 'review' || !!currentStep;
   useEffect(() => {
     if (!inProgress) return;
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      askExit(phase === 'review' ? 'review' : kind === 'relearn' ? 'relearn' : 'group');
+      askExit(phase === 'review' ? 'review' : kind === 'relearn' ? 'relearn' : 'group', exitWhere);
       return true;
     });
     return () => sub.remove();
-  }, [inProgress, phase, kind, askExit]);
+  }, [inProgress, phase, kind, askExit, exitWhere]);
 
   // Tanishishda yangi so'zni o'zi o'qiydi (sozlamaga qarab — misol gap bilan).
   useEffect(() => {
@@ -179,7 +202,6 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
     if (!left.reviews.length && !left.newWords.length) store.markDayDone();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
-  const groupLabel = kind === 'relearn' ? 'Qayta' : `${groupIndex + 1}-guruh`;
   const markWrong = (id: string) => {
     if (!firstTryWrong.current.has(id)) store.noteMistake(id); // «Xatolarim»ga tushadi
     firstTryWrong.current.add(id);
@@ -242,7 +264,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
     phase === 'review' ? 'review'
       : ['learn', 'recall', 'test', 'match', 'write', 'context'].includes(phase) ? (kind === 'relearn' ? 'relearn' : 'group')
         : null;
-  const close = () => (exitKind ? askExit(exitKind) : leave());
+  const close = () => (exitKind ? askExit(exitKind, exitWhere) : leave());
 
   // ---------- Ekranlar ----------
 
@@ -389,6 +411,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind) => void }) {
       <MatchStep
         key={group.map((x) => x.id).join()}
         group={group}
+        audio={state.prefs.naturalVoice !== false}
         header={(found) => <><Header onClose={close} progress={found / group.length} label={`Moslash · ${found}/${group.length}`} seg={seg('Moslash')} /></>}
         onMistake={(id) => { stepStats.current.matchErrors += 1; markWrong(id); }}
         onDone={() => goNext('Moslash')}
@@ -1306,7 +1329,8 @@ export function matchPages<X>(items: X[], size = MATCH_PAGE): X[][] {
   return out;
 }
 
-function MatchStep({ group, header, onMistake, onDone }: { group: Word[]; header: (found: number) => React.ReactNode; onMistake: (wordId: string) => void; onDone: () => void }) {
+/** `audio` — chap ustunda so'z yozilmaydi, faqat 🔊: eshitib, tarjimasini topish. */
+function MatchStep({ group, audio, header, onMistake, onDone }: { group: Word[]; audio: boolean; header: (found: number) => React.ReactNode; onMistake: (wordId: string) => void; onDone: () => void }) {
   // Past bo'yli ekranda bir sahifaga kamroq juft qo'yiladi — aylantirish kerak bo'lmasin
   const { height } = useWindowDimensions();
   const size = height < 620 ? 3 : height < 740 ? 4 : MATCH_PAGE;
@@ -1314,13 +1338,13 @@ function MatchStep({ group, header, onMistake, onDone }: { group: Word[]; header
   const [page, setPage] = useState(0);
   const before = pages.slice(0, page).reduce((n, p) => n + p.length, 0);
   return (
-    <MatchPage key={page} group={pages[page]} header={(found) => header(before + found)} onMistake={onMistake}
+    <MatchPage key={page} group={pages[page]} audio={audio} header={(found) => header(before + found)} onMistake={onMistake}
       pageLabel={pages.length > 1 ? `${page + 1} / ${pages.length}` : undefined}
       onDone={() => (page + 1 < pages.length ? setPage(page + 1) : onDone())} />
   );
 }
 
-function MatchPage({ group, header, onMistake, onDone, pageLabel }: { group: Word[]; header: (found: number) => React.ReactNode; onMistake: (wordId: string) => void; onDone: () => void; pageLabel?: string }) {
+function MatchPage({ group, audio, header, onMistake, onDone, pageLabel }: { group: Word[]; audio: boolean; header: (found: number) => React.ReactNode; onMistake: (wordId: string) => void; onDone: () => void; pageLabel?: string }) {
   const left = group;
   const [right] = useState(() => {
     let r = shuffle(group);
@@ -1341,8 +1365,18 @@ function MatchPage({ group, header, onMistake, onDone, pageLabel }: { group: Wor
     return () => clearTimeout(t);
   }, [wrong]);
 
+  // Hamma juft topilgach — tugma kutmasdan keyingi bosqichga (yoki sahifaga) o'tadi.
+  useEffect(() => {
+    if (!allDone) return;
+    const t = setTimeout(onDone, 900);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allDone]);
+
   const tap = (side: Side, id: string) => {
     if (found.includes(id)) return;
+    // Ovozli rejimda tanlangan 🔊 ni yana bosish — qayta eshitish
+    if (audio && side === 'L' && selected?.side === 'L' && selected.id === id) { speak(group.find((w) => w.id === id)!.word); return; }
     if (!selected || selected.side === side) {
       setSelected(selected?.side === side && selected.id === id ? null : { side, id });
       if (side === 'L') speak(group.find((w) => w.id === id)!.word);
@@ -1360,6 +1394,7 @@ function MatchPage({ group, header, onMistake, onDone, pageLabel }: { group: Wor
       setWrong({ l, r });
       setErrors(errors + 1);
       onMistake(selected.id);
+      if (audio) speak(group.find((w) => w.id === l)!.word); // xato bo'lsa — so'z yana o'qiladi
     }
   };
 
@@ -1370,11 +1405,12 @@ function MatchPage({ group, header, onMistake, onDone, pageLabel }: { group: Wor
     const isSel = selected?.side === side && selected.id === w.id;
     const isBad = !!wrong && (side === 'L' ? wrong.l : wrong.r) === w.id;
     const label = side === 'L' ? w.word : w.translation;
+    const hidden = audio && side === 'L' && !look;
     const fg = look ? look.fg : isSel ? colors.limeInk : isBad ? colors.wrongInk : colors.ink;
     return (
       <Shake key={side + w.id} trigger={isBad ? wrong : null}>
       <Pop trigger={!!look} from={look ? 0.92 : 1}>
-      <Pressable accessibilityRole="button" accessibilityLabel={look ? `${label}, ${order + 1}-juft topildi` : label} accessibilityState={{ selected: isSel, disabled: !!look }} onPress={() => tap(side, w.id)}
+      <Pressable accessibilityRole="button" accessibilityLabel={look ? `${label}, ${order + 1}-juft topildi` : hidden ? "So'zni eshitish" : label} accessibilityState={{ selected: isSel, disabled: !!look }} onPress={() => tap(side, w.id)}
         style={{ minHeight: 70, borderRadius: 20, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, borderWidth: 2,
           borderColor: look ? look.ring : isBad ? colors.wrong : isSel ? colors.forestLine : 'transparent',
           borderBottomWidth: look || isBad ? 2 : 5,
@@ -1386,38 +1422,35 @@ function MatchPage({ group, header, onMistake, onDone, pageLabel }: { group: Wor
             <T w="extrabold" size={10} color={look.bg}>{order + 1}</T>
           </View>
         ) : null}
-        <T w="extrabold" size={17} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.75} style={{ textAlign: 'center', flexShrink: 1 }} color={fg}>{label}</T>
-        {side === 'L' && !look ? <Feather name="volume-2" size={14} color={isSel ? colors.limeInk : colors.muted} /> : null}
+        {hidden ? (
+          isSel ? <Breathe><Feather name="volume-2" size={30} color={colors.limeInk} /></Breathe> : <Feather name="volume-2" size={28} color={isBad ? colors.wrongInk : colors.forestText} />
+        ) : (
+          <T w="extrabold" size={17} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.75} style={{ textAlign: 'center', flexShrink: 1 }} color={fg}>{label}</T>
+        )}
+        {side === 'L' && !hidden && (!look || audio) ? <Feather name="volume-2" size={14} color={look ? look.fg : isSel ? colors.limeInk : colors.muted} /> : null}
       </Pressable>
       </Pop>
       </Shake>
     );
   };
 
-  const wrongL = wrong ? group.find((w) => w.id === wrong.l) : undefined;
-  const wrongR = wrong ? group.find((w) => w.id === wrong.r) : undefined;
   const colHead = (t: string) => <T w="extrabold" size={11} color={colors.muted} style={{ textAlign: 'center', letterSpacing: 1 }}>{t}</T>;
 
   return (
-    <Screen footer={<Button title={allDone ? 'Davom etish' : `Yana ${group.length - found.length} juft`} disabled={!allDone} onPress={onDone} />}>
+    <Screen>
       {header(found.length)}
       <View style={{ gap: 2 }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <T w="extrabold" size={24} accessibilityRole="header">Juftini toping</T>
+          <T w="extrabold" size={24} accessibilityRole="header">{audio ? 'Eshitib juftini toping' : 'Juftini toping'}</T>
           {pageLabel ? <T w="bold" size={13} color={colors.muted}>{pageLabel}-sahifa</T> : null}
         </View>
-        <T size={14} color={colors.muted}>So'zni bosing, keyin uning tarjimasini</T>
+        {audio ? null : <T size={14} color={colors.muted}>So'zni bosing, keyin uning tarjimasini</T>}
       </View>
       <View style={{ flexDirection: 'row', gap: 12 }}>
-        <View style={{ flex: 1, gap: 12 }}>{colHead('INGLIZCHA')}{left.map((w) => tile('L', w))}</View>
+        <View style={{ flex: 1, gap: 12 }}>{colHead(audio ? 'ESHITING' : 'INGLIZCHA')}{left.map((w) => tile('L', w))}</View>
         <View style={{ flex: 1, gap: 12 }}>{colHead("O'ZBEKCHA")}{right.map((w) => tile('R', w))}</View>
       </View>
-      {wrongL && wrongR ? (
-        <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 18, borderWidth: 2, borderColor: colors.wrong, backgroundColor: colors.surface }}>
-          <Feather name="alert-circle" size={18} color={colors.wrong} />
-          <T w="semibold" size={14} color={colors.wrongInk} style={{ flex: 1 }}>«{wrongL.word}» — «{wrongR.translation}» emas. Yana urinib ko'ring</T>
-        </View>
-      ) : allDone ? (
+      {allDone ? (
         <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 18, backgroundColor: colors.limeSoft }}>
           <Feather name="check-circle" size={18} color={colors.forestText} />
           <T w="semibold" size={14} color={colors.forestText} style={{ flex: 1 }}>Hammasi topildi! {errors ? `Xatolar: ${errors}` : 'Bitta ham xatosiz.'}</T>

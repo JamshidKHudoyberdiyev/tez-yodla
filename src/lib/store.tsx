@@ -11,6 +11,7 @@ import { snapRate } from './speechRate';
 import { pickExample } from './example';
 import { migrateReminder, type ReminderPrefs } from './reminders';
 import { noteCorrect, noteMistake, type MistakeLog } from './mistakes';
+import type { SessionDraft } from './draft';
 import { EVENING_BUCKET, pushReview, retentionFactor, type ReviewEntry } from './retention';
 
 const KEY = 'yodla:v1';
@@ -43,6 +44,8 @@ export interface AppState {
   reviewLog: ReviewEntry[];
   /** Kechki mustahkamlash: qaysi kuni qilingan va qaysi so'zlarda adashilgan */
   evening?: { day: number; missed: string[] };
+  /** To'xtatilgan mashg'ulot (lib/draft.ts) — bosh sahifada «Davom ettirish» */
+  draft?: SessionDraft | null;
   prefs: Prefs;
 }
 
@@ -194,6 +197,8 @@ interface Store {
   resetProgress: () => void;
   /** Bugungi reja to'liq tugadi */
   markDayDone: () => void;
+  /** To'xtatilgan mashg'ulot joyini saqlash (null — o'chirish) */
+  setDraft: (d: SessionDraft | null) => void;
   repairStreak: (breakDay: number) => void;
   dismissBreak: (breakDay: number) => void;
   markKnown: (lemmas: string[]) => void;
@@ -295,7 +300,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         for (const r of results) cards[r.wordId] = completeLearning(cards[r.wordId] ?? newCard(r.wordId), today);
         const correct = results.filter((r) => r.correct).length;
         return withEvent(
-          { ...s, cards, log: bumpLog(s.log, today, { newLearned: results.length, correct, total: results.length }) },
+          { ...s, cards, draft: null, log: bumpLog(s.log, today, { newLearned: results.length, correct, total: results.length }) },
           'group_completed',
           { words: results.length, writtenCorrect: correct },
         );
@@ -365,7 +370,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     restoreBackup: (restored) => setState(withEvent(restored, 'backup_restored', { cards: Object.keys(restored.cards).length })),
     resetProgress: () =>
-      setState((s) => withEvent({ ...s, cards: {}, log: {}, knownLemmas: [], doneDays: [], streakRepairs: [], streakDismissed: [], reviewLog: [], evening: undefined }, 'progress_reset')),
+      setState((s) => withEvent({ ...s, cards: {}, log: {}, knownLemmas: [], doneDays: [], streakRepairs: [], streakDismissed: [], reviewLog: [], evening: undefined, draft: null }, 'progress_reset')),
+    setDraft: (d) => setState((s) => ({ ...s, draft: d })),
     markDayDone: () =>
       setState((s) => (s.doneDays.includes(today) ? s : { ...s, doneDays: [...s.doneDays.slice(-120), today] })),
     repairStreak: (day) =>
