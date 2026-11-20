@@ -1,6 +1,6 @@
 import * as Speech from 'expo-speech';
 import { Platform } from 'react-native';
-import { hasLocalAudio, isWordLike, playNativeWordAudio, stopNativeAudio, setStudioVoiceEnabled } from './audioService';
+import { hasLocalAudio, isWordLike, playNativeWordAudio, preloadWordAudio, stopNativeAudio, setStudioVoiceEnabled } from './audioService';
 import { slowRate, snapRate } from './speechRate';
 
 export { slowRate, snapRate, SPEECH_RATES, type SpeechRate } from './speechRate';
@@ -75,6 +75,7 @@ export function configureSpeech(opts: { accent: 'us' | 'uk'; rate: number; natur
   if (typeof opts.naturalVoice === 'boolean') {
     setStudioVoiceEnabled(opts.naturalVoice);
   }
+  preloadWordAudio(accent);
   pick();
 }
 

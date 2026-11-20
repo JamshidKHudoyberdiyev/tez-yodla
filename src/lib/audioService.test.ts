@@ -13,7 +13,7 @@ import { createAudioPlayer } from 'expo-audio';
 describe('audioService', () => {
   beforeEach(() => {
     setStudioVoiceEnabled(true);
-    jest.clearAllMocks();
+
   });
 
   afterEach(() => {
@@ -85,65 +85,43 @@ describe('audioService', () => {
       expect(played).toBe(false);
     });
 
-    it('plays local audio for known words and sets playback rate', async () => {
+    it("so'zning joyiga siljiydi, tezlikni qo'yadi va o'ynatadi", async () => {
       const played = await playNativeWordAudio('apple', 'us', 0.85);
       expect(played).toBe(true);
-      expect(createAudioPlayer).toHaveBeenCalled();
+      const player = (createAudioPlayer as jest.Mock).mock.results[0]?.value ?? lastPlayer();
+      expect(player.setPlaybackRate).toHaveBeenCalledWith(0.85, 'high');
+      expect(player.seekTo).toHaveBeenCalledWith(getLocalWordAudio('apple', 'us')![0] / 1000);
+      expect(player.play).toHaveBeenCalled();
     });
 
-    it('triggers onFinish when audio finishes playing', async () => {
-      let statusCallback: ((status: any) => void) | undefined;
-      const mockPlayer = {
-        play: jest.fn(),
-        pause: jest.fn(),
-        remove: jest.fn(),
-        playbackRate: 1,
-        shouldCorrectPitch: true,
-        addListener: jest.fn((event: string, cb: (status: any) => void) => {
-          if (event === 'playbackStatusUpdate') {
-            statusCallback = cb;
-          }
-          return { remove: jest.fn() };
-        }),
-      };
-      (createAudioPlayer as jest.Mock).mockReturnValueOnce(mockPlayer);
-
+    it("so'z oxiriga yetganda to'xtaydi va onFinish chaqiriladi", async () => {
       const onFinish = jest.fn();
       const played = await playNativeWordAudio('apple', 'us', 1, { onFinish });
       expect(played).toBe(true);
-
-      // Simulate finish status
-      statusCallback?.({ didJustFinish: true });
-      expect(onFinish).toHaveBeenCalled();
+      const player = lastPlayer();
+      const cb = player.addListener.mock.calls.at(-1)[1];
+      const end = getLocalWordAudio('apple', 'us')![1] / 1000;
+      cb({ currentTime: end - 0.05, didJustFinish: false });
+      expect(onFinish).not.toHaveBeenCalled();
+      cb({ currentTime: end + 0.2, didJustFinish: false });
+      expect(onFinish).toHaveBeenCalledTimes(1);
+      expect(player.pause).toHaveBeenCalled();
     });
 
-    it('triggers onError when playback error occurs', async () => {
-      let statusCallback: ((status: any) => void) | undefined;
-      const mockPlayer = {
-        play: jest.fn(),
-        pause: jest.fn(),
-        remove: jest.fn(),
-        playbackRate: 1,
-        shouldCorrectPitch: true,
-        addListener: jest.fn((event: string, cb: (status: any) => void) => {
-          if (event === 'playbackStatusUpdate') {
-            statusCallback = cb;
-          }
-          return { remove: jest.fn() };
-        }),
-      };
-      (createAudioPlayer as jest.Mock).mockReturnValueOnce(mockPlayer);
-
-      const onError = jest.fn();
-      const played = await playNativeWordAudio('apple', 'us', 1, { onError });
-      expect(played).toBe(true);
-
-      // Simulate error status
-      statusCallback?.({ error: 'Player decode error' });
-      expect(onError).toHaveBeenCalledWith('Player decode error');
+    it("pleyer hali yuklanmagan bo'lsa — telefon ovoziga (false)", async () => {
+      const player = lastPlayer();
+      player.isLoaded = false;
+      expect(await playNativeWordAudio('apple', 'us')).toBe(false);
+      player.isLoaded = true;
     });
   });
 });
+
+/** Talaffuz uchun yaratilgan (keshdagi) pleyer */
+function lastPlayer(): any {
+  const r = (createAudioPlayer as jest.Mock).mock.results;
+  return r[r.length - 1].value;
+}
 
 describe('hasLocalAudio', () => {
   it("lug'atdagi so'z uchun true, gap va noma'lum so'z uchun false", () => {

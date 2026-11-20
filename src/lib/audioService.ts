@@ -1,21 +1,28 @@
 /**
- * Tabiiy studiya talaffuzidagi mahalliy audio xizmati.
+ * Tabiiy ovoz (Kokoro, US/UK): har bir talaffuzning barcha so'zlari BITTA jamlangan
+ * MP3 faylda (OTA cheklovi: bir yangilanishda ko'pi bilan 1000 ta fayl). So'z o'ynatilganda
+ * pleyer shu fayl ichida so'z boshlangan joyga siljiydi va so'z tugagach to'xtaydi.
  *
- * 1. WORDS ro'yxatidagi so'zlar uchun mahalliy MP3 (Kokoro-82M US/UK) o'ynatiladi.
- * 2. Agar so'z xaritada bo'lmasa (foydalanuvchi qo'shgan so'z) yoki web muhitida bo'lsa,
- *    yoki ijro paytida xatolik yuz bersa — darhol zaxiradagi expo-speech ishga tushadi.
- * 3. Gaplar (isWordLike false) tizimli TTS orqali o'qiladi.
+ * - Lug'atda yo'q so'z (foydalanuvchi qo'shgan), gaplar, web, yoki pleyer hali yuklanmagan
+ *   bo'lsa — false qaytadi va speech.ts telefon ovozini (expo-speech) ishlatadi.
+ * - Fayl va vaqtlar: scripts/gen-audio-pack.py → src/data/generated/audio.ts
  */
 
 import { Platform } from 'react-native';
 import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
-import { getAudioSource } from '../data/generated/audio';
+import { AUDIO_INDEX, AUDIO_PACK } from '../data/generated/audio';
 
-let currentPlayer: AudioPlayer | null = null;
-let currentSubscription: { remove: () => void } | null = null;
+type Accent = 'us' | 'uk';
+/** So'z tugaganidan keyin shuncha soniya ham o'ynaydi (dekoder kechikishi ~50 ms; so'zlar orasida 300 ms jimlik) */
+const TAIL = 0.12;
+
 let useStudioVoice = true;
+const players: Partial<Record<Accent, AudioPlayer>> = {};
+let active: { player: AudioPlayer; sub: { remove: () => void } | null; timer: ReturnType<typeof setTimeout> | null } | null = null;
+/** Har o'ynatish/to'xtatishda oshadi — eski so'rov kechikib kelsa, e'tiborsiz qoladi */
+let seq = 0;
 
-/** Sozlamalardan: tabiiy studiya ovozidan foydalanish yoki faqat tizim ovozi */
+/** Sozlamalardan: tabiiy ovozdan foydalanish yoki faqat telefon ovozi */
 export function setStudioVoiceEnabled(enabled: boolean) {
   useStudioVoice = enabled;
 }
@@ -30,107 +37,89 @@ export function isWordLike(text: string): boolean {
   if (!clean || clean.length > 35) return false;
   // Gap oxiri belgilari bo'lsa — bu gap, alohida so'z emas
   if (/[.!?\n]/.test(clean)) return false;
-  const words = clean.split(/\s+/);
-  return words.length <= 2;
+  return clean.split(/\s+/).length <= 2;
 }
 
 /** So'zni audio slug formatiga o'tkazadi (masalan "take off" -> "take-off") */
 export function toAudioSlug(word: string): string {
-  return word
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+  return word.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-/** So'z uchun mahalliy audio manbasini (require) qaytaradi yoki null */
-export function getLocalWordAudio(word: string, accent: 'us' | 'uk' = 'us'): any | null {
-  // Gap emas va xaritada bo'lsa bas (3 so'zli iboralar ham, masalan "take care of")
+/** So'zning jamlangan fayldagi o'rni [boshlanish, tugash] (ms) yoki null */
+export function getLocalWordAudio(word: string, accent: Accent = 'us'): [number, number] | null {
+  // Gap emas va ro'yxatda bo'lsa bas (3 so'zli iboralar ham, masalan "take care of")
   if (!word || word.trim().length > 40 || /[.!?\n]/.test(word)) return null;
   const slug = toAudioSlug(word);
   if (!slug) return null;
-  const source = getAudioSource(slug, accent);
-  return source ?? null;
+  return AUDIO_INDEX[accent]?.[slug] ?? null;
 }
 
-/** So'z uchun ilova ichida tayyor MP3 bormi */
-export function hasLocalAudio(word: string, accent: 'us' | 'uk' = 'us'): boolean {
+/** So'z uchun ilova ichida tayyor tabiiy ovoz bormi */
+export function hasLocalAudio(word: string, accent: Accent = 'us'): boolean {
   return getLocalWordAudio(word, accent) != null;
+}
+
+function packPlayer(accent: Accent): AudioPlayer {
+  let p = players[accent];
+  if (!p) {
+    p = createAudioPlayer(AUDIO_PACK[accent], { updateInterval: 30 });
+    players[accent] = p;
+  }
+  return p;
+}
+
+/** Ilova ochilganda (va talaffuz almashganda) pleyerni oldindan tayyorlab qo'yadi */
+export function preloadWordAudio(accent: Accent) {
+  if (Platform.OS === 'web' || !useStudioVoice) return;
+  try {
+    packPlayer(accent);
+  } catch {
+    // tayyorlab bo'lmadi — so'zlar telefon ovozida o'qiladi
+  }
 }
 
 export interface PlayAudioOptions {
   onFinish?: () => void;
-  onError?: (error?: any) => void;
+  onError?: (error?: unknown) => void;
 }
 
 /**
- * So'zning mahalliy MP3 talaffuzini o'ynatadi.
- * Muvaffaqiyatli boshlansa true, aks holda (xaritada yo'q, xato yoki web) false qaytaradi.
+ * So'zning tabiiy ovozini o'ynatadi. Boshlansa true; aks holda false (telefon ovoziga o'tiladi).
  */
 export async function playNativeWordAudio(
   word: string,
-  accent: 'us' | 'uk' = 'us',
+  accent: Accent = 'us',
   rate = 1,
-  options?: PlayAudioOptions
+  options?: PlayAudioOptions,
 ): Promise<boolean> {
-  // Tabiiy ovoz o'chirilgan bo'lsa yoki web platformada bo'lsa, expo-speech'ga o'tamiz
-  if (!useStudioVoice || Platform.OS === 'web') {
-    return false;
-  }
-
-  const source = getLocalWordAudio(word, accent);
-  if (!source) {
-    // Lug'atda yoki audio xaritasida yo'q so'z (masalan foydalanuvchi qo'shgan yangi so'z)
-    return false;
-  }
+  if (!useStudioVoice || Platform.OS === 'web') return false;
+  const seg = getLocalWordAudio(word, accent);
+  if (!seg) return false;
 
   try {
     stopNativeAudio();
+    const my = seq;
+    const player = packPlayer(accent);
+    // Birinchi soniyalarda fayl hali yuklanayotgan bo'lishi mumkin — bu safar telefon ovozi
+    if (!player.isLoaded) return false;
+    player.setPlaybackRate(rate, 'high');
+    await player.seekTo(seg[0] / 1000);
+    if (my !== seq) return true; // kutib turganda boshqa so'z bosildi
 
-    const player = createAudioPlayer(source, { updateInterval: 50 });
-    currentPlayer = player;
-
-    let finishedOrErrored = false;
-    const cleanup = () => {
-      if (currentSubscription) {
-        try {
-          currentSubscription.remove();
-        } catch {
-          // ignore
-        }
-        currentSubscription = null;
-      }
+    const end = seg[1] / 1000 + TAIL;
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      stopNativeAudio();
+      options?.onFinish?.();
     };
-
-    if (typeof (player as any).addListener === 'function') {
-      currentSubscription = (player as any).addListener('playbackStatusUpdate', (status: any) => {
-        if (finishedOrErrored) return;
-
-        if (status?.error) {
-          finishedOrErrored = true;
-          cleanup();
-          stopNativeAudio();
-          if (options?.onError) {
-            options.onError(status.error);
-          }
-        } else if (status?.didJustFinish) {
-          finishedOrErrored = true;
-          cleanup();
-          if (options?.onFinish) {
-            options.onFinish();
-          }
-        }
-      });
-    }
-
-    // Tezlik sozlamasi (rate) va ohangni saqlash (pitch preservation)
-    if (typeof player.playbackRate === 'number') {
-      player.playbackRate = rate;
-    }
-    if ('shouldCorrectPitch' in player) {
-      (player as any).shouldCorrectPitch = true;
-    }
-
+    const sub = player.addListener('playbackStatusUpdate', (s) => {
+      if (s.didJustFinish || (s.currentTime >= end && s.currentTime < end + 5)) finish();
+    });
+    // Zaxira: holat xabari kelmasa ham so'z oxirida to'xtaydi
+    const timer = setTimeout(finish, (((seg[1] - seg[0]) / 1000 + TAIL) / rate) * 1000 + 600);
+    active = { player, sub, timer };
     player.play();
     return true;
   } catch {
@@ -139,24 +128,21 @@ export async function playNativeWordAudio(
   }
 }
 
-/** Joriy o'ynayotgan audio pleyerni to'xtatadi */
+/** O'ynayotgan so'zni to'xtatadi (pleyer keyingi so'z uchun saqlanib qoladi) */
 export function stopNativeAudio() {
-  if (currentSubscription) {
-    try {
-      currentSubscription.remove();
-    } catch {
-      // ignore
-    }
-    currentSubscription = null;
+  seq += 1;
+  const a = active;
+  active = null;
+  if (!a) return;
+  if (a.timer) clearTimeout(a.timer);
+  try {
+    a.sub?.remove();
+  } catch {
+    // e'tiborsiz
   }
-
-  if (currentPlayer) {
-    try {
-      currentPlayer.pause();
-      currentPlayer.remove();
-    } catch {
-      // ignore
-    }
-    currentPlayer = null;
+  try {
+    a.player.pause();
+  } catch {
+    // e'tiborsiz
   }
 }
