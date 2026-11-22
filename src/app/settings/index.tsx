@@ -13,8 +13,6 @@ import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
-const GOAL_LABEL: Record<string, string> = { ielts: 'IELTS', work: 'Ish', travel: 'Sayohat', school: 'Maktab', media: 'Kino, kitob' };
-
 export default function Settings() {
   const { state, streak } = useStore();
   const auth = useAuth();
@@ -32,11 +30,11 @@ export default function Settings() {
 
       <Pressable accessibilityRole="button" accessibilityLabel={`Profil: ${state.name || 'ism kiritilmagan'}, ${state.level}. Ochish`} onPress={() => router.push('/settings/profile')}
         style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 26, backgroundColor: colors.forest, opacity: pressed ? 0.9 : 1 })}>
-        <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} size={56} onDark />
+        <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} photo={p.avatarPhoto} size={56} onDark />
         <View style={{ flex: 1 }}>
           <T w="extrabold" size={19} color="#FFFFFF" numberOfLines={1}>{state.name || 'Ismingizni kiriting'}</T>
           <T size={13} color={colors.onForestSoft} numberOfLines={1}>
-            {[state.level, ...p.goals.slice(0, 1).map((g) => GOAL_LABEL[g]), `🔥 ${streak.current} kun`].join(' · ')}
+            {[state.level, `🔥 ${streak.current} kun`].join(' · ')}
           </T>
         </View>
         <T w="bold" size={13} color={colors.lime}>Profil</T>
@@ -80,7 +78,7 @@ export default function Settings() {
         <SettingRow icon="help-circle" tone="gray" title="Streak qoidalari" onPress={() => router.push('/streak-help')} last />
       </SettingGroup>
 
-      <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Tez Yodla {appVersion()} · ma'lumotlar faqat telefoningizda</T>
+      <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Tez Yodla {appVersion()}</T>
       <Modal visible={askOut} transparent animationType="slide" onRequestClose={() => setAskOut(false)}>
         <Pressable accessibilityLabel="Yopish" onPress={() => setAskOut(false)} style={{ flex: 1, backgroundColor: 'rgba(19,26,21,0.45)' }} />
         <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 20, paddingBottom: 30, gap: 14 }}>

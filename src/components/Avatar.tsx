@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { FlameArt, Plant, SnowArt } from '@/components/Art';
 import { initialsOf } from '@/components/SettingsUI';
 import { T } from '@/components/ui';
@@ -31,8 +31,12 @@ export function ArtGlyph({ id, size }: { id: string; size: number }) {
 }
 
 /** Profil avatari: bog' belgisi yoki ism bosh harflari tanlangan rangda. */
-export function Avatar({ name, color, art, size = 48, onDark = false }: { name: string; color: string; art: string | null; size?: number; onDark?: boolean }) {
+export function Avatar({ name, color, art, photo, size = 48, onDark = false }: { name: string; color: string; art: string | null; photo?: string | null; size?: number; onDark?: boolean }) {
   const r = Math.round(size * 0.34);
+  if (art === 'photo') {
+    if (photo) return <Image source={{ uri: photo }} style={{ width: size, height: size, borderRadius: r, backgroundColor: colors.track }} accessibilityIgnoresInvertColors />;
+    art = null; // rasm yo'q — bosh harflar
+  }
   if (art) {
     return (
       <View style={{ width: size, height: size, borderRadius: r, backgroundColor: artBg(art), alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>

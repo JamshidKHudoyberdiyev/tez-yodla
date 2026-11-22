@@ -70,8 +70,10 @@ export interface Prefs {
   autoSpeakExample: boolean;
   fontScale: number;
   avatarColor: string;
-  /** Bog' belgisi avatari (plant0…plant5, flame, ice); null — ism bosh harflari */
+  /** Bog' belgisi avatari (plant0…plant5, flame, ice); 'photo' — o'z rasmi; null — ism bosh harflari */
   avatarArt: string | null;
+  /** O'z rasmi: 256×256 JPEG data URI (lib/avatarPhoto.ts). Progress bilan bulutga ketadi. */
+  avatarPhoto: string | null;
   goals: string[];
   lastBackupAt: number | null;
   /** Kunlik eslatma: soat, daqiqa va kechki ogohlantirish */
@@ -103,6 +105,7 @@ export const defaultPrefs: Prefs = {
   fontScale: 1,
   avatarColor: '#1F5A2E',
   avatarArt: null,
+  avatarPhoto: null,
   goals: [],
   lastBackupAt: null,
 };

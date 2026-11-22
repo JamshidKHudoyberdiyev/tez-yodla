@@ -57,7 +57,7 @@ export default function Home() {
       <ScrollView contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 28 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <Pressable accessibilityRole="button" accessibilityLabel="Profil" onPress={() => router.push('/settings/profile')}>
-            <Avatar name={state.name} color={state.prefs.avatarColor} art={state.prefs.avatarArt} size={48} />
+            <Avatar name={state.name} color={state.prefs.avatarColor} art={state.prefs.avatarArt} photo={state.prefs.avatarPhoto} size={48} />
           </Pressable>
           <View style={{ flex: 1 }}>
             <T size={13} color={colors.muted} style={{ lineHeight: 17 }}>{greeting()}</T>

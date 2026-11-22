@@ -53,7 +53,15 @@
           "disableAutoUpload": true
         }
       ],
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Profil rasmini tanlash uchun galereyaga ruxsat kerak.",
+          "cameraPermission": "Profil rasmini suratga olish uchun kameraga ruxsat kerak.",
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
@@ -62,7 +70,7 @@
       "backgroundColor": "#12261A"
     },
     "runtimeVersion": {
-      "policy": "appVersion"
+      "policy": "fingerprint"
     },
     "extra": {
       "router": {

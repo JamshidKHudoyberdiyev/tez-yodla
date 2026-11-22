@@ -2,26 +2,19 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
-import { DuoIcon, Plant, RingsDecor, type DuoName } from '@/components/Art';
+import { Plant, RingsDecor } from '@/components/Art';
 import { achievements, ArtGlyph, artBg, Avatar, AVATAR_ARTS, type Progress } from '@/components/Avatar';
 import { Flame } from '@/components/Streak';
 import { LEVELS, LevelLadder } from '@/components/Level';
 import { BottomSheet, Button, RoundIconButton, Screen, T } from '@/components/ui';
+import { pickAvatarPhoto, photoSupported } from '@/lib/avatarPhoto';
 import { computeStats } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { AVATAR_COLORS, colors, font } from '@/lib/theme';
 
-const GOALS: { id: string; label: string; icon: DuoName }[] = [
-  { id: 'ielts', label: 'IELTS / imtihon', icon: 'exam' },
-  { id: 'work', label: 'Ish', icon: 'work' },
-  { id: 'travel', label: 'Sayohat', icon: 'travel' },
-  { id: 'school', label: 'Maktab', icon: 'school' },
-  { id: 'media', label: 'Kino, kitob', icon: 'media' },
-];
-
 /** Profil (v3): kim ekansiz va qancha o'sdingiz — daraja, maqsad, yutuqlar. Ism va avatar alohida varaqda tahrirlanadi. */
 export default function Profile() {
-  const { state, words, today, streak, setPrefs } = useStore();
+  const { state, words, today, streak } = useStore();
   const [editing, setEditing] = useState(false);
   const p = state.prefs;
   const stats = computeStats(state.cards, state.log, today);
@@ -43,14 +36,11 @@ export default function Profile() {
   const ach = achievements(progress, streak);
   const doneCount = ach.filter((a) => a.done).length;
 
-  const toggleGoal = (id: string) => setPrefs({ goals: p.goals.includes(id) ? p.goals.filter((g) => g !== id) : [...p.goals, id] });
-
   return (
     <Screen>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <RoundIconButton icon="chevron-left" label="Orqaga" onPress={() => (router.canGoBack() ? router.back() : router.replace('/settings'))} />
         <T w="extrabold" size={22} style={{ flex: 1 }} accessibilityRole="header">Profil</T>
-        <RoundIconButton icon="edit-2" label="Profilni tahrirlash" onPress={() => setEditing(true)} />
       </View>
 
       {/* Kim ekansiz */}
@@ -58,13 +48,13 @@ export default function Profile() {
         <View pointerEvents="none" style={{ position: 'absolute', right: -70, top: -70 }}><RingsDecor /></View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <Pressable accessibilityRole="button" accessibilityLabel="Avatarni o'zgartirish" onPress={() => setEditing(true)}>
-            <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} size={84} onDark />
+            <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} photo={p.avatarPhoto} size={84} onDark />
             <View style={{ position: 'absolute', right: -6, bottom: -6, width: 30, height: 30, borderRadius: 15, backgroundColor: colors.lime, borderWidth: 3, borderColor: colors.forestLine, alignItems: 'center', justifyContent: 'center' }}>
               <Feather name="edit-2" size={13} color={colors.forestDeep} />
             </View>
           </Pressable>
           <View style={{ flex: 1, minWidth: 0 }}>
-            <T w="extrabold" size={22} color="#FFFFFF" numberOfLines={1} style={{ lineHeight: 27 }}>{state.name || 'Ismingizni kiriting'}</T>
+            <T w="extrabold" size={20} color="#FFFFFF" numberOfLines={2} style={{ lineHeight: 24 }}>{state.name || 'Ismingizni kiriting'}</T>
             <T size={13} color={colors.onForestSoft}>{state.level} · {LEVELS[levelIdx]?.name}</T>
             {sinceDays > 0 ? (
               <View style={{ flexDirection: 'row', alignSelf: 'flex-start', alignItems: 'center', gap: 6, marginTop: 8, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.12)' }}>
@@ -104,26 +94,6 @@ export default function Profile() {
         ) : null}
       </View>
 
-      {/* Maqsad */}
-      <View style={{ backgroundColor: colors.surface, borderRadius: 26, padding: 16, gap: 10 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <T w="extrabold" size={16}>Nima uchun o'rganyapsiz?</T>
-          <T size={11} color={colors.muted}>o'zi saqlanadi</T>
-        </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          {GOALS.map((g) => {
-            const on = p.goals.includes(g.id);
-            return (
-              <Pressable key={g.id} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={g.label} onPress={() => toggleGoal(g.id)}
-                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, height: 40, paddingLeft: 10, paddingRight: 13, borderRadius: 20, borderWidth: 2, borderColor: on ? colors.forestLine : colors.line, backgroundColor: on ? colors.limeSoft : colors.surface, opacity: pressed ? 0.85 : 1 })}>
-                <DuoIcon name={g.icon} size={18} fill={on ? colors.duoFill : 'transparent'} stroke={on ? colors.duoStroke : colors.faint} />
-                <T w="bold" size={13}>{g.label}</T>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
-
       {/* Yutuqlar */}
       <View style={{ backgroundColor: colors.surface, borderRadius: 26, padding: 16, gap: 14 }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
@@ -155,8 +125,6 @@ export default function Profile() {
         </View>
       </View>
 
-      <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Profil faqat shu telefonda saqlanadi · hisob shart emas</T>
-
       <EditSheet visible={editing} onClose={() => setEditing(false)} progress={progress} />
     </Screen>
   );
@@ -173,29 +141,51 @@ function HeroStat({ icon, value, label, sub }: { icon: React.ReactNode; value: n
   );
 }
 
-/** Tahrirlash varag'i: ism, avatar turi (harflar yoki bog' belgisi), rang. */
+/** Tahrirlash varag'i: ism va avatar — bosh harflar (rang), bog' belgisi yoki o'z rasmi (galereya / kamera). */
+type Tab = 'letters' | 'art' | 'photo';
+const tabOf = (art: string | null): Tab => (art === 'photo' ? 'photo' : art ? 'art' : 'letters');
+
 function EditSheet({ visible, onClose, progress }: { visible: boolean; onClose: () => void; progress: Progress }) {
   const { state, setName, setPrefs } = useStore();
+  const canPhoto = useMemo(() => photoSupported(), []);
   const [name, setLocalName] = useState(state.name);
   const [color, setColor] = useState(state.prefs.avatarColor);
-  const [art, setArt] = useState<string | null>(state.prefs.avatarArt);
-  const [tab, setTab] = useState<'letters' | 'art'>(state.prefs.avatarArt ? 'art' : 'letters');
+  const [art, setArt] = useState<string | null>(state.prefs.avatarArt === 'photo' ? null : state.prefs.avatarArt);
+  const [photo, setPhoto] = useState<string | null>(state.prefs.avatarPhoto);
+  const [tab, setTab] = useState<Tab>(tabOf(state.prefs.avatarArt));
+  const [busy, setBusy] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
 
-  const reset = () => { setLocalName(state.name); setColor(state.prefs.avatarColor); setArt(state.prefs.avatarArt); setTab(state.prefs.avatarArt ? 'art' : 'letters'); };
+  const reset = () => {
+    setLocalName(state.name); setColor(state.prefs.avatarColor); setArt(state.prefs.avatarArt === 'photo' ? null : state.prefs.avatarArt);
+    setPhoto(state.prefs.avatarPhoto); setTab(tabOf(state.prefs.avatarArt)); setPhotoError(null);
+  };
   const close = () => { reset(); onClose(); };
+  const previewArt = tab === 'art' ? art : tab === 'photo' && photo ? 'photo' : null;
   const save = () => {
     setName(name.trim());
-    setPrefs({ avatarColor: color, avatarArt: tab === 'art' ? art : null });
+    setPrefs({ avatarColor: color, avatarArt: previewArt, avatarPhoto: photo });
     onClose();
   };
-  const previewArt = tab === 'art' ? art : null;
-  const dirty = name.trim() !== state.name || color !== state.prefs.avatarColor || previewArt !== state.prefs.avatarArt;
+  const dirty = name.trim() !== state.name || color !== state.prefs.avatarColor || previewArt !== state.prefs.avatarArt || photo !== state.prefs.avatarPhoto;
+
+  const pick = async (source: 'library' | 'camera') => {
+    setPhotoError(null);
+    setBusy(true);
+    const r = await pickAvatarPhoto(source);
+    setBusy(false);
+    if (r.ok) { setPhoto(r.uri); return; }
+    if (r.reason === 'denied') setPhotoError('Kameraga ruxsat berilmadi. Telefon sozlamalaridan ruxsat bering.');
+    else if (r.reason === 'error') setPhotoError('Rasmni ochib bo\'lmadi. Boshqa rasm tanlab ko\'ring.');
+  };
+
+  const tabs: [Tab, string][] = [['letters', 'Harflar'], ['art', "Bog' belgisi"], ...(canPhoto ? [['photo', 'Rasm'] as [Tab, string]] : [])];
 
   return (
     <BottomSheet visible={visible} onClose={close} contentStyle={{ paddingHorizontal: 20, paddingTop: 12, gap: 14 }}>
           <View style={{ alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line }} />
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-            <Avatar name={name} color={color} art={previewArt} size={72} />
+            <Avatar name={name} color={color} art={previewArt} photo={photo} size={72} />
             <View style={{ flex: 1 }}>
               <T w="extrabold" size={20} accessibilityRole="header">Profilni tahrirlash</T>
               <T size={13} color={colors.muted}>Avatar va ism faqat sizga ko'rinadi</T>
@@ -203,11 +193,12 @@ function EditSheet({ visible, onClose, progress }: { visible: boolean; onClose: 
           </View>
 
           <View accessibilityRole="tablist" style={{ flexDirection: 'row', padding: 4, gap: 4, borderRadius: 14, backgroundColor: colors.surface }}>
-            {([['letters', 'Harflar'], ['art', "Bog' belgisi"]] as const).map(([id, label]) => {
+            {tabs.map(([id, label]) => {
               const on = tab === id;
               return (
                 <Pressable key={id} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => { setTab(id); if (id === 'art' && !art) setArt('plant1'); }}
-                  style={{ flex: 1, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: on ? colors.forest : 'transparent' }}>
+                  style={{ flex: 1, height: 38, borderRadius: 10, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: on ? colors.forest : 'transparent' }}>
+                  {id === 'photo' ? <Feather name="camera" size={14} color={on ? '#FFFFFF' : colors.inkSoft} /> : null}
                   <T w={on ? 'extrabold' : 'semibold'} size={13} color={on ? '#FFFFFF' : colors.inkSoft}>{label}</T>
                 </Pressable>
               );
@@ -221,7 +212,7 @@ function EditSheet({ visible, onClose, progress }: { visible: boolean; onClose: 
                   style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: c, borderWidth: c === color ? 3 : 0, borderColor: colors.surface, transform: [{ scale: c === color ? 1.1 : 1 }] }} />
               ))}
             </View>
-          ) : (
+          ) : tab === 'art' ? (
             <>
               <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', rowGap: 10, marginHorizontal: -5 }}>
                 {AVATAR_ARTS.map((a) => {
@@ -245,6 +236,28 @@ function EditSheet({ visible, onClose, progress }: { visible: boolean; onClose: 
               </View>
               <T size={12} color={colors.muted}>Yangi belgilar yutuqlar bilan ochiladi.</T>
             </>
+          ) : (
+            <>
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                {([['library', 'image', 'Galereyadan'], ['camera', 'camera', 'Suratga olish']] as const).map(([src, icon, label]) => (
+                  <Pressable key={src} accessibilityRole="button" accessibilityLabel={label} disabled={busy} onPress={() => pick(src)}
+                    style={({ pressed }) => ({ flex: 1, height: 96, borderRadius: 22, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', gap: 8, opacity: busy ? 0.6 : pressed ? 0.85 : 1 })}>
+                    <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}>
+                      <Feather name={icon} size={20} color={colors.forestText} />
+                    </View>
+                    <T w="extrabold" size={14}>{label}</T>
+                  </Pressable>
+                ))}
+              </View>
+              {photoError ? (
+                <View accessibilityRole="alert" style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: colors.wrongSoft, borderWidth: 2, borderColor: colors.wrong, borderRadius: 16, padding: 12 }}>
+                  <Feather name="alert-triangle" size={18} color={colors.wrong} />
+                  <T size={13} color={colors.ink} style={{ flex: 1, lineHeight: 18 }}>{photoError}</T>
+                </View>
+              ) : (
+                <T size={12} color={colors.muted} style={{ lineHeight: 18 }}>Rasm kvadrat qilib qirqiladi. Hisobingizda saqlanadi — boshqa telefonda ham chiqadi.</T>
+              )}
+            </>
           )}
 
           <View style={{ gap: 6 }}>
@@ -252,7 +265,7 @@ function EditSheet({ visible, onClose, progress }: { visible: boolean; onClose: 
             <TextInput value={name} onChangeText={setLocalName} placeholder="Masalan, Jamshid" placeholderTextColor={colors.placeholder} accessibilityLabel="Ismingiz" maxLength={30}
               style={{ height: 52, paddingHorizontal: 16, borderRadius: 16, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface, fontFamily: font.bold, fontSize: 17, color: colors.ink }} />
           </View>
-          <Button title="Saqlash" disabled={!dirty} onPress={save} />
+          <Button title="Saqlash" disabled={!dirty || (tab === 'photo' && !photo)} onPress={save} />
     </BottomSheet>
   );
 }
