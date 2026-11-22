@@ -67,7 +67,8 @@ const Brand = () => (
 /**
  * Kirish (faqat Google). Holatlar:
  *  1) yangi foydalanuvchi — qorong'i xush kelibsiz ekrani; 2) telefonda progressi bor (yangilanishdan keyin) — «Endi progress bulutda saqlanadi»;
- *  3) kirilmoqda; 4a) yangi hisob → daraja testi; 4b) bulutdan yuklandi / ko'chirildi → bosh sahifa; xato — qizil panel.
+ *  3) kirilmoqda (faqat birinchi kirishda); 4a) yangi hisob → daraja testi; 4b) qolganlari → to'g'ri bosh sahifa; xato — qizil panel.
+ *  Avval shu hisob bilan kirgan telefonda kirish ekrani umuman ko'rinmaydi (auth.tsx — bulut orqa fonda).
  */
 export default function Login() {
   const auth = useAuth();
@@ -144,32 +145,8 @@ export default function Login() {
         </Screen>
       );
     }
-    const restored = auth.initial === 'download' || auth.initial === 'merge';
-    return (
-      <Screen scroll={false} footer={<Button title="Davom etish" onPress={() => router.replace('/home')} />}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-          <Pop from={0.6}>
-            <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}>
-              <Feather name="cloud" size={42} color={colors.forestText} />
-            </View>
-          </Pop>
-          <T w="extrabold" size={28} style={{ textAlign: 'center', lineHeight: 34 }} accessibilityRole="header">
-            {restored ? 'Qaytganingizdan xursandmiz!' : 'Progressingiz saqlandi'}
-          </T>
-          <T size={15} color={colors.muted} style={{ textAlign: 'center', lineHeight: 22 }}>
-            {restored ? 'Progressingiz bulutdan yuklandi.' : 'Endi har mashqdan keyin o\'zi saqlanadi.'}
-          </T>
-          <View style={{ flexDirection: 'row', gap: 10, marginTop: 8, alignSelf: 'stretch' }}>
-            {[[String(learned), "so'z"], [`🔥 ${streak.current}`, 'kun'], [state.level, 'daraja']].map(([n, l]) => (
-              <View key={l} style={{ flex: 1, backgroundColor: colors.surface, borderRadius: 18, padding: 12, alignItems: 'center' }}>
-                <T w="extrabold" size={22}>{n}</T>
-                <T size={12} color={colors.muted}>{l}</T>
-              </View>
-            ))}
-          </View>
-        </View>
-      </Screen>
-    );
+    // Bulutdan yuklandi / birlashtirildi / yuklandi — oraliq ekransiz to'g'ri bosh sahifaga
+    return <Redirect href="/home" />;
   }
 
   const errorPanel = error ? (

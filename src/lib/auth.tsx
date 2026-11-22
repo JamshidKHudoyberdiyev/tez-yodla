@@ -67,7 +67,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!AUTH_REQUIRED) return;
-    supabase.auth.getSession().then(({ data }) => { setSession(data.session); setReady(true); });
+    // Shu telefon shu hisob bilan avval solishtirilgan bo'lsa — darhol ilovaga (bulut orqa fonda tekshiriladi, loading yo'q)
+    Promise.all([supabase.auth.getSession(), readMeta()]).then(([{ data }, meta]) => {
+      if (data.session && meta?.uid === data.session.user.id) setInitial('resume');
+      setSession(data.session);
+      setReady(true);
+    });
     const { data } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
     return () => data.subscription.unsubscribe();
   }, []);
@@ -86,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!userId || !store.ready || synced.current === userId) return;
     let cancelled = false;
+    const startState = latest.current;
     (async () => {
       setStatus('loading');
       const meta = await readMeta();
@@ -101,7 +107,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const cloud = data?.data ? hydrate(data.data as Partial<AppState>) : null;
       const local = latest.current;
       const cloudNewer = !!cloud && !!data?.updated_at && Date.parse(data.updated_at as string) > (meta?.savedAt ?? 0) + 1000;
-      const decision: InitialSync = meta?.uid === userId ? (cloudNewer ? 'download' : 'resume') : decideInitial(local, cloud);
+      // Ma'lum telefon: foydalanuvchi allaqachon ilovada. Bulut yangiroq bo'lsa — jim yuklanadi;
+      // shu orada telefonda ham mashq qilingan bo'lsa — birlashtiriladi (hech narsa yo'qolmaydi)
+      const changedMeanwhile = local !== startState;
+      const decision: InitialSync = meta?.uid === userId
+        ? (cloudNewer ? (changedMeanwhile ? 'merge' : 'download') : 'resume')
+        : decideInitial(local, cloud);
       if (decision === 'download' && cloud) store.restoreBackup(cloud);
       if (decision === 'merge' && cloud) store.restoreBackup(mergeStates(cloud, local));
       if (decision === 'fresh') {
@@ -109,7 +120,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (name && !local.name) store.setName(name.split(' ')[0]);
       }
       synced.current = userId;
-      setInitial(decision);
+      // Ma'lum telefonda «resume» allaqachon qo'yilgan — foydalanuvchini kirish ekraniga qaytarmaymiz
+      if (meta?.uid !== userId) setInitial(decision);
       if (decision === 'upload' || decision === 'merge') await upload(decision === 'merge' && cloud ? mergeStates(cloud, local) : local, userId);
       else {
         if (decision === 'download') writeMeta({ uid: userId, savedAt: Date.now() });
