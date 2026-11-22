@@ -38,6 +38,11 @@ interface Auth {
   saveNow: () => Promise<void>;
   /** Birinchi solishtirish internet yo'qligi sababli to'xtaganda — qayta urinish */
   retry: () => void;
+  /** Hisobni butunlay o'chirish (bulut + shu telefon). Xato bo'lsa — throw, hech narsa o'chmaydi. */
+  deleteAccount: () => Promise<void>;
+  /** Hisob hozirgina o'chirildi — kirish ekrani natijani ko'rsatadi */
+  deleted: boolean;
+  clearDeleted: () => void;
 }
 
 const Ctx = createContext<Auth | null>(null);
@@ -59,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<SyncStatus>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const [deleted, setDeleted] = useState(false);
   const userId = session?.user.id ?? null;
   // Birinchi solishtirish tugamaguncha bazaga yozilmaydi (aks holda bo'sh telefon bulutdagini bosib ketadi)
   const synced = useRef<string | null>(null);
@@ -179,11 +185,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     store.reset();
   }, [userId, upload, store]);
 
+  const deleteAccount = useCallback(async () => {
+    if (!userId) throw new Error('Hisob yo\'q');
+    // O'chirish davomida avtomatik saqlash bulutga qayta yozib qo'ymasin
+    const wasSynced = synced.current;
+    synced.current = null;
+    const { data, error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
+    if (error || !(data as { ok?: boolean } | null)?.ok) {
+      synced.current = wasSynced;
+      throw error ?? new Error('Hisob o\'chirilmadi');
+    }
+    await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+    await GoogleSignin.revokeAccess().catch(() => {});
+    await GoogleSignin.signOut().catch(() => {});
+    writeMeta(null);
+    setInitial(null);
+    setStatus('idle');
+    setLastSavedAt(null);
+    store.reset();
+    setDeleted(true);
+  }, [userId, store]);
+  const clearDeleted = useCallback(() => setDeleted(false), []);
+
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
   const saveNow = useCallback(async () => { if (userId) await upload(latest.current, userId); }, [userId, upload]);
 
   const value = useMemo<Auth>(() => ({
     ready, session, email: session?.user.email ?? null, initial, status, lastSavedAt, signIn, signOut, saveNow, retry,
-  }), [ready, session, initial, status, lastSavedAt, signIn, signOut, saveNow, retry]);
+    deleteAccount, deleted, clearDeleted,
+  }), [ready, session, initial, status, lastSavedAt, signIn, signOut, saveNow, retry, deleteAccount, deleted, clearDeleted]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

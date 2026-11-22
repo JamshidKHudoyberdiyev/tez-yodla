@@ -99,6 +99,28 @@ export default function Login() {
     );
   }
 
+  // Hisob hozirgina o'chirildi — natija, keyin oddiy kirish ekrani
+  if (auth.deleted && !auth.session) {
+    return (
+      <DarkBg>
+        <Screen bg="transparent" scroll={false} footer={<Button title="Yaxshi" onPress={auth.clearDeleted} />}>
+          <Brand />
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 10 }} accessibilityLiveRegion="polite">
+            <Pop from={0.6}>
+              <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(182,228,78,0.15)', alignItems: 'center', justifyContent: 'center' }}>
+                <Feather name="check" size={40} color={colors.lime} />
+              </View>
+            </Pop>
+            <T w="extrabold" size={26} color="#FFFFFF" style={{ textAlign: 'center' }} accessibilityRole="header">Hisobingiz o'chirildi</T>
+            <T size={15} color={colors.onForestSoft} style={{ textAlign: 'center', lineHeight: 22 }}>
+              Barcha ma'lumotlaringiz bulutdan va shu telefondan o'chirildi.
+            </T>
+          </View>
+        </Screen>
+      </DarkBg>
+    );
+  }
+
   // 3) Kirilmoqda / bulut bilan solishtirilmoqda
   if (busy || (auth.session && auth.initial === null)) {
     return (

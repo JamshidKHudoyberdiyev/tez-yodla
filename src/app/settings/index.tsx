@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Modal, Pressable, View } from 'react-native';
 import { Avatar } from '@/components/Avatar';
+import { DeleteAccountRow } from '@/components/DeleteAccount';
 import { SettingGroup, SettingRow } from '@/components/SettingsUI';
 import { BackHeader, Button, Screen, T } from '@/components/ui';
 import { AUTH_REQUIRED, useAuth } from '@/lib/auth';
@@ -49,6 +50,7 @@ export default function Settings() {
           <SettingRow icon="log-out" tone="gray" title="Chiqish" onPress={() => setAskOut(true)} last />
         </SettingGroup>
       ) : null}
+      {AUTH_REQUIRED && auth.session ? <DeleteAccountRow /> : null}
 
       <SettingGroup label="O'rganish">
         <SettingRow icon="target" title="Kunlik maqsad" sub={`~${dailyMinutes(state.dailyNew)} daqiqa kuniga`} value={`${state.dailyNew} ta so'z`} onPress={() => router.push('/settings/goal')} />
