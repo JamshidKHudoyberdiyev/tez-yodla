@@ -36,7 +36,7 @@ Ular havolani telefonda ochib, APK ni o'rnatadi («Noma'lum manbalardan o'rnatis
 Faqat JavaScript/TypeScript kodi o'zgargan bo'lsa (yangi kutubxona qo'shilmagan bo'lsa):
 
 ```
-npx eas-cli@latest update --channel preview --message "Nima tuzatildi"
+npx eas-cli@latest update --channel preview --environment preview --message "Nima tuzatildi"
 ```
 
 Testerlar ilovani qayta ochganda yangilanish o'zi tushadi.
