@@ -90,7 +90,8 @@
 - Barcha dizayn eski Claude hisobidagi «Tez Yodla ilova dizayni» canvas'ida (sahifalar: v1…v4, Streak, Sozlamalar,
   Moslash, Yozish, To'plamlar, Xatolarim, Matn, Bosh sahifa, Takrorlash chegarasi, Mustahkamlash, Tabiiy ovoz,
   Kirish, Qulayliklar, Quloqchin rejimi).
-- Eksport qilingan nusxalar: `docs/design/` (agar Jamshid yuklagan bo'lsa). Yangi dizayn — faqat shu uslubda.
+- **Eksport: `docs/design/README.md`** — 24 sahifa, 166 ekran rasmi (`umumiy/*.jpg` — sahifa bo'yicha umumiy ko'rinish,
+  `ekranlar/<sahifa>/*.png` — har ekran alohida), holati (tarixiy / ilovada bor / reja) bilan. Yangi dizayn — faqat shu uslubda.
 
 ## 7. Foydali buyruqlar
 
