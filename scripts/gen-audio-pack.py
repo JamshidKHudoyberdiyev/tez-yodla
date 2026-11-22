@@ -13,7 +13,7 @@ import os, json, subprocess
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-SR = 22050          # namuna chastotasi (asl fayllar bilan bir xil)
+SR = 24000          # namuna chastotasi (Azure fayllari bilan bir xil)
 PAD = 0.3           # so'zlar orasidagi jimlik, soniya
 FF = 'ffmpeg'
 
@@ -35,7 +35,7 @@ def build(accent):
     dest = os.path.join(ROOT, 'assets', 'audio', f'pack-{accent}.mp3')
     # -write_xing 0: sarlavhasiz doimiy bitreyt — telefon vaqt bo'yicha aniq siljiy oladi
     subprocess.run([FF, '-nostdin', '-v', 'error', '-y', '-f', 's16le', '-ar', str(SR), '-ac', '1', '-i', '-',
-                    '-c:a', 'libmp3lame', '-b:a', '32k', '-write_xing', '0', dest], input=b''.join(out), check=True)
+                    '-c:a', 'libmp3lame', '-b:a', '64k', '-write_xing', '0', dest], input=b''.join(out), check=True)
     print(f'[{accent}] {len(slugs)} so\'z, {n / SR / 60:.1f} daqiqa, {os.path.getsize(dest) / 1e6:.1f} MB')
     return index
 
