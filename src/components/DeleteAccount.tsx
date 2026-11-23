@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ActivityIndicator, Keyboard, Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { Button, T } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
@@ -42,6 +43,7 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
   const [failed, setFailed] = useState<string | null>(null);
   // Klaviatura balandligi: oyna uning ustiga ko'tariladi (yozilgan matn va tugma ko'rinib turadi)
   const [kb, setKb] = useState(0);
+  const insets = useSafeAreaInsets();
   useEffect(() => {
     const a = Keyboard.addListener('keyboardDidShow', (e) => setKb(e.endCoordinates.height));
     const b = Keyboard.addListener('keyboardDidHide', () => setKb(0));
@@ -75,11 +77,11 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
 
   return (
     <Modal visible={visible} transparent animationType="slide" statusBarTranslucent onRequestClose={close}>
-      {/* Klaviatura ochiq bo'lsa oyna TEPAGA joylanadi: klaviatura balandligiga bog'liq emas, tugma doim ko'rinadi */}
-      <View style={{ flex: 1, justifyContent: kb ? 'flex-start' : 'flex-end' }}>
+      {/* Oyna pastda turadi; klaviatura ochilsa uning ustiga ko'tariladi. Android'da klaviatura balandligi
+          navigatsiya panelini o'z ichiga olmaydi, shuning uchun uni (insets.bottom) qo'shamiz. */}
+      <View style={{ flex: 1, justifyContent: 'flex-end', paddingBottom: kb ? kb + insets.bottom : 0 }}>
         <Pressable accessibilityLabel="Yopish" onPress={close} style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(19,26,21,0.45)' }]} />
-        <View style={{ backgroundColor: colors.bg, borderRadius: 32, borderBottomLeftRadius: kb ? 32 : 0, borderBottomRightRadius: kb ? 32 : 0,
-          marginTop: kb ? 56 : 0, marginHorizontal: kb ? 12 : 0, padding: 20, paddingBottom: kb ? 20 : 30, gap: 12 }}>
+        <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 20, paddingBottom: kb ? 16 : 30, gap: 12 }}>
           <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: 'center' }} />
           {busy ? (
             <View style={{ alignItems: 'center', gap: 12, paddingVertical: 40 }} accessibilityLiveRegion="polite">
