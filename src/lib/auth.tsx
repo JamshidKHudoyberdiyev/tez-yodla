@@ -70,16 +70,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const synced = useRef<string | null>(null);
   const latest = useRef(state);
   latest.current = state;
+  const resetRef = useRef(store.reset);
+  resetRef.current = store.reset;
 
   useEffect(() => {
     if (!AUTH_REQUIRED) return;
     // Shu telefon shu hisob bilan avval solishtirilgan bo'lsa — darhol ilovaga (bulut orqa fonda tekshiriladi, loading yo'q)
+    // Sessiya yo'qolgan (muddati o'tgan, hisob o'chirilgan va h.k.), lekin telefondagi progress allaqachon bulutdagi
+    // hisobniki — uni telefonda qoldirmaymiz: aks holda «progressni hisobga ko'chirish» ekrani chiqib, boshqa hisobga o'tib ketishi mumkin.
+    const forget = () => { writeMeta(null); resetRef.current(); };
     Promise.all([supabase.auth.getSession(), readMeta()]).then(([{ data }, meta]) => {
       if (data.session && meta?.uid === data.session.user.id) setInitial('resume');
+      if (!data.session && meta?.uid) forget();
       setSession(data.session);
       setReady(true);
     });
-    const { data } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    const { data } = supabase.auth.onAuthStateChange((e, s) => {
+      if (e === 'SIGNED_OUT') forget();
+      setSession(s);
+    });
     return () => data.subscription.unsubscribe();
   }, []);
 

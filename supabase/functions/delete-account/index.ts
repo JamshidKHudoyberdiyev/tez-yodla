@@ -23,7 +23,9 @@ Deno.serve(async (req) => {
   const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '');
   if (!token) return json({ error: 'unauthorized' }, 401);
 
-  const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  if (!key) return json({ error: 'config: SUPABASE_SERVICE_ROLE_KEY yo\'q' }, 500);
+  const admin = createClient(Deno.env.get('SUPABASE_URL')!, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
@@ -31,10 +33,10 @@ Deno.serve(async (req) => {
   if (userError || !user) return json({ error: 'unauthorized' }, 401);
 
   const { error: rowError } = await admin.from('progress').delete().eq('user_id', user.id);
-  if (rowError) return json({ error: 'progress' }, 500);
+  if (rowError) return json({ error: `progress: ${rowError.code ?? ''} ${rowError.message}`.slice(0, 160) }, 500);
 
   const { error: delError } = await admin.auth.admin.deleteUser(user.id);
-  if (delError) return json({ error: 'user' }, 500);
+  if (delError) return json({ error: `user: ${delError.message}`.slice(0, 160) }, 500);
 
   return json({ ok: true });
 });
