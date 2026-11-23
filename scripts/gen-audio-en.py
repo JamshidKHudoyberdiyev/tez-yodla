@@ -41,16 +41,16 @@ TEST_UK_DIR = os.path.join(ROOT, "assets", "audio", "en_test2", "uk")
 RATE_DEFAULT = "-15%"
 
 TEST_10_WORDS = [
-    "apple",
-    "passport",
-    "beautiful",
-    "weather",
-    "school",
-    "take off",
-    "look for",
-    "thought",
-    "through",
-    "comfortable",
+    "general",
+    "development",
+    "available",
+    "relationship",
+    "investigation",
+    "legislation",
+    "precision",
+    "comprehensive",
+    "assimilation",
+    "autopilot",
 ]
 
 CONFIGS = {

@@ -5842,5 +5842,5445 @@
   {
     "word": "stir",
     "translation": "aralashtirmoq"
+  },
+  {
+    "word": "general",
+    "translation": "umumiy"
+  },
+  {
+    "word": "per",
+    "translation": "har (bir)"
+  },
+  {
+    "word": "series",
+    "translation": "turkum, serial"
+  },
+  {
+    "word": "whether",
+    "translation": "-mi, yoki yo'qmi"
+  },
+  {
+    "word": "development",
+    "translation": "rivojlanish"
+  },
+  {
+    "word": "available",
+    "translation": "mavjud, bo'sh (foydalansa bo'ladigan)"
+  },
+  {
+    "word": "former",
+    "translation": "sobiq, avvalgi"
+  },
+  {
+    "word": "current",
+    "translation": "hozirgi, joriy"
+  },
+  {
+    "word": "process",
+    "translation": "jarayon"
+  },
+  {
+    "word": "term",
+    "translation": "atama; muddat (chorak)"
+  },
+  {
+    "word": "total",
+    "translation": "umumiy, jami"
+  },
+  {
+    "word": "security",
+    "translation": "xavfsizlik"
+  },
+  {
+    "word": "industry",
+    "translation": "sanoat, soha"
+  },
+  {
+    "word": "policy",
+    "translation": "siyosat, qoida"
+  },
+  {
+    "word": "press",
+    "translation": "matbuot"
+  },
+  {
+    "word": "worth",
+    "translation": "arziydigan, qiymati bor"
+  },
+  {
+    "word": "relationship",
+    "translation": "munosabat"
+  },
+  {
+    "word": "management",
+    "translation": "boshqaruv, rahbariyat"
+  },
+  {
+    "word": "central",
+    "translation": "markaziy"
+  },
+  {
+    "word": "paid",
+    "translation": "to'langan, pullik"
+  },
+  {
+    "word": "various",
+    "translation": "turli, har xil"
+  },
+  {
+    "word": "chief",
+    "translation": "bosh, asosiy"
+  },
+  {
+    "word": "property",
+    "translation": "mulk"
+  },
+  {
+    "word": "economic",
+    "translation": "iqtisodiy"
+  },
+  {
+    "word": "serious",
+    "translation": "jiddiy"
+  },
+  {
+    "word": "decision",
+    "translation": "qaror"
+  },
+  {
+    "word": "entire",
+    "translation": "butun, to'liq"
+  },
+  {
+    "word": "written",
+    "translation": "yozma"
+  },
+  {
+    "word": "council",
+    "translation": "kengash"
+  },
+  {
+    "word": "currently",
+    "translation": "hozirda"
+  },
+  {
+    "word": "financial",
+    "translation": "moliyaviy"
+  },
+  {
+    "word": "legal",
+    "translation": "qonuniy, huquqiy"
+  },
+  {
+    "word": "union",
+    "translation": "ittifoq; kasaba uyushmasi"
+  },
+  {
+    "word": "access",
+    "translation": "kirish imkoni"
+  },
+  {
+    "word": "risk",
+    "translation": "xavf, tavakkal"
+  },
+  {
+    "word": "percent",
+    "translation": "foiz"
+  },
+  {
+    "word": "growth",
+    "translation": "o'sish"
+  },
+  {
+    "word": "standard",
+    "translation": "standart, me'yor"
+  },
+  {
+    "word": "charge",
+    "translation": "haq, to'lov"
+  },
+  {
+    "word": "via",
+    "translation": "orqali"
+  },
+  {
+    "word": "beat",
+    "translation": "yengmoq; urmoq"
+  },
+  {
+    "word": "potential",
+    "translation": "imkoniyat, salohiyat"
+  },
+  {
+    "word": "completely",
+    "translation": "butunlay, to'liq"
+  },
+  {
+    "word": "content",
+    "translation": "mazmun, kontent"
+  },
+  {
+    "word": "despite",
+    "translation": "...ga qaramay"
+  },
+  {
+    "word": "individual",
+    "translation": "alohida, shaxsiy"
+  },
+  {
+    "word": "previous",
+    "translation": "oldingi"
+  },
+  {
+    "word": "region",
+    "translation": "mintaqa, viloyat"
+  },
+  {
+    "word": "sort",
+    "translation": "xil, tur"
+  },
+  {
+    "word": "positive",
+    "translation": "ijobiy"
+  },
+  {
+    "word": "throughout",
+    "translation": "davomida, bo'ylab"
+  },
+  {
+    "word": "absolutely",
+    "translation": "mutlaqo, albatta"
+  },
+  {
+    "word": "unless",
+    "translation": "agar ... bo'lmasa"
+  },
+  {
+    "word": "construction",
+    "translation": "qurilish"
+  },
+  {
+    "word": "income",
+    "translation": "daromad"
+  },
+  {
+    "word": "justice",
+    "translation": "adolat"
+  },
+  {
+    "word": "movement",
+    "translation": "harakat"
+  },
+  {
+    "word": "safety",
+    "translation": "xavfsizlik"
+  },
+  {
+    "word": "definitely",
+    "translation": "albatta, aniq"
+  },
+  {
+    "word": "particularly",
+    "translation": "ayniqsa"
+  },
+  {
+    "word": "generally",
+    "translation": "odatda, umuman"
+  },
+  {
+    "word": "global",
+    "translation": "global, jahon miqyosidagi"
+  },
+  {
+    "word": "annual",
+    "translation": "yillik"
+  },
+  {
+    "word": "battle",
+    "translation": "jang"
+  },
+  {
+    "word": "insurance",
+    "translation": "sug'urta"
+  },
+  {
+    "word": "majority",
+    "translation": "ko'pchilik"
+  },
+  {
+    "word": "active",
+    "translation": "faol"
+  },
+  {
+    "word": "administration",
+    "translation": "ma'muriyat"
+  },
+  {
+    "word": "cancer",
+    "translation": "saraton"
+  },
+  {
+    "word": "civil",
+    "translation": "fuqarolik"
+  },
+  {
+    "word": "defense",
+    "translation": "himoya, mudofaa"
+  },
+  {
+    "word": "independent",
+    "translation": "mustaqil"
+  },
+  {
+    "word": "none",
+    "translation": "hech biri"
+  },
+  {
+    "word": "awesome",
+    "translation": "ajoyib, zo'r"
+  },
+  {
+    "word": "commercial",
+    "translation": "tijoriy"
+  },
+  {
+    "word": "operation",
+    "translation": "operatsiya; faoliyat"
+  },
+  {
+    "word": "organization",
+    "translation": "tashkilot"
+  },
+  {
+    "word": "analysis",
+    "translation": "tahlil"
+  },
+  {
+    "word": "marriage",
+    "translation": "nikoh, turmush"
+  },
+  {
+    "word": "skin",
+    "translation": "teri"
+  },
+  {
+    "word": "thus",
+    "translation": "shunday qilib, shuning uchun"
+  },
+  {
+    "word": "damage",
+    "translation": "zarar, shikast"
+  },
+  {
+    "word": "directly",
+    "translation": "to'g'ridan-to'g'ri"
+  },
+  {
+    "word": "disease",
+    "translation": "kasallik"
+  },
+  {
+    "word": "professor",
+    "translation": "professor"
+  },
+  {
+    "word": "effective",
+    "translation": "samarali"
+  },
+  {
+    "word": "highly",
+    "translation": "juda, yuqori darajada"
+  },
+  {
+    "word": "reality",
+    "translation": "haqiqat, voqelik"
+  },
+  {
+    "word": "agreement",
+    "translation": "kelishuv, shartnoma"
+  },
+  {
+    "word": "comment",
+    "translation": "izoh, fikr"
+  },
+  {
+    "word": "equipment",
+    "translation": "jihozlar, uskuna"
+  },
+  {
+    "word": "eventually",
+    "translation": "oxir-oqibat"
+  },
+  {
+    "word": "otherwise",
+    "translation": "aks holda"
+  },
+  {
+    "word": "responsible",
+    "translation": "mas'ul, javobgar"
+  },
+  {
+    "word": "theory",
+    "translation": "nazariya"
+  },
+  {
+    "word": "cell",
+    "translation": "hujayra; kamera"
+  },
+  {
+    "word": "economy",
+    "translation": "iqtisodiyot"
+  },
+  {
+    "word": "mass",
+    "translation": "ommaviy"
+  },
+  {
+    "word": "mission",
+    "translation": "vazifa, missiya"
+  },
+  {
+    "word": "politics",
+    "translation": "siyosat"
+  },
+  {
+    "word": "status",
+    "translation": "holat, maqom"
+  },
+  {
+    "word": "application",
+    "translation": "ariza; ilova"
+  },
+  {
+    "word": "complex",
+    "translation": "murakkab"
+  },
+  {
+    "word": "location",
+    "translation": "joylashuv, manzil"
+  },
+  {
+    "word": "channel",
+    "translation": "kanal"
+  },
+  {
+    "word": "distance",
+    "translation": "masofa"
+  },
+  {
+    "word": "northern",
+    "translation": "shimoliy"
+  },
+  {
+    "word": "protection",
+    "translation": "himoya"
+  },
+  {
+    "word": "religious",
+    "translation": "diniy"
+  },
+  {
+    "word": "demand",
+    "translation": "talab"
+  },
+  {
+    "word": "southern",
+    "translation": "janubiy"
+  },
+  {
+    "word": "critical",
+    "translation": "muhim, tanqidiy; og'ir"
+  },
+  {
+    "word": "mental",
+    "translation": "ruhiy, aqliy"
+  },
+  {
+    "word": "surface",
+    "translation": "sirt, yuza"
+  },
+  {
+    "word": "totally",
+    "translation": "butunlay, mutlaqo"
+  },
+  {
+    "word": "benefit",
+    "translation": "foyda"
+  },
+  {
+    "word": "fund",
+    "translation": "jamg'arma, fond"
+  },
+  {
+    "word": "authority",
+    "translation": "hokimiyat; vakolat"
+  },
+  {
+    "word": "basis",
+    "translation": "asos"
+  },
+  {
+    "word": "foundation",
+    "translation": "poydevor; asos"
+  },
+  {
+    "word": "gain",
+    "translation": "yutuq, foyda"
+  },
+  {
+    "word": "rise",
+    "translation": "ko'tarilish, o'sish"
+  },
+  {
+    "word": "soul",
+    "translation": "ruh, jon"
+  },
+  {
+    "word": "supply",
+    "translation": "ta'minot, zaxira"
+  },
+  {
+    "word": "waste",
+    "translation": "isrof, keraksiz"
+  },
+  {
+    "word": "weird",
+    "translation": "g'alati"
+  },
+  {
+    "word": "edition",
+    "translation": "nashr"
+  },
+  {
+    "word": "institute",
+    "translation": "institut"
+  },
+  {
+    "word": "obviously",
+    "translation": "aniqki, tabiiyki"
+  },
+  {
+    "word": "option",
+    "translation": "variant, tanlov"
+  },
+  {
+    "word": "prison",
+    "translation": "qamoqxona"
+  },
+  {
+    "word": "bet",
+    "translation": "garov o'ynamoq, ishonmoq"
+  },
+  {
+    "word": "firm",
+    "translation": "qat'iy; mustahkam"
+  },
+  {
+    "word": "spirit",
+    "translation": "ruh, kayfiyat"
+  },
+  {
+    "word": "aware",
+    "translation": "xabardor"
+  },
+  {
+    "word": "eastern",
+    "translation": "sharqiy"
+  },
+  {
+    "word": "fifth",
+    "translation": "beshinchi"
+  },
+  {
+    "word": "nor",
+    "translation": "ham ... emas"
+  },
+  {
+    "word": "require",
+    "translation": "talab qilmoq"
+  },
+  {
+    "word": "van",
+    "translation": "furgon"
+  },
+  {
+    "word": "concept",
+    "translation": "tushuncha, g'oya"
+  },
+  {
+    "word": "journal",
+    "translation": "jurnal"
+  },
+  {
+    "word": "leadership",
+    "translation": "rahbarlik, yetakchilik"
+  },
+  {
+    "word": "length",
+    "translation": "uzunlik"
+  },
+  {
+    "word": "onto",
+    "translation": "ustiga"
+  },
+  {
+    "word": "prove",
+    "translation": "isbotlamoq"
+  },
+  {
+    "word": "rare",
+    "translation": "kamyob, kam uchraydigan"
+  },
+  {
+    "word": "balance",
+    "translation": "muvozanat; balans"
+  },
+  {
+    "word": "connection",
+    "translation": "aloqa, ulanish"
+  },
+  {
+    "word": "fellow",
+    "translation": "hamroh; ...dosh"
+  },
+  {
+    "word": "stick",
+    "translation": "yopishtirmoq; tiqmoq"
+  },
+  {
+    "word": "vehicle",
+    "translation": "transport vositasi"
+  },
+  {
+    "word": "volume",
+    "translation": "ovoz balandligi; hajm"
+  },
+  {
+    "word": "aid",
+    "translation": "yordam"
+  },
+  {
+    "word": "criminal",
+    "translation": "jinoyatchi"
+  },
+  {
+    "word": "cultural",
+    "translation": "madaniy"
+  },
+  {
+    "word": "investigation",
+    "translation": "tergov, tekshiruv"
+  },
+  {
+    "word": "responsibility",
+    "translation": "mas'uliyat"
+  },
+  {
+    "word": "slightly",
+    "translation": "biroz, sal"
+  },
+  {
+    "word": "treat",
+    "translation": "sovg'a, mehmon qilish"
+  },
+  {
+    "word": "unique",
+    "translation": "noyob, betakror"
+  },
+  {
+    "word": "variety",
+    "translation": "xilma-xillik, tur"
+  },
+  {
+    "word": "violence",
+    "translation": "zo'ravonlik"
+  },
+  {
+    "word": "edge",
+    "translation": "chet, qirra"
+  },
+  {
+    "word": "injury",
+    "translation": "jarohat"
+  },
+  {
+    "word": "blog",
+    "translation": "blog"
+  },
+  {
+    "word": "democratic",
+    "translation": "demokratik"
+  },
+  {
+    "word": "nuclear",
+    "translation": "yadroviy"
+  },
+  {
+    "word": "port",
+    "translation": "port"
+  },
+  {
+    "word": "presence",
+    "translation": "ishtirok, mavjudlik"
+  },
+  {
+    "word": "solid",
+    "translation": "qattiq, mustahkam"
+  },
+  {
+    "word": "stress",
+    "translation": "stress, zo'riqish"
+  },
+  {
+    "word": "victory",
+    "translation": "g'alaba"
+  },
+  {
+    "word": "entirely",
+    "translation": "butunlay"
+  },
+  {
+    "word": "failure",
+    "translation": "muvaffaqiyatsizlik"
+  },
+  {
+    "word": "fuel",
+    "translation": "yoqilg'i"
+  },
+  {
+    "word": "initial",
+    "translation": "bosh harf"
+  },
+  {
+    "word": "massive",
+    "translation": "ulkan"
+  },
+  {
+    "word": "regional",
+    "translation": "viloyat, mintaqaviy"
+  },
+  {
+    "word": "session",
+    "translation": "mashg'ulot, seans"
+  },
+  {
+    "word": "transfer",
+    "translation": "o'tkazmoq"
+  },
+  {
+    "word": "upper",
+    "translation": "yuqori"
+  },
+  {
+    "word": "alternative",
+    "translation": "muqobil"
+  },
+  {
+    "word": "capacity",
+    "translation": "sig'im, imkoniyat"
+  },
+  {
+    "word": "duty",
+    "translation": "burch, vazifa"
+  },
+  {
+    "word": "governor",
+    "translation": "hokim, gubernator"
+  },
+  {
+    "word": "industrial",
+    "translation": "sanoat"
+  },
+  {
+    "word": "joint",
+    "translation": "qo'shma, umumiy"
+  },
+  {
+    "word": "remove",
+    "translation": "olib tashlamoq"
+  },
+  {
+    "word": "steel",
+    "translation": "po'lat"
+  },
+  {
+    "word": "vice",
+    "translation": "o'rinbosar"
+  },
+  {
+    "word": "command",
+    "translation": "buyruq"
+  },
+  {
+    "word": "ensure",
+    "translation": "ta'minlamoq, kafolatlamoq"
+  },
+  {
+    "word": "environmental",
+    "translation": "ekologik"
+  },
+  {
+    "word": "limit",
+    "translation": "chegara"
+  },
+  {
+    "word": "ocean",
+    "translation": "okean"
+  },
+  {
+    "word": "proof",
+    "translation": "dalil, isbot"
+  },
+  {
+    "word": "historical",
+    "translation": "tarixiy"
+  },
+  {
+    "word": "honestly",
+    "translation": "rostini aytsam"
+  },
+  {
+    "word": "launch",
+    "translation": "ishga tushirmoq"
+  },
+  {
+    "word": "minimum",
+    "translation": "eng kam"
+  },
+  {
+    "word": "flow",
+    "translation": "oqim"
+  },
+  {
+    "word": "stuck",
+    "translation": "qolib ketgan, tiqilib qolgan"
+  },
+  {
+    "word": "transport",
+    "translation": "transport"
+  },
+  {
+    "word": "appeal",
+    "translation": "murojaat, chaqiriq"
+  },
+  {
+    "word": "entry",
+    "translation": "kirish"
+  },
+  {
+    "word": "era",
+    "translation": "davr"
+  },
+  {
+    "word": "grant",
+    "translation": "grant, nafaqa"
+  },
+  {
+    "word": "platform",
+    "translation": "platforma"
+  },
+  {
+    "word": "emotional",
+    "translation": "hissiy, ta'sirchan"
+  },
+  {
+    "word": "internal",
+    "translation": "ichki"
+  },
+  {
+    "word": "relatively",
+    "translation": "nisbatan"
+  },
+  {
+    "word": "studio",
+    "translation": "studiya"
+  },
+  {
+    "word": "advance",
+    "translation": "oldinga siljimoq, rivojlanmoq"
+  },
+  {
+    "word": "confidence",
+    "translation": "ishonch"
+  },
+  {
+    "word": "equal",
+    "translation": "teng"
+  },
+  {
+    "word": "fake",
+    "translation": "soxta"
+  },
+  {
+    "word": "finance",
+    "translation": "moliyalashtirmoq"
+  },
+  {
+    "word": "identity",
+    "translation": "shaxs, shaxsiyat"
+  },
+  {
+    "word": "maintain",
+    "translation": "saqlamoq, ushlab turmoq"
+  },
+  {
+    "word": "numerous",
+    "translation": "ko'p sonli"
+  },
+  {
+    "word": "approximately",
+    "translation": "taxminan"
+  },
+  {
+    "word": "conflict",
+    "translation": "mojaro, nizo"
+  },
+  {
+    "word": "distribution",
+    "translation": "tarqatish, taqsimot"
+  },
+  {
+    "word": "lay",
+    "translation": "qo'ymoq, yotqizmoq"
+  },
+  {
+    "word": "properly",
+    "translation": "to'g'ri, yaxshilab"
+  },
+  {
+    "word": "pure",
+    "translation": "toza, sof"
+  },
+  {
+    "word": "secure",
+    "translation": "xavfsiz, ishonchli"
+  },
+  {
+    "word": "determine",
+    "translation": "aniqlamoq"
+  },
+  {
+    "word": "incredible",
+    "translation": "aql bovar qilmas"
+  },
+  {
+    "word": "obvious",
+    "translation": "aniq, ravshan"
+  },
+  {
+    "word": "vision",
+    "translation": "ko'rish; orzu"
+  },
+  {
+    "word": "whenever",
+    "translation": "qachon bo'lsa ham"
+  },
+  {
+    "word": "crisis",
+    "translation": "inqiroz"
+  },
+  {
+    "word": "giant",
+    "translation": "ulkan"
+  },
+  {
+    "word": "jail",
+    "translation": "qamoqxona"
+  },
+  {
+    "word": "literature",
+    "translation": "adabiyot"
+  },
+  {
+    "word": "mayor",
+    "translation": "shahar hokimi"
+  },
+  {
+    "word": "minor",
+    "translation": "kichik, ahamiyatsiz"
+  },
+  {
+    "word": "selection",
+    "translation": "tanlov, tanlash"
+  },
+  {
+    "word": "signal",
+    "translation": "signal"
+  },
+  {
+    "word": "stream",
+    "translation": "soy, oqim"
+  },
+  {
+    "word": "struggle",
+    "translation": "kurash"
+  },
+  {
+    "word": "typically",
+    "translation": "odatda"
+  },
+  {
+    "word": "alcohol",
+    "translation": "spirtli ichimlik"
+  },
+  {
+    "word": "capable",
+    "translation": "qodir, qobiliyatli"
+  },
+  {
+    "word": "combination",
+    "translation": "birikma, uyg'unlik"
+  },
+  {
+    "word": "conservative",
+    "translation": "konservativ"
+  },
+  {
+    "word": "desire",
+    "translation": "istak"
+  },
+  {
+    "word": "essential",
+    "translation": "zarur, muhim"
+  },
+  {
+    "word": "largely",
+    "translation": "asosan"
+  },
+  {
+    "word": "medium",
+    "translation": "o'rtacha"
+  },
+  {
+    "word": "recommend",
+    "translation": "tavsiya qilmoq"
+  },
+  {
+    "word": "unable",
+    "translation": "qodir emas"
+  },
+  {
+    "word": "cycle",
+    "translation": "aylanish, sikl"
+  },
+  {
+    "word": "extreme",
+    "translation": "o'ta, haddan tashqari"
+  },
+  {
+    "word": "facility",
+    "translation": "inshoot, sharoit"
+  },
+  {
+    "word": "maximum",
+    "translation": "eng ko'p"
+  },
+  {
+    "word": "republic",
+    "translation": "respublika"
+  },
+  {
+    "word": "reserve",
+    "translation": "zaxira"
+  },
+  {
+    "word": "switch",
+    "translation": "tugma, o'chirgich"
+  },
+  {
+    "word": "threat",
+    "translation": "tahdid"
+  },
+  {
+    "word": "affect",
+    "translation": "ta'sir qilmoq"
+  },
+  {
+    "word": "aside",
+    "translation": "chetga"
+  },
+  {
+    "word": "assistance",
+    "translation": "yordam"
+  },
+  {
+    "word": "bond",
+    "translation": "bog'liqlik, rishta"
+  },
+  {
+    "word": "delivery",
+    "translation": "yetkazib berish"
+  },
+  {
+    "word": "deserve",
+    "translation": "loyiq bo'lmoq"
+  },
+  {
+    "word": "instance",
+    "translation": "misol, holat"
+  },
+  {
+    "word": "mile",
+    "translation": "mil (1,6 km)"
+  },
+  {
+    "word": "register",
+    "translation": "ro'yxat, jurnal"
+  },
+  {
+    "word": "typical",
+    "translation": "odatiy"
+  },
+  {
+    "word": "universe",
+    "translation": "koinot, olam"
+  },
+  {
+    "word": "definition",
+    "translation": "ta'rif"
+  },
+  {
+    "word": "possibility",
+    "translation": "imkoniyat, ehtimol"
+  },
+  {
+    "word": "academic",
+    "translation": "akademik, o'quv"
+  },
+  {
+    "word": "academy",
+    "translation": "akademiya"
+  },
+  {
+    "word": "accurate",
+    "translation": "aniq"
+  },
+  {
+    "word": "assume",
+    "translation": "faraz qilmoq, deb o'ylamoq"
+  },
+  {
+    "word": "bunch",
+    "translation": "dasta, bog'lam"
+  },
+  {
+    "word": "category",
+    "translation": "toifa, turkum"
+  },
+  {
+    "word": "competitive",
+    "translation": "raqobatbardosh"
+  },
+  {
+    "word": "mess",
+    "translation": "tartibsizlik"
+  },
+  {
+    "word": "normally",
+    "translation": "odatda"
+  },
+  {
+    "word": "opposition",
+    "translation": "muxolifat, qarshilik"
+  },
+  {
+    "word": "permanent",
+    "translation": "doimiy"
+  },
+  {
+    "word": "personally",
+    "translation": "shaxsan"
+  },
+  {
+    "word": "representative",
+    "translation": "vakil"
+  },
+  {
+    "word": "tank",
+    "translation": "bak, sisterna; tank"
+  },
+  {
+    "word": "tend",
+    "translation": "moyil bo'lmoq"
+  },
+  {
+    "word": "transportation",
+    "translation": "tashish, transport"
+  },
+  {
+    "word": "constitution",
+    "translation": "konstitutsiya"
+  },
+  {
+    "word": "consumer",
+    "translation": "iste'molchi"
+  },
+  {
+    "word": "counter",
+    "translation": "qarshi chiqmoq"
+  },
+  {
+    "word": "depression",
+    "translation": "tushkunlik, depressiya"
+  },
+  {
+    "word": "employment",
+    "translation": "ish bilan bandlik"
+  },
+  {
+    "word": "exclusive",
+    "translation": "eksklyuziv, alohida"
+  },
+  {
+    "word": "frequently",
+    "translation": "tez-tez"
+  },
+  {
+    "word": "hopefully",
+    "translation": "umid qilamanki"
+  },
+  {
+    "word": "object",
+    "translation": "buyum, narsa"
+  },
+  {
+    "word": "pattern",
+    "translation": "naqsh; qolip"
+  },
+  {
+    "word": "pregnant",
+    "translation": "homilador"
+  },
+  {
+    "word": "promote",
+    "translation": "targ'ib qilmoq; lavozimga ko'tarmoq"
+  },
+  {
+    "word": "severe",
+    "translation": "og'ir, qattiq"
+  },
+  {
+    "word": "suppose",
+    "translation": "deb o'ylamoq, taxmin qilmoq"
+  },
+  {
+    "word": "victim",
+    "translation": "jabrlanuvchi, qurbon"
+  },
+  {
+    "word": "arrest",
+    "translation": "hibsga olish"
+  },
+  {
+    "word": "attend",
+    "translation": "qatnashmoq"
+  },
+  {
+    "word": "deliver",
+    "translation": "yetkazmoq"
+  },
+  {
+    "word": "depth",
+    "translation": "chuqurlik"
+  },
+  {
+    "word": "electronic",
+    "translation": "elektron"
+  },
+  {
+    "word": "existence",
+    "translation": "mavjudlik"
+  },
+  {
+    "word": "maintenance",
+    "translation": "ta'mirlash, xizmat ko'rsatish"
+  },
+  {
+    "word": "nearby",
+    "translation": "yaqindagi"
+  },
+  {
+    "word": "origin",
+    "translation": "kelib chiqish"
+  },
+  {
+    "word": "retail",
+    "translation": "chakana savdo"
+  },
+  {
+    "word": "shame",
+    "translation": "uyat; afsus"
+  },
+  {
+    "word": "surely",
+    "translation": "shubhasiz, axir"
+  },
+  {
+    "word": "absolute",
+    "translation": "mutlaq, to'liq"
+  },
+  {
+    "word": "empire",
+    "translation": "imperiya, saltanat"
+  },
+  {
+    "word": "incident",
+    "translation": "hodisa"
+  },
+  {
+    "word": "broad",
+    "translation": "keng"
+  },
+  {
+    "word": "closely",
+    "translation": "diqqat bilan; yaqindan"
+  },
+  {
+    "word": "constantly",
+    "translation": "doimo"
+  },
+  {
+    "word": "height",
+    "translation": "bo'y, balandlik"
+  },
+  {
+    "word": "hidden",
+    "translation": "yashirin"
+  },
+  {
+    "word": "marine",
+    "translation": "dengiz"
+  },
+  {
+    "word": "motor",
+    "translation": "motor, dvigatel"
+  },
+  {
+    "word": "officially",
+    "translation": "rasman"
+  },
+  {
+    "word": "respond",
+    "translation": "javob bermoq"
+  },
+  {
+    "word": "somehow",
+    "translation": "qandaydir yo'l bilan"
+  },
+  {
+    "word": "blind",
+    "translation": "ko'r"
+  },
+  {
+    "word": "breath",
+    "translation": "nafas"
+  },
+  {
+    "word": "brief",
+    "translation": "qisqa"
+  },
+  {
+    "word": "conduct",
+    "translation": "xulq; o'tkazish"
+  },
+  {
+    "word": "fantasy",
+    "translation": "xayol, fantaziya"
+  },
+  {
+    "word": "grab",
+    "translation": "chang solmoq, olib olmoq"
+  },
+  {
+    "word": "immediate",
+    "translation": "darhol, zudlik bilan"
+  },
+  {
+    "word": "introduction",
+    "translation": "kirish; tanishtirish"
+  },
+  {
+    "word": "recognize",
+    "translation": "tanimoq"
+  },
+  {
+    "word": "steam",
+    "translation": "bug'"
+  },
+  {
+    "word": "witness",
+    "translation": "guvoh bo'lmoq"
+  },
+  {
+    "word": "aim",
+    "translation": "maqsad"
+  },
+  {
+    "word": "comedy",
+    "translation": "komediya"
+  },
+  {
+    "word": "comparison",
+    "translation": "taqqoslash"
+  },
+  {
+    "word": "democracy",
+    "translation": "demokratiya"
+  },
+  {
+    "word": "exact",
+    "translation": "aniq"
+  },
+  {
+    "word": "suspect",
+    "translation": "gumonlanuvchi"
+  },
+  {
+    "word": "swear",
+    "translation": "qasam ichmoq; so'kinmoq"
+  },
+  {
+    "word": "trend",
+    "translation": "tendensiya, moda"
+  },
+  {
+    "word": "valuable",
+    "translation": "qimmatli"
+  },
+  {
+    "word": "approval",
+    "translation": "ma'qullash, rozilik"
+  },
+  {
+    "word": "lift",
+    "translation": "lift; mashinada olib ketish"
+  },
+  {
+    "word": "monthly",
+    "translation": "oylik, har oylik"
+  },
+  {
+    "word": "neighborhood",
+    "translation": "mahalla, atrof"
+  },
+  {
+    "word": "outstanding",
+    "translation": "ajoyib, a'lo"
+  },
+  {
+    "word": "rid",
+    "translation": "qutulmoq (get rid of)"
+  },
+  {
+    "word": "visual",
+    "translation": "ko'rish, vizual"
+  },
+  {
+    "word": "barely",
+    "translation": "zo'rg'a"
+  },
+  {
+    "word": "coal",
+    "translation": "ko'mir"
+  },
+  {
+    "word": "historic",
+    "translation": "tarixiy (ahamiyatli)"
+  },
+  {
+    "word": "improvement",
+    "translation": "yaxshilanish"
+  },
+  {
+    "word": "initially",
+    "translation": "dastlab"
+  },
+  {
+    "word": "monster",
+    "translation": "maxluq, yalmog'iz"
+  },
+  {
+    "word": "philosophy",
+    "translation": "falsafa"
+  },
+  {
+    "word": "rough",
+    "translation": "g'adir-budur; qo'pol"
+  },
+  {
+    "word": "settlement",
+    "translation": "aholi punkti; kelishuv"
+  },
+  {
+    "word": "meanwhile",
+    "translation": "ayni paytda"
+  },
+  {
+    "word": "naturally",
+    "translation": "tabiiyki"
+  },
+  {
+    "word": "practical",
+    "translation": "amaliy"
+  },
+  {
+    "word": "primarily",
+    "translation": "asosan"
+  },
+  {
+    "word": "rescue",
+    "translation": "qutqaruv"
+  },
+  {
+    "word": "sharp",
+    "translation": "o'tkir"
+  },
+  {
+    "word": "stable",
+    "translation": "barqaror"
+  },
+  {
+    "word": "temporary",
+    "translation": "vaqtincha"
+  },
+  {
+    "word": "extent",
+    "translation": "daraja, miqyos"
+  },
+  {
+    "word": "format",
+    "translation": "format, shakl"
+  },
+  {
+    "word": "gap",
+    "translation": "bo'shliq, oraliq"
+  },
+  {
+    "word": "household",
+    "translation": "xonadon, uy"
+  },
+  {
+    "word": "immigration",
+    "translation": "immigratsiya"
+  },
+  {
+    "word": "impressive",
+    "translation": "ta'sirli, hayratlanarli"
+  },
+  {
+    "word": "membership",
+    "translation": "a'zolik"
+  },
+  {
+    "word": "mount",
+    "translation": "tog' (nomida)"
+  },
+  {
+    "word": "occur",
+    "translation": "sodir bo'lmoq"
+  },
+  {
+    "word": "proposal",
+    "translation": "taklif"
+  },
+  {
+    "word": "reputation",
+    "translation": "obro', nom"
+  },
+  {
+    "word": "shortly",
+    "translation": "tez orada"
+  },
+  {
+    "word": "technique",
+    "translation": "usul, texnika"
+  },
+  {
+    "word": "atmosphere",
+    "translation": "muhit; atmosfera"
+  },
+  {
+    "word": "belief",
+    "translation": "ishonch, e'tiqod"
+  },
+  {
+    "word": "bound",
+    "translation": "majbur; aniq (bo'ladi)"
+  },
+  {
+    "word": "element",
+    "translation": "unsur, element"
+  },
+  {
+    "word": "hip",
+    "translation": "son, bel (son suyagi)"
+  },
+  {
+    "word": "moral",
+    "translation": "ibrat, xulosa"
+  },
+  {
+    "word": "offensive",
+    "translation": "haqoratli"
+  },
+  {
+    "word": "package",
+    "translation": "posilka, o'ram"
+  },
+  {
+    "word": "poverty",
+    "translation": "qashshoqlik"
+  },
+  {
+    "word": "railway",
+    "translation": "temir yo'l"
+  },
+  {
+    "word": "ridiculous",
+    "translation": "kulgili, bema'ni"
+  },
+  {
+    "word": "superior",
+    "translation": "ustun, yuqoriroq"
+  },
+  {
+    "word": "actress",
+    "translation": "aktrisa"
+  },
+  {
+    "word": "anxiety",
+    "translation": "xavotir"
+  },
+  {
+    "word": "community",
+    "translation": "jamiyat, jamoa"
+  },
+  {
+    "word": "data",
+    "translation": "ma'lumotlar"
+  },
+  {
+    "word": "media",
+    "translation": "ommaviy axborot vositalari"
+  },
+  {
+    "word": "lower",
+    "translation": "pasaytirmoq"
+  },
+  {
+    "word": "version",
+    "translation": "versiya, nusxa"
+  },
+  {
+    "word": "minister",
+    "translation": "vazir"
+  },
+  {
+    "word": "conference",
+    "translation": "konferensiya"
+  },
+  {
+    "word": "western",
+    "translation": "g'arbiy"
+  },
+  {
+    "word": "campaign",
+    "translation": "kampaniya"
+  },
+  {
+    "word": "particular",
+    "translation": "alohida, muayyan"
+  },
+  {
+    "word": "master",
+    "translation": "usta, ustoz"
+  },
+  {
+    "word": "stock",
+    "translation": "zaxira (omborda)"
+  },
+  {
+    "word": "multiple",
+    "translation": "ko'p, bir nechta"
+  },
+  {
+    "word": "commission",
+    "translation": "komissiya"
+  },
+  {
+    "word": "grand",
+    "translation": "ulug'vor, katta"
+  },
+  {
+    "word": "literally",
+    "translation": "tom ma'noda"
+  },
+  {
+    "word": "overall",
+    "translation": "umumiy"
+  },
+  {
+    "word": "primary",
+    "translation": "boshlang'ich; asosiy"
+  },
+  {
+    "word": "executive",
+    "translation": "ijro etuvchi, rahbar"
+  },
+  {
+    "word": "trial",
+    "translation": "sud jarayoni; sinov"
+  },
+  {
+    "word": "division",
+    "translation": "bo'linma; bo'lish"
+  },
+  {
+    "word": "actual",
+    "translation": "haqiqiy"
+  },
+  {
+    "word": "prior",
+    "translation": "oldingi"
+  },
+  {
+    "word": "species",
+    "translation": "tur (hayvon, o'simlik)"
+  },
+  {
+    "word": "investment",
+    "translation": "sarmoya"
+  },
+  {
+    "word": "previously",
+    "translation": "ilgari"
+  },
+  {
+    "word": "estate",
+    "translation": "mulk; yer-mulk"
+  },
+  {
+    "word": "faith",
+    "translation": "ishonch, e'tiqod"
+  },
+  {
+    "word": "profile",
+    "translation": "profil"
+  },
+  {
+    "word": "prime",
+    "translation": "asosiy, bosh"
+  },
+  {
+    "word": "cast",
+    "translation": "aktyorlar tarkibi"
+  },
+  {
+    "word": "neither",
+    "translation": "ikkalasi ham ... emas"
+  },
+  {
+    "word": "tough",
+    "translation": "qiyin; qattiq"
+  },
+  {
+    "word": "billion",
+    "translation": "milliard"
+  },
+  {
+    "word": "technical",
+    "translation": "texnik"
+  },
+  {
+    "word": "evil",
+    "translation": "yovuz"
+  },
+  {
+    "word": "reference",
+    "translation": "ma'lumotnoma; havola"
+  },
+  {
+    "word": "core",
+    "translation": "o'zak, asosiy qism"
+  },
+  {
+    "word": "reaction",
+    "translation": "munosabat, reaksiya"
+  },
+  {
+    "word": "crew",
+    "translation": "ekipaj, jamoa"
+  },
+  {
+    "word": "domestic",
+    "translation": "ichki; uy"
+  },
+  {
+    "word": "originally",
+    "translation": "aslida, dastlab"
+  },
+  {
+    "word": "user",
+    "translation": "foydalanuvchi"
+  },
+  {
+    "word": "loan",
+    "translation": "qarz, kredit"
+  },
+  {
+    "word": "factor",
+    "translation": "omil"
+  },
+  {
+    "word": "squad",
+    "translation": "jamoa, otryad"
+  },
+  {
+    "word": "abuse",
+    "translation": "suiiste'mol; haqorat"
+  },
+  {
+    "word": "candidate",
+    "translation": "nomzod"
+  },
+  {
+    "word": "liberal",
+    "translation": "erkin fikrli, liberal"
+  },
+  {
+    "word": "payment",
+    "translation": "to'lov"
+  },
+  {
+    "word": "sector",
+    "translation": "soha, tarmoq"
+  },
+  {
+    "word": "specifically",
+    "translation": "aynan, maxsus"
+  },
+  {
+    "word": "urban",
+    "translation": "shahar"
+  },
+  {
+    "word": "aircraft",
+    "translation": "samolyot, havo kemasi"
+  },
+  {
+    "word": "corporate",
+    "translation": "korporativ"
+  },
+  {
+    "word": "phase",
+    "translation": "bosqich"
+  },
+  {
+    "word": "revenue",
+    "translation": "daromad (tushum)"
+  },
+  {
+    "word": "theme",
+    "translation": "mavzu"
+  },
+  {
+    "word": "assembly",
+    "translation": "yig'ilish; yig'ish"
+  },
+  {
+    "word": "draft",
+    "translation": "qoralama"
+  },
+  {
+    "word": "relevant",
+    "translation": "tegishli, dolzarb"
+  },
+  {
+    "word": "solo",
+    "translation": "yakka, solo"
+  },
+  {
+    "word": "statistics",
+    "translation": "statistika"
+  },
+  {
+    "word": "territory",
+    "translation": "hudud"
+  },
+  {
+    "word": "corporation",
+    "translation": "korporatsiya"
+  },
+  {
+    "word": "motion",
+    "translation": "harakat"
+  },
+  {
+    "word": "resolution",
+    "translation": "qaror; ahd; aniqlik (ekran)"
+  },
+  {
+    "word": "rural",
+    "translation": "qishloq"
+  },
+  {
+    "word": "plot",
+    "translation": "syujet; yer uchastkasi"
+  },
+  {
+    "word": "index",
+    "translation": "ko'rsatkich; mundarija"
+  },
+  {
+    "word": "scheme",
+    "translation": "sxema, reja"
+  },
+  {
+    "word": "ultimately",
+    "translation": "oxir-oqibat"
+  },
+  {
+    "word": "creation",
+    "translation": "yaratilish, ijod"
+  },
+  {
+    "word": "identify",
+    "translation": "aniqlamoq, tanimoq"
+  },
+  {
+    "word": "personnel",
+    "translation": "xodimlar"
+  },
+  {
+    "word": "perspective",
+    "translation": "nuqtai nazar"
+  },
+  {
+    "word": "revolution",
+    "translation": "inqilob"
+  },
+  {
+    "word": "ban",
+    "translation": "taqiq"
+  },
+  {
+    "word": "carbon",
+    "translation": "uglerod"
+  },
+  {
+    "word": "deputy",
+    "translation": "o'rinbosar"
+  },
+  {
+    "word": "interior",
+    "translation": "ichki qism, interyer"
+  },
+  {
+    "word": "legislation",
+    "translation": "qonunchilik"
+  },
+  {
+    "word": "mate",
+    "translation": "do'st, oshna"
+  },
+  {
+    "word": "panel",
+    "translation": "panel; hay'at"
+  },
+  {
+    "word": "resistance",
+    "translation": "qarshilik"
+  },
+  {
+    "word": "somewhat",
+    "translation": "biroz, ma'lum darajada"
+  },
+  {
+    "word": "client",
+    "translation": "mijoz"
+  },
+  {
+    "word": "constant",
+    "translation": "doimiy"
+  },
+  {
+    "word": "expansion",
+    "translation": "kengayish"
+  },
+  {
+    "word": "significantly",
+    "translation": "sezilarli darajada"
+  },
+  {
+    "word": "peak",
+    "translation": "cho'qqi"
+  },
+  {
+    "word": "portion",
+    "translation": "ulush, porsiya"
+  },
+  {
+    "word": "reform",
+    "translation": "islohot"
+  },
+  {
+    "word": "retirement",
+    "translation": "nafaqa (pensiya)ga chiqish"
+  },
+  {
+    "word": "secondary",
+    "translation": "o'rta; ikkinchi darajali"
+  },
+  {
+    "word": "solar",
+    "translation": "quyosh"
+  },
+  {
+    "word": "ultimate",
+    "translation": "yakuniy, oliy"
+  },
+  {
+    "word": "decade",
+    "translation": "o'n yillik"
+  },
+  {
+    "word": "external",
+    "translation": "tashqi"
+  },
+  {
+    "word": "commander",
+    "translation": "qo'mondon"
+  },
+  {
+    "word": "quote",
+    "translation": "iqtibos; narx taklifi"
+  },
+  {
+    "word": "convention",
+    "translation": "anjuman; odat"
+  },
+  {
+    "word": "employee",
+    "translation": "xodim"
+  },
+  {
+    "word": "gang",
+    "translation": "to'da"
+  },
+  {
+    "word": "cabinet",
+    "translation": "shkaf; vazirlar mahkamasi"
+  },
+  {
+    "word": "contemporary",
+    "translation": "zamonaviy"
+  },
+  {
+    "word": "criticism",
+    "translation": "tanqid"
+  },
+  {
+    "word": "dna",
+    "translation": "DNK"
+  },
+  {
+    "word": "effectively",
+    "translation": "samarali tarzda"
+  },
+  {
+    "word": "extensive",
+    "translation": "keng ko'lamli"
+  },
+  {
+    "word": "formation",
+    "translation": "shakllanish; tuzilma"
+  },
+  {
+    "word": "jury",
+    "translation": "hakamlar hay'ati"
+  },
+  {
+    "word": "universal",
+    "translation": "umumiy, universal"
+  },
+  {
+    "word": "consistent",
+    "translation": "izchil, barqaror"
+  },
+  {
+    "word": "necessarily",
+    "translation": "albatta, majburan"
+  },
+  {
+    "word": "partnership",
+    "translation": "hamkorlik"
+  },
+  {
+    "word": "percentage",
+    "translation": "foiz ulushi"
+  },
+  {
+    "word": "regardless",
+    "translation": "qaramasdan"
+  },
+  {
+    "word": "circuit",
+    "translation": "zanjir (elektr); aylanma yo'l"
+  },
+  {
+    "word": "province",
+    "translation": "viloyat"
+  },
+  {
+    "word": "recognition",
+    "translation": "tan olinish"
+  },
+  {
+    "word": "assessment",
+    "translation": "baholash"
+  },
+  {
+    "word": "extension",
+    "translation": "uzaytirish; qo'shimcha qism"
+  },
+  {
+    "word": "gear",
+    "translation": "uzatma; jihozlar"
+  },
+  {
+    "word": "transition",
+    "translation": "o'tish"
+  },
+  {
+    "word": "acid",
+    "translation": "kislota"
+  },
+  {
+    "word": "administrative",
+    "translation": "ma'muriy"
+  },
+  {
+    "word": "alongside",
+    "translation": "yonma-yon"
+  },
+  {
+    "word": "gross",
+    "translation": "yalpi; jirkanch"
+  },
+  {
+    "word": "publication",
+    "translation": "nashr"
+  },
+  {
+    "word": "assault",
+    "translation": "hujum"
+  },
+  {
+    "word": "concrete",
+    "translation": "aniq; beton"
+  },
+  {
+    "word": "legend",
+    "translation": "afsona"
+  },
+  {
+    "word": "procedure",
+    "translation": "tartib, muolaja"
+  },
+  {
+    "word": "replacement",
+    "translation": "almashtirish, o'rinbosar"
+  },
+  {
+    "word": "tag",
+    "translation": "yorliq"
+  },
+  {
+    "word": "thread",
+    "translation": "ip"
+  },
+  {
+    "word": "wage",
+    "translation": "ish haqi"
+  },
+  {
+    "word": "output",
+    "translation": "mahsulot, natija"
+  },
+  {
+    "word": "rear",
+    "translation": "orqa"
+  },
+  {
+    "word": "welfare",
+    "translation": "farovonlik; ijtimoiy yordam"
+  },
+  {
+    "word": "essentially",
+    "translation": "aslida, mohiyatan"
+  },
+  {
+    "word": "odd",
+    "translation": "g'alati; toq"
+  },
+  {
+    "word": "boost",
+    "translation": "kuch, turtki"
+  },
+  {
+    "word": "crack",
+    "translation": "yoriq"
+  },
+  {
+    "word": "deck",
+    "translation": "paluba; dasta (karta)"
+  },
+  {
+    "word": "evolution",
+    "translation": "evolyutsiya, rivojlanish"
+  },
+  {
+    "word": "institution",
+    "translation": "muassasa"
+  },
+  {
+    "word": "memorial",
+    "translation": "yodgorlik"
+  },
+  {
+    "word": "priority",
+    "translation": "ustuvorlik"
+  },
+  {
+    "word": "whereas",
+    "translation": "holbuki"
+  },
+  {
+    "word": "alliance",
+    "translation": "ittifoq"
+  },
+  {
+    "word": "bid",
+    "translation": "taklif qilmoq (narx)"
+  },
+  {
+    "word": "decent",
+    "translation": "munosib, yaxshi"
+  },
+  {
+    "word": "elite",
+    "translation": "elita, saralar"
+  },
+  {
+    "word": "lifetime",
+    "translation": "umr"
+  },
+  {
+    "word": "mortgage",
+    "translation": "ipoteka"
+  },
+  {
+    "word": "potentially",
+    "translation": "ehtimol, potentsial jihatdan"
+  },
+  {
+    "word": "translation",
+    "translation": "tarjima"
+  },
+  {
+    "word": "enterprise",
+    "translation": "korxona"
+  },
+  {
+    "word": "mill",
+    "translation": "tegirmon"
+  },
+  {
+    "word": "spin",
+    "translation": "aylanmoq"
+  },
+  {
+    "word": "valid",
+    "translation": "amal qiladigan, haqiqiy"
+  },
+  {
+    "word": "vital",
+    "translation": "hayotiy muhim"
+  },
+  {
+    "word": "commerce",
+    "translation": "savdo"
+  },
+  {
+    "word": "fraud",
+    "translation": "firibgarlik"
+  },
+  {
+    "word": "genuine",
+    "translation": "haqiqiy, chin"
+  },
+  {
+    "word": "hook",
+    "translation": "ilmoq, ilgak"
+  },
+  {
+    "word": "comprehensive",
+    "translation": "keng qamrovli"
+  },
+  {
+    "word": "consent",
+    "translation": "rozilik"
+  },
+  {
+    "word": "divorce",
+    "translation": "ajrashish"
+  },
+  {
+    "word": "fate",
+    "translation": "taqdir"
+  },
+  {
+    "word": "headquarters",
+    "translation": "bosh qarorgoh, bosh ofis"
+  },
+  {
+    "word": "heritage",
+    "translation": "meros"
+  },
+  {
+    "word": "initiative",
+    "translation": "tashabbus"
+  },
+  {
+    "word": "residence",
+    "translation": "turar joy"
+  },
+  {
+    "word": "ambassador",
+    "translation": "elchi"
+  },
+  {
+    "word": "corruption",
+    "translation": "korrupsiya"
+  },
+  {
+    "word": "exception",
+    "translation": "istisno"
+  },
+  {
+    "word": "input",
+    "translation": "hissa; kiritish"
+  },
+  {
+    "word": "outcome",
+    "translation": "natija"
+  },
+  {
+    "word": "ease",
+    "translation": "osonlik"
+  },
+  {
+    "word": "fame",
+    "translation": "shuhrat"
+  },
+  {
+    "word": "rally",
+    "translation": "miting; ralli"
+  },
+  {
+    "word": "swing",
+    "translation": "arg'imchoq"
+  },
+  {
+    "word": "alert",
+    "translation": "ogohlantirmoq"
+  },
+  {
+    "word": "arena",
+    "translation": "arena"
+  },
+  {
+    "word": "compensation",
+    "translation": "tovon puli"
+  },
+  {
+    "word": "ethnic",
+    "translation": "etnik, milliy"
+  },
+  {
+    "word": "fleet",
+    "translation": "flot, parki"
+  },
+  {
+    "word": "fundamental",
+    "translation": "asosiy, tub"
+  },
+  {
+    "word": "genius",
+    "translation": "daho"
+  },
+  {
+    "word": "participation",
+    "translation": "ishtirok"
+  },
+  {
+    "word": "proven",
+    "translation": "isbotlangan"
+  },
+  {
+    "word": "radical",
+    "translation": "radikal, keskin"
+  },
+  {
+    "word": "transmission",
+    "translation": "uzatish"
+  },
+  {
+    "word": "blast",
+    "translation": "portlash"
+  },
+  {
+    "word": "component",
+    "translation": "qism, tarkibiy qism"
+  },
+  {
+    "word": "faculty",
+    "translation": "fakultet"
+  },
+  {
+    "word": "feedback",
+    "translation": "fikr-mulohaza"
+  },
+  {
+    "word": "innovation",
+    "translation": "yangilik, innovatsiya"
+  },
+  {
+    "word": "legislative",
+    "translation": "qonun chiqaruvchi"
+  },
+  {
+    "word": "manual",
+    "translation": "qo'lda bajariladigan"
+  },
+  {
+    "word": "operator",
+    "translation": "operator"
+  },
+  {
+    "word": "punch",
+    "translation": "musht"
+  },
+  {
+    "word": "trailer",
+    "translation": "treyler, anons"
+  },
+  {
+    "word": "versus",
+    "translation": "qarshi"
+  },
+  {
+    "word": "amongst",
+    "translation": "orasida"
+  },
+  {
+    "word": "biological",
+    "translation": "biologik"
+  },
+  {
+    "word": "chip",
+    "translation": "chip; chips (kartoshka)"
+  },
+  {
+    "word": "database",
+    "translation": "ma'lumotlar bazasi"
+  },
+  {
+    "word": "disorder",
+    "translation": "buzilish, kasallik"
+  },
+  {
+    "word": "dynamic",
+    "translation": "faol, dinamik"
+  },
+  {
+    "word": "engagement",
+    "translation": "unashtiruv"
+  },
+  {
+    "word": "investigate",
+    "translation": "tergov qilmoq"
+  },
+  {
+    "word": "mask",
+    "translation": "niqob"
+  },
+  {
+    "word": "psychology",
+    "translation": "psixologiya"
+  },
+  {
+    "word": "rocket",
+    "translation": "raketa"
+  },
+  {
+    "word": "stability",
+    "translation": "barqarorlik"
+  },
+  {
+    "word": "treaty",
+    "translation": "shartnoma (davlatlararo)"
+  },
+  {
+    "word": "cooperation",
+    "translation": "hamkorlik"
+  },
+  {
+    "word": "edit",
+    "translation": "tahrir"
+  },
+  {
+    "word": "equity",
+    "translation": "tenglik; aksiyadorlik ulushi"
+  },
+  {
+    "word": "hardware",
+    "translation": "apparat ta'minot"
+  },
+  {
+    "word": "intellectual",
+    "translation": "aqliy, intellektual"
+  },
+  {
+    "word": "involvement",
+    "translation": "ishtirok, aralashuv"
+  },
+  {
+    "word": "regime",
+    "translation": "tuzum, rejim"
+  },
+  {
+    "word": "seal",
+    "translation": "muhr; tyulen"
+  },
+  {
+    "word": "shield",
+    "translation": "qalqon"
+  },
+  {
+    "word": "throat",
+    "translation": "tomoq"
+  },
+  {
+    "word": "certificate",
+    "translation": "sertifikat, guvohnoma"
+  },
+  {
+    "word": "eligible",
+    "translation": "huquqli, munosib"
+  },
+  {
+    "word": "execution",
+    "translation": "bajarish; qatl"
+  },
+  {
+    "word": "polish",
+    "translation": "lak, jilo"
+  },
+  {
+    "word": "ton",
+    "translation": "tonna"
+  },
+  {
+    "word": "intent",
+    "translation": "qat'iy niyatli"
+  },
+  {
+    "word": "mature",
+    "translation": "yetuk"
+  },
+  {
+    "word": "prevention",
+    "translation": "oldini olish"
+  },
+  {
+    "word": "revenge",
+    "translation": "qasos"
+  },
+  {
+    "word": "spare",
+    "translation": "ehtiyot, zaxira"
+  },
+  {
+    "word": "submit",
+    "translation": "topshirmoq"
+  },
+  {
+    "word": "copper",
+    "translation": "mis"
+  },
+  {
+    "word": "dispute",
+    "translation": "nizo, bahs"
+  },
+  {
+    "word": "earnings",
+    "translation": "daromad"
+  },
+  {
+    "word": "hilarious",
+    "translation": "juda kulgili"
+  },
+  {
+    "word": "margin",
+    "translation": "hoshiya; farq"
+  },
+  {
+    "word": "stroke",
+    "translation": "insult; zarba"
+  },
+  {
+    "word": "utility",
+    "translation": "kommunal xizmat"
+  },
+  {
+    "word": "acquisition",
+    "translation": "egallash, sotib olish"
+  },
+  {
+    "word": "controversy",
+    "translation": "bahs-munozara"
+  },
+  {
+    "word": "fiscal",
+    "translation": "moliyaviy, soliq"
+  },
+  {
+    "word": "offense",
+    "translation": "huquqbuzarlik; ranjitish"
+  },
+  {
+    "word": "rip",
+    "translation": "yirtmoq"
+  },
+  {
+    "word": "segment",
+    "translation": "bo'lak, segment"
+  },
+  {
+    "word": "venture",
+    "translation": "tavakkal ish, korxona"
+  },
+  {
+    "word": "virtually",
+    "translation": "deyarli"
+  },
+  {
+    "word": "conventional",
+    "translation": "an'anaviy"
+  },
+  {
+    "word": "inspector",
+    "translation": "inspektor, nazoratchi"
+  },
+  {
+    "word": "mercy",
+    "translation": "rahm-shafqat"
+  },
+  {
+    "word": "venue",
+    "translation": "o'tkaziladigan joy"
+  },
+  {
+    "word": "conversion",
+    "translation": "aylantirish, almashtirish"
+  },
+  {
+    "word": "exclusively",
+    "translation": "faqat"
+  },
+  {
+    "word": "export",
+    "translation": "eksport"
+  },
+  {
+    "word": "formerly",
+    "translation": "ilgari"
+  },
+  {
+    "word": "functional",
+    "translation": "ishlaydigan, funksional"
+  },
+  {
+    "word": "noble",
+    "translation": "olijanob"
+  },
+  {
+    "word": "popularity",
+    "translation": "mashhurlik"
+  },
+  {
+    "word": "toxic",
+    "translation": "zaharli"
+  },
+  {
+    "word": "upgrade",
+    "translation": "yangilash, yaxshilash"
+  },
+  {
+    "word": "actively",
+    "translation": "faol ravishda"
+  },
+  {
+    "word": "coalition",
+    "translation": "koalitsiya, ittifoq"
+  },
+  {
+    "word": "discipline",
+    "translation": "intizom"
+  },
+  {
+    "word": "instantly",
+    "translation": "darhol"
+  },
+  {
+    "word": "legendary",
+    "translation": "afsonaviy"
+  },
+  {
+    "word": "recipe",
+    "translation": "retsept"
+  },
+  {
+    "word": "serial",
+    "translation": "ketma-ket; seriyali"
+  },
+  {
+    "word": "substance",
+    "translation": "modda"
+  },
+  {
+    "word": "affordable",
+    "translation": "hamyonbop"
+  },
+  {
+    "word": "completion",
+    "translation": "tugallanish"
+  },
+  {
+    "word": "employer",
+    "translation": "ish beruvchi"
+  },
+  {
+    "word": "fluid",
+    "translation": "suyuqlik; ravon"
+  },
+  {
+    "word": "interpretation",
+    "translation": "talqin; og'zaki tarjima"
+  },
+  {
+    "word": "legitimate",
+    "translation": "qonuniy, asosli"
+  },
+  {
+    "word": "outfit",
+    "translation": "kiyim to'plami"
+  },
+  {
+    "word": "pension",
+    "translation": "pensiya"
+  },
+  {
+    "word": "sue",
+    "translation": "sudga bermoq"
+  },
+  {
+    "word": "evaluation",
+    "translation": "baholash"
+  },
+  {
+    "word": "holder",
+    "translation": "egasi; ushlagich"
+  },
+  {
+    "word": "hood",
+    "translation": "kapyushon"
+  },
+  {
+    "word": "identical",
+    "translation": "bir xil, aynan o'xshash"
+  },
+  {
+    "word": "manufacturer",
+    "translation": "ishlab chiqaruvchi"
+  },
+  {
+    "word": "skip",
+    "translation": "o'tkazib yubormoq"
+  },
+  {
+    "word": "snap",
+    "translation": "qarsillab sinmoq"
+  },
+  {
+    "word": "veteran",
+    "translation": "faxriy"
+  },
+  {
+    "word": "additionally",
+    "translation": "bundan tashqari"
+  },
+  {
+    "word": "dose",
+    "translation": "doza, miqdor"
+  },
+  {
+    "word": "flesh",
+    "translation": "et (tana go'shti)"
+  },
+  {
+    "word": "flip",
+    "translation": "ag'darmoq"
+  },
+  {
+    "word": "implement",
+    "translation": "asbob, qurol"
+  },
+  {
+    "word": "laser",
+    "translation": "lazer"
+  },
+  {
+    "word": "patch",
+    "translation": "yamoq"
+  },
+  {
+    "word": "precisely",
+    "translation": "aynan, aniq"
+  },
+  {
+    "word": "privilege",
+    "translation": "imtiyoz, sharaf"
+  },
+  {
+    "word": "radar",
+    "translation": "radar"
+  },
+  {
+    "word": "villa",
+    "translation": "villa, dala hovli"
+  },
+  {
+    "word": "blade",
+    "translation": "tig'"
+  },
+  {
+    "word": "destiny",
+    "translation": "taqdir"
+  },
+  {
+    "word": "nerve",
+    "translation": "asab; jur'at"
+  },
+  {
+    "word": "nightmare",
+    "translation": "dahshatli tush"
+  },
+  {
+    "word": "practically",
+    "translation": "deyarli; amalda"
+  },
+  {
+    "word": "ram",
+    "translation": "qo'chqor"
+  },
+  {
+    "word": "cherry",
+    "translation": "olcha, gilos"
+  },
+  {
+    "word": "classification",
+    "translation": "tasniflash"
+  },
+  {
+    "word": "costume",
+    "translation": "libos, kostyum"
+  },
+  {
+    "word": "grain",
+    "translation": "don"
+  },
+  {
+    "word": "identification",
+    "translation": "shaxsni tasdiqlash"
+  },
+  {
+    "word": "lap",
+    "translation": "tizza (o'tirganda); aylana (yugurishda)"
+  },
+  {
+    "word": "mixture",
+    "translation": "aralashma"
+  },
+  {
+    "word": "perception",
+    "translation": "idrok, tasavvur"
+  },
+  {
+    "word": "physician",
+    "translation": "shifokor"
+  },
+  {
+    "word": "rival",
+    "translation": "raqib"
+  },
+  {
+    "word": "spray",
+    "translation": "purkagich, sprey"
+  },
+  {
+    "word": "verse",
+    "translation": "she'r; band"
+  },
+  {
+    "word": "adoption",
+    "translation": "farzandlikka olish; qabul qilish"
+  },
+  {
+    "word": "anonymous",
+    "translation": "nomi noma'lum, anonim"
+  },
+  {
+    "word": "attendance",
+    "translation": "qatnashish, davomat"
+  },
+  {
+    "word": "colonial",
+    "translation": "mustamlaka"
+  },
+  {
+    "word": "genre",
+    "translation": "janr"
+  },
+  {
+    "word": "lease",
+    "translation": "ijara shartnomasi"
+  },
+  {
+    "word": "revolutionary",
+    "translation": "inqilobiy"
+  },
+  {
+    "word": "scandal",
+    "translation": "janjal, mojaro"
+  },
+  {
+    "word": "surveillance",
+    "translation": "kuzatuv"
+  },
+  {
+    "word": "testimony",
+    "translation": "guvohlik"
+  },
+  {
+    "word": "ash",
+    "translation": "kul"
+  },
+  {
+    "word": "embrace",
+    "translation": "quchoq"
+  },
+  {
+    "word": "exhibit",
+    "translation": "ko'rgazmaga qo'ymoq"
+  },
+  {
+    "word": "icon",
+    "translation": "belgi, ikonka; timsol"
+  },
+  {
+    "word": "legislature",
+    "translation": "qonun chiqaruvchi organ"
+  },
+  {
+    "word": "parade",
+    "translation": "parad"
+  },
+  {
+    "word": "preliminary",
+    "translation": "dastlabki"
+  },
+  {
+    "word": "presidency",
+    "translation": "prezidentlik"
+  },
+  {
+    "word": "rocky",
+    "translation": "toshloq"
+  },
+  {
+    "word": "strictly",
+    "translation": "qat'iy ravishda"
+  },
+  {
+    "word": "yield",
+    "translation": "hosil bermoq"
+  },
+  {
+    "word": "barrier",
+    "translation": "to'siq"
+  },
+  {
+    "word": "medication",
+    "translation": "dori"
+  },
+  {
+    "word": "stake",
+    "translation": "ulush; qoziq"
+  },
+  {
+    "word": "swift",
+    "translation": "tez, chaqqon"
+  },
+  {
+    "word": "torture",
+    "translation": "qiynamoq"
+  },
+  {
+    "word": "addiction",
+    "translation": "qaramlik, tobelik"
+  },
+  {
+    "word": "beam",
+    "translation": "nur; to'sin"
+  },
+  {
+    "word": "corrupt",
+    "translation": "poraxo'r, buzuq"
+  },
+  {
+    "word": "inflation",
+    "translation": "inflyatsiya"
+  },
+  {
+    "word": "justify",
+    "translation": "oqlamoq, asoslamoq"
+  },
+  {
+    "word": "migration",
+    "translation": "ko'chish, migratsiya"
+  },
+  {
+    "word": "missile",
+    "translation": "raketa (qurol)"
+  },
+  {
+    "word": "pearl",
+    "translation": "marvarid"
+  },
+  {
+    "word": "peer",
+    "translation": "tengdosh"
+  },
+  {
+    "word": "provision",
+    "translation": "ta'minlash; qoida"
+  },
+  {
+    "word": "tattoo",
+    "translation": "tatuirovka"
+  },
+  {
+    "word": "availability",
+    "translation": "mavjudlik, bo'shlik"
+  },
+  {
+    "word": "chancellor",
+    "translation": "kansler"
+  },
+  {
+    "word": "consciousness",
+    "translation": "hush, ong"
+  },
+  {
+    "word": "consultant",
+    "translation": "maslahatchi"
+  },
+  {
+    "word": "courtesy",
+    "translation": "xushmuomalalik"
+  },
+  {
+    "word": "embassy",
+    "translation": "elchixona"
+  },
+  {
+    "word": "flexible",
+    "translation": "egiluvchan, moslashuvchan"
+  },
+  {
+    "word": "helicopter",
+    "translation": "vertolyot"
+  },
+  {
+    "word": "keen",
+    "translation": "ishtiyoqmand"
+  },
+  {
+    "word": "prospect",
+    "translation": "istiqbol"
+  },
+  {
+    "word": "retreat",
+    "translation": "chekinish; dam olish joyi"
+  },
+  {
+    "word": "excessive",
+    "translation": "haddan tashqari"
+  },
+  {
+    "word": "journalism",
+    "translation": "jurnalistika"
+  },
+  {
+    "word": "pursuit",
+    "translation": "izlash, intilish"
+  },
+  {
+    "word": "reminder",
+    "translation": "eslatma"
+  },
+  {
+    "word": "resume",
+    "translation": "davom ettirmoq"
+  },
+  {
+    "word": "ridge",
+    "translation": "tog' tizmasi"
+  },
+  {
+    "word": "tribe",
+    "translation": "qabila"
+  },
+  {
+    "word": "alternate",
+    "translation": "navbatlashtirmoq"
+  },
+  {
+    "word": "bankruptcy",
+    "translation": "bankrotlik"
+  },
+  {
+    "word": "canon",
+    "translation": "qonun-qoida; kanon"
+  },
+  {
+    "word": "closure",
+    "translation": "yopilish"
+  },
+  {
+    "word": "convert",
+    "translation": "aylantirmoq"
+  },
+  {
+    "word": "dental",
+    "translation": "tish"
+  },
+  {
+    "word": "editorial",
+    "translation": "tahririyat maqolasi"
+  },
+  {
+    "word": "grip",
+    "translation": "ushlash, changal"
+  },
+  {
+    "word": "humble",
+    "translation": "kamtar"
+  },
+  {
+    "word": "hybrid",
+    "translation": "gibrid"
+  },
+  {
+    "word": "openly",
+    "translation": "ochiqchasiga"
+  },
+  {
+    "word": "voter",
+    "translation": "saylovchi"
+  },
+  {
+    "word": "ally",
+    "translation": "ittifoqchi"
+  },
+  {
+    "word": "booth",
+    "translation": "kabina, do'kon"
+  },
+  {
+    "word": "breakdown",
+    "translation": "buzilish; tushkunlik"
+  },
+  {
+    "word": "consensus",
+    "translation": "umumiy kelishuv"
+  },
+  {
+    "word": "fatal",
+    "translation": "halokatli"
+  },
+  {
+    "word": "genuinely",
+    "translation": "chin dildan"
+  },
+  {
+    "word": "import",
+    "translation": "import qilmoq"
+  },
+  {
+    "word": "innovative",
+    "translation": "innovatsion"
+  },
+  {
+    "word": "mighty",
+    "translation": "qudratli"
+  },
+  {
+    "word": "pine",
+    "translation": "qarag'ay"
+  },
+  {
+    "word": "pose",
+    "translation": "holat, poza"
+  },
+  {
+    "word": "rental",
+    "translation": "ijara"
+  },
+  {
+    "word": "technically",
+    "translation": "texnik jihatdan; rasman"
+  },
+  {
+    "word": "unlimited",
+    "translation": "cheksiz"
+  },
+  {
+    "word": "darling",
+    "translation": "azizim, jonim"
+  },
+  {
+    "word": "influential",
+    "translation": "nufuzli, ta'sirli"
+  },
+  {
+    "word": "invisible",
+    "translation": "ko'rinmas"
+  },
+  {
+    "word": "lawsuit",
+    "translation": "da'vo (sudda)"
+  },
+  {
+    "word": "leak",
+    "translation": "oqish, sizish"
+  },
+  {
+    "word": "olive",
+    "translation": "zaytun"
+  },
+  {
+    "word": "passionate",
+    "translation": "ishtiyoqli, otashin"
+  },
+  {
+    "word": "recommendation",
+    "translation": "tavsiya"
+  },
+  {
+    "word": "servant",
+    "translation": "xizmatkor"
+  },
+  {
+    "word": "smash",
+    "translation": "chilparchin qilmoq"
+  },
+  {
+    "word": "surrender",
+    "translation": "taslim bo'lmoq"
+  },
+  {
+    "word": "suspicious",
+    "translation": "shubhali"
+  },
+  {
+    "word": "tender",
+    "translation": "yumshoq; mehribon"
+  },
+  {
+    "word": "thoroughly",
+    "translation": "puxta, sinchiklab"
+  },
+  {
+    "word": "beneficial",
+    "translation": "foydali"
+  },
+  {
+    "word": "bud",
+    "translation": "kurtak"
+  },
+  {
+    "word": "console",
+    "translation": "tasalli bermoq"
+  },
+  {
+    "word": "fabulous",
+    "translation": "ajoyib"
+  },
+  {
+    "word": "freak",
+    "translation": "vahimaga tushmoq (freak out)"
+  },
+  {
+    "word": "gambling",
+    "translation": "qimor"
+  },
+  {
+    "word": "gently",
+    "translation": "muloyimlik bilan, ohista"
+  },
+  {
+    "word": "grief",
+    "translation": "qayg'u"
+  },
+  {
+    "word": "micro",
+    "translation": "mikro"
+  },
+  {
+    "word": "pastor",
+    "translation": "ruhoniy (pastor)"
+  },
+  {
+    "word": "rebel",
+    "translation": "isyonchi"
+  },
+  {
+    "word": "separately",
+    "translation": "alohida-alohida"
+  },
+  {
+    "word": "subtle",
+    "translation": "nozik, sezilar-sezilmas"
+  },
+  {
+    "word": "toll",
+    "translation": "yo'l haqi"
+  },
+  {
+    "word": "trainer",
+    "translation": "murabbiy; krossovka"
+  },
+  {
+    "word": "variation",
+    "translation": "o'zgarish, xil"
+  },
+  {
+    "word": "widow",
+    "translation": "beva ayol"
+  },
+  {
+    "word": "assumption",
+    "translation": "taxmin, faraz"
+  },
+  {
+    "word": "bio",
+    "translation": "qisqacha tarjimai hol"
+  },
+  {
+    "word": "capability",
+    "translation": "qobiliyat, imkoniyat"
+  },
+  {
+    "word": "drain",
+    "translation": "oqova, quvur"
+  },
+  {
+    "word": "flame",
+    "translation": "alanga"
+  },
+  {
+    "word": "hint",
+    "translation": "ishora"
+  },
+  {
+    "word": "nationwide",
+    "translation": "butun mamlakat bo'ylab"
+  },
+  {
+    "word": "nicely",
+    "translation": "yaxshi, chiroyli"
+  },
+  {
+    "word": "nomination",
+    "translation": "nomzodlik"
+  },
+  {
+    "word": "obligation",
+    "translation": "majburiyat"
+  },
+  {
+    "word": "outlook",
+    "translation": "qarash; istiqbol"
+  },
+  {
+    "word": "petty",
+    "translation": "mayda, arzimas"
+  },
+  {
+    "word": "reed",
+    "translation": "qamish"
+  },
+  {
+    "word": "span",
+    "translation": "qamrab olmoq, davom etmoq"
+  },
+  {
+    "word": "accommodation",
+    "translation": "turar joy"
+  },
+  {
+    "word": "assure",
+    "translation": "ishontirmoq"
+  },
+  {
+    "word": "ballot",
+    "translation": "saylov byulleteni"
+  },
+  {
+    "word": "cemetery",
+    "translation": "qabriston"
+  },
+  {
+    "word": "cheat",
+    "translation": "aldamoq, ko'chirmoq"
+  },
+  {
+    "word": "deficit",
+    "translation": "kamomad, taqchillik"
+  },
+  {
+    "word": "fiber",
+    "translation": "tola, kletchatka"
+  },
+  {
+    "word": "independently",
+    "translation": "mustaqil ravishda"
+  },
+  {
+    "word": "interactive",
+    "translation": "interfaol"
+  },
+  {
+    "word": "intimate",
+    "translation": "yaqin, samimiy"
+  },
+  {
+    "word": "laundry",
+    "translation": "kir (yuviladigan kiyim)"
+  },
+  {
+    "word": "politically",
+    "translation": "siyosiy jihatdan"
+  },
+  {
+    "word": "presumably",
+    "translation": "ehtimol, taxminan"
+  },
+  {
+    "word": "pulse",
+    "translation": "tomir urishi"
+  },
+  {
+    "word": "temporarily",
+    "translation": "vaqtincha"
+  },
+  {
+    "word": "coverage",
+    "translation": "yoritish; qamrov"
+  },
+  {
+    "word": "debut",
+    "translation": "ilk chiqish"
+  },
+  {
+    "word": "clinical",
+    "translation": "klinik"
+  },
+  {
+    "word": "hence",
+    "translation": "shuning uchun"
+  },
+  {
+    "word": "whilst",
+    "translation": "...gan paytda; holbuki"
+  },
+  {
+    "word": "legacy",
+    "translation": "meros"
+  },
+  {
+    "word": "diversity",
+    "translation": "xilma-xillik"
+  },
+  {
+    "word": "sacrifice",
+    "translation": "qurbonlik, fidoyilik"
+  },
+  {
+    "word": "carrier",
+    "translation": "tashuvchi"
+  },
+  {
+    "word": "collaboration",
+    "translation": "hamkorlik"
+  },
+  {
+    "word": "mechanism",
+    "translation": "mexanizm"
+  },
+  {
+    "word": "quest",
+    "translation": "izlanish"
+  },
+  {
+    "word": "suspension",
+    "translation": "to'xtatib qo'yish; osma (mashina)"
+  },
+  {
+    "word": "dominant",
+    "translation": "ustun, hukmron"
+  },
+  {
+    "word": "charter",
+    "translation": "ijaraga olmoq (samolyot, avtobus)"
+  },
+  {
+    "word": "amateur",
+    "translation": "havaskor"
+  },
+  {
+    "word": "criteria",
+    "translation": "mezonlar"
+  },
+  {
+    "word": "transit",
+    "translation": "tranzit, tashish"
+  },
+  {
+    "word": "scenario",
+    "translation": "ssenariy, holat"
+  },
+  {
+    "word": "bulk",
+    "translation": "katta qism; ulgurji"
+  },
+  {
+    "word": "advisory",
+    "translation": "maslahat beruvchi"
+  },
+  {
+    "word": "structural",
+    "translation": "tuzilmaviy"
+  },
+  {
+    "word": "chill",
+    "translation": "sovutmoq; dam olmoq"
+  },
+  {
+    "word": "compliance",
+    "translation": "rioya qilish"
+  },
+  {
+    "word": "magnetic",
+    "translation": "magnitli"
+  },
+  {
+    "word": "marvel",
+    "translation": "hayratlanmoq"
+  },
+  {
+    "word": "vertical",
+    "translation": "tik, vertikal"
+  },
+  {
+    "word": "trauma",
+    "translation": "jarohat; ruhiy zarba"
+  },
+  {
+    "word": "conviction",
+    "translation": "ishonch, e'tiqod; hukm"
+  },
+  {
+    "word": "duration",
+    "translation": "davomiylik"
+  },
+  {
+    "word": "linear",
+    "translation": "chiziqli"
+  },
+  {
+    "word": "restoration",
+    "translation": "ta'mirlash, tiklash"
+  },
+  {
+    "word": "jurisdiction",
+    "translation": "yurisdiksiya, vakolat"
+  },
+  {
+    "word": "facial",
+    "translation": "yuz (ga oid)"
+  },
+  {
+    "word": "contractor",
+    "translation": "pudratchi"
+  },
+  {
+    "word": "notable",
+    "translation": "e'tiborga molik"
+  },
+  {
+    "word": "hostile",
+    "translation": "dushmanona"
+  },
+  {
+    "word": "ethical",
+    "translation": "axloqiy"
+  },
+  {
+    "word": "testament",
+    "translation": "isbot, dalil"
+  },
+  {
+    "word": "elaborate",
+    "translation": "batafsil, murakkab"
+  },
+  {
+    "word": "demo",
+    "translation": "namoyish versiyasi"
+  },
+  {
+    "word": "hack",
+    "translation": "buzib kirmoq"
+  },
+  {
+    "word": "comply",
+    "translation": "bo'ysunmoq, rioya qilmoq"
+  },
+  {
+    "word": "thereby",
+    "translation": "shu tariqa"
+  },
+  {
+    "word": "sentiment",
+    "translation": "his-tuyg'u, kayfiyat"
+  },
+  {
+    "word": "verdict",
+    "translation": "hukm, qaror"
+  },
+  {
+    "word": "peninsula",
+    "translation": "yarim orol"
+  },
+  {
+    "word": "ego",
+    "translation": "o'zlik, manmanlik"
+  },
+  {
+    "word": "fusion",
+    "translation": "qo'shilish, uyg'unlashuv"
+  },
+  {
+    "word": "aesthetic",
+    "translation": "estetik, go'zallikka oid"
+  },
+  {
+    "word": "consultation",
+    "translation": "maslahat (mutaxassis bilan)"
+  },
+  {
+    "word": "inclusion",
+    "translation": "kiritish, qamrash"
+  },
+  {
+    "word": "harassment",
+    "translation": "ta'qib, bezovta qilish"
+  },
+  {
+    "word": "precision",
+    "translation": "aniqlik"
+  },
+  {
+    "word": "voluntary",
+    "translation": "ixtiyoriy"
+  },
+  {
+    "word": "crude",
+    "translation": "xom; qo'pol"
+  },
+  {
+    "word": "fossil",
+    "translation": "qoldiq (toshga aylangan)"
+  },
+  {
+    "word": "speculation",
+    "translation": "taxmin, mish-mish"
+  },
+  {
+    "word": "wicked",
+    "translation": "yovuz, yomon"
+  },
+  {
+    "word": "sequel",
+    "translation": "davomi (film, kitob)"
+  },
+  {
+    "word": "acoustic",
+    "translation": "akustik"
+  },
+  {
+    "word": "prophet",
+    "translation": "payg'ambar"
+  },
+  {
+    "word": "gig",
+    "translation": "konsert, chiqish"
+  },
+  {
+    "word": "portable",
+    "translation": "ko'chma, olib yuriladigan"
+  },
+  {
+    "word": "clan",
+    "translation": "urug', qabila"
+  },
+  {
+    "word": "succession",
+    "translation": "ketma-ketlik; voris bo'lish"
+  },
+  {
+    "word": "inclusive",
+    "translation": "hammani qamrab oluvchi; ...ni ham qo'shib"
+  },
+  {
+    "word": "substantially",
+    "translation": "sezilarli darajada"
+  },
+  {
+    "word": "fraction",
+    "translation": "kasr; kichik qism"
+  },
+  {
+    "word": "circulation",
+    "translation": "qon aylanishi; tarqalish"
+  },
+  {
+    "word": "integral",
+    "translation": "ajralmas"
+  },
+  {
+    "word": "salvation",
+    "translation": "najot"
+  },
+  {
+    "word": "amid",
+    "translation": "orasida, o'rtasida"
+  },
+  {
+    "word": "synthetic",
+    "translation": "sun'iy, sintetik"
+  },
+  {
+    "word": "robust",
+    "translation": "mustahkam, baquvvat"
+  },
+  {
+    "word": "swap",
+    "translation": "almashtirmoq"
+  },
+  {
+    "word": "profound",
+    "translation": "chuqur"
+  },
+  {
+    "word": "terrain",
+    "translation": "joy relyefi"
+  },
+  {
+    "word": "acre",
+    "translation": "akr (yer o'lchovi)"
+  },
+  {
+    "word": "descent",
+    "translation": "tushish; kelib chiqish"
+  },
+  {
+    "word": "demographic",
+    "translation": "demografik"
+  },
+  {
+    "word": "exterior",
+    "translation": "tashqi ko'rinish"
+  },
+  {
+    "word": "pioneer",
+    "translation": "kashshof bo'lmoq"
+  },
+  {
+    "word": "likelihood",
+    "translation": "ehtimollik"
+  },
+  {
+    "word": "suburban",
+    "translation": "shahar chetidagi"
+  },
+  {
+    "word": "withdrawn",
+    "translation": "odamovi, o'zini olib qochuvchi"
+  },
+  {
+    "word": "elevation",
+    "translation": "balandlik (dengiz sathidan)"
+  },
+  {
+    "word": "juvenile",
+    "translation": "voyaga yetmagan shaxs"
+  },
+  {
+    "word": "immense",
+    "translation": "ulkan"
+  },
+  {
+    "word": "clutch",
+    "translation": "mahkam ushlamoq"
+  },
+  {
+    "word": "credibility",
+    "translation": "ishonchlilik"
+  },
+  {
+    "word": "psychiatric",
+    "translation": "psixiatrik"
+  },
+  {
+    "word": "gem",
+    "translation": "qimmatbaho tosh; durdona"
+  },
+  {
+    "word": "prospective",
+    "translation": "bo'lajak"
+  },
+  {
+    "word": "woo",
+    "translation": "o'ziga og'dirmoq"
+  },
+  {
+    "word": "irony",
+    "translation": "kinoya, taqdir o'yini"
+  },
+  {
+    "word": "fatigue",
+    "translation": "charchoq"
+  },
+  {
+    "word": "manipulation",
+    "translation": "manipulyatsiya, makkorlik"
+  },
+  {
+    "word": "obscure",
+    "translation": "to'smoq, xiralashtirmoq"
+  },
+  {
+    "word": "niche",
+    "translation": "o'z o'rni, tor soha"
+  },
+  {
+    "word": "exploitation",
+    "translation": "ekspluatatsiya, ishlatib olish"
+  },
+  {
+    "word": "atmospheric",
+    "translation": "atmosferaga oid; kayfiyatli"
+  },
+  {
+    "word": "violet",
+    "translation": "binafsha"
+  },
+  {
+    "word": "goose",
+    "translation": "g'oz"
+  },
+  {
+    "word": "organizational",
+    "translation": "tashkiliy"
+  },
+  {
+    "word": "vicious",
+    "translation": "shafqatsiz"
+  },
+  {
+    "word": "inherent",
+    "translation": "tug'ma, o'ziga xos"
+  },
+  {
+    "word": "discourse",
+    "translation": "nutq, munozara"
+  },
+  {
+    "word": "geological",
+    "translation": "geologik"
+  },
+  {
+    "word": "premise",
+    "translation": "asos, dastlabki fikr"
+  },
+  {
+    "word": "citation",
+    "translation": "iqtibos; havola"
+  },
+  {
+    "word": "predecessor",
+    "translation": "o'tmishdosh"
+  },
+  {
+    "word": "retention",
+    "translation": "saqlab qolish"
+  },
+  {
+    "word": "injustice",
+    "translation": "adolatsizlik"
+  },
+  {
+    "word": "carpenter",
+    "translation": "duradgor"
+  },
+  {
+    "word": "inheritance",
+    "translation": "meros"
+  },
+  {
+    "word": "traumatic",
+    "translation": "og'ir, ruhan zarbali"
+  },
+  {
+    "word": "faction",
+    "translation": "guruh (ichki)"
+  },
+  {
+    "word": "strap",
+    "translation": "tasma"
+  },
+  {
+    "word": "collaborative",
+    "translation": "hamkorlikdagi"
+  },
+  {
+    "word": "alignment",
+    "translation": "tekislash; muvofiqlik"
+  },
+  {
+    "word": "bliss",
+    "translation": "baxt, rohat"
+  },
+  {
+    "word": "render",
+    "translation": "qilmoq, aylantirmoq"
+  },
+  {
+    "word": "buffer",
+    "translation": "yumshatmoq, himoya qilmoq"
+  },
+  {
+    "word": "vegetation",
+    "translation": "o'simliklar"
+  },
+  {
+    "word": "continuity",
+    "translation": "uzluksizlik"
+  },
+  {
+    "word": "offspring",
+    "translation": "nasl, avlod"
+  },
+  {
+    "word": "simplicity",
+    "translation": "soddalik"
+  },
+  {
+    "word": "prop",
+    "translation": "tirab qo'ymoq"
+  },
+  {
+    "word": "maternal",
+    "translation": "onalik; ona tomondan"
+  },
+  {
+    "word": "credible",
+    "translation": "ishonarli"
+  },
+  {
+    "word": "norms",
+    "translation": "me'yorlar"
+  },
+  {
+    "word": "twitch",
+    "translation": "uchmoq, pirpiramoq"
+  },
+  {
+    "word": "phenomenal",
+    "translation": "g'ayrioddiy, ajoyib"
+  },
+  {
+    "word": "forensic",
+    "translation": "sud-tibbiy"
+  },
+  {
+    "word": "endorsement",
+    "translation": "qo'llab-quvvatlash; reklama shartnomasi"
+  },
+  {
+    "word": "remotely",
+    "translation": "masofadan; zarracha"
+  },
+  {
+    "word": "specification",
+    "translation": "tavsif, xususiyat"
+  },
+  {
+    "word": "naive",
+    "translation": "sodda, go'l"
+  },
+  {
+    "word": "scrutiny",
+    "translation": "sinchkov tekshiruv"
+  },
+  {
+    "word": "stray",
+    "translation": "adashib qolmoq"
+  },
+  {
+    "word": "stoke",
+    "translation": "olovni kuchaytirmoq"
+  },
+  {
+    "word": "specimen",
+    "translation": "namuna"
+  },
+  {
+    "word": "sponsorship",
+    "translation": "homiylik"
+  },
+  {
+    "word": "persecution",
+    "translation": "ta'qib qilish"
+  },
+  {
+    "word": "insecure",
+    "translation": "o'ziga ishonmaydigan"
+  },
+  {
+    "word": "voluntarily",
+    "translation": "ixtiyoriy ravishda"
+  },
+  {
+    "word": "classy",
+    "translation": "nafis, didli"
+  },
+  {
+    "word": "occupational",
+    "translation": "kasbiy"
+  },
+  {
+    "word": "induction",
+    "translation": "tanishtiruv (ishga yangi kelganlarga)"
+  },
+  {
+    "word": "spontaneous",
+    "translation": "o'z-o'zidan, kutilmagan"
+  },
+  {
+    "word": "slack",
+    "translation": "bo'shashmoq"
+  },
+  {
+    "word": "marginal",
+    "translation": "ahamiyatsiz, chekka"
+  },
+  {
+    "word": "tract",
+    "translation": "hudud, yer maydoni"
+  },
+  {
+    "word": "psychiatrist",
+    "translation": "psixiatr"
+  },
+  {
+    "word": "genome",
+    "translation": "genom"
+  },
+  {
+    "word": "meaningless",
+    "translation": "ma'nosiz"
+  },
+  {
+    "word": "domination",
+    "translation": "hukmronlik"
+  },
+  {
+    "word": "apprentice",
+    "translation": "shogird"
+  },
+  {
+    "word": "purity",
+    "translation": "tozalik, poklik"
+  },
+  {
+    "word": "apt",
+    "translation": "o'rinli, mos"
+  },
+  {
+    "word": "exodus",
+    "translation": "ommaviy ko'chish"
+  },
+  {
+    "word": "preach",
+    "translation": "va'z qilmoq"
+  },
+  {
+    "word": "realism",
+    "translation": "realizm"
+  },
+  {
+    "word": "plaque",
+    "translation": "lavha; tish karashi"
+  },
+  {
+    "word": "preacher",
+    "translation": "va'zxon"
+  },
+  {
+    "word": "durable",
+    "translation": "chidamli"
+  },
+  {
+    "word": "mutually",
+    "translation": "o'zaro"
+  },
+  {
+    "word": "staple",
+    "translation": "asosiy oziq-ovqat; skrepka"
+  },
+  {
+    "word": "protagonist",
+    "translation": "bosh qahramon"
+  },
+  {
+    "word": "cite",
+    "translation": "keltirmoq (iqtibos)"
+  },
+  {
+    "word": "snail",
+    "translation": "shilliqqurt"
+  },
+  {
+    "word": "muscular",
+    "translation": "mushakdor"
+  },
+  {
+    "word": "commercially",
+    "translation": "tijoriy jihatdan"
+  },
+  {
+    "word": "fixture",
+    "translation": "o'rnatilgan jihoz; o'yin"
+  },
+  {
+    "word": "demise",
+    "translation": "halokat, tugash"
+  },
+  {
+    "word": "versatile",
+    "translation": "ko'p qirrali"
+  },
+  {
+    "word": "ruthless",
+    "translation": "shafqatsiz"
+  },
+  {
+    "word": "indefinitely",
+    "translation": "cheksiz muddatga"
+  },
+  {
+    "word": "posture",
+    "translation": "qad-qomat holati"
+  },
+  {
+    "word": "salvage",
+    "translation": "qutqarib qolmoq"
+  },
+  {
+    "word": "anthropology",
+    "translation": "antropologiya"
+  },
+  {
+    "word": "hypocrisy",
+    "translation": "ikkiyuzlamachilik"
+  },
+  {
+    "word": "plausible",
+    "translation": "ishonarli"
+  },
+  {
+    "word": "mythology",
+    "translation": "mifologiya"
+  },
+  {
+    "word": "assertion",
+    "translation": "da'vo, ta'kid"
+  },
+  {
+    "word": "align",
+    "translation": "tekislamoq; moslashtirmoq"
+  },
+  {
+    "word": "flick",
+    "translation": "chertmoq"
+  },
+  {
+    "word": "portray",
+    "translation": "tasvirlamoq"
+  },
+  {
+    "word": "comprise",
+    "translation": "tashkil topmoq"
+  },
+  {
+    "word": "beforehand",
+    "translation": "oldindan"
+  },
+  {
+    "word": "peasant",
+    "translation": "dehqon (qadimgi)"
+  },
+  {
+    "word": "fuse",
+    "translation": "birlashtirmoq"
+  },
+  {
+    "word": "sarcasm",
+    "translation": "kinoya, piching"
+  },
+  {
+    "word": "demolition",
+    "translation": "buzib tashlash"
+  },
+  {
+    "word": "resin",
+    "translation": "smola"
+  },
+  {
+    "word": "pigeon",
+    "translation": "kaptar"
+  },
+  {
+    "word": "hostility",
+    "translation": "adovat"
+  },
+  {
+    "word": "tailor",
+    "translation": "tikuvchi"
+  },
+  {
+    "word": "reminiscent",
+    "translation": "eslatuvchi"
+  },
+  {
+    "word": "cavity",
+    "translation": "bo'shliq; tish kovagi"
+  },
+  {
+    "word": "isolate",
+    "translation": "ajratib qo'ymoq"
+  },
+  {
+    "word": "climax",
+    "translation": "avj nuqtasi"
+  },
+  {
+    "word": "quarry",
+    "translation": "karyer, tosh koni"
+  },
+  {
+    "word": "sarcastic",
+    "translation": "kinoyali"
+  },
+  {
+    "word": "degradation",
+    "translation": "yomonlashuv, buzilish"
+  },
+  {
+    "word": "prolific",
+    "translation": "sermahsul"
+  },
+  {
+    "word": "ventilation",
+    "translation": "shamollatish"
+  },
+  {
+    "word": "adjustable",
+    "translation": "sozlanadigan"
+  },
+  {
+    "word": "sap",
+    "translation": "shira (daraxt)"
+  },
+  {
+    "word": "inherently",
+    "translation": "tabiatan"
+  },
+  {
+    "word": "plumbing",
+    "translation": "suv quvurlari"
+  },
+  {
+    "word": "conditional",
+    "translation": "shartli"
+  },
+  {
+    "word": "calorie",
+    "translation": "kaloriya"
+  },
+  {
+    "word": "cynical",
+    "translation": "kinik, hech narsaga ishonmaydigan"
+  },
+  {
+    "word": "elastic",
+    "translation": "rezina"
+  },
+  {
+    "word": "eccentric",
+    "translation": "g'alati odatli"
+  },
+  {
+    "word": "liaison",
+    "translation": "aloqa, bog'lovchi shaxs"
+  },
+  {
+    "word": "rotate",
+    "translation": "aylanmoq"
+  },
+  {
+    "word": "resilience",
+    "translation": "chidamlilik"
+  },
+  {
+    "word": "cloak",
+    "translation": "plash, yopinchiq"
+  },
+  {
+    "word": "wary",
+    "translation": "ehtiyotkor"
+  },
+  {
+    "word": "victorious",
+    "translation": "g'olib"
+  },
+  {
+    "word": "immensely",
+    "translation": "nihoyatda"
+  },
+  {
+    "word": "intuitive",
+    "translation": "tushunarli; ichki sezgiga asoslangan"
+  },
+  {
+    "word": "orchard",
+    "translation": "mevazor"
+  },
+  {
+    "word": "aquarium",
+    "translation": "akvarium"
+  },
+  {
+    "word": "superficial",
+    "translation": "yuzaki"
+  },
+  {
+    "word": "batter",
+    "translation": "qattiq urmoq"
+  },
+  {
+    "word": "waterfront",
+    "translation": "qirg'oq bo'yi"
+  },
+  {
+    "word": "convict",
+    "translation": "aybdor deb topmoq"
+  },
+  {
+    "word": "complementary",
+    "translation": "bir-birini to'ldiruvchi"
+  },
+  {
+    "word": "detrimental",
+    "translation": "zararli"
+  },
+  {
+    "word": "portrayal",
+    "translation": "tasvir"
+  },
+  {
+    "word": "expire",
+    "translation": "muddati tugamoq"
+  },
+  {
+    "word": "intuition",
+    "translation": "ichki sezgi"
+  },
+  {
+    "word": "screenplay",
+    "translation": "kino ssenariysi"
+  },
+  {
+    "word": "conform",
+    "translation": "moslashmoq, bo'ysunmoq"
+  },
+  {
+    "word": "plaster",
+    "translation": "gips; plastir"
+  },
+  {
+    "word": "knowledgeable",
+    "translation": "bilimdon"
+  },
+  {
+    "word": "customary",
+    "translation": "odatiy, an'anaviy"
+  },
+  {
+    "word": "flourish",
+    "translation": "gullab-yashnash; hashamatli harakat"
+  },
+  {
+    "word": "heroine",
+    "translation": "qahramon ayol"
+  },
+  {
+    "word": "sentimental",
+    "translation": "ta'sirchan, his-tuyg'uli"
+  },
+  {
+    "word": "reap",
+    "translation": "o'rmoq (hosil); natijasini ko'rmoq"
+  },
+  {
+    "word": "recess",
+    "translation": "tanaffus"
+  },
+  {
+    "word": "numb",
+    "translation": "uvishgan"
+  },
+  {
+    "word": "maneuver",
+    "translation": "mohirona harakatlantirmoq"
+  },
+  {
+    "word": "characterization",
+    "translation": "obraz yaratish"
+  },
+  {
+    "word": "quirky",
+    "translation": "o'ziga xos, g'alati"
+  },
+  {
+    "word": "alleviate",
+    "translation": "yengillatmoq"
+  },
+  {
+    "word": "adrenaline",
+    "translation": "adrenalin"
+  },
+  {
+    "word": "turmoil",
+    "translation": "notinchlik, g'alayon"
+  },
+  {
+    "word": "speculative",
+    "translation": "taxminiy"
+  },
+  {
+    "word": "collaborate",
+    "translation": "hamkorlik qilmoq"
+  },
+  {
+    "word": "parasite",
+    "translation": "parazit"
+  },
+  {
+    "word": "profoundly",
+    "translation": "chuqur, tubdan"
+  },
+  {
+    "word": "oversee",
+    "translation": "nazorat qilmoq"
+  },
+  {
+    "word": "benign",
+    "translation": "xavfsiz, zararsiz (o'sma)"
+  },
+  {
+    "word": "avid",
+    "translation": "ishqiboz"
+  },
+  {
+    "word": "tedious",
+    "translation": "zerikarli"
+  },
+  {
+    "word": "provoke",
+    "translation": "qo'zg'atmoq, gijgijlamoq"
+  },
+  {
+    "word": "bribe",
+    "translation": "pora bermoq"
+  },
+  {
+    "word": "resilient",
+    "translation": "chidamli"
+  },
+  {
+    "word": "canoe",
+    "translation": "kanoe (qayiq)"
+  },
+  {
+    "word": "lapse",
+    "translation": "xato, bo'shashish"
+  },
+  {
+    "word": "intellect",
+    "translation": "aql-zakovat"
+  },
+  {
+    "word": "plunge",
+    "translation": "sho'ng'imoq"
+  },
+  {
+    "word": "remorse",
+    "translation": "pushaymonlik"
+  },
+  {
+    "word": "speculate",
+    "translation": "taxmin qilmoq"
+  },
+  {
+    "word": "blockbuster",
+    "translation": "mashhur film (kassabop)"
+  },
+  {
+    "word": "notwithstanding",
+    "translation": "...ga qaramay"
+  },
+  {
+    "word": "flashback",
+    "translation": "o'tmishga qaytish (sahna)"
+  },
+  {
+    "word": "crave",
+    "translation": "qattiq istamoq"
+  },
+  {
+    "word": "apprenticeship",
+    "translation": "shogirdlik"
+  },
+  {
+    "word": "graft",
+    "translation": "payvand qilmoq"
+  },
+  {
+    "word": "elusive",
+    "translation": "tutqich bermas"
+  },
+  {
+    "word": "suffice",
+    "translation": "yetarli bo'lmoq"
+  },
+  {
+    "word": "confinement",
+    "translation": "qamalib qolish"
+  },
+  {
+    "word": "estimation",
+    "translation": "baho, fikr"
+  },
+  {
+    "word": "consultancy",
+    "translation": "maslahat firmasi"
+  },
+  {
+    "word": "reluctantly",
+    "translation": "istar-istamas"
+  },
+  {
+    "word": "gadget",
+    "translation": "moslama, gadjet"
+  },
+  {
+    "word": "depiction",
+    "translation": "tasvir"
+  },
+  {
+    "word": "candid",
+    "translation": "ochiqko'ngil, samimiy"
+  },
+  {
+    "word": "pinnacle",
+    "translation": "cho'qqi, avj"
+  },
+  {
+    "word": "insensitive",
+    "translation": "befarq, nozik bo'lmagan"
+  },
+  {
+    "word": "recognizable",
+    "translation": "tanib bo'ladigan"
+  },
+  {
+    "word": "subordinate",
+    "translation": "qo'l ostidagi xodim"
+  },
+  {
+    "word": "peacock",
+    "translation": "tovus"
+  },
+  {
+    "word": "provocative",
+    "translation": "g'alayon qo'zg'atuvchi, bahsli"
+  },
+  {
+    "word": "outset",
+    "translation": "boshlanish"
+  },
+  {
+    "word": "deprivation",
+    "translation": "mahrumlik"
+  },
+  {
+    "word": "saloon",
+    "translation": "saloon (bar); sedan (mashina)"
+  },
+  {
+    "word": "aqua",
+    "translation": "moviy-yashil"
+  },
+  {
+    "word": "rumble",
+    "translation": "gumburlamoq"
+  },
+  {
+    "word": "regulatory",
+    "translation": "tartibga soluvchi"
+  },
+  {
+    "word": "integration",
+    "translation": "integratsiya, birlashish"
+  },
+  {
+    "word": "counsel",
+    "translation": "maslahat; advokat"
+  },
+  {
+    "word": "cognitive",
+    "translation": "bilish, aqliy"
+  },
+  {
+    "word": "merit",
+    "translation": "fazilat, xizmat"
+  },
+  {
+    "word": "echo",
+    "translation": "aks-sado"
+  },
+  {
+    "word": "tactical",
+    "translation": "taktik"
+  },
+  {
+    "word": "rhetoric",
+    "translation": "so'z o'yini, balandparvoz gap"
+  },
+  {
+    "word": "prone",
+    "translation": "moyil"
+  },
+  {
+    "word": "accountability",
+    "translation": "hisobdorlik"
+  },
+  {
+    "word": "hypothesis",
+    "translation": "faraz, gipoteza"
+  },
+  {
+    "word": "correlation",
+    "translation": "bog'liqlik"
+  },
+  {
+    "word": "commodity",
+    "translation": "tovar"
+  },
+  {
+    "word": "autonomous",
+    "translation": "avtonom, mustaqil"
+  },
+  {
+    "word": "proposition",
+    "translation": "taklif; mulohaza"
+  },
+  {
+    "word": "synthesis",
+    "translation": "sintez"
+  },
+  {
+    "word": "wholly",
+    "translation": "butunlay"
+  },
+  {
+    "word": "methodology",
+    "translation": "metodologiya"
+  },
+  {
+    "word": "ironic",
+    "translation": "kinoyali"
+  },
+  {
+    "word": "vicinity",
+    "translation": "atrof, yaqin joy"
+  },
+  {
+    "word": "cosmic",
+    "translation": "koinotga oid"
+  },
+  {
+    "word": "incumbent",
+    "translation": "lavozimdagi shaxs"
+  },
+  {
+    "word": "spatial",
+    "translation": "fazoviy"
+  },
+  {
+    "word": "mesh",
+    "translation": "mos tushmoq"
+  },
+  {
+    "word": "solitary",
+    "translation": "yolg'iz"
+  },
+  {
+    "word": "paramount",
+    "translation": "eng muhim"
+  },
+  {
+    "word": "reconciliation",
+    "translation": "yarashuv"
+  },
+  {
+    "word": "tactic",
+    "translation": "taktika, usul"
+  },
+  {
+    "word": "proprietary",
+    "translation": "xususiy (mulk sifatida)"
+  },
+  {
+    "word": "malicious",
+    "translation": "g'arazli"
+  },
+  {
+    "word": "helm",
+    "translation": "rul; boshqaruv"
+  },
+  {
+    "word": "vocational",
+    "translation": "kasb-hunar"
+  },
+  {
+    "word": "rift",
+    "translation": "yoriq; kelishmovchilik"
+  },
+  {
+    "word": "corpus",
+    "translation": "to'plam (matnlar)"
+  },
+  {
+    "word": "practitioner",
+    "translation": "amaliyotchi (shifokor, mutaxassis)"
+  },
+  {
+    "word": "nostalgia",
+    "translation": "sog'inch (o'tmishga)"
+  },
+  {
+    "word": "hypothetical",
+    "translation": "faraziy"
+  },
+  {
+    "word": "proliferation",
+    "translation": "ko'payib ketish"
+  },
+  {
+    "word": "proportional",
+    "translation": "mutanosib"
+  },
+  {
+    "word": "equilibrium",
+    "translation": "muvozanat"
+  },
+  {
+    "word": "authenticity",
+    "translation": "haqiqiylik"
+  },
+  {
+    "word": "scholarly",
+    "translation": "ilmiy"
+  },
+  {
+    "word": "transmitter",
+    "translation": "uzatgich"
+  },
+  {
+    "word": "blitz",
+    "translation": "tezkor hujum qilmoq"
+  },
+  {
+    "word": "combustion",
+    "translation": "yonish"
+  },
+  {
+    "word": "parameter",
+    "translation": "parametr, chegara"
+  },
+  {
+    "word": "adhere",
+    "translation": "amal qilmoq; yopishmoq"
+  },
+  {
+    "word": "eminent",
+    "translation": "taniqli, ulug'"
+  },
+  {
+    "word": "induce",
+    "translation": "chaqirmoq, sabab bo'lmoq"
+  },
+  {
+    "word": "interrogation",
+    "translation": "so'roq"
+  },
+  {
+    "word": "subsidy",
+    "translation": "subsidiya"
+  },
+  {
+    "word": "curator",
+    "translation": "kurator, muzey xodimi"
+  },
+  {
+    "word": "physiological",
+    "translation": "fiziologik"
+  },
+  {
+    "word": "seismic",
+    "translation": "seysmik"
+  },
+  {
+    "word": "menace",
+    "translation": "tahdid, xavf"
+  },
+  {
+    "word": "residue",
+    "translation": "qoldiq"
+  },
+  {
+    "word": "rebound",
+    "translation": "qaytib sakramoq; tiklanmoq"
+  },
+  {
+    "word": "residual",
+    "translation": "qoldiq"
+  },
+  {
+    "word": "procedural",
+    "translation": "tartibga oid"
+  },
+  {
+    "word": "brink",
+    "translation": "chet, yoqa (xavf)"
+  },
+  {
+    "word": "mediation",
+    "translation": "vositachilik"
+  },
+  {
+    "word": "angular",
+    "translation": "burchakli, qirrali"
+  },
+  {
+    "word": "locomotive",
+    "translation": "lokomotiv"
+  },
+  {
+    "word": "utilization",
+    "translation": "foydalanish"
+  },
+  {
+    "word": "profitability",
+    "translation": "daromadlilik"
+  },
+  {
+    "word": "reconcile",
+    "translation": "yarashtirmoq, muvofiqlashtirmoq"
+  },
+  {
+    "word": "annex",
+    "translation": "qo'shimcha bino"
+  },
+  {
+    "word": "slab",
+    "translation": "plita, qalin bo'lak"
+  },
+  {
+    "word": "choreography",
+    "translation": "xoreografiya"
+  },
+  {
+    "word": "homestead",
+    "translation": "xo'jalik, uy-joy"
+  },
+  {
+    "word": "gravitational",
+    "translation": "tortishish"
+  },
+  {
+    "word": "myriad",
+    "translation": "son-sanoqsiz"
+  },
+  {
+    "word": "retrospective",
+    "translation": "o'tmishga nazar"
+  },
+  {
+    "word": "anthology",
+    "translation": "antologiya"
+  },
+  {
+    "word": "fabrication",
+    "translation": "to'qima, uydirma"
+  },
+  {
+    "word": "hysterical",
+    "translation": "asabiy; juda kulgili"
+  },
+  {
+    "word": "centralized",
+    "translation": "markazlashgan"
+  },
+  {
+    "word": "intrinsic",
+    "translation": "ichki, o'ziga xos"
+  },
+  {
+    "word": "vortex",
+    "translation": "girdob"
+  },
+  {
+    "word": "stabilize",
+    "translation": "barqarorlashtirmoq"
+  },
+  {
+    "word": "diminish",
+    "translation": "kamaymoq"
+  },
+  {
+    "word": "apostle",
+    "translation": "havoriy; targ'ibotchi"
+  },
+  {
+    "word": "nostalgic",
+    "translation": "sog'inchli"
+  },
+  {
+    "word": "qualitative",
+    "translation": "sifat"
+  },
+  {
+    "word": "kinetic",
+    "translation": "kinetik"
+  },
+  {
+    "word": "contractual",
+    "translation": "shartnomaviy"
+  },
+  {
+    "word": "lyrical",
+    "translation": "lirik"
+  },
+  {
+    "word": "stringent",
+    "translation": "qattiq, qat'iy"
+  },
+  {
+    "word": "bogus",
+    "translation": "soxta"
+  },
+  {
+    "word": "hitch",
+    "translation": "ulamoq (tirkama)"
+  },
+  {
+    "word": "turret",
+    "translation": "minora"
+  },
+  {
+    "word": "solitude",
+    "translation": "yolg'izlik (tinch)"
+  },
+  {
+    "word": "constrained",
+    "translation": "cheklangan"
+  },
+  {
+    "word": "austerity",
+    "translation": "tejamkorlik siyosati"
+  },
+  {
+    "word": "emulate",
+    "translation": "taqlid qilmoq, o'rnak olmoq"
+  },
+  {
+    "word": "artifact",
+    "translation": "qadimiy buyum"
+  },
+  {
+    "word": "agile",
+    "translation": "chaqqon"
+  },
+  {
+    "word": "pervasive",
+    "translation": "keng tarqalgan"
+  },
+  {
+    "word": "melancholy",
+    "translation": "g'amginlik"
+  },
+  {
+    "word": "meteorological",
+    "translation": "meteorologik"
+  },
+  {
+    "word": "anonymity",
+    "translation": "noma'lumlik"
+  },
+  {
+    "word": "conglomerate",
+    "translation": "konglomerat (yirik kompaniyalar guruhi)"
+  },
+  {
+    "word": "hinder",
+    "translation": "xalaqit bermoq"
+  },
+  {
+    "word": "punitive",
+    "translation": "jazolovchi"
+  },
+  {
+    "word": "electrode",
+    "translation": "elektrod"
+  },
+  {
+    "word": "rhetorical",
+    "translation": "ritorik"
+  },
+  {
+    "word": "hysteria",
+    "translation": "vahima, isteriya"
+  },
+  {
+    "word": "misdemeanor",
+    "translation": "yengil huquqbuzarlik"
+  },
+  {
+    "word": "notoriously",
+    "translation": "yomon nom chiqargan holda"
+  },
+  {
+    "word": "beneficiary",
+    "translation": "foyda oluvchi, merosxo'r"
+  },
+  {
+    "word": "opaque",
+    "translation": "shaffof bo'lmagan"
+  },
+  {
+    "word": "conjecture",
+    "translation": "taxmin qilmoq"
+  },
+  {
+    "word": "palate",
+    "translation": "ta'm bilish; tanglay"
+  },
+  {
+    "word": "ostensibly",
+    "translation": "go'yo, zohiran"
+  },
+  {
+    "word": "pedestal",
+    "translation": "poydevor, tagkursi"
+  },
+  {
+    "word": "moor",
+    "translation": "botqoqli dasht"
+  },
+  {
+    "word": "hindsight",
+    "translation": "keyin tushunish"
+  },
+  {
+    "word": "malice",
+    "translation": "yovuz niyat"
+  },
+  {
+    "word": "informant",
+    "translation": "xabar beruvchi"
+  },
+  {
+    "word": "deficient",
+    "translation": "yetishmaydigan"
+  },
+  {
+    "word": "uncanny",
+    "translation": "g'ayritabiiy, hayratlanarli"
+  },
+  {
+    "word": "adept",
+    "translation": "mohir"
+  },
+  {
+    "word": "maverick",
+    "translation": "o'z yo'lidan yuruvchi"
+  },
+  {
+    "word": "additive",
+    "translation": "qo'shimcha modda"
+  },
+  {
+    "word": "deterrent",
+    "translation": "to'xtatuvchi vosita"
+  },
+  {
+    "word": "agility",
+    "translation": "chaqqonlik"
+  },
+  {
+    "word": "treacherous",
+    "translation": "xavfli; xoin"
+  },
+  {
+    "word": "philanthropy",
+    "translation": "xayriyachilik"
+  },
+  {
+    "word": "redundancy",
+    "translation": "ishdan qisqartirish; ortiqchalik"
+  },
+  {
+    "word": "baroque",
+    "translation": "barokko"
+  },
+  {
+    "word": "ethos",
+    "translation": "ruh, tamoyillar"
+  },
+  {
+    "word": "embodiment",
+    "translation": "timsol"
+  },
+  {
+    "word": "disperse",
+    "translation": "tarqalmoq"
+  },
+  {
+    "word": "depressive",
+    "translation": "tushkun"
+  },
+  {
+    "word": "denote",
+    "translation": "bildirmoq"
+  },
+  {
+    "word": "perch",
+    "translation": "qo'nmoq (qush)"
+  },
+  {
+    "word": "clinch",
+    "translation": "qo'lga kiritmoq (qat'iy)"
+  },
+  {
+    "word": "recourse",
+    "translation": "murojaat imkoni"
+  },
+  {
+    "word": "collide",
+    "translation": "to'qnashmoq"
+  },
+  {
+    "word": "archival",
+    "translation": "arxiv"
+  },
+  {
+    "word": "diffuse",
+    "translation": "tarqoq"
+  },
+  {
+    "word": "conduit",
+    "translation": "quvur; vosita"
+  },
+  {
+    "word": "splinter",
+    "translation": "parchalanmoq"
+  },
+  {
+    "word": "topography",
+    "translation": "joy relyefi"
+  },
+  {
+    "word": "parasitic",
+    "translation": "tekinxo'r, parazit"
+  },
+  {
+    "word": "encompass",
+    "translation": "qamrab olmoq"
+  },
+  {
+    "word": "angst",
+    "translation": "tashvish, iztirob"
+  },
+  {
+    "word": "dissemination",
+    "translation": "tarqatish"
+  },
+  {
+    "word": "mercenary",
+    "translation": "yollanma askar"
+  },
+  {
+    "word": "knack",
+    "translation": "ko'nikma, qobiliyat"
+  },
+  {
+    "word": "hamper",
+    "translation": "to'sqinlik qilmoq"
+  },
+  {
+    "word": "brood",
+    "translation": "g'am chekib o'ylamoq"
+  },
+  {
+    "word": "extant",
+    "translation": "saqlanib qolgan"
+  },
+  {
+    "word": "antidote",
+    "translation": "zaharga qarshi dori"
+  },
+  {
+    "word": "lament",
+    "translation": "nola qilmoq"
+  },
+  {
+    "word": "impeccable",
+    "translation": "benuqson"
+  },
+  {
+    "word": "blight",
+    "translation": "ofat, kasallik (o'simlik)"
+  },
+  {
+    "word": "denounce",
+    "translation": "qoralamoq"
+  },
+  {
+    "word": "overlay",
+    "translation": "ustidan qoplamoq"
+  },
+  {
+    "word": "euphoria",
+    "translation": "cheksiz shodlik"
+  },
+  {
+    "word": "jargon",
+    "translation": "jargon, kasbiy til"
+  },
+  {
+    "word": "nigh",
+    "translation": "yaqin"
+  },
+  {
+    "word": "whirlwind",
+    "translation": "quyun; shiddatli"
+  },
+  {
+    "word": "cinematography",
+    "translation": "kinematografiya (tasvirga olish)"
+  },
+  {
+    "word": "meticulous",
+    "translation": "sinchkov"
+  },
+  {
+    "word": "chronology",
+    "translation": "xronologiya"
+  },
+  {
+    "word": "meteorology",
+    "translation": "meteorologiya"
+  },
+  {
+    "word": "calamity",
+    "translation": "ofat"
+  },
+  {
+    "word": "fruition",
+    "translation": "ro'yobga chiqish"
+  },
+  {
+    "word": "armory",
+    "translation": "qurol-yarog' ombori"
+  },
+  {
+    "word": "hermit",
+    "translation": "zohid, yolg'iz yashovchi"
+  },
+  {
+    "word": "eminence",
+    "translation": "obro', mashhurlik"
+  },
+  {
+    "word": "prolong",
+    "translation": "uzaytirmoq"
+  },
+  {
+    "word": "philanthropic",
+    "translation": "xayriya"
+  },
+  {
+    "word": "fallacy",
+    "translation": "noto'g'ri fikr"
+  },
+  {
+    "word": "mercantile",
+    "translation": "savdo"
+  },
+  {
+    "word": "oblique",
+    "translation": "qiya; bilvosita"
+  },
+  {
+    "word": "correlate",
+    "translation": "bog'liq omil"
+  },
+  {
+    "word": "aptitude",
+    "translation": "qobiliyat"
+  },
+  {
+    "word": "unravel",
+    "translation": "yechmoq, ochib bermoq"
+  },
+  {
+    "word": "zoology",
+    "translation": "zoologiya"
+  },
+  {
+    "word": "indulgence",
+    "translation": "o'ziga erk berish, xohishiga yo'l qo'yish"
+  },
+  {
+    "word": "imposition",
+    "translation": "ortiqcha yuk, tashvish"
+  },
+  {
+    "word": "provocation",
+    "translation": "qo'zg'atish, gijgijlash"
+  },
+  {
+    "word": "ornate",
+    "translation": "bezakli"
+  },
+  {
+    "word": "notoriety",
+    "translation": "yomon shuhrat"
+  },
+  {
+    "word": "perverse",
+    "translation": "teskari, o'jar"
+  },
+  {
+    "word": "plume",
+    "translation": "tutun ustuni; pat"
+  },
+  {
+    "word": "assimilation",
+    "translation": "o'zlashtirish, singib ketish"
+  },
+  {
+    "word": "intermediary",
+    "translation": "vositachi"
+  },
+  {
+    "word": "sulphur",
+    "translation": "oltingugurt"
+  },
+  {
+    "word": "arduous",
+    "translation": "mashaqqatli"
+  },
+  {
+    "word": "promenade",
+    "translation": "sayrgoh"
+  },
+  {
+    "word": "condone",
+    "translation": "ko'z yummoq, kechirmoq"
+  },
+  {
+    "word": "proximal",
+    "translation": "yaqin (tanaga)"
+  },
+  {
+    "word": "rapture",
+    "translation": "zavq-shavq"
+  },
+  {
+    "word": "embody",
+    "translation": "o'zida mujassam etmoq"
+  },
+  {
+    "word": "autopilot",
+    "translation": "avtopilot"
   }
 ]

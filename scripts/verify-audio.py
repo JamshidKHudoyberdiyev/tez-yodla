@@ -145,45 +145,57 @@ def recognize_single_file(key: str, region: str, audio_path: str, lang: str) -> 
     confidence = 0.0
     reason_str = "NoMatch"
 
-    try:
-        stt_config = speechsdk.SpeechConfig(subscription=key, region=region)
-        stt_config.output_format = speechsdk.OutputFormat.Detailed
-        audio_config = speechsdk.AudioConfig(filename=tmp_path)
-        recognizer = speechsdk.SpeechRecognizer(speech_config=stt_config, audio_config=audio_config, language=lang)
-        result = recognizer.recognize_once_async().get()
-
-        reason_str = str(result.reason)
-        if result.reason == speechsdk.ResultReason.RecognizedSpeech:
-            try:
-                j = json.loads(result.json)
-                nbest = j.get("NBest", [{}])[0]
-                recognized_text = nbest.get("Lexical", "") or nbest.get("Display", "")
-                confidence = float(nbest.get("Confidence", 1.0))
-            except Exception:
-                recognized_text = result.text or ""
-                confidence = 1.0
-        elif result.reason == speechsdk.ResultReason.NoMatch:
-            recognized_text = ""
-            confidence = 0.0
-        elif result.reason == speechsdk.ResultReason.Canceled:
-            try:
-                cancellation = speechsdk.CancellationDetails(result)
-                recognized_text = f"[CANCELED: {cancellation.error_details}]"
-            except Exception:
-                recognized_text = "[CANCELED]"
-            confidence = 0.0
-
-        del recognizer
-        del audio_config
-    except Exception as e:
-        recognized_text = f"[EXCEPTION: {e}]"
-        confidence = 0.0
-    finally:
+    for attempt in range(4):
         try:
-            if os.path.exists(tmp_path):
-                os.remove(tmp_path)
-        except Exception:
-            pass
+            stt_config = speechsdk.SpeechConfig(subscription=key, region=region)
+            stt_config.output_format = speechsdk.OutputFormat.Detailed
+            audio_config = speechsdk.AudioConfig(filename=tmp_path)
+            recognizer = speechsdk.SpeechRecognizer(speech_config=stt_config, audio_config=audio_config, language=lang)
+            result = recognizer.recognize_once_async().get()
+
+            reason_str = str(result.reason)
+            if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+                try:
+                    j = json.loads(result.json)
+                    nbest = j.get("NBest", [{}])[0]
+                    recognized_text = nbest.get("Lexical", "") or nbest.get("Display", "")
+                    confidence = float(nbest.get("Confidence", 1.0))
+                except Exception:
+                    recognized_text = result.text or ""
+                    confidence = 1.0
+                break
+            elif result.reason == speechsdk.ResultReason.NoMatch:
+                recognized_text = ""
+                confidence = 0.0
+                break
+            elif result.reason == speechsdk.ResultReason.Canceled:
+                cancellation = speechsdk.CancellationDetails(result)
+                err_details = cancellation.error_details or ""
+                if "4429" in err_details or "concurrent" in err_details.lower():
+                    time.sleep(1.2 + attempt * 1.5)
+                    continue
+                recognized_text = f"[CANCELED: {err_details}]"
+                confidence = 0.0
+                break
+        except Exception as e:
+            if attempt < 3:
+                time.sleep(1.0)
+                continue
+            recognized_text = f"[EXCEPTION: {e}]"
+            confidence = 0.0
+            break
+        finally:
+            try:
+                del recognizer
+                del audio_config
+            except Exception:
+                pass
+
+    try:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+    except Exception:
+        pass
 
     return recognized_text, confidence, duration_sec, reason_str
 
@@ -274,16 +286,35 @@ def verify_task_worker(task: dict, key: str, region: str, no_retry: bool):
 def main():
     parser = argparse.ArgumentParser(description="Azure STT Verification for Tez Yodla Audio")
     parser.add_argument("--test-10", action="store_true", help="1-qadam test papkalarini tekshirish (en_test2)")
-    parser.add_argument("--all", action="store_true", help="2-qadam: Barcha ishlab chiqarish fayllarini tekshirish (us, uk, uz)")
+    parser.add_argument("--all", action="store_true", help="Barcha ishlab chiqarish fayllarini tekshirish (us, uk, uz)")
+    parser.add_argument("--en", action="store_true", help="Faqat inglizcha ishlab chiqarish fayllarini tekshirish (us, uk)")
+    parser.add_argument("--new-only", action="store_true", help="Faqat yangi qo'shilgan so'zlarni tekshirish")
     parser.add_argument("--dir", type=str, default=None, help="Bitta papkani tekshirish")
     parser.add_argument("--lang", type=str, default=None, help="STT tili (en-US, en-GB, uz-UZ)")
     parser.add_argument("--no-retry", action="store_true", help="Mos kelmaganlarni qayta sintez qilmaslik")
     parser.add_argument("--resume", action="store_true", default=True, help="Avval tekshirilganlarni o'tkazib yuborish")
-    parser.add_argument("--workers", type=int, default=6, help="Parallel ishchilar soni (sukut: 6)")
+    parser.add_argument("--workers", type=int, default=3, help="Parallel ishchilar soni (sukut: 3)")
     args = parser.parse_args()
 
     key, region = load_env_credentials()
     en_map, uz_map = load_word_maps()
+
+    new_slugs = set()
+    if os.path.exists(WORDS_UZ_JSON):
+        try:
+            with open(WORDS_UZ_JSON, "r", encoding="utf-8") as f:
+                w_list = json.load(f)
+            # 1461 old words, items beyond 1461 are new
+            if len(w_list) > 1461:
+                for item in w_list[1461:]:
+                    s = get_slug(item["word"])
+                    if s:
+                        new_slugs.add(s)
+        except Exception:
+            pass
+
+    is_default = not args.test_10 and not args.all and not args.dir and not args.en
+    only_new = args.new_only or is_default
 
     dir_targets = []
     if args.test_10:
@@ -297,16 +328,16 @@ def main():
             (PROD_UK_DIR, "en-GB", "en-GB-SoniaNeural", en_map),
             (PROD_UZ_DIR, "uz-UZ", "uz-UZ-MadinaNeural", uz_map),
         ]
+    elif args.en or is_default:
+        dir_targets = [
+            (PROD_US_DIR, "en-US", "en-US-AvaNeural", en_map),
+            (PROD_UK_DIR, "en-GB", "en-GB-SoniaNeural", en_map),
+        ]
     elif args.dir:
         lang = args.lang or ("en-US" if "us" in args.dir.lower() else "en-GB" if "uk" in args.dir.lower() else "uz-UZ")
         voice = "en-US-AvaNeural" if lang == "en-US" else "en-GB-SoniaNeural" if lang == "en-GB" else "uz-UZ-MadinaNeural"
         wmap = uz_map if lang == "uz-UZ" else en_map
         dir_targets = [(args.dir, lang, voice, wmap)]
-    else:
-        dir_targets = [
-            (TEST_US_DIR, "en-US", "en-US-AvaNeural", en_map),
-            (TEST_UK_DIR, "en-GB", "en-GB-SoniaNeural", en_map),
-        ]
 
     # Load existing progress if resuming
     verified_cache = {}
@@ -327,6 +358,8 @@ def main():
         files = sorted([f for f in os.listdir(d) if f.endswith(".mp3")])
         for f in files:
             slug = os.path.splitext(f)[0]
+            if only_new and new_slugs and slug not in new_slugs:
+                continue
             fpath = os.path.join(d, f)
             if fpath in verified_cache:
                 skipped_count += 1
