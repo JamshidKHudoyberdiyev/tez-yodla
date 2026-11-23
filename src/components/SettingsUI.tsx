@@ -13,17 +13,17 @@ const TONES = (): Record<Tone, { bg: string; fg: string }> => ({
   danger: { bg: colors.amberSoft, fg: colors.error },
 });
 
-export function SettingGroup({ label, children }: { label?: string; children: ReactNode }) {
+export function SettingGroup({ label, children, danger }: { label?: string; children: ReactNode; danger?: boolean }) {
   return (
     <View style={{ gap: 6 }}>
       {label ? <T w="extrabold" size={12} color={colors.muted} style={{ paddingHorizontal: 6, letterSpacing: 1, textTransform: 'uppercase' }}>{label}</T> : null}
-      <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>{children}</View>
+      <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', ...(danger ? { borderWidth: 2, borderColor: colors.wrong } : null) }}>{children}</View>
     </View>
   );
 }
 
-export function SettingRow({ icon, tone = 'green', title, sub, value, onPress, right, last, danger, disabled }: {
-  icon?: IconName; tone?: Tone; title: string; sub?: string; value?: string; onPress?: () => void; right?: ReactNode; last?: boolean; danger?: boolean; disabled?: boolean;
+export function SettingRow({ icon, tone = 'green', title, sub, subColor, value, onPress, right, last, danger, disabled }: {
+  icon?: IconName; tone?: Tone; title: string; sub?: string; subColor?: string; value?: string; onPress?: () => void; right?: ReactNode; last?: boolean; danger?: boolean; disabled?: boolean;
 }) {
   const t = TONES()[danger ? 'danger' : tone];
   const rowStyle = { flexDirection: 'row' as const, alignItems: 'center' as const, gap: 12, minHeight: 58, paddingHorizontal: 14, paddingVertical: 9, borderBottomWidth: last ? 0 : 1, borderBottomColor: colors.divider, opacity: disabled ? 0.55 : 1 };
@@ -36,7 +36,7 @@ export function SettingRow({ icon, tone = 'green', title, sub, value, onPress, r
       ) : null}
       <View style={{ flex: 1, minWidth: 0 }}>
         <T w="bold" size={15} color={danger ? colors.error : colors.ink}>{title}</T>
-        {sub ? <T size={12} color={colors.muted}>{sub}</T> : null}
+        {sub ? <T size={12} w={subColor ? 'bold' : undefined} color={subColor ?? colors.muted}>{sub}</T> : null}
       </View>
       {right ?? (
         <>

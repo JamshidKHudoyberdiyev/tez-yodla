@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Keyboard, Modal, Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Keyboard, Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { Button, T } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { useStore } from '@/lib/store';
@@ -75,9 +75,11 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
 
   return (
     <Modal visible={visible} transparent animationType="slide" statusBarTranslucent onRequestClose={close}>
-      <View style={{ flex: 1, paddingBottom: kb }}>
-        <Pressable accessibilityLabel="Yopish" onPress={close} style={{ flex: 1, backgroundColor: 'rgba(19,26,21,0.45)' }} />
-        <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 20, paddingBottom: kb ? 16 : 30, gap: 12 }}>
+      {/* Klaviatura ochiq bo'lsa oyna TEPAGA joylanadi: klaviatura balandligiga bog'liq emas, tugma doim ko'rinadi */}
+      <View style={{ flex: 1, justifyContent: kb ? 'flex-start' : 'flex-end' }}>
+        <Pressable accessibilityLabel="Yopish" onPress={close} style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(19,26,21,0.45)' }]} />
+        <View style={{ backgroundColor: colors.bg, borderRadius: 32, borderBottomLeftRadius: kb ? 32 : 0, borderBottomRightRadius: kb ? 32 : 0,
+          marginTop: kb ? 56 : 0, marginHorizontal: kb ? 12 : 0, padding: 20, paddingBottom: kb ? 20 : 30, gap: 12 }}>
           <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: 'center' }} />
           {busy ? (
             <View style={{ alignItems: 'center', gap: 12, paddingVertical: 40 }} accessibilityLiveRegion="polite">

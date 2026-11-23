@@ -1,17 +1,40 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Modal, Pressable, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { ActivityIndicator, Modal, Pressable, View } from 'react-native';
 import { Avatar } from '@/components/Avatar';
 import { DeleteAccountRow } from '@/components/DeleteAccount';
 import { SettingGroup, SettingRow } from '@/components/SettingsUI';
 import { BackHeader, Button, Screen, T } from '@/components/ui';
 import { AUTH_REQUIRED, useAuth } from '@/lib/auth';
-import { agoLabel } from '@/lib/cloud';
 import { appVersion } from '@/lib/monitoring';
 import { timeLabel } from '@/lib/reminders';
 import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
+
+/** Bulutga saqlash holati — Google qatorining o'ng chetida: saqlangan / saqlanmoqda / xato (qayta urinish) */
+function SyncBadge({ status, onRetry }: { status: string; onRetry: () => void }) {
+  if (status === 'error') {
+    return (
+      <Pressable accessibilityRole="button" accessibilityLabel="Saqlanmadi. Qayta urinish" onPress={onRetry} hitSlop={6}
+        style={({ pressed }) => ({ paddingHorizontal: 12, minHeight: 36, borderRadius: 14, borderWidth: 2, borderColor: colors.line, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.8 : 1 })}>
+        <T w="extrabold" size={12}>Qayta urinish</T>
+      </Pressable>
+    );
+  }
+  const busy = status === 'saving' || status === 'loading';
+  return (
+    <View accessible accessibilityLabel={busy ? 'Saqlanmoqda' : 'Bulutga saqlangan'} style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: busy ? colors.bg : colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}>
+      {busy ? <ActivityIndicator size="small" color={colors.forestText} /> : (
+        <View style={{ width: 22, height: 22, alignItems: 'center', justifyContent: 'center' }}>
+          <Feather name="cloud" size={21} color={colors.forestText} />
+          <Feather name="check" size={10} color={colors.forestText} style={{ position: 'absolute', top: 7 }} />
+        </View>
+      )}
+    </View>
+  );
+}
 
 export default function Settings() {
   const { state, streak } = useStore();
@@ -19,7 +42,7 @@ export default function Settings() {
   const [askOut, setAskOut] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const p = state.prefs;
-  const saved = auth.status === 'saving' ? 'saqlanmoqda…' : auth.status === 'error' ? 'internet yo\'q' : agoLabel(auth.lastSavedAt);
+  const syncError = auth.status === 'error';
   const stepCount = 1 + Object.values(p.steps).filter(Boolean).length;
   const backupDays = p.lastBackupAt ? Math.floor((Date.now() - p.lastBackupAt) / 86_400_000) : null;
   const fontLabel = p.fontScale < 1 ? 'Kichik' : p.fontScale === 1 ? "O'rta" : p.fontScale < 1.2 ? 'Katta' : 'Juda katta';
@@ -41,10 +64,9 @@ export default function Settings() {
       </Pressable>
 
       {AUTH_REQUIRED && auth.session ? (
-        <SettingGroup label="Hisob">
-          <SettingRow icon="user" tone="gray" title="Google hisobi" sub={auth.email ?? ''} />
-          <SettingRow icon={auth.status === 'error' ? 'cloud-off' : 'cloud'} tone={auth.status === 'error' ? 'amber' : 'green'} title="Saqlangan"
-            sub="Har mashqdan keyin avtomatik" value={saved} onPress={() => auth.saveNow()} />
+        <SettingGroup label="Hisob" danger={syncError}>
+          <SettingRow icon="user" tone="gray" title="Google hisobi" sub={syncError ? 'Saqlanmadi' : (auth.email ?? '')} subColor={syncError ? colors.wrong : undefined}
+            right={<SyncBadge status={auth.status} onRetry={() => auth.saveNow()} />} />
           <SettingRow icon="log-out" tone="gray" title="Chiqish" onPress={() => setAskOut(true)} last />
         </SettingGroup>
       ) : null}
