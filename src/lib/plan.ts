@@ -169,13 +169,11 @@ export function estimateLevel(correctByLevel: Record<string, number>): { level: 
     if ((correctByLevel[l] ?? 0) >= 2) level = l;
     else break;
   }
-  const knownWords = { A1: 500, A2: 1200, B1: 2400, B2: 4000, C1: 6000 }[level];
+  const knownWords = { A1: 500, A2: 1200, B1: 2400, B2: 4000, C1: 6000, C2: 8000 }[level];
   return { level, knownWords };
 }
 
 /** Darajaga mos boshlang'ich to'plam */
 export function recommendedDeck(level: Level): string {
-  if (level === 'A1' || level === 'A2') return 'core';
-  if (level === 'B1') return 'b1';
-  return 'ielts';
+  return level.toLowerCase();
 }

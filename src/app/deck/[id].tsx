@@ -83,12 +83,9 @@ export default function DeckScreen() {
           </View>
         </View>
         <Pressable accessibilityRole="switch" accessibilityState={{ checked: active }} accessibilityLabel="Kunlik rejada" onPress={() => toggleDeck(deck.id)}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 12, borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: 12 }}>
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48, borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: 12 }}>
           <Feather name="calendar" size={20} color={colors.forestText} />
-          <View style={{ flex: 1 }}>
-            <T w="extrabold" size={14}>Kunlik rejada</T>
-            <T size={12} color={colors.muted}>{active ? "Har kuni shu mavzudan ham so'z beriladi" : "Yoqsangiz, kunlik mashg'ulotga qo'shiladi"}</T>
-          </View>
+          <T w="extrabold" size={15} style={{ flex: 1 }}>Kunlik rejada</T>
           <View style={{ width: 50, height: 30, borderRadius: 15, padding: 3, backgroundColor: active ? colors.forest : colors.line, alignItems: active ? 'flex-end' : 'flex-start' }}>
             <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: active ? colors.lime : '#FFFFFF' }} />
           </View>

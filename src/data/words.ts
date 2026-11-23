@@ -10,8 +10,10 @@
 import { CORE_ENTRIES } from './core';
 import { FAMILY, SCHOOL, TRAVEL, WORK } from './topics';
 import { GENERATED_DECKS, GENERATED_WORDS } from './generated';
+import { coreDeckOf } from './levels';
+import { LEVEL_ROWS } from './leveled';
 
-export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
+export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
 export interface Word {
   id: string;
@@ -61,19 +63,24 @@ export interface Deck {
   group?: DeckGroup;
 }
 
-export type DeckGroup = 'daily' | 'study' | 'travel' | 'level';
+export type DeckGroup = 'daily' | 'study' | 'travel' | 'level' | 'exam';
 /** Guruhlar tartibi va nomlari — To'plamlar sahifasida shu tartibda chiqadi */
 export const DECK_GROUPS: { id: DeckGroup; title: string }[] = [
   { id: 'daily', title: 'Kundalik hayot' },
   { id: 'study', title: "Ish va o'qish" },
   { id: 'travel', title: 'Sayohat va hordiq' },
   { id: 'level', title: "Daraja bo'yicha" },
+  { id: 'exam', title: 'Imtihonlar' },
 ];
 
 export const DECKS: Deck[] = [
-  { id: 'core', title: "1000 asosiy so'z", subtitle: "A1–A2 · eng ko'p ishlatiladigan", badge: '1K', tint: '#E6F4CC', ink: '#17461F', group: 'level' },
-  { id: 'b1', title: 'CEFR B1', subtitle: "O'rta daraja", badge: 'B1', tint: '#F1E8FB', ink: '#6B3FA8', group: 'level' },
-  { id: 'ielts', title: 'IELTS Academic', subtitle: "B2–C1 · akademik so'zlar", badge: 'IE', tint: '#E4EDFB', ink: '#1F55A8', group: 'level' },
+  { id: 'a1', title: "A1 · Boshlang'ich", subtitle: "Eng zarur so'zlar", badge: 'A1', tint: '#DDF0E3', ink: '#1E7A3E', group: 'level' },
+  { id: 'a2', title: 'A2 · Elementar', subtitle: "Kundalik so'zlar", badge: 'A2', tint: '#E6F4CC', ink: '#17461F', group: 'level' },
+  { id: 'b1', title: "B1 · O'rta", subtitle: "O'rta daraja", badge: 'B1', tint: '#FDF0C9', ink: '#8A6A00', group: 'level' },
+  { id: 'b2', title: 'B2 · Yuqoriroq', subtitle: 'Yuqoriroq daraja', badge: 'B2', tint: '#FCE3D2', ink: '#A6501C', group: 'level' },
+  { id: 'c1', title: 'C1 · Yuqori', subtitle: 'Yuqori daraja', badge: 'C1', tint: '#F1E8FB', ink: '#6B3FA8', group: 'level' },
+  { id: 'c2', title: 'C2 · Mukammal', subtitle: 'Mukammal daraja', badge: 'C2', tint: '#E4EDFB', ink: '#1F55A8', group: 'level' },
+  { id: 'ielts', title: 'IELTS Academic', subtitle: "B2–C1 · akademik so'zlar", badge: 'IE', tint: '#E4EDFB', ink: '#1F55A8', group: 'exam' },
   { id: 'kitchen', title: 'Oshxona va ovqat', subtitle: 'A1–A2', badge: 'OV', tint: '#F6EAD7', ink: '#8F4A12', topic: true, icon: 'pot-steam', group: 'daily' },
   { id: 'school', title: "Maktab va ta'lim", subtitle: 'A1–A2', badge: 'MT', tint: '#E4EDFB', ink: '#1F55A8', topic: true, icon: 'school', group: 'study' },
   { id: 'work', title: 'Ish va ofis', subtitle: 'A2–B1', badge: 'IS', tint: '#F1E8FB', ink: '#6B3FA8', topic: true, icon: 'briefcase', group: 'study' },
@@ -86,11 +93,32 @@ export const DECKS: Deck[] = [
 const w = (deckId: string, level: Level, list: Omit<Word, 'id' | 'deckId' | 'level'>[]): Word[] =>
   list.map((x) => ({ ...x, id: `${deckId}:${x.word}`, deckId, level }));
 
-/** 1000 asosiy so'z: birinchi yarmi A1, ikkinchi yarmi A2 (chastota tartibida). */
-const CORE_WORDS: Word[] = CORE_ENTRIES.map((e, i) => ({ ...e, id: `core:${e.word}`, deckId: 'core', level: i < 500 ? 'A1' : 'A2' }));
+/**
+ * Asosiy so'zlar daraja to'plamlariga taqsimlangan (levels.ts). Identifikator eskicha (`core:…`) — progress saqlanadi.
+ */
+/** Daraja to'plamlarining yangi so'zlari (leveled/*.ts) */
+const LEVEL_WORDS: Word[] = LEVEL_ROWS.flatMap(([deckId, rows]) =>
+  rows.map(([word, translation, pos, example, exampleUz]) => ({ id: `${deckId}:${word}`, word, translation, pos, example, exampleUz, deckId, level: deckId.toUpperCase() as Level })));
+
+const CORE_WORDS: Word[] = CORE_ENTRIES.map((e) => {
+  const deckId = coreDeckOf(e.word);
+  return { ...e, id: `core:${e.word}`, deckId, level: deckId.toUpperCase() as Level };
+});
+
+/** Darajaga mos to'plam */
+export function levelDeck(level: Level): string {
+  return level.toLowerCase();
+}
+
+/** Eski «1000 asosiy so'z» (core) rejada bo'lsa — uning so'zlari endi A1 va A2 da, ikkalasi rejaga qo'yiladi (avvalgidek) */
+export function normalizeDecks(ids: string[]): string[] {
+  if (!ids.includes('core')) return ids;
+  return Array.from(new Set(ids.flatMap((d) => (d === 'core' ? ['a1', 'a2'] : [d]))));
+}
 
 export const WORDS: Word[] = [
   ...CORE_WORDS,
+  ...LEVEL_WORDS,
   ...SCHOOL,
   ...WORK,
   ...TRAVEL,

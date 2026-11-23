@@ -22,7 +22,7 @@ function shuffle<T>(a: T[]): T[] {
 function buildQuestions(): Question[] {
   const pools: [string, Word[]][] = [
     ['A1', TEST_WORDS],
-    ['A2', WORDS.filter((w) => w.deckId === 'core' && w.level === 'A2')],
+    ['A2', WORDS.filter((w) => w.deckId === 'a2')],
     ['B1', WORDS.filter((w) => w.deckId === 'b1')],
     ['B2', WORDS.filter((w) => w.deckId === 'ielts')],
   ];

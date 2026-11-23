@@ -6,11 +6,11 @@ const T = 20000;
 
 describe('plan', () => {
   test("bugungi reja yangi so'zlarni 5 tadan guruhlarga bo'ladi va limitni hisobga oladi", () => {
-    const plan = todayPlan({ words: WORDS, cards: {}, activeDecks: ['core'], knownLemmas: new Set(), dailyNew: 10, log: {}, today: T });
+    const plan = todayPlan({ words: WORDS, cards: {}, activeDecks: ['a1'], knownLemmas: new Set(), dailyNew: 10, log: {}, today: T });
     expect(plan.newWords).toHaveLength(10);
     expect(plan.groups.map((g) => g.length)).toEqual([5, 5]);
 
-    const after = todayPlan({ words: WORDS, cards: {}, activeDecks: ['core'], knownLemmas: new Set(['time']), dailyNew: 10, log: { [T]: { newLearned: 5, reviewed: 0, correct: 0, total: 0 } }, today: T });
+    const after = todayPlan({ words: WORDS, cards: {}, activeDecks: ['a1'], knownLemmas: new Set(['time']), dailyNew: 10, log: { [T]: { newLearned: 5, reviewed: 0, correct: 0, total: 0 } }, today: T });
     expect(after.newWords).toHaveLength(5);
     expect(after.newWords.map((w) => w.word)).not.toContain('time');
   });
@@ -44,11 +44,11 @@ describe('plan', () => {
   });
 
   test("yangi qo'shilgan mavzu katta to'plam ortida qolib ketmaydi: to'plamlar navbatma-navbat so'z beradi", () => {
-    const plan = todayPlan({ words: WORDS, cards: {}, activeDecks: ['core', 'travel'], knownLemmas: new Set(), dailyNew: 6, log: {}, today: T });
+    const plan = todayPlan({ words: WORDS, cards: {}, activeDecks: ['a1', 'travel'], knownLemmas: new Set(), dailyNew: 6, log: {}, today: T });
     const decks = plan.newWords.map((w) => w.deckId);
     expect(decks[0]).toBe('travel'); // eng oxirgi qo'shilgani birinchi
     expect(decks.filter((d) => d === 'travel')).toHaveLength(3);
-    expect(decks.filter((d) => d === 'core')).toHaveLength(3);
+    expect(decks.filter((d) => d === 'a1')).toHaveLength(3);
     // Faqat bitta to'plam faol bo'lsa — eski tartib saqlanadi
     const one = todayPlan({ words: WORDS, cards: {}, activeDecks: ['travel'], knownLemmas: new Set(), dailyNew: 5, log: {}, today: T });
     expect(one.newWords.map((w) => w.word)).toEqual(['passport', 'ticket', 'luggage', 'flight', 'airport']);

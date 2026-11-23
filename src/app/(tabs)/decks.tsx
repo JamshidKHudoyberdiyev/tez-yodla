@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, TextInput, View } from 'react-native';
+import { LayoutAnimation, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DuoIcon } from '@/components/Art';
 import { Card, H1, IconTile, T } from '@/components/ui';
@@ -13,6 +13,9 @@ import { colors, font } from '@/lib/theme';
 export default function Decks() {
   const { state, words, today } = useStore();
   const [q, setQ] = useState('');
+  /** Ochiq guruhlar — hammasi yopiq boshlanadi */
+  const [open, setOpen] = useState<Record<string, boolean>>({});
+  const toggle = (id: string) => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setOpen((o) => ({ ...o, [id]: !o[id] })); };
   const query = q.trim().toLowerCase();
 
   const byWord = useMemo(() => cardsByWord(words, state.cards), [words, state.cards]);
@@ -26,6 +29,8 @@ export default function Decks() {
   const own = info.find((x) => x.d.custom);
   const activeCount = info.filter((x) => x.active && !x.d.custom).length;
   const visible = info.filter((x) => !x.d.custom && x.total > 0);
+  /** Kunlik rejadagilar — «Mening so'zlarim» ostida; guruhlarda takrorlanmaydi */
+  const planned = visible.filter((x) => x.active);
   const deckHits = query ? visible.filter((x) => x.d.title.toLowerCase().includes(query)) : [];
   const results = query ? words.filter((w) => w.word.toLowerCase().includes(query) || w.translation.toLowerCase().includes(query)).slice(0, 20) : [];
 
@@ -58,8 +63,9 @@ export default function Decks() {
         ) : (
           <>
             {own ? (
+              <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
               <Pressable accessibilityRole="button" accessibilityLabel={`Mening so'zlarim, ${own.total} ta so'z`} onPress={() => router.push('/my-words')}
-                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surface, borderRadius: 22, paddingVertical: 12, paddingHorizontal: 14, opacity: pressed ? 0.9 : 1 })}>
+                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
                 <View style={{ width: 42, height: 42, borderRadius: 14, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}><DuoIcon name="add" size={22} /></View>
                 <View style={{ flex: 1 }}>
                   <T w="extrabold" size={15}>Mening so'zlarim</T>
@@ -69,18 +75,40 @@ export default function Decks() {
                 </View>
                 <Feather name="chevron-right" size={20} color={colors.muted} />
               </Pressable>
+              {planned.length ? (
+                <View style={{ borderTopWidth: 1, borderTopColor: colors.divider }}>
+                  <T w="extrabold" size={11} color={colors.forestText} accessibilityRole="header" style={{ paddingHorizontal: 16, paddingTop: 10, letterSpacing: 1 }}>KUNLIK REJADA · {planned.length} TA</T>
+                  <DeckRows items={planned} bare />
+                </View>
+              ) : null}
+              </View>
             ) : null}
 
+            <T w="extrabold" size={12} color={colors.muted} style={{ paddingHorizontal: 4, marginTop: 6, letterSpacing: 1 }}>BARCHA TO'PLAMLAR</T>
             {DECK_GROUPS.map((g) => {
-              const items = visible.filter((x) => (x.d.group ?? 'level') === g.id);
-              if (!items.length) return null;
+              const all = visible.filter((x) => (x.d.group ?? 'level') === g.id);
+              if (!all.length) return null;
+              const items = all.filter((x) => !x.active);
+              const inPlan = all.length - items.length;
+              const isOpen = !!open[g.id];
+              const sub = `${all.length} ta to'plam${inPlan ? ` · ${inPlan} tasi rejada` : ''}`;
               return (
-                <View key={g.id} style={{ gap: 10, marginTop: 6 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                    <T w="extrabold" size={18} accessibilityRole="header">{g.title}</T>
-                    <T w="bold" size={13} color={colors.muted}>{items.length} ta</T>
-                  </View>
-                  <DeckRows items={items} />
+                <View key={g.id} style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', borderWidth: 2, borderColor: isOpen ? colors.limeSoft : 'transparent' }}>
+                  <Pressable accessibilityRole="button" accessibilityState={{ expanded: isOpen }} accessibilityLabel={`${g.title}, ${sub}`} onPress={() => toggle(g.id)}
+                    style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 64, paddingVertical: 10, paddingLeft: 16, paddingRight: 12, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
+                    <View style={{ flex: 1 }}>
+                      <T w="extrabold" size={17}>{g.title}</T>
+                      <T size={12} color={colors.muted}>{sub}</T>
+                    </View>
+                    <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: isOpen ? colors.limeSoft : colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+                      <Feather name={isOpen ? 'chevron-up' : 'chevron-down'} size={20} color={isOpen ? colors.forestText : colors.ink} />
+                    </View>
+                  </Pressable>
+                  {isOpen ? (
+                    <View style={{ borderTopWidth: 1, borderTopColor: colors.divider }}>
+                      {items.length ? <DeckRows items={items} bare /> : <T size={13} color={colors.muted} style={{ padding: 16 }}>Hammasi kunlik rejada</T>}
+                    </View>
+                  ) : null}
                 </View>
               );
             })}
@@ -106,9 +134,9 @@ export default function Decks() {
 type DeckInfo = { d: Deck; total: number; started: number; due: number; active: boolean };
 
 /** To'plamlar ro'yxati: ikonka, nom, «Rejada» belgisi, progress va so'z soni. Bosilsa — to'plam sahifasi. */
-function DeckRows({ items }: { items: DeckInfo[] }) {
+function DeckRows({ items, bare }: { items: DeckInfo[]; bare?: boolean }) {
   return (
-    <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
+    <View style={bare ? undefined : { backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
       {items.map(({ d, total, started, due, active }, i) => (
         <Pressable key={d.id} accessibilityRole="button" accessibilityLabel={`${d.title}, ${started} / ${total} so'z${active ? ', rejada' : ''}`}
           onPress={() => router.push({ pathname: '/deck/[id]', params: { id: d.id } })}
@@ -117,7 +145,7 @@ function DeckRows({ items }: { items: DeckInfo[] }) {
           <View style={{ flex: 1, gap: 5 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <T w="extrabold" size={15} numberOfLines={1} style={{ flexShrink: 1 }}>{d.title}</T>
-              {active ? (
+              {active && !bare ? (
                 <View style={{ paddingHorizontal: 7, paddingVertical: 2, borderRadius: 7, backgroundColor: colors.limeSoft }}>
                   <T w="extrabold" size={10} color={colors.forestText} style={{ letterSpacing: 0.4 }}>REJADA</T>
                 </View>

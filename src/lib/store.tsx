@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useColorScheme } from 'react-native';
-import { WORDS, Word, Level } from '../data/words';
+import { WORDS, Word, Level, normalizeDecks } from '../data/words';
 import { Card, completeLearning, completeRelearning, dayNumber, Grade, gradeCard, newCard } from './srs';
 import { DayLog } from './plan';
 import { computeStreak, StreakInfo } from './streak';
@@ -146,7 +146,8 @@ export function hydrate(raw: Partial<AppState>): AppState {
     const dict = BUILTIN.get(w.word.toLowerCase());
     return { ...rest, example: undefined, exampleUz: undefined, ...pickExample(w.word, { dict, sentence: w.example }) };
   });
-  return { ...initialState, ...raw, customWords, prefs };
+  const activeDecks = normalizeDecks(raw.activeDecks ?? []);
+  return { ...initialState, ...raw, customWords, activeDecks, prefs };
 }
 const BUILTIN = new Map(WORDS.map((w) => [w.word.toLowerCase(), w]));
 
