@@ -193,7 +193,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
     if (error || !(data as { ok?: boolean } | null)?.ok) {
       synced.current = wasSynced;
-      throw error ?? new Error('Hisob o\'chirilmadi');
+      // Haqiqiy sabab ko'rinsin: server javobining holati va kodi (masalan «401 Invalid JWT»)
+      let detail = 'tarmoq';
+      const res = (error as { context?: Response } | null)?.context;
+      if (res && typeof res.status === 'number') {
+        let code = '';
+        try {
+          const j = await res.clone().json();
+          code = String(j?.error ?? j?.message ?? j?.msg ?? '');
+        } catch { /* javob JSON emas */ }
+        detail = `${res.status}${code ? ` ${code}` : ''}`;
+      }
+      throw new Error(detail);
     }
     await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
     await GoogleSignin.revokeAccess().catch(() => {});

@@ -3,7 +3,9 @@
  * Foydalanuvchi o'z tokeni bilan chaqiradi; maxfiy (service_role) kalit faqat shu yerda — ilovada emas.
  * O'chiriladi: `progress` jadvalidagi qatori va Supabase'dagi hisobining o'zi.
  *
- * Yuklash:  npx supabase functions deploy delete-account --project-ref kkhxlxxfdyyqkgpvsuyc
+ * Yuklash:  npx supabase functions deploy delete-account --project-ref kkhxlxxfdyyqkgpvsuyc --use-api --no-verify-jwt
+ * (--no-verify-jwt: yangi Supabase loyihalarida tokenlar asimmetrik imzolanadi, eski darvoza ularni rad etadi.
+ *  Token baribir pastda admin.auth.getUser(token) bilan tekshiriladi, shuning uchun xavfsizlik pasaymaydi.)
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
 

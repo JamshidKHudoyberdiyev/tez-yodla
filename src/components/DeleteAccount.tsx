@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Keyboard, Modal, Pressable, TextInput, View } from 'react-native';
 import { Button, T } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { useStore } from '@/lib/store';
@@ -39,20 +39,28 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
   const { state, streak } = useStore();
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+  // Klaviatura balandligi: oyna uning ustiga ko'tariladi (yozilgan matn va tugma ko'rinib turadi)
+  const [kb, setKb] = useState(0);
+  useEffect(() => {
+    const a = Keyboard.addListener('keyboardDidShow', (e) => setKb(e.endCoordinates.height));
+    const b = Keyboard.addListener('keyboardDidHide', () => setKb(0));
+    return () => { a.remove(); b.remove(); };
+  }, []);
   const learned = Object.values(state.cards).filter((c) => c.state !== 'new').length;
   const ok = normalize(text) === WORD;
 
-  const close = () => { if (busy) return; setText(''); setFailed(false); onClose(); };
+  const close = () => { if (busy) return; Keyboard.dismiss(); setText(''); setFailed(null); onClose(); };
   const run = async () => {
+    Keyboard.dismiss();
     setBusy(true);
-    setFailed(false);
+    setFailed(null);
     try {
       await auth.deleteAccount();
       setText('');
       onClose();
-    } catch {
-      setFailed(true);
+    } catch (e) {
+      setFailed(e instanceof Error ? e.message : 'xato');
     } finally {
       setBusy(false);
     }
@@ -66,10 +74,10 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
   ];
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={close}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+    <Modal visible={visible} transparent animationType="slide" statusBarTranslucent onRequestClose={close}>
+      <View style={{ flex: 1, paddingBottom: kb }}>
         <Pressable accessibilityLabel="Yopish" onPress={close} style={{ flex: 1, backgroundColor: 'rgba(19,26,21,0.45)' }} />
-        <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 20, paddingBottom: 30, gap: 12 }}>
+        <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 20, paddingBottom: kb ? 16 : 30, gap: 12 }}>
           <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: 'center' }} />
           {busy ? (
             <View style={{ alignItems: 'center', gap: 12, paddingVertical: 40 }} accessibilityLiveRegion="polite">
@@ -79,18 +87,22 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
             </View>
           ) : (
             <>
-              <View style={{ width: 56, height: 56, borderRadius: 18, backgroundColor: colors.wrongSoft, alignItems: 'center', justifyContent: 'center' }}>
-                <Feather name="trash-2" size={26} color={colors.wrong} />
-              </View>
+              {kb ? null : (
+                <View style={{ width: 56, height: 56, borderRadius: 18, backgroundColor: colors.wrongSoft, alignItems: 'center', justifyContent: 'center' }}>
+                  <Feather name="trash-2" size={26} color={colors.wrong} />
+                </View>
+              )}
               <T w="extrabold" size={24} accessibilityRole="header">Hisobingiz o'chirilsinmi?</T>
-              <View style={{ gap: 4 }}>
-                {items.map((i) => <T key={i} size={14} color={colors.inkSoft}>• {i}</T>)}
-              </View>
+              {kb ? null : (
+                <View style={{ gap: 4 }}>
+                  {items.map((i) => <T key={i} size={14} color={colors.inkSoft}>• {i}</T>)}
+                </View>
+              )}
               <T w="bold" size={14} color={colors.wrong} style={{ lineHeight: 20 }}>Buni qaytarib bo'lmaydi. Barcha telefonlardan ham o'chadi.</T>
               {failed ? (
                 <View accessibilityRole="alert" style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: colors.wrongSoft, borderWidth: 2, borderColor: colors.wrong, borderRadius: 16, padding: 12 }}>
                   <Feather name="alert-triangle" size={18} color={colors.wrong} />
-                  <T size={13} color={colors.ink} style={{ flex: 1, lineHeight: 18 }}>Internet yo'q yoki server javob bermadi. Hisob o'chirilmadi — qayta urinib ko'ring.</T>
+                  <T size={13} color={colors.ink} style={{ flex: 1, lineHeight: 18 }}>{failed === 'tarmoq' ? "Internet yo'q yoki server javob bermadi." : 'Server xato qaytardi.'} Hisob o'chirilmadi — qayta urinib ko'ring. {failed === 'tarmoq' ? '' : `(${failed})`}</T>
                 </View>
               ) : null}
               <T w="bold" size={13}>Tasdiqlash uchun {WORD} deb yozing</T>
@@ -102,13 +114,15 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
                 <View style={{ flex: 1 }}><Button title="Bekor qilish" variant="white" onPress={close} /></View>
                 <View style={{ flex: 1 }}><Button title={failed ? 'Qayta urinish' : "O'chirish"} variant="dangerOutline" disabled={!ok} onPress={run} /></View>
               </View>
-              <Pressable accessibilityRole="link" onPress={() => { close(); router.push('/settings/data'); }} style={{ alignSelf: 'center', padding: 6 }}>
-                <T w="bold" size={13} color={colors.forestText} style={{ textDecorationLine: 'underline' }}>Avval zaxira nusxa olish</T>
-              </Pressable>
+              {kb ? null : (
+                <Pressable accessibilityRole="link" onPress={() => { close(); router.push('/settings/data'); }} style={{ alignSelf: 'center', padding: 6 }}>
+                  <T w="bold" size={13} color={colors.forestText} style={{ textDecorationLine: 'underline' }}>Avval zaxira nusxa olish</T>
+                </Pressable>
+              )}
             </>
           )}
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }

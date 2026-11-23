@@ -82,7 +82,7 @@ export interface Prefs {
   reminderAsked: boolean;
   /** O'yinlar rekordlari */
   gameBest: Record<string, number>;
-  /** Mavzu: telefon sozlamasiga qarab, yorug' yoki tungi */
+  /** Mavzu: yorug' (default), tungi yoki telefon sozlamasiga qarab */
   theme: 'system' | 'light' | 'dark';
 }
 
@@ -91,7 +91,7 @@ export const defaultPrefs: Prefs = {
   reminder: { enabled: false, times: [{ h: 20, m: 0 }], evening: true },
   reminderAsked: false,
   gameBest: {},
-  theme: 'system',
+  theme: 'light',
   testOptions: 4,
   reviewCap: 30,
   autoAdvance: false,
