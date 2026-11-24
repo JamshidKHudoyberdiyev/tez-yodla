@@ -133,6 +133,43 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
   /** Takrorlashda bir bosqich o'sgan so'zlar — yakunda «bog'ingizda o'sdi» deb ko'rsatiladi */
   const grown = useRef<{ word: string; from: number; to: number }[]>([]);
 
+  /** «Bilaman»: so'z o'rganilmaydi, o'rniga rejadan yangi so'z keladi (5 soniya ichida bekor qilsa bo'ladi) */
+  const [knownToast, setKnownToast] = useState<{ prev: Word; next: Word | null; at: number } | null>(null);
+  useEffect(() => {
+    if (!knownToast) return;
+    const id = setTimeout(() => setKnownToast(null), 5000);
+    return () => clearTimeout(id);
+  }, [knownToast]);
+  const replacementFor = (w: Word): Word | null => {
+    const busy = new Set([...group, ...initial.groups.flat()].map((x) => x.id));
+    const known = new Set([...state.knownLemmas, w.word.toLowerCase()]);
+    const p = todayPlan({ words, cards: state.cards, activeDecks: deck ? [deck] : state.activeDecks, knownLemmas: known, dailyNew: 0, extraNew: 40, log: state.log, today });
+    return p.newWords.find((x) => !busy.has(x.id) && x.word.toLowerCase() !== w.word.toLowerCase()) ?? null;
+  };
+  const knowWord = (w: Word) => {
+    const next = replacementFor(w);
+    if (!next && group.length < 2) return;
+    store.markKnown([w.word]);
+    store.track('word_known', { wordId: w.id });
+    const g = next ? group.map((x) => (x.id === w.id ? next : x)) : group.filter((x) => x.id !== w.id);
+    setGroup(g);
+    if (!next && idx >= g.length) setIdx(g.length - 1);
+    setKnownToast({ prev: w, next, at: idx });
+  };
+  const undoKnown = () => {
+    if (!knownToast) return;
+    const { prev, next, at } = knownToast;
+    store.unmarkKnown(prev.word);
+    setGroup((g) => {
+      if (next && g.some((x) => x.id === next.id)) return g.map((x) => (x.id === next.id ? prev : x));
+      const c = [...g];
+      c.splice(Math.min(at, c.length), 0, prev);
+      return c;
+    });
+    setIdx(at);
+    setKnownToast(null);
+  };
+
   const startGroup = (ws: Word[], k: GroupKind) => {
     setGroup(ws);
     setKind(k);
@@ -329,11 +366,38 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
 
   if (phase === 'learn') {
     const w = group[idx];
-    return (
-      <Screen footer={<Button title={idx + 1 < group.length ? 'Tushundim, keyingisi' : steps[1] ? `${steps[1]}ga o'tish` : 'Tugatish'} onPress={() => {
+    const nextBtn = (style?: { flex: number }) => (
+      <Button title={idx + 1 < group.length ? 'Tushundim, keyingisi' : steps[1] ? `${steps[1]}ga o'tish` : 'Tugatish'} style={style} onPress={() => {
+        setKnownToast(null);
         if (idx + 1 < group.length) setIdx(idx + 1);
         else goNext('Tanishish');
-      }} />}>
+      }} />
+    );
+    return (
+      <Screen footer={<>
+        {knownToast ? (
+          <SlideUp key={knownToast.prev.id}>
+            <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.forest, borderRadius: 18, paddingVertical: 12, paddingHorizontal: 14 }}>
+              <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: colors.lime, alignItems: 'center', justifyContent: 'center' }}>
+                <Feather name="check" size={16} color={colors.limeInk} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <T w="extrabold" size={14} color="#FFFFFF">«{knownToast.prev.word}» — bilasiz</T>
+                <T size={12} color="rgba(255,255,255,0.75)">Takrorlashga qo'shilmaydi.{knownToast.next ? " O'rniga yangi so'z" : ''}</T>
+              </View>
+              <Pressable accessibilityRole="button" onPress={undoKnown} hitSlop={10}>
+                <T w="extrabold" size={14} color={colors.lime}>Bekor qilish</T>
+              </Pressable>
+            </View>
+          </SlideUp>
+        ) : null}
+        {kind === 'new' ? (
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <Button title="Bilaman" icon="check" variant="white" style={{ width: 118 }} onPress={() => knowWord(w)} />
+            {nextBtn({ flex: 1 })}
+          </View>
+        ) : nextBtn()}
+      </>}>
         <Header onClose={close} progress={(idx + 1) / group.length} label={`Tanishish · ${idx + 1}/${group.length}`} seg={seg('Tanishish')} />
         <Pop trigger={w.id} from={0.96}>
           <View style={{ gap: 14 }}>

@@ -206,6 +206,8 @@ interface Store {
   repairStreak: (breakDay: number) => void;
   dismissBreak: (breakDay: number) => void;
   markKnown: (lemmas: string[]) => void;
+  /** «Bilaman» bekor qilindi / o'rganishga qaytarildi */
+  unmarkKnown: (lemma: string) => void;
   track: (name: string, props?: AnalyticsEvent['props']) => void;
   /** Joriy mavzu (tizim sozlamasi hisobga olingan) */
   scheme: Scheme;
@@ -384,6 +386,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setState((s) => withEvent({ ...s, streakDismissed: [...s.streakDismissed, day] }, 'streak_restarted', { day })),
     markKnown: (lemmas) =>
       setState((s) => ({ ...s, knownLemmas: Array.from(new Set([...s.knownLemmas, ...lemmas.map((l) => l.toLowerCase())])) })),
+    unmarkKnown: (lemma) =>
+      setState((s) => ({ ...s, knownLemmas: s.knownLemmas.filter((l) => l !== lemma.toLowerCase()) })),
     track,
     reset: () => setState(initialState),
   };

@@ -11,9 +11,11 @@ import { speak } from '@/lib/speech';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
-/** O'zi qo'shgan so'zlar: ko'rish, tarjimani tahrirlash, o'chirish. */
+/** O'zi qo'shgan so'zlar: ko'rish, tarjimani tahrirlash, o'chirish. Pastda — «Bilaman» deganlari (o'rganishga qaytarsa bo'ladi). */
 export default function MyWords() {
-  const { state, today, updateCustomWord, removeCustomWords } = useStore();
+  const { state, words, today, updateCustomWord, removeCustomWords, unmarkKnown } = useStore();
+  const trOf = useMemo(() => new Map(words.map((w) => [w.word.toLowerCase(), w.translation])), [words]);
+  const known = [...state.knownLemmas].reverse();
   const [q, setQ] = useState('');
   const [openId, setOpenId] = useState<string | null>(null);
   const list = state.customWords;
@@ -63,6 +65,30 @@ export default function MyWords() {
           {!shown.length ? <T size={14} color={colors.muted} style={{ padding: 16 }}>Hech narsa topilmadi</T> : null}
         </View>
       )}
+
+      {known.length ? (
+        <>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 6, marginTop: 8 }}>
+            <T w="extrabold" size={12} color={colors.muted} style={{ letterSpacing: 1 }}>«BILAMAN» DEGANLARIM</T>
+            <T w="bold" size={13} color={colors.muted}>{known.length} ta</T>
+          </View>
+          <T size={13} color={colors.muted} style={{ paddingHorizontal: 6, marginTop: -8 }}>Bu so'zlar o'rganish va takrorlashga tushmaydi. Adashib belgilagan bo'lsangiz — qaytaring.</T>
+          <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
+            {known.map((l, i) => (
+              <View key={l} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingVertical: 10, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider }}>
+                <View style={{ flex: 1 }}>
+                  <T w="extrabold" size={15} numberOfLines={1}>{l}</T>
+                  {trOf.get(l) ? <T size={13} color={colors.inkSoft} numberOfLines={1}>{trOf.get(l)}</T> : null}
+                </View>
+                <Pressable accessibilityRole="button" accessibilityLabel={`${l} — o'rganishga qaytarish`} onPress={() => unmarkKnown(l)} hitSlop={6}
+                  style={({ pressed }) => ({ paddingHorizontal: 12, height: 34, borderRadius: 17, justifyContent: 'center', backgroundColor: pressed ? colors.limeSoft : colors.bg })}>
+                  <T w="extrabold" size={13} color={colors.forestText}>Qaytarish</T>
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        </>
+      ) : null}
     </Screen>
   );
 }

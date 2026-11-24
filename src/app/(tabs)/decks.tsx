@@ -5,7 +5,8 @@ import { LayoutAnimation, Pressable, ScrollView, TextInput, View } from 'react-n
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DuoIcon } from '@/components/Art';
 import { Card, H1, IconTile, T } from '@/components/ui';
-import { DECK_GROUPS, DECKS, type Deck } from '@/data/words';
+import { DECK_GROUPS, DECKS, type Deck, type Level } from '@/data/words';
+import { LEVEL_ORDER } from '@/lib/levelTest';
 import { cardsByWord, deckProgress } from '@/lib/decks';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
@@ -23,7 +24,10 @@ export default function Decks() {
     const ws = words.filter((w) => w.deckId === d.id);
     const p = deckProgress(ws, state.cards, byWord);
     const due = ws.filter((w) => state.cards[w.id] && state.cards[w.id].state !== 'new' && state.cards[w.id].due <= today).length;
-    return { d, ...p, due, active: state.activeDecks.includes(d.id) };
+    // Darajasi foydalanuvchinikidan past to'plam — «Siz uchun oson»
+    const lv = LEVEL_ORDER.indexOf((ws[0]?.level ?? '') as Level);
+    const easy = !d.custom && lv >= 0 && lv < LEVEL_ORDER.indexOf(state.level);
+    return { d, ...p, due, active: state.activeDecks.includes(d.id), easy };
   });
   /** «Mening so'zlarim» — o'zingiz qo'shgan so'zlar; bosilsa ro'yxati ochiladi. */
   const own = info.find((x) => x.d.custom);
@@ -131,23 +135,28 @@ export default function Decks() {
   );
 }
 
-type DeckInfo = { d: Deck; total: number; started: number; due: number; active: boolean };
+type DeckInfo = { d: Deck; total: number; started: number; due: number; active: boolean; easy?: boolean };
 
 /** To'plamlar ro'yxati: ikonka, nom, «Rejada» belgisi, progress va so'z soni. Bosilsa — to'plam sahifasi. */
 function DeckRows({ items, bare }: { items: DeckInfo[]; bare?: boolean }) {
   return (
     <View style={bare ? undefined : { backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
-      {items.map(({ d, total, started, due, active }, i) => (
+      {items.map(({ d, total, started, due, active, easy }, i) => (
         <Pressable key={d.id} accessibilityRole="button" accessibilityLabel={`${d.title}, ${started} / ${total} so'z${active ? ', rejada' : ''}`}
           onPress={() => router.push({ pathname: '/deck/[id]', params: { id: d.id } })}
           style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
           <IconTile mdi={d.icon} label={d.badge} bg={d.tint} fg={d.ink} size={42} />
-          <View style={{ flex: 1, gap: 5 }}>
+          <View style={{ flex: 1, gap: 5, opacity: easy && !active ? 0.75 : 1 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <T w="extrabold" size={15} numberOfLines={1} style={{ flexShrink: 1 }}>{d.title}</T>
               {active && !bare ? (
                 <View style={{ paddingHorizontal: 7, paddingVertical: 2, borderRadius: 7, backgroundColor: colors.limeSoft }}>
                   <T w="extrabold" size={10} color={colors.forestText} style={{ letterSpacing: 0.4 }}>REJADA</T>
+                </View>
+              ) : null}
+              {easy ? (
+                <View style={{ paddingHorizontal: 7, paddingVertical: 2, borderRadius: 7, backgroundColor: '#FFF1D6' }}>
+                  <T w="extrabold" size={10} color="#8A5A00" numberOfLines={1}>Siz uchun oson</T>
                 </View>
               ) : null}
             </View>
