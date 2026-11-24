@@ -1,18 +1,32 @@
 import { Feather } from '@expo/vector-icons';
 import { router, type Href } from 'expo-router';
-import { useMemo } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { useMemo, type ReactNode } from 'react';
+import { Image, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DuoIcon, Plant, Ring, RingsDecor, type DuoName } from '@/components/Art';
-import { Flame, StreakCard, StreakStrip } from '@/components/Streak';
+import Svg, { Line } from 'react-native-svg';
+import { PLANT_IMG, PLANT_RATIO, Ring } from '@/components/Art';
+import { StreakCard, StreakStrip } from '@/components/Streak';
 import { Avatar } from '@/components/Avatar';
-import { Button, T } from '@/components/ui';
+import { Button, T, type IconName } from '@/components/ui';
 import { gardenStages } from '@/lib/garden';
 import { capReviews, EVENING_FROM_HOUR, EXTRA_NEW, learnedOn, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { activeDraft, draftMinutes, type SessionDraft } from '@/lib/draft';
 import { colors } from '@/lib/theme';
 
+const HERO_BG = require('../../../assets/home/hero-bg.webp');
+/** Kitob o'qiyotgan miya (426×440) */
+const BRAIN = require('../../../assets/home/brain-sit.webp');
+const FLAME = require('../../../assets/home/flame.webp');
+const ICON = {
+  review: require('../../../assets/home/review.webp'),
+  mistake: require('../../../assets/home/mistake.webp'),
+  book: require('../../../assets/home/book.webp'),
+  games: require('../../../assets/home/games.webp'),
+  calendar: require('../../../assets/home/calendar.webp'),
+  gear: require('../../../assets/home/gear.webp'),
+};
+const hidden = { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' as const };
 
 function greeting(d = new Date()) {
   const h = d.getHours();
@@ -54,23 +68,23 @@ export default function Home() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 28 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 28 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 2 }}>
           <Pressable accessibilityRole="button" accessibilityLabel="Profil" onPress={() => router.push('/settings/profile')}>
             <Avatar name={state.name} color={state.prefs.avatarColor} art={state.prefs.avatarArt} photo={state.prefs.avatarPhoto} size={48} />
           </Pressable>
           <View style={{ flex: 1 }}>
-            <T size={13} color={colors.muted} style={{ lineHeight: 17 }}>{greeting()}</T>
-            <T w="extrabold" size={20} numberOfLines={1} style={{ lineHeight: 26 }}>{state.name || "Do'stim"}</T>
+            <T size={14} color={colors.inkSoft} style={{ lineHeight: 18 }}>{greeting()}</T>
+            <T w="extrabold" size={21} numberOfLines={1} style={{ lineHeight: 27 }}>{state.name || "Do'stim"}</T>
           </View>
           <Pressable accessibilityRole="button" accessibilityLabel={`Streak: ${streak.current} kun`} onPress={() => router.push('/streak')}
-            style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 4, height: 44, paddingLeft: 8, paddingRight: 14, borderRadius: 22, backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 })}>
-            <Flame size={26} dim={!streak.todayDone} />
-            <T w="extrabold" size={17}>{streak.current}</T>
+            style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, height: 44, paddingLeft: 12, paddingRight: 16, borderRadius: 22, backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 })}>
+            <Image source={FLAME} {...hidden} style={{ width: 22, height: 26, opacity: streak.todayDone ? 1 : 0.45 }} />
+            <T w="extrabold" size={18}>{streak.current}</T>
           </Pressable>
           <Pressable accessibilityRole="button" accessibilityLabel="Sozlamalar" onPress={() => router.push('/settings')} hitSlop={4}
             style={({ pressed }) => ({ width: 44, height: 44, borderRadius: 22, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.85 : 1 })}>
-            <DuoIcon name="settings" size={22} fill="transparent" stroke={colors.ink} />
+            <Image source={ICON.gear} {...hidden} style={{ width: 25, height: 24 }} />
           </Pressable>
         </View>
 
@@ -80,113 +94,122 @@ export default function Home() {
             onRestart={() => { setDraft(null); router.push({ pathname: '/session', params: draft.deck ? { deck: draft.deck } : draft.extra ? { extra: '1' } : { only: 'new' } }); }} />
         ) : (
         /* Bugungi yangi so'zlar (halqa faqat yangi so'zlarni sanaydi) */
-        <View style={{ backgroundColor: colors.forest, borderRadius: 32, paddingHorizontal: 20, paddingTop: 22, paddingBottom: 20, gap: 16, overflow: 'hidden' }}>
-          <View pointerEvents="none" style={{ position: 'absolute', right: -60, top: -50 }}><RingsDecor /></View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-            <View accessible accessibilityLabel={`Bugun ${newToday} ta yangi so'z o'rganildi, reja ${newTotal}`} style={{ width: 92, height: 92 }}>
-              <Ring value={newDone ? 1 : newToday / Math.max(1, newTotal)} />
+        <Hero mascot={newDone ? 112 : 142}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <View accessible accessibilityLabel={`Bugun ${newToday} ta yangi so'z o'rganildi, reja ${newTotal}`} style={{ width: 84, height: 84 }}>
+              <Ring size={84} stroke={8} track="rgba(255,255,255,0.22)" value={newDone ? 1 : newToday / Math.max(1, newTotal)} />
               <View style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
-                {newDone && !newToday ? <Feather name={outOfWords ? 'layers' : 'check'} size={34} color={colors.lime} /> : (
+                {newDone ? <Feather name={outOfWords && !newToday ? 'layers' : 'check'} size={34} color={colors.lime} /> : (
                   <>
-                    <T w="extrabold" size={24} color="#FFFFFF" style={{ lineHeight: 26 }}>{newToday}</T>
-                    <T size={11} color={colors.onForestSoft} style={{ lineHeight: 14 }}>/ {Math.max(newTotal, newToday)}</T>
+                    <T w="extrabold" size={26} color="#FFFFFF" style={{ lineHeight: 28 }}>{newToday}</T>
+                    <T size={12} color="#D4E8D6" style={{ lineHeight: 15 }}>/ {Math.max(newTotal, newToday)}</T>
                   </>
                 )}
               </View>
             </View>
             <View style={{ flex: 1 }}>
-              <T w="extrabold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>
+              <T w="extrabold" size={12} color="#D7F76A" style={{ letterSpacing: 1, textTransform: 'uppercase' }}>
                 {outOfWords ? "So'zlar tugadi" : newDone ? 'Reja bajarildi' : "Yangi so'zlar"}
               </T>
-              <T w="extrabold" size={24} color="#FFFFFF" style={{ lineHeight: 28, marginTop: 4 }} accessibilityRole="header">
+              <T w="extrabold" size={21} color="#FFFFFF" style={{ lineHeight: 26, marginTop: 2 }} accessibilityRole="header">
                 {outOfWords ? (newToday ? 'Barakalla!' : "Yangi so'z qolmadi") : newDone ? 'Barakalla!' : newToday > 0 ? `Yana ${newLeft} ta so'z` : `${newLeft} ta yangi so'z`}
               </T>
-              <T size={13} color={colors.onForestSoft}>
-                {outOfWords
-                  ? "Rejadagi to'plamlarda yangi so'z qolmadi — yangi mavzu qo'shing"
-                  : newDone
-                    ? (newToday > state.dailyNew ? `Bugun ${newToday} ta yangi so'z — zo'r!` : `${newToday} ta yangi so'z o'rganildi`)
-                    : `~${newMinutes} daqiqa`}
-              </T>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                {!newDone ? <Feather name="clock" size={14} color="#E3F0E4" /> : null}
+                <T size={13} color="#E3F0E4" style={{ flexShrink: 1 }}>
+                  {outOfWords
+                    ? "Rejadagi to'plamlarda yangi so'z qolmadi — yangi mavzu qo'shing"
+                    : newDone
+                      ? (newToday > state.dailyNew ? `Bugun ${newToday} ta yangi so'z — zo'r!` : `${newToday} ta yangi so'z o'rganildi`)
+                      : `~${newMinutes} daqiqa`}
+                </T>
+              </View>
             </View>
           </View>
           {outOfWords ? (
-            <Button title="Mavzu tanlash" icon="layers" onPress={() => router.push('/decks')} />
+            <Button title="Mavzu tanlash" icon="layers" style={{ alignSelf: 'flex-start', minWidth: 190 }} onPress={() => router.push('/decks')} />
           ) : newDone ? (
-            <>
-              {more ? <Button title={`Yana ${more} ta so'z o'rganish`} icon="plus" onPress={() => router.push({ pathname: '/session', params: { extra: '1' } })} /> : null}
-              <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/add', params: { tab: 'text' } })}
-                style={({ pressed }) => ({ height: more ? 48 : 56, borderRadius: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: more ? 'rgba(255,255,255,0.1)' : colors.lime, opacity: pressed ? 0.8 : 1 })}>
-                <Feather name="align-left" size={18} color={more ? colors.lime : colors.limeInk} />
-                <T w="extrabold" size={15} color={more ? '#FFFFFF' : colors.limeInk}>Matndan so'z qo'shish</T>
-              </Pressable>
-            </>
+            <View style={{ gap: 10, alignSelf: 'flex-start', minWidth: 206 }}>
+              {more ? <Button title={`Yana ${more} ta so'z`} icon="plus" onPress={() => router.push({ pathname: '/session', params: { extra: '1' } })} /> : null}
+              <HeroGhost icon="align-left" title="Matndan so'z qo'shish" onPress={() => router.push({ pathname: '/add', params: { tab: 'text' } })} />
+            </View>
           ) : (
-            <Button title={newToday > 0 ? 'Davom etish' : 'Boshlash'} iconRight="arrow-right" onPress={() => router.push({ pathname: '/session', params: { only: 'new' } })} />
+            <Button title={newToday > 0 ? 'Davom etish' : 'Boshlash'} icon={newToday > 0 ? undefined : 'play'} iconRight={newToday > 0 ? 'arrow-right' : undefined}
+              style={{ alignSelf: 'flex-start', minWidth: 172 }} onPress={() => router.push({ pathname: '/session', params: { only: 'new' } })} />
           )}
-        </View>
+        </Hero>
         )}
 
         {eveningOn ? (
-          <MiniCard icon="moon" tint={colors.nightSoft} ink={colors.night} title="Mustahkamlash"
+          <Row icon={<View style={{ width: 40, height: 40, borderRadius: 14, backgroundColor: colors.night, alignItems: 'center', justifyContent: 'center' }}><Feather name="moon" size={20} color="#FFFFFF" /></View>}
+            tint={colors.nightSoft} accent={colors.night} title="Mustahkamlash"
             sub={`Kechki · bugungi ${eveningCount} ta so'z · ~${Math.max(1, Math.round(eveningCount * 0.15))} daq`}
-            action="Boshlash" actionBg={colors.night} actionFg="#FFFFFF" border={colors.nightSoft}
             label={`Kechki mustahkamlash: bugungi ${eveningCount} ta so'z. Boshlash`} onPress={() => router.push('/evening')} />
         ) : null}
 
-        {/* Takrorlash — alohida, ixcham karta */}
+        {/* Takrorlash */}
         {reviewsLeft ? (
-          <MiniCard icon="rotate-ccw" tint={colors.blueSoft} ink={colors.blue} title={`Takrorlash · ${reviewsLeft} ta`}
-            sub={`~${reviewMinutes} daq${queued ? ` · navbatda yana ${queued} ta` : ''}`}
-            action="Boshlash" actionBg={colors.blue} actionFg={colors.blueSoft} border={colors.blueSoft}
+          <Row icon={<Image source={ICON.review} {...hidden} style={{ width: 36, height: 33 }} />} tint={colors.blueSoft} accent={colors.blue}
+            title="Takrorlash" sub={`${reviewsLeft} ta so'z · ~${reviewMinutes} daq${queued ? ` · navbatda yana ${queued} ta` : ''}`}
             label={`Takrorlash: ${reviewsLeft} ta so'z. Boshlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review' } })} />
         ) : queued ? (
-          <MiniCard icon="rotate-ccw" tint={colors.blueSoft} ink={colors.blue} title={`${reviewedToday} ta takrorlandi`} sub={`Navbatda yana ${queued} ta`}
-            action={`Yana ${moreCount} ta`} actionBg={colors.blueSoft} actionFg={colors.blue} border={colors.blueSoft}
+          <Row icon={<Image source={ICON.review} {...hidden} style={{ width: 36, height: 33 }} />} tint={colors.blueSoft} accent={colors.blue}
+            title={`${reviewedToday} ta takrorlandi`} sub={`Navbatda yana ${queued} ta`} action={`Yana ${moreCount} ta`}
             label={`Bugungi takrorlash bajarildi. Yana ${moreCount} ta takrorlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review', more: '1' } })} />
         ) : null}
 
         {mistakeCount && state.mistakesDoneDay !== today ? (
-          <MiniCard icon="alert-circle" tint={colors.wrongSoft} ink={colors.wrongInk} title="Xatolarim" sub={`${mistakeCount} ta so'z · ko'p adashganlaringiz`}
-            action="Mashq" actionBg={colors.lime} actionFg={colors.limeInk} border={colors.wrongSoft}
+          <Row icon={<Image source={ICON.mistake} {...hidden} style={{ width: 26, height: 26 }} />} tint={colors.peach} accent={colors.error}
+            title="Xatolarim" sub={`${mistakeCount} ta so'z · ko'p adashganlaringiz`}
             label={`Xatolarim: ${mistakeCount} ta so'z. Mashq qilish`} onPress={() => router.push('/mistakes')} />
         ) : null}
+
         {streak.offer ? <StreakCard info={streak} today={today} onRepair={repairStreak} onRestart={dismissBreak} /> : <StreakStrip info={streak} today={today} />}
 
         {/* So'zlar bog'i */}
         <Pressable accessibilityRole="button" accessibilityLabel={`So'zlar bog'i: ${gardenTotal} ta so'z`} onPress={() => router.push('/garden')}
-          style={({ pressed }) => ({ backgroundColor: colors.surface, borderRadius: 22, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 10, gap: 6, opacity: pressed ? 0.9 : 1 })}>
-          <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <T w="extrabold" size={16}>So'zlar bog'i</T>
-            <T w="bold" size={12} color={colors.forestText}>{gardenTotal ? `${gardenTotal} so'z →` : "Birinchi so'zlar shu yerda unadi"}</T>
+          style={({ pressed }) => ({ backgroundColor: colors.surface, borderRadius: 24, paddingHorizontal: 14, paddingTop: 14, paddingBottom: 10, gap: 10, opacity: pressed ? 0.9 : 1 })}>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 4 }}>
+            <T w="extrabold" size={18}>So'zlar bog'i</T>
+            <T w="extrabold" size={13} color={colors.forestText}>{gardenTotal ? `${gardenTotal} so'z →` : "Birinchi so'zlar shu yerda unadi"}</T>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            {garden.map((g, i) => (
-              <View key={g.key} style={{ alignItems: 'center', opacity: g.ids.length ? 1 : 0.4 }} accessibilityLabel={`${g.title}: ${g.ids.length}`}>
-                <View>
-                  <Plant stage={i} size={46} />
-                  {g.dueIds.length ? (
-                    <View style={{ position: 'absolute', top: -2, right: -8, minWidth: 18, height: 18, paddingHorizontal: 4, borderRadius: 9, backgroundColor: colors.error, alignItems: 'center', justifyContent: 'center' }}>
-                      <T w="extrabold" size={10} color="#FFFFFF" style={{ lineHeight: 13 }}>{g.dueIds.length}</T>
+          <View>
+            <Svg width="100%" height={4} style={{ position: 'absolute', left: 0, right: 0, top: 58 }} {...hidden}>
+              <Line x1="8%" y1={2} x2="92%" y2={2} stroke="#EBC88E" strokeWidth={2.4} strokeDasharray="5 6" />
+            </Svg>
+            <View style={{ flexDirection: 'row' }}>
+              {garden.map((g, i) => {
+                const empty = !g.ids.length;
+                const ph = [26, 38, 48, 52, 52, 52][i];
+                return (
+                  <View key={g.key} style={{ flex: 1, alignItems: 'center', gap: 4 }} accessibilityLabel={`${g.title}: ${g.ids.length}`}>
+                    <View style={{ width: 52, height: 66, alignItems: 'center', justifyContent: 'flex-end' }}>
+                      <View style={{ position: 'absolute', bottom: 0, width: 48, height: 14, borderRadius: 24, backgroundColor: '#F6E3BE' }} />
+                      <Image source={PLANT_IMG[i]} {...hidden} resizeMode="contain" style={{ width: ph * PLANT_RATIO[i], height: ph, marginBottom: 7, opacity: empty ? 0.5 : 1 }} />
+                      {empty ? (
+                        <View style={{ position: 'absolute', bottom: 8, width: 24, height: 24, borderRadius: 12, backgroundColor: '#666B66', borderWidth: 2, borderColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
+                          <Feather name="lock" size={11} color="#FFFFFF" />
+                        </View>
+                      ) : null}
                     </View>
-                  ) : null}
-                </View>
-                <T w="extrabold" size={12}>{g.ids.length}</T>
-              </View>
-            ))}
+                    <T w="extrabold" size={15} color={empty ? colors.faint : colors.ink}>{g.ids.length}</T>
+                  </View>
+                );
+              })}
+            </View>
           </View>
         </Pressable>
 
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {([
-            { icon: 'text', label: 'Matndan', href: { pathname: '/add', params: { tab: 'text' } } },
-            { icon: 'games', label: "O'yinlar", href: '/games' },
-            { icon: 'calendar', label: 'Hafta', href: '/weekly' },
-          ] as { icon: DuoName; label: string; href: Href }[]).map((a) => (
+            { icon: ICON.book, w: 26, h: 20, label: 'Matndan', href: { pathname: '/add', params: { tab: 'text' } } },
+            { icon: ICON.games, w: 27, h: 18, label: "O'yinlar", href: '/games' },
+            { icon: ICON.calendar, w: 21, h: 21, label: 'Hafta', href: '/weekly' },
+          ] as { icon: number; w: number; h: number; label: string; href: Href }[]).map((a) => (
             <Pressable key={a.label} accessibilityRole="button" accessibilityLabel={a.label} onPress={() => router.push(a.href)}
-              style={({ pressed }) => ({ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: 48, paddingHorizontal: 12, borderRadius: 16, backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 })}>
-              <DuoIcon name={a.icon} size={20} />
-              <T w="bold" size={13} numberOfLines={1} style={{ flexShrink: 1 }}>{a.label}</T>
+              style={({ pressed }) => ({ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, paddingHorizontal: 8, borderRadius: 18, backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 })}>
+              <Image source={a.icon} {...hidden} style={{ width: a.w, height: a.h }} />
+              <T w="extrabold" size={14} numberOfLines={1} style={{ flexShrink: 1 }}>{a.label}</T>
             </Pressable>
           ))}
         </View>
@@ -195,57 +218,81 @@ export default function Home() {
   );
 }
 
-/** To'xtatilgan mashg'ulot: qaysi guruh va bosqichda qolgani, «Davom ettirish». */
-function ResumeCard({ draft, onResume, onRestart }: { draft: SessionDraft; onResume: () => void; onRestart: () => void }) {
-  const at = draft.steps.indexOf(draft.step);
+/** Yashil karta: ChatGPT chizgan fon (tepalik, butalar) va kitob o'qiyotgan miya. */
+function Hero({ children, mascot = 142 }: { children: ReactNode; mascot?: number }) {
   return (
-    <View style={{ backgroundColor: colors.forest, borderRadius: 32, paddingHorizontal: 20, paddingTop: 22, paddingBottom: 16, gap: 16, overflow: 'hidden' }}>
-      <View pointerEvents="none" style={{ position: 'absolute', right: -60, top: -50 }}><RingsDecor /></View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.lime }} />
-        <T w="extrabold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>To'xtatilgan mashg'ulot</T>
-      </View>
-      <View style={{ gap: 4 }}>
-        <T w="extrabold" size={24} color="#FFFFFF" style={{ lineHeight: 28 }} accessibilityRole="header">{draft.groupIndex + 1}-guruh · {draft.step} bosqichi</T>
-        <T size={13} color={colors.onForestSoft}>{draft.wordIds.length} ta yangi so'z · ~{draftMinutes(draft)} daqiqa qoldi</T>
-      </View>
-      <View accessible accessibilityLabel={`${draft.steps.length} bosqichdan ${at + 1}-bosqich: ${draft.step}`} style={{ gap: 6 }}>
-        <View style={{ flexDirection: 'row', gap: 4 }}>
-          {draft.steps.map((s, i) => <View key={s} style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: i < at ? colors.lime : i === at ? 'rgba(182,228,78,0.45)' : 'rgba(255,255,255,0.18)' }} />)}
-        </View>
-        <View style={{ flexDirection: 'row', gap: 4 }}>
-          {draft.steps.map((s, i) => <T key={s} w={i === at ? 'extrabold' : 'medium'} size={10} numberOfLines={1} color={i === at ? colors.lime : colors.onForestSoft} style={{ flex: 1, textAlign: 'center' }}>{s}</T>)}
-        </View>
-      </View>
-      <Button title="Davom ettirish" iconRight="arrow-right" onPress={onResume} />
-      <Pressable accessibilityRole="button" onPress={onRestart} hitSlop={8} style={{ alignSelf: 'center', paddingVertical: 2 }}>
-        <T w="bold" size={14} color={colors.onForestSoft}>Boshidan boshlash</T>
-      </Pressable>
+    <View style={{ backgroundColor: colors.forest, borderRadius: 30, overflow: 'hidden', paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, gap: 16 }}>
+      <Image source={HERO_BG} resizeMode="cover" {...hidden} style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
+      <Image source={BRAIN} {...hidden} style={{ position: 'absolute', right: 0, bottom: 6, height: mascot, width: (mascot * 426) / 440 }} />
+      {children}
     </View>
   );
 }
 
-/** Bosh sahifadagi ixcham karta (Takrorlash, Xatolarim): ikonka, sarlavha, izoh va kichik tugma. */
-function MiniCard({ icon, tint, ink, title, sub, action, actionBg, actionFg, border, label, onPress }: {
-  icon: React.ComponentProps<typeof Feather>['name']; tint: string; ink: string; title: string; sub: string;
-  action?: string; actionBg?: string; actionFg?: string; border?: string; label: string; onPress?: () => void;
+/** Yashil karta ichidagi ikkinchi darajali tugma: shaffof, oq chegarali */
+function HeroGhost({ icon, title, onPress }: { icon: IconName; title: string; onPress: () => void }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress} hitSlop={4}
+      style={({ pressed }) => ({ height: 44, borderRadius: 22, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.6)', backgroundColor: 'rgba(14,52,24,0.45)',
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 16, opacity: pressed ? 0.85 : 1 })}>
+      <Feather name={icon} size={17} color="#FFFFFF" />
+      <T w="extrabold" size={15} color="#FFFFFF" numberOfLines={1}>{title}</T>
+    </Pressable>
+  );
+}
+
+/** To'xtatilgan mashg'ulot: qaysi guruh va bosqichda qolgani, «Davom ettirish». */
+function ResumeCard({ draft, onResume, onRestart }: { draft: SessionDraft; onResume: () => void; onRestart: () => void }) {
+  const at = draft.steps.indexOf(draft.step);
+  return (
+    <Hero mascot={110}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.lime }} />
+        <T w="extrabold" size={12} color="#D7F76A" style={{ letterSpacing: 1, textTransform: 'uppercase' }}>To'xtatilgan mashg'ulot</T>
+      </View>
+      <View style={{ gap: 4, marginTop: -6 }}>
+        <T w="extrabold" size={22} color="#FFFFFF" style={{ lineHeight: 28 }} accessibilityRole="header">{draft.groupIndex + 1}-guruh · {draft.step}</T>
+        <T size={13} color="#E3F0E4">{draft.wordIds.length} ta yangi so'z · ~{draftMinutes(draft)} daqiqa qoldi</T>
+      </View>
+      <View accessible accessibilityLabel={`${draft.steps.length} bosqichdan ${at + 1}-bosqich: ${draft.step}`} style={{ gap: 6, maxWidth: 230 }}>
+        <View style={{ flexDirection: 'row', gap: 4 }}>
+          {draft.steps.map((s, i) => <View key={s} style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: i < at ? colors.lime : i === at ? 'rgba(198,245,66,0.5)' : 'rgba(255,255,255,0.22)' }} />)}
+        </View>
+        <View style={{ flexDirection: 'row', gap: 4 }}>
+          {draft.steps.map((s, i) => <T key={s} w={i === at ? 'extrabold' : 'medium'} size={10} numberOfLines={1} color={i === at ? colors.lime : '#D4E8D6'} style={{ flex: 1, textAlign: 'center' }}>{s}</T>)}
+        </View>
+      </View>
+      <View style={{ gap: 10, alignSelf: 'flex-start', minWidth: 210 }}>
+        <Button title="Davom ettirish" iconRight="arrow-right" onPress={onResume} />
+        <HeroGhost icon="rotate-ccw" title="Boshidan boshlash" onPress={onRestart} />
+      </View>
+    </Hero>
+  );
+}
+
+/** Bosh sahifadagi qator (Takrorlash, Xatolarim, Mustahkamlash): oq hoshiya ichida rangli fon, 3D ikonka va o'ngda strelka yoki kichik tugma. */
+function Row({ icon, tint, accent, title, sub, action, label, onPress }: {
+  icon: ReactNode; tint: string; accent: string; title: string; sub: string; action?: string; label: string; onPress: () => void;
 }) {
   return (
-    <Pressable accessibilityRole={onPress ? 'button' : undefined} accessibilityLabel={label} disabled={!onPress} onPress={onPress}
-      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surface, borderRadius: 20, paddingVertical: 10, paddingHorizontal: 12,
-        borderWidth: border ? 1.5 : 0, borderColor: border, opacity: pressed ? 0.9 : 1 })}>
-      <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: tint, alignItems: 'center', justifyContent: 'center' }}>
-        <Feather name={icon} size={20} color={ink} />
-      </View>
-      <View style={{ flex: 1 }}>
-        <T w="extrabold" size={15} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{title}</T>
-        <T size={12} color={colors.muted} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>{sub}</T>
-      </View>
-      {action ? (
-        <View style={{ height: 34, paddingHorizontal: 14, borderRadius: 12, backgroundColor: actionBg, justifyContent: 'center' }}>
-          <T w="extrabold" size={13} color={actionFg}>{action}</T>
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
+      style={({ pressed }) => ({ backgroundColor: colors.surface, borderRadius: 22, padding: 4, opacity: pressed ? 0.9 : 1 })}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 18, backgroundColor: tint, paddingVertical: 8, paddingLeft: 12, paddingRight: 10 }}>
+        <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>{icon}</View>
+        <View style={{ flex: 1 }}>
+          <T w="extrabold" size={16} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{title}</T>
+          <T size={13} color={colors.inkSoft} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>{sub}</T>
         </View>
-      ) : null}
+        {action ? (
+          <View style={{ height: 32, paddingHorizontal: 12, borderRadius: 16, backgroundColor: colors.surface, justifyContent: 'center' }}>
+            <T w="extrabold" size={13} color={accent}>{action}</T>
+          </View>
+        ) : (
+          <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>
+            <Feather name="chevron-right" size={18} color={accent} />
+          </View>
+        )}
+      </View>
     </Pressable>
   );
 }
