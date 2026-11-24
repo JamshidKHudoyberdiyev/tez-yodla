@@ -3,91 +3,129 @@ import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Pop } from '@/components/Motion';
 import { BackHeader, Button, RoundIconButton, Screen, T } from '@/components/ui';
-import { TEST_WORDS, Word, WORDS } from '@/data/words';
-import { estimateLevel } from '@/lib/plan';
+import { WORDS } from '@/data/words';
+import { buildTest, CHECK_EVERY, checkOptions, scoreTest, type TestAnswer, type TestWord } from '@/lib/levelTest';
 import { speak } from '@/lib/speech';
 import { colors } from '@/lib/theme';
 
-interface Question { word: Word; level: string; options: string[] }
+const LEVEL_DECKS = ['a1', 'a2', 'b1', 'b2', 'c1', 'c2'];
+const POOL: TestWord[] = WORDS.filter((w) => LEVEL_DECKS.includes(w.deckId) && w.level).map((w) => ({ word: w.word, translation: w.translation, level: w.level! }));
 
-function shuffle<T>(a: T[]): T[] {
-  const b = [...a];
-  for (let i = b.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [b[i], b[j]] = [b[j], b[i]];
-  }
-  return b;
-}
+const RULES: [string, string][] = [
+  ['⏱', "30 ta so'z · taxminan 1 daqiqa"],
+  ['🎯', 'A1 dan C2 gacha — aniq daraja'],
+  ['🕵️', "Orasida soxta so'zlar ham bor — taxmin qilmang"],
+];
 
-function buildQuestions(): Question[] {
-  const pools: [string, Word[]][] = [
-    ['A1', TEST_WORDS],
-    ['A2', WORDS.filter((w) => w.deckId === 'a2')],
-    ['B1', WORDS.filter((w) => w.deckId === 'b1')],
-    ['B2', WORDS.filter((w) => w.deckId === 'ielts')],
-  ];
-  const allTranslations = [...TEST_WORDS, ...WORDS].map((w) => w.translation);
-  const qs: Question[] = [];
-  for (const [level, pool] of pools) {
-    for (const word of shuffle(pool).slice(0, 3)) {
-      const distractors = shuffle(allTranslations.filter((t) => t !== word.translation)).slice(0, 3);
-      qs.push({ word, level, options: shuffle([word.translation, ...distractors]) });
-    }
-  }
-  return qs;
-}
-
+/**
+ * Daraja testi: «So'zni bilasizmi?» (Bilaman / Bilmayman). Orasida soxta so'zlar bor (taxminni ushlaydi),
+ * har 5-«Bilaman»dan keyin tarjima so'raladi. Hisob — lib/levelTest.ts.
+ */
 export default function LevelTest() {
   const { retake } = useLocalSearchParams<{ retake?: string }>();
-  const questions = useMemo(buildQuestions, []);
+  const items = useMemo(() => buildTest(POOL), []);
+  const [started, setStarted] = useState(false);
   const [i, setI] = useState(0);
-  const [correct, setCorrect] = useState<Record<string, number>>({});
-  const q = questions[i];
+  const [answers, setAnswers] = useState<TestAnswer[]>([]);
+  const [yesCount, setYesCount] = useState(0);
+  const [check, setCheck] = useState<string[] | null>(null);
+  const item = items[i];
 
-  const answer = (option: string | null) => {
-    const next = { ...correct };
-    if (option === q.word.translation) next[q.level] = (next[q.level] ?? 0) + 1;
-    setCorrect(next);
-    if (i + 1 < questions.length) setI(i + 1);
-    else {
-      const { level, knownWords } = estimateLevel(next);
-      router.replace({ pathname: '/onboarding/result', params: { level, knownWords: String(knownWords), ...(retake ? { retake: '1' } : {}) } });
-    }
+  const record = (a: TestAnswer) => {
+    const next = [...answers, a];
+    setAnswers(next);
+    setCheck(null);
+    if (i + 1 < items.length) { setI(i + 1); return; }
+    const { level, knownWords, fakesYes } = scoreTest(next);
+    router.replace({ pathname: '/onboarding/result', params: { level, knownWords: String(knownWords), fakes: String(fakesYes), ...(retake ? { retake: '1' } : {}) } });
   };
+  const yes = () => {
+    const n = yesCount + 1;
+    setYesCount(n);
+    if (item.kind === 'real' && n % CHECK_EVERY === 0) { setCheck(checkOptions(item, POOL)); return; }
+    record({ item, yes: true });
+  };
+  const no = () => record({ item, yes: false });
+
+  if (!started) {
+    return (
+      <Screen scroll={false} footer={<Button title="Boshlash" onPress={() => setStarted(true)} />}>
+        <BackHeader title="Daraja testi" />
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <View style={{ backgroundColor: colors.surface, borderRadius: 28, padding: 22, gap: 14 }}>
+            <T w="extrabold" size={26} style={{ lineHeight: 32 }} accessibilityRole="header">So'zni bilasizmi?</T>
+            <T size={15} color={colors.muted} style={{ lineHeight: 22, marginTop: -4 }}>
+              Har bir so'zga «Bilaman» yoki «Bilmayman» deng. Ma'nosini aniq bilsangizgina «Bilaman».
+            </T>
+            {RULES.map(([icon, text]) => (
+              <View key={text} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}>
+                  <T size={17}>{icon}</T>
+                </View>
+                <T w="semibold" size={15} style={{ flex: 1, lineHeight: 20 }}>{text}</T>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Screen>
+    );
+  }
+
+  const header = (
+    <>
+      <BackHeader title="Daraja testi" right={<T w="extrabold" size={14} color={colors.muted}>{i + 1} / {items.length}</T>} />
+      <View style={{ height: 10, borderRadius: 5, backgroundColor: colors.track, overflow: 'hidden' }} accessibilityRole="progressbar" accessibilityLabel={`Savol ${i + 1}, jami ${items.length}`}>
+        <View style={{ width: `${(i / items.length) * 100}%`, height: '100%', borderRadius: 5, backgroundColor: colors.forest }} />
+      </View>
+    </>
+  );
+
+  // Tekshiruv: «Bilaman» degan so'zning tarjimasi
+  if (check && item.kind === 'real') {
+    return (
+      <Screen footer={<T size={13} color={colors.muted} style={{ textAlign: 'center' }}>Har {CHECK_EVERY} ta «Bilaman»dan biri shunday tekshiriladi</T>}>
+        {header}
+        <Pop key={`c${i}`} from={0.94}>
+          <View style={{ backgroundColor: colors.surface, borderRadius: 28, paddingVertical: 22, paddingHorizontal: 16, alignItems: 'center', gap: 8 }}>
+            <View style={{ height: 28, paddingHorizontal: 12, borderRadius: 14, backgroundColor: colors.limeSoft, justifyContent: 'center' }}>
+              <T w="extrabold" size={12} color={colors.forestText}>TEKSHIRUV</T>
+            </View>
+            <T w="bold" size={13} color={colors.muted}>«Bilaman» dedingiz — tarjimasi qaysi?</T>
+            <T w="extrabold" size={40} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 48, letterSpacing: -1, alignSelf: 'stretch', textAlign: 'center' }} accessibilityRole="header">{item.word}</T>
+          </View>
+        </Pop>
+        <View style={{ gap: 10 }} accessibilityRole="radiogroup">
+          {check.map((o, k) => (
+            <Pressable key={o} accessibilityRole="button" accessibilityLabel={o} onPress={() => record({ item, yes: true, checked: o === item.translation })}
+              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 58, paddingHorizontal: 16, borderRadius: 20, borderWidth: 2, borderColor: pressed ? colors.forestLine : 'transparent', backgroundColor: pressed ? colors.limeSoft : colors.surface })}>
+              <View style={{ width: 32, height: 32, borderRadius: 11, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+                <T w="extrabold" size={13} color={colors.muted}>{'ABCD'[k]}</T>
+              </View>
+              <T w="bold" size={17} style={{ flex: 1 }}>{o}</T>
+            </Pressable>
+          ))}
+        </View>
+      </Screen>
+    );
+  }
 
   return (
-    <Screen footer={<Button title="Bilmayman" variant="ghost" onPress={() => answer(null)} />}>
-      <BackHeader title="Daraja testi" right={<T w="bold" size={14} color={colors.inkSoft}>{i + 1} / {questions.length}</T>} />
-      <View style={{ flexDirection: 'row', gap: 4 }} accessibilityRole="progressbar" accessibilityLabel={`Savol ${i + 1}, jami ${questions.length}`}>
-        {questions.map((_, k) => (
-          <View key={k} style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: k < i ? colors.forest : k === i ? colors.lime : colors.line }} />
-        ))}
+    <Screen scroll={false} footer={
+      <View style={{ flexDirection: 'row', gap: 12 }}>
+        <Button title="Bilmayman" variant="white" onPress={no} style={{ flex: 1 }} />
+        <Button title="Bilaman" onPress={yes} style={{ flex: 1 }} />
       </View>
-      <T size={14} color={colors.muted}>Taxminan 2 daqiqa. Bilmasangiz, taxmin qilmang — «Bilmayman»ni bosing.</T>
-
-      <Pop key={i} from={0.94}>
-        <View style={{ backgroundColor: colors.surface, borderRadius: 32, paddingVertical: 30, alignItems: 'center', gap: 10 }}>
-          <T w="bold" size={13} color={colors.muted}>Tarjimasini tanlang</T>
-          <T w="extrabold" size={46} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 54, letterSpacing: -1, alignSelf: 'stretch', textAlign: 'center' }} accessibilityRole="header">{q.word.word}</T>
-          <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(q.word.word)} />
-        </View>
-      </Pop>
-
-      <View style={{ gap: 10 }} accessibilityRole="radiogroup">
-        {q.options.map((o, k) => (
-          <Pressable
-            key={o}
-            accessibilityRole="button"
-            accessibilityLabel={o}
-            onPress={() => answer(o)}
-            style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 60, paddingHorizontal: 16, borderRadius: 20, borderWidth: 2, borderColor: pressed ? colors.forestLine : 'transparent', backgroundColor: pressed ? colors.limeSoft : colors.surface, transform: [{ scale: pressed ? 0.98 : 1 }] })}
-          >
-            <View style={{ width: 32, height: 32, borderRadius: 11, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' }}>
-              <T w="extrabold" size={13} color={colors.muted}>{'ABCD'[k]}</T>
-            </View>
-            <T w="bold" size={17} style={{ flex: 1 }}>{o}</T>
-          </Pressable>
-        ))}
+    }>
+      {header}
+      <View style={{ flex: 1, justifyContent: 'center', gap: 14 }}>
+        <Pop key={i} from={0.94}>
+          <View style={{ backgroundColor: colors.surface, borderRadius: 32, paddingVertical: 40, paddingHorizontal: 16, alignItems: 'center', gap: 12 }}>
+            <T w="bold" size={13} color={colors.muted}>Bu so'zni bilasizmi?</T>
+            <T w="extrabold" size={48} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 56, letterSpacing: -1, alignSelf: 'stretch', textAlign: 'center' }} accessibilityRole="header">{item.word}</T>
+            <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(item.word)} />
+          </View>
+        </Pop>
+        <T size={13} color={colors.muted} style={{ textAlign: 'center' }}>Ma'nosini aniq bilsangiz — «Bilaman»</T>
       </View>
     </Screen>
   );

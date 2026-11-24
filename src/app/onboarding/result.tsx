@@ -19,7 +19,8 @@ const GOALS = [10, 20, 30].map((n) => ({ n, time: `~${dailyMinutes(n)} daq` }));
 const TOPICS = DECKS.filter((d) => d.topic);
 
 export default function LevelResult() {
-  const params = useLocalSearchParams<{ level?: string; knownWords?: string; retake?: string }>();
+  const params = useLocalSearchParams<{ level?: string; knownWords?: string; fakes?: string; retake?: string }>();
+  const fakes = Number(params.fakes ?? 0);
   const retake = params.retake === '1';
   const level = (params.level as Level) ?? 'A1';
   const deck = deckById(recommendedDeck(level))!;
@@ -57,6 +58,15 @@ export default function LevelResult() {
       <View style={{ backgroundColor: colors.surface, borderRadius: 26, padding: 16 }}>
         <LevelLadder level={level} tall />
       </View>
+
+      {fakes > 0 ? (
+        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start', backgroundColor: '#FFF8E6', borderRadius: 18, padding: 14 }}>
+          <T size={18}>🕵️</T>
+          <T size={13} color="#6B5300" style={{ flex: 1, lineHeight: 19 }}>
+            <T w="extrabold" size={13} color="#6B5300">{fakes} ta soxta so'zni</T> «bilaman» dedingiz — natija shunga qarab tuzatildi. Keyingi safar faqat aniq bilganingizni belgilang.
+          </T>
+        </View>
+      ) : null}
 
       <SectionLabel>Asosiy to'plam</SectionLabel>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 24, backgroundColor: colors.surface, borderWidth: 2, borderColor: colors.forestLine }}>

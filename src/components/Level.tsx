@@ -8,11 +8,12 @@ export const LEVELS = [
   { id: 'B1', name: "O'rta" },
   { id: 'B2', name: 'Yuqoriroq' },
   { id: 'C1', name: 'Yuqori' },
+  { id: 'C2', name: 'Mukammal' },
 ] as const;
 
 export const levelName = (id: string) => LEVELS.find((l) => l.id === id)?.name ?? id;
 
-/** Daraja zinapoyasi: A1 → C1, joriy daraja «Siz» belgisi bilan. */
+/** Daraja zinapoyasi: A1 → C2, joriy daraja «Siz» belgisi bilan. */
 export function LevelLadder({ level, tall = false }: { level: string; tall?: boolean }) {
   const idx = Math.max(0, LEVELS.findIndex((l) => l.id === level));
   const step = tall ? 12 : 9;
