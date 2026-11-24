@@ -13,3 +13,5 @@ create table if not exists public.telegram_logins (
 );
 alter table public.telegram_logins enable row level security;
 create index if not exists telegram_logins_created_idx on public.telegram_logins (created_at);
+-- Yangi loyihalarda jadvallar Data API'ga avtomatik ochilmaydi: server kaliti (service_role) uchun ruxsat
+grant select, insert, update, delete on table public.telegram_logins to service_role;
