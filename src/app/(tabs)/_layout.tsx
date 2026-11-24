@@ -45,12 +45,12 @@ function TabBar({ state, navigateToTab }: BottomTabBarProps) {
         accessibilityLabel="So'z qo'shish"
         onPress={() => router.push('/add')}
         style={({ pressed }) => ({
-          width: 60, height: 60, borderRadius: 22, backgroundColor: colors.forestDeep, alignItems: 'center', justifyContent: 'center',
+          width: 60, height: 60, borderRadius: 22, backgroundColor: colors.lime, alignItems: 'center', justifyContent: 'center',
           marginTop: -26, transform: [{ scale: pressed ? 0.94 : 1 }],
-          shadowColor: colors.forestDeep, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 8 }, elevation: 8,
+          shadowColor: '#7FA01E', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 8 }, elevation: 8,
         })}
       >
-        <Feather name="plus" size={28} color={colors.lime} />
+        <Feather name="plus" size={30} color={colors.limeInk} />
       </Pressable>
     </View>
   );

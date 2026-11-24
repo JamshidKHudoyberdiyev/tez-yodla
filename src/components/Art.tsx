@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { Image, Text, View } from 'react-native';
-import Svg, { Circle, Defs, Ellipse, G, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, G, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { colors, font } from '@/lib/theme';
 
 /**
@@ -9,8 +9,6 @@ import { colors, font } from '@/lib/theme';
  */
 
 const LIME = colors.lime;
-const FOREST = colors.forest;
-const BROWN = '#8F4A12';
 const hidden = { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' as const };
 
 /** Belgi: nihol (so'z xotirada o'sadi) + chapda tezlik chiziqlari («tez»). */
@@ -31,68 +29,21 @@ export function Wordmark({ size = 28, dark = false }: { size?: number; dark?: bo
   );
 }
 
-/** Bog' bosqichlari: 0 urug' · 1 maysa · 2 nihol · 3 ko'chat · 4 daraxt · 5 meva */
+/** Bog' bosqichlari (3D rasmlar): 0 urug' · 1 maysa · 2 nihol · 3 ko'chat · 4 daraxt · 5 meva */
+export const PLANT_IMG = [
+  require('../../assets/garden/seed.webp'),
+  require('../../assets/garden/sprout.webp'),
+  require('../../assets/garden/seedling.webp'),
+  require('../../assets/garden/sapling.webp'),
+  require('../../assets/garden/tree.webp'),
+  require('../../assets/garden/fruit.webp'),
+];
+/** Rasmlarning eni / bo'yi */
+export const PLANT_RATIO = [277 / 171, 262 / 246, 266 / 357, 266 / 381, 363 / 420, 379 / 420];
+
 export function Plant({ stage, size = 56 }: { stage: number; size?: number }) {
-  const ground = <Ellipse cx={32} cy={54} rx={20} ry={5} fill={colors.soil} />;
-  let g: React.ReactNode;
-  switch (Math.max(0, Math.min(5, stage))) {
-    case 0:
-      g = (<>
-        <Ellipse cx={32} cy={46} rx={10} ry={8} fill={BROWN} />
-        <Ellipse cx={29} cy={43.5} rx={3} ry={2} fill="#B66A2A" />
-        <Path d="M33 39c1-3 4-4 6-3-1 3-4 4-6 3z" fill={LIME} />
-      </>);
-      break;
-    case 1:
-      g = (<>
-        <Path d="M32 53V40" stroke={FOREST} strokeWidth={3} strokeLinecap="round" />
-        <Path d="M32 42c-1-6-6-8-11-7 1 6 6 8 11 7z" fill={LIME} />
-        <Path d="M32 41c1-6 6-9 12-8-1 6-6 9-12 8z" fill="#8FC93A" />
-      </>);
-      break;
-    case 2:
-      g = (<>
-        <Path d="M32 53V28" stroke={FOREST} strokeWidth={3} strokeLinecap="round" />
-        <Path d="M32 44c-2-5-7-7-12-6 1 5 7 7 12 6z" fill="#8FC93A" />
-        <Path d="M32 38c2-5 7-7 12-6-1 5-7 7-12 6z" fill={LIME} />
-        <Path d="M32 31c-2-5-6-7-10-6 1 5 6 7 10 6z" fill={LIME} />
-        <Path d="M32 29c1-4 4-6 8-5-1 4-4 6-8 5z" fill="#8FC93A" />
-      </>);
-      break;
-    case 3:
-      g = (<>
-        <Path d="M32 53V30" stroke={BROWN} strokeWidth={3.5} strokeLinecap="round" />
-        <Circle cx={32} cy={26} r={13} fill="#8FC93A" />
-        <Circle cx={25} cy={30} r={8} fill={LIME} />
-        <Circle cx={39} cy={29} r={8} fill="#7BB832" />
-      </>);
-      break;
-    case 4:
-      g = (<>
-        <Path d="M32 53V30" stroke={BROWN} strokeWidth={4.5} strokeLinecap="round" />
-        <Path d="M32 42l-6-6M32 38l6-5" stroke={BROWN} strokeWidth={3} strokeLinecap="round" />
-        <Circle cx={32} cy={22} r={16} fill={FOREST} />
-        <Circle cx={22} cy={28} r={10} fill="#2E7A3E" />
-        <Circle cx={42} cy={27} r={10} fill="#2E7A3E" />
-        <Circle cx={30} cy={15} r={7} fill="#3E8E4C" />
-      </>);
-      break;
-    default:
-      g = (<>
-        <Path d="M32 53V30" stroke={BROWN} strokeWidth={4.5} strokeLinecap="round" />
-        <Circle cx={32} cy={22} r={16} fill={FOREST} />
-        <Circle cx={22} cy={28} r={10} fill="#2E7A3E" />
-        <Circle cx={42} cy={27} r={10} fill="#2E7A3E" />
-        {[[25, 20], [38, 16], [40, 30], [27, 33]].map(([x, y]) => <Circle key={`${x}${y}`} cx={x} cy={y} r={3.6} fill="#E2463A" />)}
-        <Path d="M45 9l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5z" fill={LIME} />
-      </>);
-  }
-  return (
-    <Svg width={size} height={size} viewBox="0 0 64 64" {...hidden}>
-      {ground}
-      {g}
-    </Svg>
-  );
+  const i = Math.max(0, Math.min(5, Math.round(stage) || 0));
+  return <Image source={PLANT_IMG[i]} resizeMode="contain" {...hidden} style={{ width: size, height: size }} />;
 }
 
 /** Olov — faqat streak uchun. */
