@@ -13,7 +13,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { AppState as RNAppState, Platform } from 'react-native';
 import { decideInitial, mergeStates, snapshotOf, type InitialSync } from './cloud';
 import { hydrate, useStore, type AppState } from './store';
-import { accountLabelOf, CALLBACK_PATH, parseCallback, TELEGRAM_PROVIDER, type AuthProviderKind } from './authLinks';
+import { accountLabelOf, providerOf, telegramLink, type AuthProviderKind } from './authLinks';
 import { GOOGLE_WEB_CLIENT_ID, supabase } from './supabase';
 
 export const AUTH_REQUIRED = Platform.OS !== 'web';
@@ -25,8 +25,11 @@ const readMeta = async (): Promise<Meta | null> => { try { const r = await Async
 const writeMeta = (m: Meta | null) => (m ? AsyncStorage.setItem(META_KEY, JSON.stringify(m)) : AsyncStorage.removeItem(META_KEY)).catch(() => {});
 
 export type SyncStatus = 'idle' | 'loading' | 'saving' | 'saved' | 'error';
-/** Telegram orqali kirish holati: Telegram ochilgan (tasdiq kutilmoqda) → ilovaga qaytdi (sessiya olinmoqda) → xato */
-export type TelegramStatus = 'idle' | 'waiting' | 'exchanging' | 'error';
+/** Telegram kodini tekshirish natijasi (server: supabase/functions/telegram-login) */
+export type TelegramVerify =
+  | { ok: true; tokenHash: string }
+  | { ok: false; error: 'wrong'; left: number }
+  | { ok: false; error: 'expired' | 'locked' | 'no_code' | 'network' };
 
 interface Auth {
   /** Sessiya tekshirildi */
@@ -37,10 +40,13 @@ interface Auth {
   provider: AuthProviderKind | null;
   /** Hisobni ko'rsatish uchun: email (Google) yoki «Ism · @username» (Telegram) */
   accountLabel: string | null;
-  telegram: TelegramStatus;
-  /** Telegram'ni ochadi; natija deep link orqali keladi (telegram holatini kuzating) */
-  signInTelegram: () => Promise<void>;
-  cancelTelegram: () => void;
+  /** Telegram: kirish so'rovi ochiladi va bot chati (START → kod) ochiladi. Bot nomi va so'rov raqami qaytadi. */
+  telegramStart: () => Promise<{ nonce: string; bot: string }>;
+  /** Shu so'rov uchun botni qayta ochish (yangi kod olish) */
+  telegramReopen: (t: { nonce: string; bot: string }) => void;
+  /** 5 xonali kodni tekshirish (hali kirmaydi — «Tasdiqlandi» ko'rsatib, so'ng telegramSignIn) */
+  telegramVerify: (nonce: string, code: string) => Promise<TelegramVerify>;
+  telegramSignIn: (tokenHash: string) => Promise<void>;
   /** Kirgandan keyingi birinchi solishtirish natijasi (kirish ekrani shunga qarab yo'naltiradi) */
   initial: InitialSync | null;
   status: SyncStatus;
@@ -77,8 +83,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [deleted, setDeleted] = useState(false);
-  const [telegram, setTelegram] = useState<TelegramStatus>('idle');
-  const usedCode = useRef<string | null>(null);
   const userId = session?.user.id ?? null;
   // Birinchi solishtirish tugamaguncha bazaga yozilmaydi (aks holda bo'sh telefon bulutdagini bosib ketadi)
   const synced = useRef<string | null>(null);
@@ -104,26 +108,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
     });
     return () => data.subscription.unsubscribe();
-  }, []);
-
-  // Telegram'dan qaytish: yodla://auth-callback?code=… → sessiya
-  useEffect(() => {
-    if (!AUTH_REQUIRED) return;
-    const handle = (url: string | null) => {
-      const r = url ? parseCallback(url) : null;
-      if (!r) return;
-      if (!r.code) { setTelegram('error'); return; }
-      if (usedCode.current === r.code) return;
-      usedCode.current = r.code;
-      setInitial(null);
-      setTelegram('exchanging');
-      supabase.auth.exchangeCodeForSession(r.code)
-        .then(({ error }) => setTelegram(error ? 'error' : 'idle'))
-        .catch(() => setTelegram('error'));
-    };
-    Linking.getInitialURL().then(handle).catch(() => {});
-    const sub = Linking.addEventListener('url', (e) => handle(e.url));
-    return () => sub.remove();
   }, []);
 
   const upload = useCallback(async (s: AppState, uid: string) => {
@@ -217,20 +201,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const signInTelegram = useCallback(async () => {
-    setTelegram('waiting');
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: TELEGRAM_PROVIDER as never,
-        options: { redirectTo: Linking.createURL(CALLBACK_PATH), skipBrowserRedirect: true },
-      });
-      if (error || !data?.url) throw error ?? new Error('Telegram manzili kelmadi');
-      await Linking.openURL(data.url);
-    } catch {
-      setTelegram('error');
-    }
+  const telegramReopen = useCallback((t: { nonce: string; bot: string }) => {
+    Linking.openURL(telegramLink(t.bot, t.nonce)).catch(() => {});
   }, []);
-  const cancelTelegram = useCallback(() => setTelegram('idle'), []);
+  const telegramStart = useCallback(async () => {
+    const { data, error } = await supabase.functions.invoke('telegram-login', { body: { action: 'start' } });
+    const r = data as { nonce?: string; bot?: string } | null;
+    if (error || !r?.nonce || !r.bot) throw error ?? new Error('telegram-login: start');
+    const t = { nonce: r.nonce, bot: r.bot };
+    telegramReopen(t);
+    return t;
+  }, [telegramReopen]);
+  const telegramVerify = useCallback(async (nonce: string, code: string): Promise<TelegramVerify> => {
+    const { data, error } = await supabase.functions.invoke('telegram-login', { body: { action: 'verify', nonce, code } });
+    const r = data as { token_hash?: string; error?: string; left?: number } | null;
+    if (error || !r) return { ok: false, error: 'network' };
+    if (r.token_hash) return { ok: true, tokenHash: r.token_hash };
+    if (r.error === 'wrong') return { ok: false, error: 'wrong', left: r.left ?? 0 };
+    if (r.error === 'locked' || r.error === 'no_code') return { ok: false, error: r.error };
+    return { ok: false, error: 'expired' };
+  }, []);
+  const telegramSignIn = useCallback(async (tokenHash: string) => {
+    setInitial(null);
+    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'magiclink' });
+    if (error) throw error;
+  }, []);
 
   const signOut = useCallback(async () => {
     if (userId && synced.current === userId) await upload(latest.current, userId);
@@ -282,12 +277,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<Auth>(() => {
     const user = session?.user;
-    const provider: AuthProviderKind | null = !user ? null : user.app_metadata?.provider === TELEGRAM_PROVIDER ? 'telegram' : 'google';
+    const provider: AuthProviderKind | null = user ? providerOf(user) : null;
     return {
       ready, session, email: user?.email || null, provider, accountLabel: user ? accountLabelOf(user, provider) : null,
       initial, status, lastSavedAt, signIn, signOut, saveNow, retry,
-      telegram, signInTelegram, cancelTelegram, deleteAccount, deleted, clearDeleted,
+      telegramStart, telegramReopen, telegramVerify, telegramSignIn, deleteAccount, deleted, clearDeleted,
     };
-  }, [ready, session, initial, status, lastSavedAt, signIn, signOut, saveNow, retry, telegram, signInTelegram, cancelTelegram, deleteAccount, deleted, clearDeleted]);
+  }, [ready, session, initial, status, lastSavedAt, signIn, signOut, saveNow, retry, telegramStart, telegramReopen, telegramVerify, telegramSignIn, deleteAccount, deleted, clearDeleted]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

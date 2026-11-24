@@ -1,19 +1,23 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { Redirect, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState, type ReactNode } from 'react';
-import { ActivityIndicator, Pressable, View } from 'react-native';
+import React, { useEffect, useRef, useState, type ReactNode } from 'react';
+import { ActivityIndicator, Animated, BackHandler, Easing, Pressable, TextInput, View } from 'react-native';
 import Svg, { Circle, Defs, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
-import { Logo, Plant, Wordmark } from '@/components/Art';
+import { Logo, Wordmark } from '@/components/Art';
 import { Pop } from '@/components/Motion';
 import { Button, Screen, T } from '@/components/ui';
-import { AUTH_REQUIRED, useAuth } from '@/lib/auth';
+import { AUTH_REQUIRED, useAuth, type TelegramVerify } from '@/lib/auth';
+import { cleanCode } from '@/lib/authLinks';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
-const ROW: { stage: number; size: number }[] = [
-  { stage: 0, size: 46 }, { stage: 1, size: 54 }, { stage: 2, size: 62 }, { stage: 3, size: 74 }, { stage: 5, size: 96 },
-];
+const TELEGRAM_BLUE = '#2AABEE';
+/** Kirish ekranining o'z ranglari (mavzudan qat'i nazar: qorong'i yashil fon + och panel) */
+const SHEET = '#F6F7F2';
+const INK = '#131A15';
+const MUTED = '#5F665F';
+const RED = '#E5484D';
 
 function GoogleLogo({ size = 22 }: { size?: number }) {
   return (
@@ -26,52 +30,45 @@ function GoogleLogo({ size = 22 }: { size?: number }) {
   );
 }
 
-const TELEGRAM_BLUE = '#2AABEE';
-
-/** Oq kirish tugmasi — Google yoki Telegram (qora tugma ishlatilmaydi) */
-function SignInButton({ kind, title, onPress, disabled }: { kind: 'google' | 'telegram'; title: string; onPress: () => void; disabled?: boolean }) {
+/** Oq «Google orqali kirish» tugmasi (qora tugma ishlatilmaydi) */
+function GoogleButton({ onPress, disabled }: { onPress: () => void; disabled?: boolean }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={title} disabled={disabled} onPress={onPress}
-      style={({ pressed }) => ({ height: 58, borderRadius: 20, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12,
+    <Pressable accessibilityRole="button" accessibilityLabel="Google orqali kirish" disabled={disabled} onPress={onPress}
+      style={({ pressed }) => ({ height: 56, borderRadius: 18, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12,
         borderWidth: 1.5, borderColor: '#DCDED6', opacity: disabled ? 0.6 : 1, transform: [{ translateY: pressed ? 2 : 0 }] })}>
-      {kind === 'google' ? <GoogleLogo /> : <FontAwesome name="telegram" size={24} color={TELEGRAM_BLUE} />}
-      <T w="extrabold" size={17} color="#131A15">{title}</T>
+      <GoogleLogo />
+      <T w="extrabold" size={16} color={INK}>Google orqali kirish</T>
     </Pressable>
   );
 }
 
-/** Telegram ochilgan — tasdiqlashni kutish (3 qadam) */
-function TelegramWait({ onCancel }: { onCancel: () => void }) {
-  const steps = ['Telegram oynasi ochiladi', '«Tasdiqlash» ni bosasiz', 'Ilovaga qaytasiz — tayyor'];
+/** Ko'k «Telegram orqali kirish» tugmasi — asosiy */
+function TelegramButton({ onPress, busy }: { onPress: () => void; busy?: boolean }) {
   return (
-    <DarkBg>
-      <Screen bg="transparent" scroll={false} footer={<>
-        <Button title="Bekor qilish" variant="white" icon="x" onPress={onCancel} />
-        <T size={12} color={colors.onForestSoft} style={{ textAlign: 'center', lineHeight: 17 }}>Telegram telefonda yo'q bo'lsa — brauzerda raqamingiz orqali kirasiz</T>
-      </>}>
-        <Brand />
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }} accessibilityLiveRegion="polite">
-          <View style={{ width: 96, height: 96, alignItems: 'center', justifyContent: 'center' }}>
-            <ActivityIndicator size={96} color={colors.lime} style={{ position: 'absolute' }} />
-            <FontAwesome name="telegram" size={60} color={TELEGRAM_BLUE} />
-          </View>
-          <T w="extrabold" size={26} color="#FFFFFF" style={{ textAlign: 'center' }} accessibilityRole="header">Telegram'da tasdiqlang</T>
-          <T size={15} color={colors.onForestSoft} style={{ textAlign: 'center', lineHeight: 22, maxWidth: 300 }}>
-            Telegram ochildi. U yerda <T w="extrabold" size={15} color="#FFFFFF">«Tasdiqlash»</T> ni bosing — keyin o'zi shu yerga qaytasiz.
-          </T>
-          <View style={{ alignSelf: 'stretch', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 22, padding: 16, gap: 12 }}>
-            {steps.map((t, i) => (
-              <View key={t} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <View style={{ width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: i === 1 ? colors.lime : 'rgba(255,255,255,0.12)' }}>
-                  <T w="extrabold" size={14} color={i === 1 ? '#14301A' : '#FFFFFF'}>{i + 1}</T>
-                </View>
-                <T w={i === 1 ? 'extrabold' : 'semibold'} size={15} color={i === 1 ? '#FFFFFF' : 'rgba(255,255,255,0.7)'}>{t}</T>
-              </View>
-            ))}
-          </View>
-        </View>
-      </Screen>
-    </DarkBg>
+    <Pressable accessibilityRole="button" accessibilityLabel="Telegram orqali kirish" disabled={busy} onPress={onPress}
+      style={({ pressed }) => ({ height: 56, borderRadius: 18, backgroundColor: TELEGRAM_BLUE, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12,
+        opacity: busy ? 0.8 : 1, transform: [{ translateY: pressed ? 2 : 0 }] })}>
+      {busy ? <ActivityIndicator color="#FFFFFF" /> : <FontAwesome name="telegram" size={24} color="#FFFFFF" />}
+      <T w="extrabold" size={16} color="#FFFFFF">Telegram orqali kirish</T>
+    </Pressable>
+  );
+}
+
+type LoginError = { via: 'google' | 'telegram'; code?: string };
+
+/** Xato: qizil chegara, sabab va kichik kod (sababini tez topish uchun) */
+function ErrorPanel({ err }: { err: LoginError }) {
+  return (
+    <View accessibilityRole="alert" style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: '#FFFFFF', borderWidth: 2, borderColor: RED, borderRadius: 16, padding: 12 }}>
+      <Feather name="alert-triangle" size={18} color={RED} style={{ marginTop: 2 }} />
+      <View style={{ flex: 1, gap: 2 }}>
+        <T w="extrabold" size={14} color={INK}>{err.via === 'google' ? 'Google' : 'Telegram'} bilan kirib bo'lmadi</T>
+        <T size={13} color={MUTED} style={{ lineHeight: 18 }}>
+          Birozdan so'ng qayta urining yoki {err.via === 'google' ? 'Telegram' : 'Google'} orqali kiring.
+          {err.code ? <T size={13} color="#9AA09A">{`  Kod: ${err.code}`}</T> : null}
+        </T>
+      </View>
+    </View>
   );
 }
 
@@ -94,6 +91,172 @@ function DarkBg({ children }: { children: ReactNode }) {
   );
 }
 
+/** Uch nuqta — navbat bilan yonadi */
+function Dots() {
+  const v = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const a = Animated.loop(Animated.timing(v, { toValue: 3, duration: 1200, easing: Easing.linear, useNativeDriver: true }));
+    a.start();
+    return () => a.stop();
+  }, [v]);
+  return (
+    <View style={{ flexDirection: 'row', gap: 7 }}>
+      {[0, 1, 2].map((i) => (
+        <Animated.View key={i} style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: colors.lime,
+          opacity: v.interpolate({ inputRange: [0, i, i + 0.5, i + 1, 3], outputRange: [0.25, 0.25, 1, 0.25, 0.25], extrapolate: 'clamp' }) }} />
+      ))}
+    </View>
+  );
+}
+
+/** Kirgandan keyin: bitta tinch ekran (logo + «Hisobingiz tayyorlanmoqda») */
+function Preparing({ failed, onRetry }: { failed?: boolean; onRetry: () => void }) {
+  return (
+    <DarkBg>
+      <Screen bg="transparent" scroll={false}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }} accessibilityLiveRegion="polite">
+          <Logo size={96} />
+          <Wordmark size={30} dark />
+          <View style={{ height: 22 }} />
+          {failed ? (
+            <View style={{ gap: 10, alignItems: 'center', paddingHorizontal: 20 }}>
+              <T size={15} color="#FFFFFF" style={{ textAlign: 'center' }}>Internet bilan bog'lanib bo'lmadi.</T>
+              <Button title="Qayta urinish" small onPress={onRetry} />
+            </View>
+          ) : (
+            <>
+              <Dots />
+              <T size={15} color={colors.onForestSoft}>Hisobingiz tayyorlanmoqda…</T>
+            </>
+          )}
+        </View>
+      </Screen>
+    </DarkBg>
+  );
+}
+
+const RESEND_AFTER = 45;
+type CodeStatus = 'typing' | 'checking' | 'ok' | Exclude<TelegramVerify, { ok: true }>['error'];
+
+/** Telegram'dagi 5 xonali kodni kiritish */
+function TelegramCode({ t, onBack, onRestart }: { t: { nonce: string; bot: string }; onBack: () => void; onRestart: () => void }) {
+  const auth = useAuth();
+  const input = useRef<React.ComponentRef<typeof TextInput>>(null);
+  const [code, setCode] = useState('');
+  const [status, setStatus] = useState<CodeStatus>('typing');
+  const [left, setLeft] = useState(0);
+  const [wait, setWait] = useState(RESEND_AFTER);
+
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => { onBack(); return true; });
+    return () => sub.remove();
+  }, [onBack]);
+  useEffect(() => {
+    if (wait <= 0) return;
+    const id = setTimeout(() => setWait((w) => w - 1), 1000);
+    return () => clearTimeout(id);
+  }, [wait]);
+
+  const submit = async (c: string) => {
+    setStatus('checking');
+    const r = await auth.telegramVerify(t.nonce, c);
+    if (r.ok) {
+      setStatus('ok');
+      input.current?.blur();
+      setTimeout(() => { auth.telegramSignIn(r.tokenHash).catch(() => setStatus('network')); }, 600);
+      return;
+    }
+    if (r.error === 'wrong') setLeft(r.left);
+    setStatus(r.error);
+  };
+  const onChange = (v: string) => {
+    const c = cleanCode(v);
+    setCode(c);
+    if (status !== 'checking' && status !== 'ok') setStatus('typing');
+    if (c.length === 5 && status !== 'checking' && status !== 'ok') submit(c);
+  };
+  const reopen = () => { auth.telegramReopen(t); setWait(RESEND_AFTER); setCode(''); setStatus('typing'); input.current?.focus(); };
+
+  const bad = status === 'wrong' || status === 'expired' || status === 'locked' || status === 'no_code' || status === 'network';
+  const message: Record<string, string> = {
+    wrong: `Kod noto'g'ri — yana ${left} ta urinish bor`,
+    no_code: "Kod hali yuborilmagan — Telegram'da START tugmasini bosing",
+    expired: "Kodning muddati o'tdi — yangisini oling",
+    locked: 'Urinishlar tugadi — yangi kod oling',
+    network: "Internet bilan bog'lanib bo'lmadi",
+  };
+
+  return (
+    <DarkBg>
+      <Screen bg="transparent" scroll={false}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Orqaga" onPress={onBack}
+          style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' }}>
+          <Feather name="chevron-left" size={24} color="#FFFFFF" />
+        </Pressable>
+        <View style={{ alignItems: 'center', gap: 12, marginTop: 18 }}>
+          <FontAwesome name="telegram" size={52} color={TELEGRAM_BLUE} />
+          <T w="extrabold" size={30} color="#FFFFFF" style={{ textAlign: 'center', lineHeight: 36 }} accessibilityRole="header">Kodni kiriting</T>
+          <T size={15} color="rgba(255,255,255,0.72)" style={{ textAlign: 'center', lineHeight: 22 }}>
+            Telegram'dagi <T w="extrabold" size={15} color={colors.lime}>@{t.bot}</T> sizga 5 xonali kod yubordi
+          </T>
+        </View>
+        <Pressable accessibilityLabel="Kod" onPress={() => input.current?.focus()} style={{ flexDirection: 'row', gap: 10, marginTop: 8 }}>
+          {[0, 1, 2, 3, 4].map((i) => {
+            const active = (status === 'typing' || status === 'checking') && i === code.length;
+            const st = status === 'ok'
+              ? { backgroundColor: colors.lime, borderColor: colors.lime, borderWidth: 2 }
+              : bad && status !== 'network'
+                ? { backgroundColor: 'rgba(229,72,77,0.10)', borderColor: '#FF6B6B', borderWidth: 2 }
+                : active
+                  ? { backgroundColor: 'rgba(182,228,78,0.08)', borderColor: colors.lime, borderWidth: 2 }
+                  : { backgroundColor: 'rgba(255,255,255,0.07)', borderColor: 'rgba(255,255,255,0.18)', borderWidth: 1.5 };
+            return (
+              <View key={i} style={[{ flex: 1, height: 68, borderRadius: 18, alignItems: 'center', justifyContent: 'center' }, st]}>
+                {active && status === 'typing'
+                  ? <View style={{ width: 2, height: 28, borderRadius: 1, backgroundColor: colors.lime }} />
+                  : <T w="extrabold" size={30} color={status === 'ok' ? colors.limeInk : '#FFFFFF'}>{code[i] ?? ''}</T>}
+              </View>
+            );
+          })}
+        </Pressable>
+        <TextInput ref={input} value={code} onChangeText={onChange} autoFocus keyboardType="number-pad" textContentType="oneTimeCode" autoComplete="one-time-code"
+          editable={status !== 'checking' && status !== 'ok'} caretHidden style={{ position: 'absolute', width: 1, height: 1, opacity: 0 }} />
+        <View style={{ alignItems: 'center', gap: 8 }} accessibilityLiveRegion="polite">
+          {status === 'checking' ? (
+            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+              <ActivityIndicator size="small" color={colors.lime} />
+              <T size={14} color="rgba(255,255,255,0.7)">Tekshirilmoqda…</T>
+            </View>
+          ) : status === 'ok' ? (
+            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+              <Feather name="check" size={18} color={colors.lime} />
+              <T w="extrabold" size={15} color={colors.lime}>Tasdiqlandi</T>
+            </View>
+          ) : bad ? (
+            <T w="bold" size={14} color="#FF8A8A" style={{ textAlign: 'center' }}>{message[status]}</T>
+          ) : null}
+          {status === 'expired' || status === 'locked' ? (
+            <Pressable accessibilityRole="button" onPress={onRestart} hitSlop={10}><T w="extrabold" size={14} color={colors.lime}>Yangi kod olish</T></Pressable>
+          ) : status === 'network' ? (
+            <Pressable accessibilityRole="button" onPress={() => submit(code)} hitSlop={10}><T w="extrabold" size={14} color={colors.lime}>Qayta urinish</T></Pressable>
+          ) : status === 'typing' || status === 'wrong' || status === 'no_code' ? (
+            wait > 0
+              ? <T size={14} color="rgba(255,255,255,0.55)" style={{ textAlign: 'center' }}>Kod kelmadimi? <T w="extrabold" size={14} color="#FFFFFF">{`0:${String(wait).padStart(2, '0')}`}</T> dan keyin qayta yuboramiz</T>
+              : <Pressable accessibilityRole="button" onPress={reopen} hitSlop={10}><T w="extrabold" size={14} color={colors.lime}>Yangi kod olish</T></Pressable>
+          ) : null}
+          {status !== 'ok' ? (
+            <Pressable accessibilityRole="button" onPress={() => auth.telegramReopen(t)}
+              style={{ marginTop: 6, height: 40, paddingHorizontal: 16, borderRadius: 20, backgroundColor: 'rgba(42,171,238,0.14)', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <FontAwesome name="telegram" size={18} color={TELEGRAM_BLUE} />
+              <T w="extrabold" size={14} color="#8FD0F5">Telegram'ni ochish</T>
+            </Pressable>
+          ) : null}
+        </View>
+      </Screen>
+    </DarkBg>
+  );
+}
+
 const Brand = () => (
   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingTop: 6 }}>
     <Logo size={40} />
@@ -101,30 +264,46 @@ const Brand = () => (
   </View>
 );
 
+const Chip = ({ label }: { label: string }) => (
+  <View style={{ height: 32, paddingHorizontal: 12, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center' }}>
+    <T w="bold" size={13} color="#FFFFFF">{label}</T>
+  </View>
+);
+
 /**
- * Kirish (Google yoki Telegram). Holatlar:
- *  1) yangi foydalanuvchi — qorong'i xush kelibsiz ekrani; 2) telefonda progressi bor (yangilanishdan keyin) — «Endi progress bulutda saqlanadi»;
- *  3) kirilmoqda (faqat birinchi kirishda); 4a) yangi hisob → daraja testi; 4b) qolganlari → to'g'ri bosh sahifa; xato — qizil panel.
+ * Kirish (Telegram yoki Google). Holatlar:
+ *  1) yangi foydalanuvchi — logo tepada, tugmalar pastki och panelda; 2) telefonda progressi bor (yangilanishdan keyin) — «Endi progress bulutda saqlanadi»;
+ *  Telegram: bot kod yuboradi → kod ekrani; kirgandan keyin — «Hisobingiz tayyorlanmoqda»; 4a) yangi hisob → daraja testi; 4b) qolganlari → bosh sahifa.
  *  Avval shu hisob bilan kirgan telefonda kirish ekrani umuman ko'rinmaydi (auth.tsx — bulut orqa fonda).
  */
 export default function Login() {
   const auth = useAuth();
   const { state, streak } = useStore();
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
+  const [tgBusy, setTgBusy] = useState(false);
+  const [tg, setTg] = useState<{ nonce: string; bot: string } | null>(null);
+  const [error, setError] = useState<LoginError | null>(null);
   const learned = Object.values(state.cards).filter((c) => c.state !== 'new').length;
 
-  const goTelegram = () => {
-    setError(false);
-    auth.signInTelegram();
+  const goTelegram = async () => {
+    setError(null);
+    setTgBusy(true);
+    try {
+      setTg(await auth.telegramStart());
+    } catch (e) {
+      setTg(null);
+      setError({ via: 'telegram', code: errCode(e) });
+    } finally {
+      setTgBusy(false);
+    }
   };
   const go = async () => {
-    setError(false);
+    setError(null);
     setBusy(true);
     try {
       await auth.signIn();
-    } catch {
-      setError(true);
+    } catch (e) {
+      setError({ via: 'google', code: errCode(e) });
     } finally {
       setBusy(false);
     }
@@ -162,29 +341,12 @@ export default function Login() {
     );
   }
 
-  // Telegram ochildi — tasdiqlash kutilmoqda
-  if (!auth.session && auth.telegram === 'waiting') return <TelegramWait onCancel={auth.cancelTelegram} />;
+  // Telegram: kod kiritish
+  if (tg && !auth.session) return <TelegramCode key={tg.nonce} t={tg} onBack={() => setTg(null)} onRestart={goTelegram} />;
 
-  // 3) Kirilmoqda / bulut bilan solishtirilmoqda
-  if (busy || auth.telegram === 'exchanging' || (auth.session && auth.initial === null)) {
-    return (
-      <DarkBg>
-        <Screen bg="transparent" scroll={false}>
-          <Brand />
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }} accessibilityLiveRegion="polite">
-            <ActivityIndicator size="large" color={colors.lime} />
-            <T w="extrabold" size={20} color="#FFFFFF">{auth.session ? 'Progress tekshirilmoqda…' : 'Kirilmoqda…'}</T>
-            {auth.accountLabel ? <T size={14} color={colors.onForestSoft}>{auth.accountLabel}</T> : null}
-            {auth.session && auth.status === 'error' ? (
-              <View style={{ gap: 10, alignItems: 'center', paddingHorizontal: 20 }}>
-                <T size={14} color="#FFFFFF" style={{ textAlign: 'center' }}>Internet bilan bog'lanib bo'lmadi.</T>
-                <Button title="Qayta urinish" small onPress={auth.retry} />
-              </View>
-            ) : null}
-          </View>
-        </Screen>
-      </DarkBg>
-    );
+  // Kirilmoqda / bulut bilan solishtirilmoqda — bitta ekran
+  if (busy || (auth.session && auth.initial === null)) {
+    return <Preparing failed={!!auth.session && auth.status === 'error'} onRetry={auth.retry} />;
   }
 
   // Shu telefon shu hisob bilan avval kirgan — to'g'ri ilovaga
@@ -215,27 +377,15 @@ export default function Login() {
     return <Redirect href="/home" />;
   }
 
-  const failed = error || auth.telegram === 'error';
-  const errorPanel = failed ? (
-    <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start', backgroundColor: 'rgba(242,85,85,0.12)', borderWidth: 2, borderColor: colors.wrong, borderRadius: 18, padding: 14 }}
-      accessibilityRole="alert">
-      <Feather name="alert-triangle" size={20} color="#FF8A8A" />
-      <View style={{ flex: 1, gap: 2 }}>
-        <T w="extrabold" size={15} color={state.onboarded ? colors.ink : '#FFFFFF'}>Kirib bo'lmadi</T>
-        <T size={13} color={state.onboarded ? colors.inkSoft : 'rgba(255,255,255,0.8)'} style={{ lineHeight: 18 }}>
-          Internet yo'q yoki oyna yopildi. Ulanishni tekshirib, qayta urinib ko'ring.
-        </T>
-      </View>
-    </View>
-  ) : null;
+  const errorPanel = error ? <ErrorPanel err={error} /> : null;
 
   // 2) Hozirgi foydalanuvchi: telefonda progress bor — bir marta kirish
   if (state.onboarded) {
     return (
       <Screen scroll={false} footer={<>
         {errorPanel}
-        <SignInButton kind="google" title="Google bilan kirish" onPress={go} />
-        <SignInButton kind="telegram" title="Telegram bilan kirish" onPress={goTelegram} />
+        <TelegramButton onPress={goTelegram} busy={tgBusy} />
+        <GoogleButton onPress={go} />
         <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Faqat bir marta, yangilanishdan keyin</T>
       </>}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14 }}>
@@ -259,32 +409,33 @@ export default function Login() {
   // 1) Yangi foydalanuvchi
   return (
     <DarkBg>
-      <Screen bg="transparent" footer={<>
+      <Screen bg="transparent" scroll={false} sheet={SHEET} footer={<>
+        <T w="extrabold" size={22} color={INK} accessibilityRole="header">Boshlash uchun kiring</T>
+        <T size={14} color={MUTED} style={{ lineHeight: 20, marginTop: -8 }}>Progressingiz bulutda saqlanadi — telefon almashsa ham yo'qolmaydi.</T>
         {errorPanel}
-        <SignInButton kind="google" title="Google bilan davom etish" onPress={go} />
-        <SignInButton kind="telegram" title="Telegram bilan davom etish" onPress={goTelegram} />
-        <T size={12} color={colors.onForestSoft} style={{ textAlign: 'center', lineHeight: 17 }}>Kirish progressingizni bulutda saqlash uchun kerak · bepul</T>
+        <TelegramButton onPress={goTelegram} busy={tgBusy} />
+        <GoogleButton onPress={go} />
+        <T size={12} color="#8A9088" style={{ textAlign: 'center' }}>Kirish bepul · Telegram yoki Google hisobingiz kifoya</T>
       </>}>
-        <Brand />
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 200 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-            {ROW.map((p, i) => (
-              <Pop key={p.stage} delay={150 + i * 120} from={0.3}>
-                <Plant stage={p.stage} size={p.size} />
-              </Pop>
-            ))}
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14, paddingHorizontal: 10 }}>
+          <Pop from={0.7}><Logo size={108} /></Pop>
+          <Wordmark size={34} dark />
+          <T size={16} color="rgba(255,255,255,0.78)" style={{ textAlign: 'center', lineHeight: 23 }}>Inglizcha so'zlarni kuniga{'\n'}15–20 daqiqada yodlang</T>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 4 }}>
+            <Chip label="A1–C2 · 2400+ so'z" />
+            <Chip label="Talaffuz" />
+            <Chip label="Aqlli takrorlash" />
           </View>
-          <View style={{ width: 300, maxWidth: '90%', height: 3, borderRadius: 3, backgroundColor: 'rgba(182,228,78,0.35)' }} />
-        </View>
-        <View style={{ gap: 12 }}>
-          <T w="extrabold" size={34} color="#FFFFFF" style={{ lineHeight: 38, letterSpacing: -0.6 }} accessibilityRole="header">
-            So'zni tez yodlang.{'\n'}<T w="extrabold" size={34} color={colors.lime} style={{ lineHeight: 38 }}>Umrbod eslab qoling.</T>
-          </T>
-          <T size={15} color={colors.onForestSoft} style={{ lineHeight: 22 }}>
-            Har bir so'z urug'dan mevagacha o'sadi: o'z vaqtida takrorlash, yozib mashq qilish va kuniga 15–20 daqiqa.
-          </T>
         </View>
       </Screen>
     </DarkBg>
   );
+}
+
+/** Xato kodi (masalan Google: «10» = DEVELOPER_ERROR) — foydalanuvchiga kichik qilib ko'rsatiladi */
+function errCode(e: unknown): string | undefined {
+  const c = (e as { code?: unknown })?.code;
+  if (c != null && String(c).length <= 24) return String(c);
+  const m = (e as { message?: unknown })?.message;
+  return typeof m === 'string' ? m.slice(0, 24) : undefined;
 }
