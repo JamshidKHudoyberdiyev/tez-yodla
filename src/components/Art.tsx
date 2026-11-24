@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import Svg, { Circle, Defs, Ellipse, G, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { colors, font } from '@/lib/theme';
 
@@ -14,16 +14,10 @@ const BROWN = '#8F4A12';
 const hidden = { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' as const };
 
 /** Belgi: nihol (so'z xotirada o'sadi) + chapda tezlik chiziqlari («tez»). */
+/** Ilova belgisi: «A» kartochkasi, nihol, kitob (assets/logo.png — ilova ikonkasi bilan bir xil). */
+const LOGO_IMG = require('../../assets/logo.png');
 export function Logo({ size = 44 }: { size?: number }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 48 48" {...hidden}>
-      <Rect width={48} height={48} rx={15} fill={FOREST} />
-      <Path d="M27 38V25" stroke={LIME} strokeWidth={4.2} strokeLinecap="round" />
-      <Path d="M27 26c0-7 5-12 12-12 0 7-5 12-12 12z" fill={LIME} />
-      <Path d="M27 24c0-6-4.5-10.5-10.5-10.5 0 6 4.5 10.5 10.5 10.5z" fill="#D9F09A" />
-      <Path d="M8 22h6M6 28h9M9 34h7" stroke={LIME} strokeWidth={3} strokeLinecap="round" opacity={0.85} />
-    </Svg>
-  );
+  return <Image source={LOGO_IMG} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={{ width: size, height: size, borderRadius: Math.round(size * 0.23) }} />;
 }
 
 /** «tez yodla» yozuvi: «tez» qiya va yashil, «yodla» to'q. */
