@@ -13,7 +13,7 @@ import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
-/** Bulutga saqlash holati — Google qatorining o'ng chetida: saqlangan / saqlanmoqda / xato (qayta urinish) */
+/** Bulutga saqlash holati — hisob qatorining o'ng chetida: saqlangan / saqlanmoqda / xato (qayta urinish) */
 function SyncBadge({ status, onRetry }: { status: string; onRetry: () => void }) {
   if (status === 'error') {
     return (
@@ -65,7 +65,7 @@ export default function Settings() {
 
       {AUTH_REQUIRED && auth.session ? (
         <SettingGroup label="Hisob" danger={syncError}>
-          <SettingRow icon="user" tone="gray" title="Google hisobi" sub={syncError ? 'Saqlanmadi' : (auth.email ?? '')} subColor={syncError ? colors.wrong : undefined}
+          <SettingRow icon={auth.provider === 'telegram' ? 'send' : 'user'} tone="gray" title={auth.provider === 'telegram' ? 'Telegram hisobi' : 'Google hisobi'} sub={syncError ? 'Saqlanmadi' : (auth.accountLabel ?? '')} subColor={syncError ? colors.wrong : undefined}
             right={<SyncBadge status={auth.status} onRetry={() => auth.saveNow()} />} />
           <SettingRow icon="log-out" tone="gray" title="Chiqish" onPress={() => setAskOut(true)} last />
         </SettingGroup>

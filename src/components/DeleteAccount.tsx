@@ -72,7 +72,7 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
     `${learned} ta so'z va takrorlash jadvali`,
     ...(state.customWords.length ? [`${state.customWords.length} ta o'zingiz qo'shgan so'z`] : []),
     `${streak.current} kunlik streak va tarix`,
-    'Google hisobi bilan bog\'lanish',
+    auth.provider === 'telegram' ? 'Telegram hisobi bilan bog\'lanish' : 'Google hisobi bilan bog\'lanish',
   ];
 
   return (

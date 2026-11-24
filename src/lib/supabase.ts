@@ -18,6 +18,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    // Telegram (OAuth) kirishi uchun: code ilovaga qaytadi, tasdiqlovchi kalit telefonda saqlanadi
+    flowType: 'pkce',
   },
 });
 

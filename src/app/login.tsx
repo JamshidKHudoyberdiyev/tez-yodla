@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import { Redirect, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState, type ReactNode } from 'react';
@@ -26,15 +26,52 @@ function GoogleLogo({ size = 22 }: { size?: number }) {
   );
 }
 
-/** Oq «Google bilan …» tugmasi (qora tugma ishlatilmaydi) */
-function GoogleButton({ title, onPress, disabled }: { title: string; onPress: () => void; disabled?: boolean }) {
+const TELEGRAM_BLUE = '#2AABEE';
+
+/** Oq kirish tugmasi — Google yoki Telegram (qora tugma ishlatilmaydi) */
+function SignInButton({ kind, title, onPress, disabled }: { kind: 'google' | 'telegram'; title: string; onPress: () => void; disabled?: boolean }) {
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={title} disabled={disabled} onPress={onPress}
       style={({ pressed }) => ({ height: 58, borderRadius: 20, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12,
         borderWidth: 1.5, borderColor: '#DCDED6', opacity: disabled ? 0.6 : 1, transform: [{ translateY: pressed ? 2 : 0 }] })}>
-      <GoogleLogo />
+      {kind === 'google' ? <GoogleLogo /> : <FontAwesome name="telegram" size={24} color={TELEGRAM_BLUE} />}
       <T w="extrabold" size={17} color="#131A15">{title}</T>
     </Pressable>
+  );
+}
+
+/** Telegram ochilgan — tasdiqlashni kutish (3 qadam) */
+function TelegramWait({ onCancel }: { onCancel: () => void }) {
+  const steps = ['Telegram oynasi ochiladi', '«Tasdiqlash» ni bosasiz', 'Ilovaga qaytasiz — tayyor'];
+  return (
+    <DarkBg>
+      <Screen bg="transparent" scroll={false} footer={<>
+        <Button title="Bekor qilish" variant="white" icon="x" onPress={onCancel} />
+        <T size={12} color={colors.onForestSoft} style={{ textAlign: 'center', lineHeight: 17 }}>Telegram telefonda yo'q bo'lsa — brauzerda raqamingiz orqali kirasiz</T>
+      </>}>
+        <Brand />
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }} accessibilityLiveRegion="polite">
+          <View style={{ width: 96, height: 96, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size={96} color={colors.lime} style={{ position: 'absolute' }} />
+            <FontAwesome name="telegram" size={60} color={TELEGRAM_BLUE} />
+          </View>
+          <T w="extrabold" size={26} color="#FFFFFF" style={{ textAlign: 'center' }} accessibilityRole="header">Telegram'da tasdiqlang</T>
+          <T size={15} color={colors.onForestSoft} style={{ textAlign: 'center', lineHeight: 22, maxWidth: 300 }}>
+            Telegram ochildi. U yerda <T w="extrabold" size={15} color="#FFFFFF">«Tasdiqlash»</T> ni bosing — keyin o'zi shu yerga qaytasiz.
+          </T>
+          <View style={{ alignSelf: 'stretch', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 22, padding: 16, gap: 12 }}>
+            {steps.map((t, i) => (
+              <View key={t} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View style={{ width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: i === 1 ? colors.lime : 'rgba(255,255,255,0.12)' }}>
+                  <T w="extrabold" size={14} color={i === 1 ? '#14301A' : '#FFFFFF'}>{i + 1}</T>
+                </View>
+                <T w={i === 1 ? 'extrabold' : 'semibold'} size={15} color={i === 1 ? '#FFFFFF' : 'rgba(255,255,255,0.7)'}>{t}</T>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Screen>
+    </DarkBg>
   );
 }
 
@@ -65,7 +102,7 @@ const Brand = () => (
 );
 
 /**
- * Kirish (faqat Google). Holatlar:
+ * Kirish (Google yoki Telegram). Holatlar:
  *  1) yangi foydalanuvchi — qorong'i xush kelibsiz ekrani; 2) telefonda progressi bor (yangilanishdan keyin) — «Endi progress bulutda saqlanadi»;
  *  3) kirilmoqda (faqat birinchi kirishda); 4a) yangi hisob → daraja testi; 4b) qolganlari → to'g'ri bosh sahifa; xato — qizil panel.
  *  Avval shu hisob bilan kirgan telefonda kirish ekrani umuman ko'rinmaydi (auth.tsx — bulut orqa fonda).
@@ -77,6 +114,10 @@ export default function Login() {
   const [error, setError] = useState(false);
   const learned = Object.values(state.cards).filter((c) => c.state !== 'new').length;
 
+  const goTelegram = () => {
+    setError(false);
+    auth.signInTelegram();
+  };
   const go = async () => {
     setError(false);
     setBusy(true);
@@ -121,8 +162,11 @@ export default function Login() {
     );
   }
 
+  // Telegram ochildi — tasdiqlash kutilmoqda
+  if (!auth.session && auth.telegram === 'waiting') return <TelegramWait onCancel={auth.cancelTelegram} />;
+
   // 3) Kirilmoqda / bulut bilan solishtirilmoqda
-  if (busy || (auth.session && auth.initial === null)) {
+  if (busy || auth.telegram === 'exchanging' || (auth.session && auth.initial === null)) {
     return (
       <DarkBg>
         <Screen bg="transparent" scroll={false}>
@@ -130,7 +174,7 @@ export default function Login() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }} accessibilityLiveRegion="polite">
             <ActivityIndicator size="large" color={colors.lime} />
             <T w="extrabold" size={20} color="#FFFFFF">{auth.session ? 'Progress tekshirilmoqda…' : 'Kirilmoqda…'}</T>
-            {auth.email ? <T size={14} color={colors.onForestSoft}>{auth.email}</T> : null}
+            {auth.accountLabel ? <T size={14} color={colors.onForestSoft}>{auth.accountLabel}</T> : null}
             {auth.session && auth.status === 'error' ? (
               <View style={{ gap: 10, alignItems: 'center', paddingHorizontal: 20 }}>
                 <T size={14} color="#FFFFFF" style={{ textAlign: 'center' }}>Internet bilan bog'lanib bo'lmadi.</T>
@@ -154,7 +198,7 @@ export default function Login() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
             <Pop from={0.6}>
               <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: colors.lime }}>
-                <T w="extrabold" size={36} color="#FFFFFF">{(state.name || auth.email || '?')[0].toUpperCase()}</T>
+                <T w="extrabold" size={36} color="#FFFFFF">{(state.name || auth.accountLabel || '?')[0].toUpperCase()}</T>
               </View>
             </Pop>
             <T w="extrabold" size={28} style={{ textAlign: 'center', lineHeight: 34 }} accessibilityRole="header">
@@ -171,7 +215,8 @@ export default function Login() {
     return <Redirect href="/home" />;
   }
 
-  const errorPanel = error ? (
+  const failed = error || auth.telegram === 'error';
+  const errorPanel = failed ? (
     <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start', backgroundColor: 'rgba(242,85,85,0.12)', borderWidth: 2, borderColor: colors.wrong, borderRadius: 18, padding: 14 }}
       accessibilityRole="alert">
       <Feather name="alert-triangle" size={20} color="#FF8A8A" />
@@ -189,7 +234,8 @@ export default function Login() {
     return (
       <Screen scroll={false} footer={<>
         {errorPanel}
-        <GoogleButton title={error ? 'Qayta urinish' : 'Google bilan kirish'} onPress={go} />
+        <SignInButton kind="google" title="Google bilan kirish" onPress={go} />
+        <SignInButton kind="telegram" title="Telegram bilan kirish" onPress={goTelegram} />
         <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Faqat bir marta, yangilanishdan keyin</T>
       </>}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14 }}>
@@ -203,7 +249,7 @@ export default function Login() {
           </Svg>
           <T w="extrabold" size={28} style={{ textAlign: 'center', lineHeight: 34 }} accessibilityRole="header">Endi progress bulutda saqlanadi</T>
           <T size={15} color={colors.muted} style={{ textAlign: 'center', lineHeight: 22 }}>
-            Bir marta Google bilan kiring — telefoningizdagi <T w="extrabold" size={15}>{learned} ta so'z{streak.current ? ` va ${streak.current} kunlik streak` : ''}</T> hisobingizga ko'chiriladi. Hech narsa yo'qolmaydi.
+            Bir marta Google yoki Telegram bilan kiring — telefoningizdagi <T w="extrabold" size={15}>{learned} ta so'z{streak.current ? ` va ${streak.current} kunlik streak` : ''}</T> hisobingizga ko'chiriladi. Hech narsa yo'qolmaydi.
           </T>
         </View>
       </Screen>
@@ -215,7 +261,8 @@ export default function Login() {
     <DarkBg>
       <Screen bg="transparent" footer={<>
         {errorPanel}
-        <GoogleButton title={error ? 'Qayta urinish' : 'Google bilan davom etish'} onPress={go} />
+        <SignInButton kind="google" title="Google bilan davom etish" onPress={go} />
+        <SignInButton kind="telegram" title="Telegram bilan davom etish" onPress={goTelegram} />
         <T size={12} color={colors.onForestSoft} style={{ textAlign: 'center', lineHeight: 17 }}>Kirish progressingizni bulutda saqlash uchun kerak · bepul</T>
       </>}>
         <Brand />
