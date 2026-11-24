@@ -222,7 +222,7 @@ export default function Home() {
 function Hero({ children, mascot = 142 }: { children: ReactNode; mascot?: number }) {
   return (
     <View style={{ backgroundColor: colors.forest, borderRadius: 30, overflow: 'hidden', paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, gap: 16 }}>
-      <Image source={HERO_BG} resizeMode="cover" {...hidden} style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
+      <Image source={HERO_BG} resizeMode="cover" {...hidden} style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }} />
       <Image source={BRAIN} {...hidden} style={{ position: 'absolute', right: 0, bottom: 6, height: mascot, width: (mascot * 426) / 440 }} />
       {children}
     </View>
