@@ -271,7 +271,7 @@ const Chip = ({ label }: { label: string }) => (
 );
 
 /**
- * Kirish (Telegram yoki Google). Holatlar:
+ * Kirish (Google yoki Telegram). Holatlar:
  *  1) yangi foydalanuvchi — logo tepada, tugmalar pastki och panelda; 2) telefonda progressi bor (yangilanishdan keyin) — «Endi progress bulutda saqlanadi»;
  *  Telegram: bot kod yuboradi → kod ekrani; kirgandan keyin — «Hisobingiz tayyorlanmoqda»; 4a) yangi hisob → daraja testi; 4b) qolganlari → bosh sahifa.
  *  Avval shu hisob bilan kirgan telefonda kirish ekrani umuman ko'rinmaydi (auth.tsx — bulut orqa fonda).
@@ -366,9 +366,7 @@ export default function Login() {
             <T w="extrabold" size={28} style={{ textAlign: 'center', lineHeight: 34 }} accessibilityRole="header">
               Xush kelibsiz{state.name ? `, ${state.name}` : ''}!
             </T>
-            <T size={15} color={colors.muted} style={{ textAlign: 'center', lineHeight: 22, paddingHorizontal: 10 }}>
-              Hisobingiz tayyor — endi progress o'zi saqlanadi. Avval darajangizni aniqlaymiz: 12 ta savol, ~2 daqiqa.
-            </T>
+            <T size={15} color={colors.muted} style={{ textAlign: 'center', lineHeight: 22 }}>Darajangizni aniqlaymiz</T>
           </View>
         </Screen>
       );
@@ -384,8 +382,8 @@ export default function Login() {
     return (
       <Screen scroll={false} footer={<>
         {errorPanel}
-        <TelegramButton onPress={goTelegram} busy={tgBusy} />
         <GoogleButton onPress={go} />
+        <TelegramButton onPress={goTelegram} busy={tgBusy} />
         <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Faqat bir marta, yangilanishdan keyin</T>
       </>}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14 }}>
@@ -413,8 +411,8 @@ export default function Login() {
         <T w="extrabold" size={22} color={INK} accessibilityRole="header">Boshlash uchun kiring</T>
         <T size={14} color={MUTED} style={{ lineHeight: 20, marginTop: -8 }}>Progressingiz bulutda saqlanadi — telefon almashsa ham yo'qolmaydi.</T>
         {errorPanel}
-        <TelegramButton onPress={goTelegram} busy={tgBusy} />
         <GoogleButton onPress={go} />
+        <TelegramButton onPress={goTelegram} busy={tgBusy} />
         <T size={12} color="#8A9088" style={{ textAlign: 'center' }}>Kirish bepul · Telegram yoki Google hisobingiz kifoya</T>
       </>}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14, paddingHorizontal: 10 }}>

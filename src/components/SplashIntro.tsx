@@ -7,14 +7,14 @@ import { useReducedMotion } from '@/components/Motion';
 import { colors } from '@/lib/theme';
 
 /**
- * Ilova ochilishi (~2 s). Telefonning o'z splash'i (assets/splash-icon.png) — bo'sh yashil kafel, shu yerdan boshlanadi:
- * kitob pastdan chiqib ochiladi → undan so'zlar uchib chiqadi → nihol o'sib, bargda «A» → tezlik chiziqlari va «tez yodla»
- * → hammasi so'nib, bosh sahifa. «Harakatni kamaytirish» yoqilgan bo'lsa — animatsiyasiz darhol yopiladi.
+ * Ilova ochilishi (~1.7 s). Telefonning o'z splash'i (assets/splash-icon.png) — tayyor logo; shu yerdan davom etadi:
+ * kitobdan so'zlar (apple / word / learn) tepaga uchib chiqadi → ostida «tez yodla» → hammasi so'nib, ilova.
+ * «Harakatni kamaytirish» yoqilgan bo'lsa — animatsiyasiz darhol yopiladi.
  */
 const SIZE = 110;
 const TILE = '#1F5A2E';
 const LIME = '#C6F542';
-const END = 2050;
+const END = 1700;
 const native = Platform.OS !== 'web';
 const u = (v: number) => (v / 1024) * SIZE; // logo koordinatasidan dp ga
 
@@ -43,21 +43,38 @@ function track(t: Animated.Value, parts: { input: number[]; output: number[] }[]
 const lin = (x: number) => x;
 const flyOut = Easing.bezier(0.2, 0.7, 0.3, 1);
 
-/** Ma'lumot yuklanguncha: telefon splash'i bilan aynan bir xil — bo'sh kafel */
-export function SplashStatic() {
+/** Tayyor logo (kafel + kitob + nihol + tezlik chiziqlari) — telefon splash'i bilan aynan bir xil */
+function LogoTile() {
   return (
-    <View style={s.fill}>
-      <View style={s.tile} />
+    <View style={s.tile}>
+      <Svg width={SIZE} height={SIZE} viewBox="0 0 1024 1024">
+        <Path d={BOOK_LOW} fill="#fff" fillRule="evenodd" />
+        <Path d={BOOK_TOP} fill="#fff" fillRule="evenodd" />
+        <Path d={PLANT} fill={LIME} fillRule="evenodd" />
+        <Path d={PLANT_A} fill={LIME} />
+        <Path d={SPEED_1} fill={LIME} />
+        <Path d={SPEED_2} fill={LIME} />
+      </Svg>
     </View>
   );
 }
 
+/** Ma'lumot yuklanguncha: telefon splash'i bilan bir xil — tayyor logo */
+export function SplashStatic() {
+  return (
+    <View style={s.fill}>
+      <LogoTile />
+    </View>
+  );
+}
+
+/** So'zlar kitobdan (540, 760) chiqib, kafel ustiga uchadi (koordinatalar — logo tizimida, manfiy y = kafeldan yuqori) */
 const WORDS = [
-  { text: 'apple', x: 250, y: 380, t0: 420, color: '#fff' },
-  { text: 'word', x: 540, y: 250, t0: 500, color: LIME },
-  { text: 'learn', x: 800, y: 390, t0: 580, color: '#fff' },
+  { text: 'apple', x: 90, y: -380, t0: 100, color: '#fff', r: '-10deg' },
+  { text: 'word', x: 512, y: -600, t0: 180, color: LIME, r: '0deg' },
+  { text: 'learn', x: 934, y: -380, t0: 260, color: '#fff', r: '10deg' },
 ];
-const WORD_W = 80;
+const WORD_W = 100;
 
 export function SplashIntro({ onDone }: { onDone: () => void }) {
   const reduce = useReducedMotion();
@@ -69,65 +86,27 @@ export function SplashIntro({ onDone }: { onDone: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduce]);
 
-  // Kitob: pastdan chiqadi, ochiladi
-  const bookOpacity = track(t, [seg(150, 400, 0, 1, lin)]);
-  const bookY = track(t, [seg(150, 450, u(140), 0)]);
-  const bookSX = track(t, [seg(150, 600, 0.55, 1)]);
-  const bookSY = track(t, [seg(150, 600, 0.9, 1)]);
-  // Nihol pastdan yuqoriga ochiladi (kesish chizig'i 790 → 150)
-  const clip = track(t, [seg(800, 1250, u(790), u(150), Easing.inOut(Easing.cubic))]);
-  const clipBack = Animated.multiply(clip, -1);
-  // Tezlik chiziqlari va yozuv
-  const lines = track(t, [seg(1050, 1300, 0, 1)]);
-  const linesX = track(t, [seg(1050, 1300, u(-160), 0)]);
-  const word = track(t, [seg(1050, 1300, 0, 1)]);
-  const wordY = track(t, [seg(1050, 1300, 8, 0)]);
-  // Oxirida hammasi so'nadi
-  const fade = track(t, [seg(1750, 2050, 1, 0, Easing.in(Easing.quad))]);
+  // Yozuv va oxirida hammasi so'nadi
+  const word = track(t, [seg(250, 550, 0, 1)]);
+  const wordY = track(t, [seg(250, 550, 8, 0)]);
+  const fade = track(t, [seg(1400, 1700, 1, 0, Easing.in(Easing.quad))]);
 
   return (
     <Animated.View pointerEvents="none" style={[s.fill, StyleSheet.absoluteFill, { opacity: fade }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
       <View style={{ width: SIZE, height: SIZE }}>
-        <View style={s.tile}>
-          <Animated.View style={[StyleSheet.absoluteFill, { opacity: bookOpacity, transform: [{ translateY: bookY }] }]}>
-            <Animated.View style={[StyleSheet.absoluteFill, { transformOrigin: `${(540 / 1024) * 100}% ${(850 / 1024) * 100}%`, transform: [{ scaleX: bookSX }, { scaleY: bookSY }] }]}>
-              <Svg width={SIZE} height={SIZE} viewBox="0 0 1024 1024">
-                <Path d={BOOK_LOW} fill="#fff" fillRule="evenodd" />
-                <Path d={BOOK_TOP} fill="#fff" fillRule="evenodd" />
-              </Svg>
+        <LogoTile />
+        {WORDS.map((w) => {
+          const op = track(t, [seg(w.t0, w.t0 + 120, 0, 1, lin), seg(w.t0 + 700, w.t0 + 950, 1, 0.85, lin)]);
+          const move = track(t, [seg(w.t0, w.t0 + 450, 1, 0, flyOut)]);
+          const sc = track(t, [seg(w.t0, w.t0 + 450, 0.3, 1, lin)]);
+          const dx = Animated.multiply(move, u(540 - w.x));
+          const dy = Animated.multiply(move, u(760 - w.y));
+          return (
+            <Animated.View key={w.text} style={[s.wordBox, { left: u(w.x) - WORD_W / 2, top: u(w.y) - 13, opacity: op, transform: [{ translateX: dx }, { translateY: dy }, { scale: sc }, { rotate: w.r }] }]}>
+              <Text style={[s.wordTxt, { color: w.color }]} allowFontScaling={false}>{w.text}</Text>
             </Animated.View>
-          </Animated.View>
-
-          {WORDS.map((w) => {
-            const op = track(t, [seg(w.t0, w.t0 + 100, 0, 1, lin), seg(w.t0 + 350, w.t0 + 550, 1, 0, lin)]);
-            const move = track(t, [seg(w.t0, w.t0 + 300, 1, 0, flyOut)]);
-            const sc = track(t, [seg(w.t0, w.t0 + 300, 0.3, 1, lin)]);
-            const dx = Animated.multiply(move, u(540 - w.x));
-            const dy = Animated.multiply(move, u(760 - w.y));
-            return (
-              <Animated.View key={w.text} style={[s.wordBox, { left: u(w.x) - WORD_W / 2, top: u(w.y) - 9, opacity: op, transform: [{ translateX: dx }, { translateY: dy }, { scale: sc }] }]}>
-                <Text style={[s.wordTxt, { color: w.color }]} allowFontScaling={false}>{w.text}</Text>
-              </Animated.View>
-            );
-          })}
-
-          <Animated.View style={[StyleSheet.absoluteFill, { overflow: 'hidden', transform: [{ translateY: clip }] }]}>
-            <Animated.View style={{ transform: [{ translateY: clipBack }] }}>
-              <Svg width={SIZE} height={SIZE} viewBox="0 0 1024 1024">
-                <Path d={PLANT} fill={LIME} fillRule="evenodd" />
-                <Path d={PLANT_A} fill={LIME} />
-              </Svg>
-            </Animated.View>
-          </Animated.View>
-
-          <Animated.View style={[StyleSheet.absoluteFill, { opacity: lines, transform: [{ translateX: linesX }] }]}>
-            <Svg width={SIZE} height={SIZE} viewBox="0 0 1024 1024">
-              <Path d={SPEED_1} fill={LIME} />
-              <Path d={SPEED_2} fill={LIME} />
-            </Svg>
-          </Animated.View>
-        </View>
-
+          );
+        })}
         <Animated.View style={[s.word, { opacity: word, transform: [{ translateY: wordY }] }]}>
           <Wordmark size={30} dark />
         </Animated.View>
@@ -139,7 +118,7 @@ export function SplashIntro({ onDone }: { onDone: () => void }) {
 const s = StyleSheet.create({
   fill: { flex: 1, backgroundColor: colors.forestDeep, alignItems: 'center', justifyContent: 'center' },
   tile: { width: SIZE, height: SIZE, borderRadius: Math.round(SIZE * 0.23), backgroundColor: TILE, overflow: 'hidden' },
-  wordBox: { position: 'absolute', width: WORD_W, height: 18, alignItems: 'center', justifyContent: 'center' },
-  wordTxt: { fontFamily: 'Manrope_800ExtraBold', fontSize: 12, lineHeight: 16 },
+  wordBox: { position: 'absolute', width: WORD_W, height: 26, alignItems: 'center', justifyContent: 'center' },
+  wordTxt: { fontFamily: 'Manrope_800ExtraBold', fontSize: 20, lineHeight: 26 },
   word: { position: 'absolute', top: SIZE + 20, left: -120, right: -120, alignItems: 'center' },
 });
