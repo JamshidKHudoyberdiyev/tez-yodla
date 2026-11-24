@@ -2,7 +2,8 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import { DuoIcon, Plant } from '@/components/Art';
+import { Plant } from '@/components/Art';
+import { HeroBg, Icon3D } from '@/components/Icon3D';
 import { gardenStages } from '@/lib/garden';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Chip, H1, H2, StatPanel, T } from '@/components/ui';
@@ -36,7 +37,8 @@ export default function Stats() {
 
         {/* Esda qolish: takrorlashlarda to'g'ri topilganlar ulushi (oxirgi 30 kun) */}
         <Pressable accessibilityRole="button" accessibilityLabel={enough ? `Esda qolish ${r.pct} foiz. So'z yo'li haqida` : "Esda qolish: hali ma'lumot kam. So'z yo'li haqida"} onPress={() => router.push('/word-path')}
-          style={({ pressed }) => ({ backgroundColor: colors.forest, borderRadius: 28, padding: 18, gap: 4, opacity: pressed ? 0.92 : 1 })}>
+          style={({ pressed }) => ({ backgroundColor: colors.forest, borderRadius: 28, padding: 18, gap: 4, overflow: 'hidden', opacity: pressed ? 0.92 : 1 })}>
+          <HeroBg />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <T w="extrabold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Esda qolish</T>
             {trend !== null && trend !== 0 ? <Chip label={`${trend > 0 ? '+' : ''}${trend}% ${trend > 0 ? '↑' : '↓'}`} bg={colors.lime} fg={colors.limeInk} /> : null}
@@ -89,14 +91,15 @@ export default function Stats() {
         </Pressable>
         <View style={{ flexDirection: 'row', gap: 10 }}>
           <Pressable accessibilityRole="button" onPress={() => router.push('/weekly')} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: 50, paddingHorizontal: 14, borderRadius: 16, backgroundColor: colors.surface }}>
-            <DuoIcon name="stats" size={20} /><T w="bold" size={14} style={{ flex: 1 }}>Hafta yakuni</T>
+            <Icon3D name="chart" size={22} /><T w="bold" size={14} style={{ flex: 1 }}>Hafta yakuni</T>
           </Pressable>
           <Pressable accessibilityRole="button" onPress={() => router.push('/streak-calendar')} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: 50, paddingHorizontal: 14, borderRadius: 16, backgroundColor: colors.surface }}>
-            <DuoIcon name="calendar" size={20} /><T w="bold" size={14} style={{ flex: 1 }}>Faollik tarixi</T>
+            <Icon3D name="calendar" size={21} /><T w="bold" size={14} style={{ flex: 1 }}>Faollik tarixi</T>
           </Pressable>
         </View>
 
-        <View style={{ backgroundColor: colors.forest, borderRadius: 30, padding: 18, gap: 14 }}>
+        <View style={{ backgroundColor: colors.forest, borderRadius: 30, padding: 18, gap: 14, overflow: 'hidden' }}>
+          <HeroBg />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <T w="bold" size={12} color={colors.onForestSoft} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Umumiy natija</T>
             <Chip label={state.level} />

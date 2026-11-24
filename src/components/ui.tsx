@@ -1,9 +1,10 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Children, isValidElement, ReactNode, useContext, useEffect, useRef, useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, Modal, Pressable, ScrollView, type ScrollViewInstance, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
+import { Image, Keyboard, KeyboardAvoidingView, Modal, Pressable, ScrollView, type ScrollViewInstance, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, font, FontScaleContext, radius, themed, ThemeContext } from '../lib/theme';
+import { deck3D } from './Icon3D';
 
 export type IconName = keyof typeof Feather.glyphMap;
 
@@ -225,7 +226,8 @@ export function Button({ title, onPress, variant = 'lime', icon, iconRight, disa
 }
 
 export function Card({ children, style, onPress }: { children: ReactNode; style?: StyleProp<ViewStyle>; onPress?: () => void }) {
-  const base = { backgroundColor: colors.surface, borderRadius: radius.xl, padding: 16 };
+  // Yangi uslub: oq karta, juda yengil soya
+  const base = { backgroundColor: colors.surface, borderRadius: radius.xl, padding: 16, shadowColor: '#1E321E', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2 };
   if (onPress) {
     return (
       <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [base, { opacity: pressed ? 0.9 : 1 }, style]}>
@@ -240,7 +242,8 @@ export function Card({ children, style, onPress }: { children: ReactNode; style?
 export function IconTile({ icon, mdi, label, bg = colors.surfaceMuted, fg = colors.ink, size = 48 }: { icon?: IconName; mdi?: string; label?: string; bg?: string; fg?: string; size?: number }) {
   return (
     <View style={{ width: size, height: size, borderRadius: size * 0.33, backgroundColor: themed(bg), alignItems: 'center', justifyContent: 'center' }}>
-      {mdi ? <MaterialCommunityIcons name={mdi as never} size={size * 0.52} color={themed(fg)} />
+      {mdi && deck3D(mdi) ? <Image source={deck3D(mdi)![0]} resizeMode="contain" style={{ width: size * 0.58, height: size * 0.58 }} />
+        : mdi ? <MaterialCommunityIcons name={mdi as never} size={size * 0.52} color={themed(fg)} />
         : icon ? <Feather name={icon} size={size * 0.46} color={themed(fg)} /> : <T w="extrabold" size={size * 0.3} color={themed(fg)}>{label}</T>}
     </View>
   );

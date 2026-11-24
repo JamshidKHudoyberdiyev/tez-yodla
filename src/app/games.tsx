@@ -2,18 +2,18 @@ import { Feather } from '@expo/vector-icons';
 import { router, type Href } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DuoIcon, type DuoName } from '@/components/Art';
+import { HeroBg, Icon3D, type Icon3DName } from '@/components/Icon3D';
 import { BackHeader, Button, T } from '@/components/ui';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
-interface Game { key: string; title: string; sub: string; icon: DuoName; href: Href; min: number; best?: (n: number) => string; tint: 'limeSoft' | 'blueSoft' | 'amberSoft' | 'purpleSoft' }
+interface Game { key: string; title: string; sub: string; icon: Icon3DName; href: Href; min: number; best?: (n: number) => string; tint: 'limeSoft' | 'blueSoft' | 'amberSoft' | 'purpleSoft' }
 
 const GAMES: Game[] = [
-  { key: 'speed', title: '60 soniya', sub: "Bir daqiqada qancha so'z?", icon: 'games', href: '/game-speed', min: 6, best: (n) => `rekord ${n} ta`, tint: 'limeSoft' },
-  { key: 'listen', title: 'Eshit va yoz', sub: "So'zni tinglab, to'g'ri yozing", icon: 'voice', href: '/game-listen', min: 4, best: (n) => `rekord ${n}/8`, tint: 'blueSoft' },
-  { key: 'pairs', title: 'Juftlikni top', sub: "Kartalarni ochib, juftini toping", icon: 'decks', href: '/game-pairs', min: 6, best: (n) => `rekord ${n} urinish`, tint: 'amberSoft' },
-  { key: 'verbs', title: "Noto'g'ri fe'llar", sub: 'go — went — gone', icon: 'school', href: '/game-verbs', min: 0, best: (n) => `rekord ${n}/8`, tint: 'purpleSoft' },
+  { key: 'speed', title: '60 soniya', sub: "Bir daqiqada qancha so'z?", icon: 'timer', href: '/game-speed', min: 6, best: (n) => `rekord ${n} ta`, tint: 'limeSoft' },
+  { key: 'listen', title: 'Eshit va yoz', sub: "So'zni tinglab, to'g'ri yozing", icon: 'headphones', href: '/game-listen', min: 4, best: (n) => `rekord ${n}/8`, tint: 'blueSoft' },
+  { key: 'pairs', title: 'Juftlikni top', sub: "Kartalarni ochib, juftini toping", icon: 'cards', href: '/game-pairs', min: 6, best: (n) => `rekord ${n} urinish`, tint: 'amberSoft' },
+  { key: 'verbs', title: "Noto'g'ri fe'llar", sub: 'go — went — gone', icon: 'change', href: '/game-verbs', min: 0, best: (n) => `rekord ${n}/8`, tint: 'purpleSoft' },
 ];
 
 export default function Games() {
@@ -28,7 +28,8 @@ export default function Games() {
         <BackHeader title="O'yinlar" right={<T w="extrabold" size={13} color={colors.forestText}>{learned} ta so'z</T>} />
         <T size={14} color={colors.muted} style={{ marginTop: -4 }}>O'rgangan so'zlaringiz bilan — mashg'ulotdan keyin bir oz o'ynang.</T>
 
-        <View style={{ backgroundColor: colors.forest, borderRadius: 30, padding: 20, gap: 12 }}>
+        <View style={{ backgroundColor: colors.forest, borderRadius: 30, padding: 20, gap: 12, overflow: 'hidden' }}>
+          <HeroBg />
           <T w="bold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Kun o'yini</T>
           <T w="extrabold" size={26} color="#FFFFFF" accessibilityRole="header">Gap tuzish</T>
           <T size={14} color={colors.onForestSoft} style={{ lineHeight: 20 }}>So'zlardan inglizcha gap yig'ing. So'zni gapda ishlatish uni eng mustahkam eslab qoldiradi.</T>
@@ -45,7 +46,7 @@ export default function Games() {
                 style={({ pressed }) => ({ width: '48.5%', backgroundColor: colors.surface, borderRadius: 24, padding: 14, gap: 10, opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <View style={{ width: 52, height: 52, borderRadius: 18, backgroundColor: colors[g.tint], alignItems: 'center', justifyContent: 'center' }}>
-                    <DuoIcon name={g.icon} size={28} />
+                    <Icon3D name={g.icon} size={30} />
                   </View>
                   {locked ? <Feather name="lock" size={15} color={colors.muted} /> : null}
                 </View>

@@ -12,6 +12,7 @@ import { timeLabel } from '@/lib/reminders';
 import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
+import { HeroBg } from '@/components/Icon3D';
 
 /** Bulutga saqlash holati — hisob qatorining o'ng chetida: saqlangan / saqlanmoqda / xato (qayta urinish) */
 function SyncBadge({ status, onRetry }: { status: string; onRetry: () => void }) {
@@ -52,7 +53,8 @@ export default function Settings() {
       <BackHeader title="Sozlamalar" />
 
       <Pressable accessibilityRole="button" accessibilityLabel={`Profil: ${state.name || 'ism kiritilmagan'}, ${state.level}. Ochish`} onPress={() => router.push('/settings/profile')}
-        style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 26, backgroundColor: colors.forest, opacity: pressed ? 0.9 : 1 })}>
+        style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 26, backgroundColor: colors.forest, overflow: 'hidden', opacity: pressed ? 0.9 : 1 })}>
+        <HeroBg />
         <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} photo={p.avatarPhoto} size={56} onDark />
         <View style={{ flex: 1 }}>
           <T w="extrabold" size={19} color="#FFFFFF" numberOfLines={1}>{state.name || 'Ismingizni kiriting'}</T>

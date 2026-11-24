@@ -1,15 +1,16 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
-import { FlameArt, SnowArt } from '@/components/Art';
+import { SnowArt } from '@/components/Art';
+import { Icon3D } from '@/components/Icon3D';
 import { T } from '@/components/ui';
 import { DAY_GOAL, dayState, milestoneLabel, StreakInfo, weekDays, WEEKDAYS } from '@/lib/streak';
 import { colors } from '@/lib/theme';
 
 
-/** Olov belgisi — vektor (v3), faqat streak uchun ishlatiladi */
+/** Olov belgisi — 3D (yangi uslub), faqat streak uchun ishlatiladi. Bugun hali sanalmagan bo'lsa — xira. */
 export function Flame({ size = 24, dim = false }: { size?: number; dim?: boolean }) {
-  return <FlameArt size={size} dim={dim} />;
+  return <Icon3D name="flame" size={size} style={dim ? { opacity: 0.35 } : undefined} />;
 }
 
 export function FreezeChip({ n, big = false }: { n: number; big?: boolean }) {

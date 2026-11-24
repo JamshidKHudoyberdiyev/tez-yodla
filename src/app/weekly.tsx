@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Flame } from '@/components/Streak';
 import { SnowArt } from '@/components/Art';
+import { HeroBg } from '@/components/Icon3D';
 import { BackHeader, Button, Screen, T } from '@/components/ui';
 import { uzDate } from '@/lib/drill';
 import { practiced, weekDays, WEEKDAYS } from '@/lib/streak';
@@ -40,7 +41,8 @@ export default function Weekly() {
       </View>
       <T size={13} color={colors.muted} style={{ textAlign: 'center', marginTop: -4 }}>{uzDate(days[0])} – {uzDate(days[6])}</T>
 
-      <View style={{ backgroundColor: colors.forest, borderRadius: 26, padding: 18, gap: 14 }}>
+      <View style={{ backgroundColor: colors.forest, borderRadius: 26, padding: 18, gap: 14, overflow: 'hidden' }}>
+        <HeroBg />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <Flame size={28} />
           <T w="extrabold" size={18} color="#FFFFFF" style={{ flex: 1 }}>{activeDays} / {passed} kun{prev ? '' : ` · streak ${s.current}`}</T>

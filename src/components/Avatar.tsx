@@ -1,5 +1,6 @@
 import { Image, View } from 'react-native';
-import { FlameArt, Plant, SnowArt } from '@/components/Art';
+import { Plant, SnowArt } from '@/components/Art';
+import { Icon3D } from '@/components/Icon3D';
 import { initialsOf } from '@/components/SettingsUI';
 import { T } from '@/components/ui';
 import type { StreakInfo } from '@/lib/streak';
@@ -24,7 +25,7 @@ export const AVATAR_ARTS: { id: ArtId; label: string; lock?: (p: Progress) => st
 export const artBg = (id: string) => (id === 'plant5' || id === 'flame' ? colors.peach : id === 'ice' ? colors.blueSoft : colors.limeSoft);
 
 export function ArtGlyph({ id, size }: { id: string; size: number }) {
-  if (id === 'flame') return <FlameArt size={size * 0.8} />;
+  if (id === 'flame') return <Icon3D name="flame" size={size * 0.8} />;
   if (id === 'ice') return <SnowArt size={size * 0.6} />;
   const stage = Number(id.replace('plant', ''));
   return <Plant stage={Number.isFinite(stage) ? stage : 0} size={size} />;

@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { has3D, Icon3D } from '@/components/Icon3D';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Platform, Pressable, TextInput, View } from 'react-native';
 import { IconName, T } from '@/components/ui';
@@ -17,7 +18,7 @@ export function SettingGroup({ label, children, danger }: { label?: string; chil
   return (
     <View style={{ gap: 6 }}>
       {label ? <T w="extrabold" size={12} color={colors.muted} style={{ paddingHorizontal: 6, letterSpacing: 1, textTransform: 'uppercase' }}>{label}</T> : null}
-      <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', ...(danger ? { borderWidth: 2, borderColor: colors.wrong } : null) }}>{children}</View>
+      <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', elevation: 2, shadowColor: '#1E321E', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, ...(danger ? { borderWidth: 2, borderColor: colors.wrong } : null) }}>{children}</View>
     </View>
   );
 }
@@ -31,7 +32,7 @@ export function SettingRow({ icon, tone = 'green', title, sub, subColor, value, 
     <>
       {icon ? (
         <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: t.bg, alignItems: 'center', justifyContent: 'center' }}>
-          <Feather name={icon} size={18} color={t.fg} />
+          {has3D(icon) && !danger ? <Icon3D name={icon} size={21} /> : <Feather name={icon} size={18} color={t.fg} />}
         </View>
       ) : null}
       <View style={{ flex: 1, minWidth: 0 }}>

@@ -2,7 +2,8 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
-import { Plant, RingsDecor } from '@/components/Art';
+import { Plant } from '@/components/Art';
+import { HeroBg } from '@/components/Icon3D';
 import { achievements, ArtGlyph, artBg, Avatar, AVATAR_ARTS, type Progress } from '@/components/Avatar';
 import { Flame } from '@/components/Streak';
 import { LEVELS, LevelLadder } from '@/components/Level';
@@ -45,7 +46,7 @@ export default function Profile() {
 
       {/* Kim ekansiz */}
       <View style={{ backgroundColor: colors.forest, borderRadius: 32, padding: 20, gap: 16, overflow: 'hidden' }}>
-        <View pointerEvents="none" style={{ position: 'absolute', right: -70, top: -70 }}><RingsDecor /></View>
+        <HeroBg />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <Pressable accessibilityRole="button" accessibilityLabel="Avatarni o'zgartirish" onPress={() => setEditing(true)}>
             <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} photo={p.avatarPhoto} size={84} onDark />
