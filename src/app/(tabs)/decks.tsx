@@ -1,15 +1,55 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { LayoutAnimation, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Image, LayoutAnimation, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DuoIcon } from '@/components/Art';
+import { PLANT_IMG, PLANT_RATIO } from '@/components/Art';
 import { Card, H1, IconTile, T } from '@/components/ui';
-import { DECK_GROUPS, DECKS, type Deck, type Level } from '@/data/words';
+import { DECK_GROUPS, DECKS, type Deck, type DeckGroup, type Level } from '@/data/words';
 import { LEVEL_ORDER } from '@/lib/levelTest';
 import { cardsByWord, deckProgress } from '@/lib/decks';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
+
+/** 3D ikonkalar: [rasm, eni/bo'yi] */
+const DECK_ICON: Record<string, [number, number]> = {
+  kitchen: [require('../../../assets/decks/kitchen.webp'), 1.028],
+  school: [require('../../../assets/decks/school.webp'), 0.982],
+  work: [require('../../../assets/decks/work.webp'), 1.009],
+  travel: [require('../../../assets/decks/travel.webp'), 1.514],
+  family: [require('../../../assets/decks/family.webp'), 1.009],
+  animals: [require('../../../assets/decks/animals.webp'), 1.179],
+  city: [require('../../../assets/decks/city.webp'), 1.087],
+  clothes: [require('../../../assets/decks/clothes.webp'), 1.244],
+  emotions: [require('../../../assets/decks/emotions.webp'), 1],
+  health: [require('../../../assets/decks/health.webp'), 1.057],
+  home: [require('../../../assets/decks/home.webp'), 1.131],
+  shopping: [require('../../../assets/decks/shopping.webp'), 1.067],
+  sport: [require('../../../assets/decks/sport.webp'), 1.009],
+  tech: [require('../../../assets/decks/tech.webp'), 1.273],
+  weather: [require('../../../assets/decks/weather.webp'), 1.12],
+};
+const GROUP_ICON: Record<DeckGroup, [number, number, string]> = {
+  daily: [require('../../../assets/decks/group-daily.webp'), 1.155, '#FDE4E3'],
+  study: [require('../../../assets/decks/group-study.webp'), 1.12, '#E2ECFC'],
+  travel: [require('../../../assets/decks/group-travel.webp'), 0.812, '#FDEBD7'],
+  level: [require('../../../assets/decks/group-level.webp'), 1.109, '#EEE6FC'],
+  exam: [require('../../../assets/decks/group-exam.webp'), 1.318, '#E2ECFC'],
+};
+const HERO_BG = require('../../../assets/home/hero-bg.webp');
+const BOOK = require('../../../assets/home/book.webp');
+const hidden = { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' as const };
+const shadow = { shadowColor: '#1E321E', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 };
+
+/** Ikonka yumshoq rangli kvadrat ichida (o'lchami kichik — minimal ko'rinish) */
+function Pic({ src, ratio, bg, size = 44, h = 26 }: { src: number; ratio: number; bg: string; size?: number; h?: number }) {
+  const w = Math.min(h * ratio, size - 10);
+  return (
+    <View style={{ width: size, height: size, borderRadius: Math.round(size * 0.32), backgroundColor: bg, alignItems: 'center', justifyContent: 'center' }}>
+      <Image source={src} {...hidden} resizeMode="contain" style={{ width: w, height: w / ratio }} />
+    </View>
+  );
+}
 
 export default function Decks() {
   const { state, words, today } = useStore();
@@ -33,19 +73,22 @@ export default function Decks() {
   const own = info.find((x) => x.d.custom);
   const activeCount = info.filter((x) => x.active && !x.d.custom).length;
   const visible = info.filter((x) => !x.d.custom && x.total > 0);
-  /** Kunlik rejadagilar — «Mening so'zlarim» ostida; guruhlarda takrorlanmaydi */
+  /** Kunlik rejadagilar — alohida blokda; guruhlarda takrorlanmaydi */
   const planned = visible.filter((x) => x.active);
   const deckHits = query ? visible.filter((x) => x.d.title.toLowerCase().includes(query)) : [];
   const results = query ? words.filter((w) => w.word.toLowerCase().includes(query) || w.translation.toLowerCase().includes(query)).slice(0, 20) : [];
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 32 }} keyboardShouldPersistTaps="handled">
-        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 32 }} keyboardShouldPersistTaps="handled">
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4 }}>
           <H1>To'plamlar</H1>
-          <T w="extrabold" size={14} color={colors.forestText}>{activeCount} ta rejada</T>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, height: 36, paddingHorizontal: 14, borderRadius: 18, backgroundColor: colors.surface, ...shadow }}>
+            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.forest }} />
+            <T w="extrabold" size={14} color={colors.forestText}>{activeCount} ta rejada</T>
+          </View>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 50, paddingHorizontal: 16, backgroundColor: colors.surface, borderRadius: 18 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 50, paddingHorizontal: 16, backgroundColor: colors.surface, borderRadius: 18, ...shadow }}>
           <Feather name="search" size={20} color={colors.muted} />
           <TextInput value={q} onChangeText={setQ} placeholder="Mavzu yoki so'z qidirish" placeholderTextColor={colors.muted} accessibilityLabel="Qidirish"
             style={{ flex: 1, fontFamily: font.medium, fontSize: 15, color: colors.ink }} />
@@ -67,28 +110,27 @@ export default function Decks() {
         ) : (
           <>
             {own ? (
-              <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
               <Pressable accessibilityRole="button" accessibilityLabel={`Mening so'zlarim, ${own.total} ta so'z`} onPress={() => router.push('/my-words')}
-                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
-                <View style={{ width: 42, height: 42, borderRadius: 14, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}><DuoIcon name="add" size={22} /></View>
+                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 22, backgroundColor: colors.surface, opacity: pressed ? 0.9 : 1, ...shadow })}>
+                <Pic src={PLANT_IMG[1]} ratio={PLANT_RATIO[1]} bg={colors.limeSoft} h={28} />
                 <View style={{ flex: 1 }}>
-                  <T w="extrabold" size={15}>Mening so'zlarim</T>
-                  <T size={12} color={own.due ? colors.error : colors.muted}>
+                  <T w="extrabold" size={16}>Mening so'zlarim</T>
+                  <T w={own.due ? 'bold' : 'medium'} size={13} color={own.due ? colors.error : colors.muted}>
                     {own.total === 0 ? "Hali so'z yo'q — qo'shish uchun bosing" : own.due ? `Bugun ${own.due} ta takror` : `${own.total} ta so'z`}
                   </T>
                 </View>
                 <Feather name="chevron-right" size={20} color={colors.muted} />
               </Pressable>
-              {planned.length ? (
-                <View style={{ borderTopWidth: 1, borderTopColor: colors.divider }}>
-                  <T w="extrabold" size={11} color={colors.forestText} accessibilityRole="header" style={{ paddingHorizontal: 16, paddingTop: 10, letterSpacing: 1 }}>KUNLIK REJADA · {planned.length} TA</T>
-                  <DeckRows items={planned} bare />
-                </View>
-              ) : null}
+            ) : null}
+
+            {planned.length ? (
+              <View style={{ borderRadius: 22, backgroundColor: colors.surface, borderWidth: 2, borderColor: colors.limeSoft, overflow: 'hidden', ...shadow }}>
+                <T w="extrabold" size={12} color={colors.forestText} accessibilityRole="header" style={{ paddingHorizontal: 16, paddingTop: 12, letterSpacing: 0.8 }}>KUNLIK REJADA · {planned.length} TA</T>
+                <DeckRows items={planned} bare />
               </View>
             ) : null}
 
-            <T w="extrabold" size={12} color={colors.muted} style={{ paddingHorizontal: 4, marginTop: 6, letterSpacing: 1 }}>BARCHA TO'PLAMLAR</T>
+            <T w="extrabold" size={12} color={colors.muted} style={{ paddingHorizontal: 6, marginTop: 6, letterSpacing: 0.8 }}>BARCHA TO'PLAMLAR</T>
             {DECK_GROUPS.map((g) => {
               const all = visible.filter((x) => (x.d.group ?? 'level') === g.id);
               if (!all.length) return null;
@@ -96,37 +138,43 @@ export default function Decks() {
               const inPlan = all.length - items.length;
               const isOpen = !!open[g.id];
               const sub = `${all.length} ta to'plam${inPlan ? ` · ${inPlan} tasi rejada` : ''}`;
+              const [gsrc, gratio, gbg] = GROUP_ICON[g.id];
               return (
-                <View key={g.id} style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', borderWidth: 2, borderColor: isOpen ? colors.limeSoft : 'transparent' }}>
+                <View key={g.id} style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', ...shadow }}>
                   <Pressable accessibilityRole="button" accessibilityState={{ expanded: isOpen }} accessibilityLabel={`${g.title}, ${sub}`} onPress={() => toggle(g.id)}
-                    style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 64, paddingVertical: 10, paddingLeft: 16, paddingRight: 12, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
+                    style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 66, paddingVertical: 10, paddingLeft: 12, paddingRight: 12,
+                      backgroundColor: isOpen ? colors.limeSoft : pressed ? colors.surfaceMuted : 'transparent' })}>
+                    <Pic src={gsrc} ratio={gratio} bg={gbg} h={26} />
                     <View style={{ flex: 1 }}>
-                      <T w="extrabold" size={17}>{g.title}</T>
-                      <T size={12} color={colors.muted}>{sub}</T>
+                      <T w="extrabold" size={16}>{g.title}</T>
+                      <T size={13} color={colors.muted}>{sub}</T>
                     </View>
-                    <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: isOpen ? colors.limeSoft : colors.bg, alignItems: 'center', justifyContent: 'center' }}>
-                      <Feather name={isOpen ? 'chevron-up' : 'chevron-down'} size={20} color={isOpen ? colors.forestText : colors.ink} />
+                    <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: isOpen ? colors.surface : colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+                      <Feather name={isOpen ? 'chevron-up' : 'chevron-down'} size={18} color={colors.ink} />
                     </View>
                   </Pressable>
                   {isOpen ? (
-                    <View style={{ borderTopWidth: 1, borderTopColor: colors.divider }}>
-                      {items.length ? <DeckRows items={items} bare /> : <T size={13} color={colors.muted} style={{ padding: 16 }}>Hammasi kunlik rejada</T>}
-                    </View>
+                    !items.length ? <T size={13} color={colors.muted} style={{ padding: 16 }}>Hammasi kunlik rejada</T>
+                      : g.id === 'level' ? <LevelCards items={items} />
+                        : <DeckRows items={items} bare />
                   ) : null}
                 </View>
               );
             })}
 
             <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/add', params: { tab: 'text' } })}
-              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, marginTop: 6, borderRadius: 24, backgroundColor: colors.forest, opacity: pressed ? 0.92 : 1 })}>
-              <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center' }}>
-                <DuoIcon name="text" size={24} fill={colors.lime} stroke={colors.limeInk} />
+              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, marginTop: 6, borderRadius: 24, overflow: 'hidden', backgroundColor: colors.forest, opacity: pressed ? 0.92 : 1 })}>
+              <Image source={HERO_BG} {...hidden} resizeMode="cover" style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }} />
+              <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center' }}>
+                <Image source={BOOK} {...hidden} style={{ width: 30, height: 23 }} />
               </View>
               <View style={{ flex: 1 }}>
                 <T w="extrabold" size={16} color="#FFFFFF">O'qiyotgan matningizdan</T>
-                <T size={13} color={colors.onForestSoft}>Notanish so'zlarni ajratib, yodlashga qo'shing</T>
+                <T size={13} color="#E3F0E4">Notanish so'zlarni ajratib, yodlashga qo'shing</T>
               </View>
-              <Feather name="arrow-right" size={20} color={colors.lime} />
+              <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: colors.lime, alignItems: 'center', justifyContent: 'center' }}>
+                <Feather name="chevron-right" size={20} color={colors.limeInk} />
+              </View>
             </Pressable>
           </>
         )}
@@ -137,41 +185,66 @@ export default function Decks() {
 
 type DeckInfo = { d: Deck; total: number; started: number; due: number; active: boolean; easy?: boolean };
 
+function DeckIcon({ d }: { d: Deck }) {
+  const pic = DECK_ICON[d.id];
+  return pic ? <Pic src={pic[0]} ratio={pic[1]} bg={d.tint} size={42} h={24} /> : <IconTile mdi={d.icon} label={d.badge} bg={d.tint} fg={d.ink} size={42} />;
+}
+
 /** To'plamlar ro'yxati: ikonka, nom, «Rejada» belgisi, progress va so'z soni. Bosilsa — to'plam sahifasi. */
 function DeckRows({ items, bare }: { items: DeckInfo[]; bare?: boolean }) {
   return (
-    <View style={bare ? undefined : { backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
+    <View style={bare ? undefined : { backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', ...shadow }}>
       {items.map(({ d, total, started, due, active, easy }, i) => (
         <Pressable key={d.id} accessibilityRole="button" accessibilityLabel={`${d.title}, ${started} / ${total} so'z${active ? ', rejada' : ''}`}
           onPress={() => router.push({ pathname: '/deck/[id]', params: { id: d.id } })}
           style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
-          <IconTile mdi={d.icon} label={d.badge} bg={d.tint} fg={d.ink} size={42} />
-          <View style={{ flex: 1, gap: 5, opacity: easy && !active ? 0.75 : 1 }}>
+          <DeckIcon d={d} />
+          <View style={{ flex: 1, gap: 6, opacity: easy && !active ? 0.75 : 1 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <T w="extrabold" size={15} numberOfLines={1} style={{ flexShrink: 1 }}>{d.title}</T>
               {active && !bare ? (
-                <View style={{ paddingHorizontal: 7, paddingVertical: 2, borderRadius: 7, backgroundColor: colors.limeSoft }}>
-                  <T w="extrabold" size={10} color={colors.forestText} style={{ letterSpacing: 0.4 }}>REJADA</T>
+                <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, backgroundColor: colors.limeSoft }}>
+                  <T w="extrabold" size={10} color={colors.forestText}>Rejada</T>
                 </View>
               ) : null}
               {easy ? (
-                <View style={{ paddingHorizontal: 7, paddingVertical: 2, borderRadius: 7, backgroundColor: '#FFF1D6' }}>
+                <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, backgroundColor: '#FFF1D6' }}>
                   <T w="extrabold" size={10} color="#8A5A00" numberOfLines={1}>Siz uchun oson</T>
                 </View>
               ) : null}
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <View style={{ flex: 1, height: 5, borderRadius: 3, backgroundColor: colors.bg, overflow: 'hidden' }}>
-                <View style={{ width: `${Math.max(started ? 3 : 0, Math.round((started / total) * 100))}%`, height: 5, borderRadius: 3, backgroundColor: colors.forest }} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <View style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: colors.bg, overflow: 'hidden' }}>
+                <View style={{ width: `${Math.max(started ? 3 : 0, Math.round((started / total) * 100))}%`, height: 6, borderRadius: 3, backgroundColor: colors.forest }} />
               </View>
-              <T size={12} color={due ? colors.error : colors.muted} style={{ minWidth: 70, textAlign: 'right' }}>
+              <T w={due ? 'bold' : 'medium'} size={12} color={due ? colors.error : colors.muted} style={{ minWidth: 70, textAlign: 'right' }}>
                 {due ? `${due} ta takror` : started ? `${started} / ${total} so'z` : `${total} so'z`}
               </T>
             </View>
           </View>
-          <Feather name="chevron-right" size={20} color={colors.muted} />
+          <Feather name="chevron-right" size={18} color={colors.muted} />
         </Pressable>
       ))}
     </View>
+  );
+}
+
+/** «Daraja bo'yicha» ochilganda: A1–C2 kartalari yonma-yon (surib ko'riladi) */
+function LevelCards({ items }: { items: DeckInfo[] }) {
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, padding: 12 }}>
+      {items.map(({ d, total, started, due }) => (
+        <Pressable key={d.id} accessibilityRole="button" accessibilityLabel={`${d.title}, ${started} / ${total} so'z`}
+          onPress={() => router.push({ pathname: '/deck/[id]', params: { id: d.id } })}
+          style={({ pressed }) => ({ width: 96, paddingVertical: 14, borderRadius: 18, backgroundColor: d.tint, alignItems: 'center', gap: 4, opacity: pressed ? 0.85 : 1 })}>
+          <T w="extrabold" size={22} color={d.ink} style={{ lineHeight: 28 }}>{d.badge}</T>
+          <T w="bold" size={11} color={d.ink} numberOfLines={1}>{d.title.split('· ')[1] ?? d.subtitle}</T>
+          <View style={{ width: 60, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.7)', overflow: 'hidden', marginTop: 6 }}>
+            <View style={{ width: `${Math.max(started ? 4 : 0, Math.round((started / total) * 100))}%`, height: 5, backgroundColor: d.ink }} />
+          </View>
+          <T size={11} color={due ? colors.error : '#4A524B'} style={{ marginTop: 2 }}>{due ? `${due} ta takror` : `${started} / ${total}`}</T>
+        </Pressable>
+      ))}
+    </ScrollView>
   );
 }
