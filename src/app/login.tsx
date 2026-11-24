@@ -2,7 +2,7 @@ import { Feather, FontAwesome } from '@expo/vector-icons';
 import { Redirect, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ActivityIndicator, Animated, BackHandler, Easing, Pressable, TextInput, View } from 'react-native';
+import { ActivityIndicator, Animated, BackHandler, Easing, Image, Pressable, TextInput, useWindowDimensions, View } from 'react-native';
 import Svg, { Circle, Defs, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { Logo, Wordmark } from '@/components/Art';
 import { Pop } from '@/components/Motion';
@@ -13,8 +13,6 @@ import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
 const TELEGRAM_BLUE = '#2AABEE';
-/** Kirish ekranining o'z ranglari (mavzudan qat'i nazar: qorong'i yashil fon + och panel) */
-const SHEET = '#F6F7F2';
 const INK = '#131A15';
 const MUTED = '#5F665F';
 const RED = '#E5484D';
@@ -264,11 +262,45 @@ const Brand = () => (
   </View>
 );
 
-const Chip = ({ label }: { label: string }) => (
-  <View style={{ height: 32, paddingHorizontal: 12, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center' }}>
-    <T w="bold" size={13} color="#FFFFFF">{label}</T>
-  </View>
-);
+const WELCOME_BG = require('../../assets/login-bg.webp');
+const WELCOME_BRAIN = require('../../assets/login-brain.webp');
+const HEAD = '#1E4A2B';
+
+/** Yangi foydalanuvchi: quyoshli fon, «Yodlash endi oson!» va kitob o'qiyotgan miya */
+function Welcome({ footer }: { footer: ReactNode }) {
+  const { width } = useWindowDimensions();
+  const [h, setH] = useState(0);
+  // Miya matnga tegmasin: kichik ekranda kichrayadi
+  const bh = Math.max(0, Math.min(width * 0.633, h - 190, ((width - 162) * 774) / 720));
+  const bw = (bh * 720) / 774;
+  return (
+    <View style={{ flex: 1, backgroundColor: '#72B822' }}>
+      <Image source={WELCOME_BG} resizeMode="cover" accessibilityElementsHidden importantForAccessibility="no"
+        style={{ position: 'absolute', left: 0, top: 0, width, height: width * 1.5 }} />
+      <StatusBar style="dark" />
+      <Screen bg="transparent" scroll={false} sheet="#FFFFFF" footer={footer}>
+        <View style={{ flex: 1 }} onLayout={(e) => setH(e.nativeEvent.layout.height)}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingTop: 4 }}>
+            <Logo size={42} />
+            <T w="extrabold" size={24} color={HEAD} style={{ letterSpacing: -0.3, lineHeight: 30 }}>tez yodla</T>
+          </View>
+          <T w="extrabold" size={46} color={HEAD} accessibilityRole="header" style={{ marginTop: 30, lineHeight: 50, letterSpacing: -1.4 }}>
+            Yodlash{'\n'}endi <T w="extrabold" size={46} color="#4FB21C" style={{ lineHeight: 50, letterSpacing: -1.4 }}>oson!</T>
+          </T>
+          <T w="semibold" size={16} color="#2E3D33" style={{ marginTop: 12, lineHeight: 24, width: 172 }}>Aqlli takrorlash bilan so'zlarni abadiy eslab qoling.</T>
+          {bh > 100 ? (
+            <View style={{ position: 'absolute', right: -28, bottom: 50, width: bw, height: bh }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+              <Image source={WELCOME_BRAIN} resizeMode="contain" style={{ width: bw, height: bh }} />
+              <Svg width={bh * 0.16} height={bh * 0.16} viewBox="0 0 40 40" style={{ position: 'absolute', left: bw * 0.2, top: bh * 0.057 }}>
+                <Path d="M8 8 L15 15 M4 24 L13 24 M22 2 L23 11" stroke="#FFC83D" strokeWidth={4.5} strokeLinecap="round" />
+              </Svg>
+            </View>
+          ) : null}
+        </View>
+      </Screen>
+    </View>
+  );
+}
 
 /**
  * Kirish (Google yoki Telegram). Holatlar:
@@ -406,27 +438,13 @@ export default function Login() {
 
   // 1) Yangi foydalanuvchi
   return (
-    <DarkBg>
-      <Screen bg="transparent" scroll={false} sheet={SHEET} footer={<>
-        <T w="extrabold" size={22} color={INK} accessibilityRole="header">Boshlash uchun kiring</T>
-        <T size={14} color={MUTED} style={{ lineHeight: 20, marginTop: -8 }}>Progressingiz bulutda saqlanadi — telefon almashsa ham yo'qolmaydi.</T>
-        {errorPanel}
-        <GoogleButton onPress={go} />
-        <TelegramButton onPress={goTelegram} busy={tgBusy} />
-        <T size={12} color="#8A9088" style={{ textAlign: 'center' }}>Kirish bepul · Telegram yoki Google hisobingiz kifoya</T>
-      </>}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14, paddingHorizontal: 10 }}>
-          <Pop from={0.7}><Logo size={108} /></Pop>
-          <Wordmark size={34} dark />
-          <T size={16} color="rgba(255,255,255,0.78)" style={{ textAlign: 'center', lineHeight: 23 }}>Inglizcha so'zlarni kuniga{'\n'}15–20 daqiqada yodlang</T>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 4 }}>
-            <Chip label="A1–C2 · 2400+ so'z" />
-            <Chip label="Talaffuz" />
-            <Chip label="Aqlli takrorlash" />
-          </View>
-        </View>
-      </Screen>
-    </DarkBg>
+    <Welcome footer={<>
+      <T w="extrabold" size={22} color={INK} accessibilityRole="header">Boshlash uchun kiring</T>
+      {errorPanel}
+      <GoogleButton onPress={go} />
+      <TelegramButton onPress={goTelegram} busy={tgBusy} />
+      <T size={12} color="#8A9088" style={{ textAlign: 'center' }}>Kirish bepul · Telegram yoki Google hisobingiz kifoya</T>
+    </>} />
   );
 }
 
