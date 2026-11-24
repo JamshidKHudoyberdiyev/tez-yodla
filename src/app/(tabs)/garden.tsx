@@ -26,7 +26,7 @@ const HILLS = require('../../../assets/garden/hills.webp');
 const ROW = 140;
 const C = 96;
 const PATH_Y = C - 16;
-const PLANT_H = [74, 96, 116, 130, 132, 132];
+const PLANT_H = [64, 84, 100, 110, 112, 112];
 const hidden = { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' as const };
 
 /** So'zlar bog'i: urug'dan mevagacha yo'lak — har bir so'z qaysi takrorlash bosqichida ekanini ko'rsatadi. */
@@ -140,7 +140,7 @@ function Warning() {
 
 function Lock() {
   return (
-    <Svg width={18} height={18} viewBox="0 0 24 24">
+    <Svg width={15} height={15} viewBox="0 0 24 24">
       <Path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="#FFFFFF" strokeWidth={2.6} strokeLinecap="round" />
       <Rect x="4.5" y="10" width="15" height="11.5" rx="3" fill="#FFFFFF" />
       <Rect x="11.1" y="13.6" width="1.8" height="4.6" rx="0.9" fill="#6B706B" />
@@ -169,7 +169,8 @@ function StageRow({ stage: s, index, width, today, onOpen }: { stage: GardenStag
   const due = s.dueIds.length;
   const fruit = s.key === 'fruit';
   const chip = due ? `${due} ta bugun` : !empty && !fruit && s.nextDue ? relativeDay(s.nextDue - today) : '';
-  const ph = PLANT_H[index] * Math.min(1.1, width / 390);
+  // O'simlik kartaga tegmasin: eni ko'pi bilan 96 (kartagacha 56 dan 8 bo'sh joy qoladi)
+  const ph = Math.min(PLANT_H[index] * Math.min(1, width / 390), 96 / PLANT_RATIO[index]);
   const pw = ph * PLANT_RATIO[index];
   const cw = Math.min(216, left ? width - (cx + 56) - 12 : cx - 56 - 12);
   return (
@@ -196,8 +197,8 @@ function StageRow({ stage: s, index, width, today, onOpen }: { stage: GardenStag
         <Image source={PLANT_IMG[index]} resizeMode="contain"
           style={{ position: 'absolute', left: 75 - pw / 2, bottom: 12, width: pw, height: ph, opacity: empty ? 0.75 : 1 }} />
         {empty ? (
-          <View style={{ position: 'absolute', left: 75 - pw / 2 + 6, bottom: ph * 0.28, width: 40, height: 40, borderRadius: 20, backgroundColor: '#666B66',
-            borderWidth: 3, borderColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', elevation: 3,
+          <View style={{ position: 'absolute', left: 75 - pw / 2 + 6, bottom: ph * 0.26, width: 34, height: 34, borderRadius: 17, backgroundColor: '#666B66',
+            borderWidth: 2.5, borderColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', elevation: 3,
             shadowColor: '#000000', shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 4 } }}>
             <Lock />
           </View>
@@ -213,7 +214,7 @@ function StageRow({ stage: s, index, width, today, onOpen }: { stage: GardenStag
           <T w="extrabold" size={18} color={empty ? '#4A524B' : INK} numberOfLines={1}>{s.title}</T>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Feather name="layers" size={13} color={MUTED} />
-            <T size={12} color={MUTED} numberOfLines={1} style={{ flexShrink: 1 }}>{fruit ? 'yodlangan' : s.everyLabel} · {s.ids.length} ta so'z</T>
+            <T size={12} color={MUTED} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ flexShrink: 1 }}>{fruit ? 'yodlangan' : s.everyLabel} · {s.ids.length} ta so'z</T>
           </View>
           {chip || s.replantedIds.length ? (
             <View style={{ flexDirection: 'row', gap: 6, marginTop: 3 }}>
