@@ -398,7 +398,7 @@ function TextTab() {
   const [text, setText] = useState('');
   const [reading, setReading] = useState(false);
   const [picks, setPicks] = useState<Pick[]>([]);
-  const [savedCount, setSavedCount] = useState<number | null>(null);
+  const [saved, setSaved] = useState<string[] | null>(null);
 
   const dictionary = useMemo(() => new Map(words.map((w) => [w.word.toLowerCase(), w])), [words]);
 
@@ -440,13 +440,6 @@ function TextTab() {
       .catch(() => update(lemma, { source: 'none' }));
   };
 
-  const addAllHints = () => {
-    const seen = new Set(picked);
-    for (const s of sentences) for (const t of s.tokens) {
-      if (t.key && hints.has(t.key) && !seen.has(t.key)) { seen.add(t.key); add(t.key, t.text, s.sentence); }
-    }
-  };
-
   const missing = picks.filter((x) => !x.translation.trim()).length;
   const loading = picks.some((x) => x.source === 'loading');
 
@@ -459,38 +452,61 @@ function TextTab() {
         association: d?.association, soundsLike: d?.soundsLike,
       };
     }));
-    setSavedCount(picks.length);
+    setSaved(picks.map((x) => x.lemma));
     setPicks([]);
     setReading(false);
     setText('');
   };
 
-  if (savedCount !== null) {
+  if (saved !== null) {
     return (
-      <Card style={{ alignItems: 'center', gap: 10, paddingVertical: 28 }}>
-        <Feather name="check-circle" size={36} color={colors.forestText} />
-        <T w="extrabold" size={20}>{savedCount} ta so'z yodlashga qo'shildi</T>
-        <T size={14} color={colors.muted} style={{ textAlign: 'center' }}>Ular «Mening so'zlarim» to'plamiga tushdi va har biri matndagi asl gapi bilan saqlandi.</T>
-        <Button title="Hozir o'rganish" icon="play" onPress={() => router.replace('/session')} style={{ alignSelf: 'stretch', marginTop: 8 }} />
-        <Button title="Yana matn qo'shish" variant="ghost" onPress={() => setSavedCount(null)} />
-      </Card>
+      <View style={{ gap: 6 }}>
+        <Card style={{ alignItems: 'center', gap: 6, paddingVertical: 26 }}>
+          <View style={{ width: 56, height: 56, borderRadius: 18, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+            <Feather name="check" size={28} color={colors.forestText} />
+          </View>
+          <T w="bold" size={21}>{saved.length} ta so'z qo'shildi</T>
+          <T size={14} color={colors.muted}>Kunlik rejangizga tushadi</T>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 10 }}>
+            {saved.map((w) => (
+              <View key={w} style={{ paddingHorizontal: 12, height: 32, borderRadius: 16, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.line }}>
+                <T w="semibold" size={14}>{w}</T>
+              </View>
+            ))}
+          </View>
+          <Button title="Hozir o'rganish" iconRight="arrow-right" onPress={() => router.replace('/session')} style={{ alignSelf: 'stretch', marginTop: 16 }} />
+        </Card>
+        <Button title="Yana matn qo'shish" variant="ghost" onPress={() => setSaved(null)} />
+      </View>
     );
   }
 
   if (!reading) {
+    const count = (text.match(/[A-Za-z][A-Za-z'’-]*/g) ?? []).length;
     return (
       <View style={{ gap: 12 }}>
-        <T size={14} color={colors.inkSoft}>Kitob, maqola yoki darslikdan matnni nusxalab qo'ying. Keyin bilmagan so'zlaringizni matn ichida bosib tanlaysiz.</T>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          multiline
-          placeholder="The harbour was quiet at dawn. Fishermen were mending their nets…"
-          placeholderTextColor={colors.placeholder}
-          accessibilityLabel="Ingliz tilidagi matn"
-          style={[inputStyleOf(), { minHeight: 200, paddingTop: 14, paddingBottom: 14, textAlignVertical: 'top', fontSize: 16, lineHeight: 24 }]}
-        />
-        <Button title="Davom etish" icon="arrow-right" disabled={text.trim().length < 3} onPress={() => setReading(true)} />
+        <T size={14} color={colors.muted} style={{ paddingHorizontal: 4 }}>Inglizcha matnni qo'ying — bilmagan so'zlarni bosib tanlaysiz.</T>
+        <View style={{ borderRadius: 20, backgroundColor: colors.surface, borderWidth: 1.5, borderColor: text ? colors.forest : colors.line, overflow: 'hidden' }}>
+          <TextInput
+            value={text}
+            onChangeText={setText}
+            multiline
+            placeholder="The harbour was quiet at dawn. Fishermen were mending their nets…"
+            placeholderTextColor={colors.placeholder}
+            accessibilityLabel="Ingliz tilidagi matn"
+            style={[{ minHeight: 180, maxHeight: 320, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 6, textAlignVertical: 'top', fontFamily: font.regular, fontSize: 16.5, lineHeight: 25, color: colors.ink }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as object)]}
+          />
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 12, paddingBottom: 12, paddingTop: 4 }}>
+            <T size={12.5} color={colors.muted} style={{ paddingLeft: 4 }}>{count ? `${count} so'z` : ''}</T>
+            <Pressable accessibilityRole="button" accessibilityLabel={text ? 'Matnni tozalash' : "Nusxalangan matnni qo'yish"} hitSlop={8}
+              onPress={text ? () => setText('') : async () => { try { const v = await Clipboard.getStringAsync(); if (v.trim()) setText(v.trim()); } catch { /* ruxsat berilmadi */ } }}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 32, paddingHorizontal: 10, borderRadius: 10, backgroundColor: colors.surfaceMuted }}>
+              <Feather name={text ? 'x' : 'clipboard'} size={14} color={colors.inkSoft} />
+              <T w="bold" size={13} color={colors.inkSoft}>{text ? 'Tozalash' : "Qo'yish"}</T>
+            </Pressable>
+          </View>
+        </View>
+        <Button title="So'zlarni tanlash" iconRight="arrow-right" disabled={text.trim().length < 3} onPress={() => setReading(true)} />
       </View>
     );
   }
@@ -498,10 +514,13 @@ function TextTab() {
   return (
     <View style={{ gap: 14 }}>
       <Card style={{ gap: 12 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Feather name="mouse-pointer" size={15} color={colors.forestText} />
-          <T w="bold" size={13} color={colors.forestText} style={{ flex: 1 }}>Bilmagan so'zingizni bosing</T>
-          <T w="semibold" size={13} color={colors.inkSoft} accessibilityRole="button" onPress={() => setReading(false)}>Matnni o'zgartirish</T>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+          <T w="semibold" size={13} color={colors.muted}>Bilmagan so'zni bosing</T>
+          <Pressable accessibilityRole="button" accessibilityLabel="Matnni tahrirlash" hitSlop={8} onPress={() => setReading(false)}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 30, paddingHorizontal: 10, borderRadius: 10, backgroundColor: colors.surfaceMuted }}>
+            <Feather name="file-text" size={13} color={colors.inkSoft} />
+            <T w="bold" size={13} color={colors.inkSoft}>Tahrirlash</T>
+          </Pressable>
         </View>
         <T size={17} style={{ lineHeight: 30 }}>
           {sentences.map((s, si) => (
@@ -511,9 +530,9 @@ function TextTab() {
                 const on = picked.has(t.key);
                 const hint = !on && hints.has(t.key);
                 return (
-                  <T key={i} size={17} w={on ? 'bold' : 'regular'} color={on ? colors.limeInk : colors.ink} accessibilityRole="button" accessibilityState={{ selected: on }}
+                  <T key={i} size={17} w={on ? 'bold' : 'regular'} color={on ? colors.forestText : colors.ink} accessibilityRole="button" accessibilityState={{ selected: on }}
                     onPress={() => toggle(t.key!, t.text, s.sentence)}
-                    style={{ backgroundColor: on ? colors.lime : 'transparent', borderRadius: 6, textDecorationLine: hint ? 'underline' : 'none', textDecorationStyle: 'dotted', textDecorationColor: colors.amber }}>
+                    style={{ backgroundColor: on ? colors.limeSoft : 'transparent', borderRadius: 7, textDecorationLine: hint ? 'underline' : 'none', textDecorationStyle: 'dotted', textDecorationColor: colors.forestText }}>
                     {t.text}
                   </T>
                 );
@@ -522,25 +541,17 @@ function TextTab() {
             </T>
           ))}
         </T>
-        {hints.size ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: 10 }}>
-            <T size={12} color={colors.muted} style={{ flex: 1 }}>Nuqtali chiziq — siz bilmasligingiz mumkin bo'lgan so'zlar (taxmin).</T>
-            {[...hints].some((h) => !picked.has(h)) ? (
-              <T w="bold" size={12} color={colors.forestText} accessibilityRole="button" onPress={addAllHints}>Hammasini qo'shish</T>
-            ) : null}
-          </View>
-        ) : null}
       </Card>
 
       {picks.length ? (
         <>
-          <T w="extrabold" size={15}>Tanlangan so'zlar · {picks.length}</T>
+          <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9, paddingHorizontal: 4, marginBottom: -4 }}>TANLANGAN · {picks.length}</T>
           <Group>
             {picks.map((x, i) => (
-              <View key={x.lemma} style={{ padding: 12, gap: 8, borderBottomWidth: i < picks.length - 1 ? 1 : 0, borderBottomColor: colors.divider }}>
+              <View key={x.lemma} style={{ paddingHorizontal: 14, paddingVertical: 12, gap: 8, borderBottomWidth: i < picks.length - 1 ? 1 : 0, borderBottomColor: colors.divider }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <T w="extrabold" size={17} style={{ flex: 1 }} numberOfLines={1}>
-                    {x.lemma}{x.surface.toLowerCase() !== x.lemma ? <T size={13} color={colors.muted}>  matnda: {x.surface}</T> : null}
+                  <T w="bold" size={18} style={{ flex: 1 }} numberOfLines={1}>
+                    {x.lemma}{x.surface.toLowerCase() !== x.lemma ? <T size={12.5} color={colors.muted}>  matnda: {x.surface}</T> : null}
                   </T>
                   <Pressable accessibilityRole="button" accessibilityLabel={`${x.lemma} talaffuzi`} hitSlop={6} onPress={() => speak(x.lemma)}
                     style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}>
@@ -558,26 +569,24 @@ function TextTab() {
                   placeholderTextColor={colors.placeholder}
                   accessibilityLabel={`${x.lemma} tarjimasi`}
                   autoCapitalize="none"
-                  style={[inputStyleOf(), { minHeight: 44, fontSize: 15, borderColor: x.translation.trim() || x.source === 'loading' ? colors.line : colors.amberLine }]}
+                  style={[inputStyleOf(), { minHeight: 46, borderRadius: 13, borderWidth: 1.5, fontSize: 15.5, borderColor: x.translation.trim() || x.source === 'loading' ? colors.line : colors.error }]}
                 />
                 {/* Faqat e'tibor kerak bo'lganda: internet tarjimasi, qidiruv yoki topilmagan. Lug'atdagi so'zda yozuv yo'q. */}
-                {!x.touched && x.source !== 'dict' ? (
-                  <T size={12} color={x.source === 'web' ? colors.amber : colors.muted}>
-                    {x.source === 'web' ? 'Internetdan — tekshirib oling'
-                      : x.source === 'loading' ? 'Internetdan qidirilmoqda…'
-                        : "Tarjima topilmadi — o'zingiz yozing yoki olib tashlang"}
-                  </T>
+                {(!x.touched && x.source !== 'dict') || (x.source === 'none' && !x.translation.trim()) ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    {x.source === 'loading' ? <ActivityIndicator size="small" color={colors.forestText} /> : <Feather name="info" size={13} color={colors.muted} />}
+                    <T size={12.5} color={colors.muted}>
+                      {x.source === 'web' ? 'Internetdan topildi — tekshirib oling' : x.source === 'loading' ? 'Internetdan qidirilmoqda…' : "So'z topilmadi"}
+                    </T>
+                  </View>
                 ) : null}
               </View>
             ))}
           </Group>
         </>
-      ) : (
-        <T size={13} color={colors.muted} style={{ textAlign: 'center' }}>Tanlagan so'zlaringiz shu yerda tarjimasi bilan chiqadi.</T>
-      )}
+      ) : null}
 
-      {missing && !loading ? <T size={13} color={colors.amber}>{missing} ta so'zga tarjima yozing yoki ✕ bilan olib tashlang.</T> : null}
-      {picks.length ? <Button title={`Yodlashga qo'shish (${picks.length})`} disabled={missing > 0} onPress={save} /> : null}
+      {picks.length ? <Button title={`Yodlashga qo'shish (${picks.length})`} disabled={missing > 0 || loading} onPress={save} /> : null}
     </View>
   );
 }
