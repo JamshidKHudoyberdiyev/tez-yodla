@@ -1,5 +1,4 @@
 import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ActivityIndicator, Keyboard, Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
@@ -118,11 +117,6 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
                 <View style={{ flex: 1 }}><Button title="Bekor qilish" variant="white" onPress={close} /></View>
                 <View style={{ flex: 1 }}><Button title={failed ? 'Qayta urinish' : "O'chirish"} variant="dangerOutline" disabled={!ok} onPress={run} /></View>
               </View>
-              {kb ? null : (
-                <Pressable accessibilityRole="link" onPress={() => { close(); router.push('/settings/data'); }} style={{ alignSelf: 'center', padding: 6 }}>
-                  <T w="bold" size={13} color={colors.forestText} style={{ textDecorationLine: 'underline' }}>Avval zaxira nusxa olish</T>
-                </Pressable>
-              )}
             </>
           )}
         </View>

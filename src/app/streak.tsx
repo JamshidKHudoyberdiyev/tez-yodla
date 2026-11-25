@@ -100,7 +100,6 @@ export default function StreakScreen() {
 
       <View style={{ flexDirection: 'row', gap: 10 }}>
         <Button title="Kalendar va marralar" variant="white" small style={{ flex: 1 }} onPress={() => router.push('/streak-calendar')} />
-        <Button title="Qoidalar" variant="white" small style={{ flex: 0.6 }} onPress={() => router.push('/streak-help')} />
       </View>
     </Screen>
   );

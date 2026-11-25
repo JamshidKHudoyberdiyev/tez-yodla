@@ -8,6 +8,7 @@ import { SettingGroup, SettingRow } from '@/components/SettingsUI';
 import { BackHeader, Button, Screen, T } from '@/components/ui';
 import { AUTH_REQUIRED, useAuth } from '@/lib/auth';
 import { appVersion } from '@/lib/monitoring';
+import { shareCustomWordsCsv } from '@/lib/exportCsv';
 import { timeLabel } from '@/lib/reminders';
 import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
@@ -44,7 +45,7 @@ export default function Settings() {
   const p = state.prefs;
   const syncError = auth.status === 'error';
   const stepCount = 1 + Object.values(p.steps).filter(Boolean).length;
-  const backupDays = p.lastBackupAt ? Math.floor((Date.now() - p.lastBackupAt) / 86_400_000) : null;
+  const [csvNote, setCsvNote] = useState<string | null>(null);
   const fontLabel = p.fontScale < 1 ? 'Kichik' : p.fontScale === 1 ? "O'rta" : p.fontScale < 1.2 ? 'Katta' : 'Juda katta';
 
   return (
@@ -91,13 +92,11 @@ export default function Settings() {
 
       <SettingGroup label="Ma'lumotlar">
         <SettingRow icon="bookmark" title="Mening so'zlarim" value={`${state.customWords.length} ta`} onPress={() => router.push('/my-words')} />
-        <SettingRow icon="download" title="Zaxira nusxa va tiklash" value={backupDays === null ? "hali yo'q" : backupDays === 0 ? 'bugun' : `${backupDays} kun oldin`}
-          onPress={() => router.push('/settings/data')} last />
-      </SettingGroup>
-
-      <SettingGroup label="Yordam">
-        <SettingRow icon="activity" tone="gray" title="Algoritm qanday ishlaydi" onPress={() => router.push('/about')} />
-        <SettingRow icon="help-circle" tone="gray" title="Streak qoidalari" onPress={() => router.push('/streak-help')} last />
+        <SettingRow icon="file-text" title="So'zlarimni CSV qilib olish" sub={csvNote ?? 'Excel yoki Anki uchun'} disabled={!state.customWords.length}
+          onPress={async () => {
+            const how = await shareCustomWordsCsv(state.customWords);
+            setCsvNote(how === 'shared' ? `${state.customWords.length} ta so'z yuborildi` : `${state.customWords.length} ta so'z nusxalandi`);
+          }} last />
       </SettingGroup>
 
       <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Tez Yodla {appVersion()}</T>
