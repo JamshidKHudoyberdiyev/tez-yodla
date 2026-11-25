@@ -1,9 +1,9 @@
 import { Feather } from '@expo/vector-icons';
 import { useMemo, useRef, useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { Platform, Pressable, TextInput, View } from 'react-native';
 import { GameHeader, GameResult } from '@/components/GameKit';
 import { buzz, Pop, Shake } from '@/components/Motion';
-import { Button, RoundIconButton, Screen, T } from '@/components/ui';
+import { Button, Screen, T } from '@/components/ui';
 import { IRREGULAR, type Irregular } from '@/data/irregular';
 import { shuffle } from '@/lib/drill';
 import { formMatches, isRecord } from '@/lib/games';
@@ -66,8 +66,9 @@ function Round({ onAgain }: { onAgain: () => void }) {
       <T w="bold" size={12} color={colors.muted} style={{ textAlign: 'center', letterSpacing: 0.8, textTransform: 'uppercase' }}>{label}</T>
       <Shake trigger={ok === false ? i + 1 : null}>
         <TextInput ref={ref} value={value} onChangeText={(t) => !checked && set(t)} onSubmitEditing={onSubmit} autoCapitalize="none" autoCorrect={false} spellCheck={false}
-          accessibilityLabel={label} returnKeyType="next" placeholder="…" placeholderTextColor={colors.placeholder}
-          style={{ height: 56, borderRadius: 18, borderWidth: 2, borderColor: ok === undefined ? colors.line : ok ? colors.forestLine : colors.wrong, backgroundColor: ok ? colors.limeSoft : colors.surface,
+          accessibilityLabel={label} returnKeyType="next" placeholder={label === 'III shakl' ? 'gone…' : 'went…'} placeholderTextColor={colors.placeholder}
+          autoComplete="off" importantForAutofill="no" keyboardType={Platform.OS === 'android' ? 'visible-password' : 'default'}
+          style={{ height: 56, borderRadius: 16, borderWidth: 1.5, borderColor: ok === undefined ? colors.line : ok ? colors.lime : colors.wrong, backgroundColor: ok ? colors.limeSoft : ok === false ? colors.wrongSoft : colors.surface,
             fontFamily: font.bold, fontSize: 19, color: colors.ink, textAlign: 'center' }} />
       </Shake>
       {ok === false ? <T w="extrabold" size={14} color={colors.forestText} style={{ textAlign: 'center' }}>{answer}</T> : null}
@@ -81,10 +82,13 @@ function Round({ onAgain }: { onAgain: () => void }) {
 
       <Pop key={i} from={0.94}>
         <View style={{ alignItems: 'center', gap: 6, paddingVertical: 26, borderRadius: 32, backgroundColor: colors.surface }}>
-          <T w="bold" size={13} color={colors.muted}>Ikki shaklini yozing</T>
+          <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9 }}>IKKI SHAKLINI YOZING</T>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <T w="extrabold" size={46} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 54, letterSpacing: -1, flexShrink: 1 }} accessibilityRole="header">{base}</T>
-            <RoundIconButton icon="volume-2" label="Eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speakSequence([base])} />
+            <Pressable accessibilityRole="button" accessibilityLabel="Eshitish" onPress={() => speakSequence([base])}
+              style={({ pressed }) => ({ width: 44, height: 44, borderRadius: 22, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.8 : 1 })}>
+              <Feather name="volume-2" size={20} color={colors.forestText} />
+            </Pressable>
           </View>
           <T w="extrabold" size={18} color={colors.forestText}>{uz}</T>
         </View>

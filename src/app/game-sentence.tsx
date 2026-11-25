@@ -6,6 +6,7 @@ import { Button, Card, Progress, RoundIconButton, Screen, T } from '@/components
 import { Word } from '@/data/words';
 import { speak } from '@/lib/speech';
 import { useStore } from '@/lib/store';
+import { ScorePill } from '@/components/GameKit';
 import { colors } from '@/lib/theme';
 
 const ROUNDS = 5;
@@ -85,7 +86,7 @@ export default function SentenceGame() {
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
         <RoundIconButton icon="x" label="O'yindan chiqish" onPress={() => router.back()} />
         <View style={{ flex: 1 }}><Progress value={r / rounds.length} height={8} track={colors.line} /></View>
-        <T w="extrabold" size={13} color={colors.amber}>{score} ball</T>
+        <ScorePill>{score} ball</ScorePill>
       </View>
 
       <T w="bold" size={13} color={colors.muted} style={{ textTransform: 'uppercase', letterSpacing: 0.8 }}>Gapni inglizchaga yig'ing</T>
@@ -97,14 +98,19 @@ export default function SentenceGame() {
         </View>
       </Card>
 
-      <View style={{ minHeight: 120, borderRadius: 20, borderWidth: 2, borderStyle: 'dashed', borderColor: checked === null ? colors.track : checked ? colors.forestLine : colors.error, padding: 12, flexDirection: 'row', flexWrap: 'wrap', alignContent: 'flex-start', gap: 8 }}
+      {/* Gap yig'iladigan joy: nechta so'z kerakligi bo'sh kataklar bilan ko'rinadi */}
+      <View style={{ minHeight: 76, borderRadius: 20, borderWidth: 1.5, borderColor: checked === null ? colors.line : checked ? colors.lime : colors.wrong,
+        backgroundColor: checked === null ? colors.surfaceMuted : checked ? colors.limeSoft : colors.wrongSoft, padding: 12, flexDirection: 'row', flexWrap: 'wrap', alignContent: 'flex-start', gap: 8 }}
         accessibilityLabel="Sizning javobingiz">
         {picked.map((i, k) => (
           <Pressable key={`${i}-${k}`} accessibilityRole="button" disabled={checked !== null} onPress={() => setPicked(picked.filter((_, j) => j !== k))}
-            style={{ height: 44, paddingHorizontal: 14, borderRadius: 12, backgroundColor: parts[i].toLowerCase().startsWith(word.word.toLowerCase()) ? colors.forest : colors.ink, justifyContent: 'center' }}>
-            <T w="semibold" size={16} color="#FFFFFF">{parts[i]}</T>
+            style={{ height: 48, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line, justifyContent: 'center' }}>
+            <T w="semibold" size={17} color={parts[i].toLowerCase().startsWith(word.word.toLowerCase()) ? colors.forestText : colors.ink}>{parts[i]}</T>
           </Pressable>
         ))}
+        {checked === null ? Array.from({ length: parts.length - picked.length }, (_, k) => (
+          <View key={`e${k}`} style={{ width: 56, height: 48, borderRadius: 12, borderWidth: 1.5, borderStyle: 'dashed', borderColor: colors.track }} />
+        )) : null}
       </View>
 
       {checked === null ? (
@@ -113,15 +119,15 @@ export default function SentenceGame() {
             const used = picked.includes(i);
             return (
               <Pressable key={i} accessibilityRole="button" disabled={used} onPress={() => setPicked([...picked, i])}
-                style={{ height: 44, paddingHorizontal: 14, borderRadius: 12, backgroundColor: used ? colors.line : colors.surface, borderWidth: 1, borderColor: colors.line, justifyContent: 'center', opacity: used ? 0.4 : 1 }}>
-                <T w="medium" size={16}>{parts[i]}</T>
+                style={{ height: 52, paddingHorizontal: 18, borderRadius: 14, backgroundColor: used ? colors.surfaceMuted : colors.surface, borderWidth: 1, borderColor: used ? colors.surfaceMuted : colors.line, justifyContent: 'center' }}>
+                <T w="semibold" size={18} color={used ? colors.surfaceMuted : colors.ink}>{parts[i]}</T>
               </Pressable>
             );
           })}
         </View>
       ) : (
-        <Card style={{ gap: 6, backgroundColor: checked ? colors.limeSoft : colors.amberBg }}>
-          <T w="extrabold" size={17} color={checked ? colors.forestInk : colors.amber}>{checked ? "To'g'ri!" : "To'g'ri javob:"}</T>
+        <Card style={{ gap: 6 }}>
+          <T w="bold" size={17} color={checked ? colors.forestText : colors.wrongInk}>{checked ? "To'g'ri!" : "To'g'risi:"}</T>
           {!checked ? <T size={16}>{parts.join(' ')}</T> : null}
         </Card>
       )}

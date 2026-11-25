@@ -88,7 +88,7 @@ function Run({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
     <Screen>
       <GameHeader progress={left / SECONDS} label={`0:${String(left).padStart(2, '0')}`} score={score} />
       <Pop key={n} from={0.92}>
-        <View style={{ alignItems: 'center', paddingVertical: 34, borderRadius: 32, backgroundColor: colors.surface, borderWidth: 2, borderColor: low ? colors.error : 'transparent' }}>
+        <View style={{ alignItems: 'center', paddingVertical: 34, borderRadius: 28, backgroundColor: colors.surface, borderWidth: 1.5, borderColor: low ? colors.error : 'transparent' }}>
           <T w="extrabold" size={44} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 52, letterSpacing: -1, textAlign: 'center', alignSelf: 'stretch' }} accessibilityRole="header">{w.word}</T>
         </View>
       </Pop>
@@ -98,12 +98,11 @@ function Run({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
           return (
             <Shake key={`${n}-${c}`} trigger={state === 'wrong' ? n + 1 : null} style={{ width: '48.5%' }}>
               <Pressable accessibilityRole="button" accessibilityLabel={c} onPress={() => pick(c)}
-                style={({ pressed }) => ({ minHeight: 84, borderRadius: 22, padding: 10, alignItems: 'center', justifyContent: 'center', borderWidth: 2,
-                  borderColor: state === 'right' ? colors.forestLine : state === 'wrong' ? colors.wrong : 'transparent',
-                  borderBottomWidth: state === 'idle' ? 5 : 2, borderBottomColor: state === 'idle' ? colors.track : state === 'right' ? colors.forestLine : state === 'wrong' ? colors.wrong : 'transparent',
-                  backgroundColor: state === 'right' ? colors.limeSoft : colors.surface,
+                style={({ pressed }) => ({ minHeight: 72, borderRadius: 18, padding: 10, alignItems: 'center', justifyContent: 'center', borderWidth: state === 'idle' || state === 'dim' ? 1 : 2,
+                  borderColor: state === 'right' ? colors.lime : state === 'wrong' ? colors.wrong : colors.line,
+                  backgroundColor: state === 'right' ? colors.limeSoft : state === 'wrong' ? colors.wrongSoft : colors.surface,
                   opacity: state === 'dim' ? 0.5 : 1, transform: [{ scale: pressed && !flash ? 0.97 : 1 }] })}>
-                <T w="bold" size={16} style={{ textAlign: 'center' }} numberOfLines={3}>{c}</T>
+                <T w="semibold" size={16} style={{ textAlign: 'center' }} numberOfLines={3} color={state === 'right' ? colors.forestText : state === 'wrong' ? colors.wrongInk : colors.ink}>{c}</T>
               </Pressable>
             </Shake>
           );

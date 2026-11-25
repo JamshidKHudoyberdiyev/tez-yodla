@@ -26,12 +26,18 @@ export function GameHeader({ progress, label, score }: { progress: number; label
       <View style={{ flex: 1, height: 8, borderRadius: 4, backgroundColor: colors.line, overflow: 'hidden' }}>
         <View style={{ width: `${Math.max(0, Math.min(1, progress)) * 100}%`, height: 8, borderRadius: 4, backgroundColor: colors.forest }} />
       </View>
-      {score !== undefined ? (
-        <View style={{ paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, backgroundColor: colors.surface }}>
-          <T w="extrabold" size={13} color={colors.forestText}>{score}</T>
-        </View>
-      ) : null}
-      <T w="semibold" size={13} color={colors.inkSoft}>{label}</T>
+      {label ? <T size={13.5} color={colors.inkSoft}>{label}</T> : null}
+      {score !== undefined ? <ScorePill>{score}</ScorePill> : null}
+    </View>
+  );
+}
+
+/** Ball: och yashil belgi, yulduzcha bilan (o'yinlarning hammasida bir xil) */
+export function ScorePill({ children }: { children: ReactNode }) {
+  return (
+    <View accessibilityLabel={`Ball: ${children}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 11, height: 30, borderRadius: 15, backgroundColor: colors.limeSoft }}>
+      <Feather name="star" size={13} color={colors.forestText} />
+      <T w="bold" size={13.5} color={colors.forestText}>{children}</T>
     </View>
   );
 }

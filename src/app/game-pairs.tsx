@@ -1,6 +1,6 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { Plant } from '@/components/Art';
 import { GameHeader, GameResult, NeedWords, useLearnedWords } from '@/components/GameKit';
 import { buzz, Flip, Pop } from '@/components/Motion';
 import { Screen, T } from '@/components/ui';
@@ -77,10 +77,10 @@ function Board({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
 
   return (
     <Screen>
-      <GameHeader progress={matched.size / PAIRS} label={`${matched.size}/${PAIRS} juft`} score={`${moves} urinish`} />
+      <GameHeader progress={matched.size / PAIRS} label={`${matched.size}/${PAIRS} juft`} />
       <View style={{ gap: 2 }}>
         <T w="extrabold" size={22} accessibilityRole="header">Juftini toping</T>
-        <T size={13} color={colors.muted}>Ikkita kartani oching: so'z va uning tarjimasi.</T>
+        <T size={13.5} color={colors.muted}>So'z va tarjimasini oching · {moves} urinish</T>
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
         {tiles.map((t) => {
@@ -92,16 +92,16 @@ function Board({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
               <Pressable accessibilityRole="button" accessibilityLabel={isOpen ? t.text : 'Yopiq karta'} accessibilityState={{ disabled: isMatched }} onPress={() => tap(t)} style={{ flex: 1 }}>
                 <Flip flipped={isOpen} style={{ flex: 1 }}
                   front={
-                    <View style={{ flex: 1, borderRadius: 20, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center', borderBottomWidth: 4, borderBottomColor: colors.lime }}>
-                      <View style={{ opacity: 0.85 }}><Plant stage={1} size={36} /></View>
+                    <View style={{ flex: 1, borderRadius: 16, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' }}>
+                      <MaterialCommunityIcons name="sprout-outline" size={26} color={colors.track} />
                     </View>
                   }
                   back={
                     <Pop trigger={isMatched} from={isMatched ? 0.9 : 1} style={{ flex: 1 }}>
-                      <View style={{ flex: 1, borderRadius: 20, padding: 6, alignItems: 'center', justifyContent: 'center', borderWidth: 2,
-                        borderColor: isMatched ? colors.forestLine : wrong ? colors.wrong : colors.line,
-                        backgroundColor: isMatched ? colors.limeSoft : colors.surface }}>
-                        <T w={t.side === 'word' ? 'extrabold' : 'bold'} size={t.side === 'word' ? 16 : 14} style={{ textAlign: 'center' }} numberOfLines={3}
+                      <View style={{ flex: 1, borderRadius: 16, padding: 6, alignItems: 'center', justifyContent: 'center', borderWidth: isMatched ? 1.5 : 2,
+                        borderColor: isMatched ? colors.lime : wrong ? colors.wrong : colors.forest,
+                        backgroundColor: isMatched ? colors.limeSoft : wrong ? colors.wrongSoft : colors.surface, opacity: isMatched ? 0.75 : 1 }}>
+                        <T w={t.side === 'word' ? 'bold' : 'semibold'} size={t.side === 'word' ? 16 : 14} style={{ textAlign: 'center' }} numberOfLines={3}
                           color={isMatched ? colors.forestText : colors.ink}>{t.text}</T>
                       </View>
                     </Pop>

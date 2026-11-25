@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useEffect, useMemo, useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { Platform, Pressable, TextInput, View } from 'react-native';
 import { GameHeader, GameResult, NeedWords, SpeakButton, useLearnedWords } from '@/components/GameKit';
 import { buzz, Confetti, Pop, Shake } from '@/components/Motion';
 import { DiffLetters } from '@/components/WordParts';
@@ -74,18 +74,25 @@ function Round({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
       <GameHeader progress={(i + (result ? 1 : 0)) / list.length} label={`${i + 1}/${list.length}`} score={score} />
 
       <View style={{ alignItems: 'center', gap: 14, paddingVertical: 28, borderRadius: 32, backgroundColor: colors.surface }}>
-        <T w="bold" size={13} color={colors.muted}>Eshiting va yozing</T>
+        <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9 }}>ESHITING VA YOZING</T>
         <SpeakButton onPress={() => speak(w.word)} />
-        <T w="bold" size={14} color={colors.forestText} accessibilityRole="button" onPress={() => speak(w.word, true)}>Sekinroq eshitish</T>
+        <Pressable accessibilityRole="button" accessibilityLabel="Sekinroq eshitish" onPress={() => speak(w.word, true)}
+          style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, height: 34, paddingHorizontal: 14, borderRadius: 17, backgroundColor: colors.surfaceMuted, opacity: pressed ? 0.8 : 1 })}>
+          <Feather name="clock" size={14} color={colors.forestText} />
+          <T w="bold" size={13} color={colors.forestText}>Sekinroq</T>
+        </Pressable>
       </View>
 
       <Shake trigger={result === 'bad' ? i + 1 : null}>
         <TextInput value={text} onChangeText={(v) => !result && setText(v)} onSubmitEditing={() => (result ? next() : check())}
-          placeholder="Eshitganingizni yozing" placeholderTextColor={colors.placeholder} autoCapitalize="none" autoCorrect={false} spellCheck={false} autoFocus
+          placeholder="yozing…" placeholderTextColor={colors.placeholder} autoCapitalize="none" autoCorrect={false} spellCheck={false} autoFocus
+          // Klaviatura so'z taklif qilmasin (javobni aytib qo'yadi)
+          autoComplete="off" importantForAutofill="no" keyboardType={Platform.OS === 'android' ? 'visible-password' : 'default'}
           accessibilityLabel="Javobingiz" returnKeyType="done"
-          style={{ height: 60, borderRadius: 20, borderWidth: 2, borderColor: result === 'good' ? colors.forestLine : result ? colors.wrong : colors.line, backgroundColor: result === 'good' ? colors.limeSoft : colors.surface,
+          style={{ height: 60, borderRadius: 16, borderWidth: 1.5, borderColor: result === 'good' ? colors.lime : result ? colors.wrong : colors.line, backgroundColor: result === 'good' ? colors.limeSoft : result ? colors.wrongSoft : colors.surface,
             paddingHorizontal: 18, fontFamily: font.bold, fontSize: 22, color: colors.ink, textAlign: 'center' }} />
       </Shake>
+      {!result ? <T size={13} color={colors.muted} style={{ textAlign: 'center', marginTop: -4 }}>{w.word.length} ta harf</T> : null}
 
       {result === 'good' ? (
         <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
@@ -97,7 +104,7 @@ function Round({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
         </View>
       ) : result ? (
         <View accessibilityLiveRegion="polite" style={{ gap: 8, padding: 16, borderRadius: 22, backgroundColor: colors.surface }}>
-          <T w="extrabold" size={15} color={result === 'close' ? colors.amber : colors.wrong}>{result === 'close' ? "Deyarli! Bitta harf xato" : "To'g'risi:"}</T>
+          <T w="bold" size={15} color={result === 'close' ? colors.forestText : colors.wrongInk}>{result === 'close' ? "Deyarli! Bitta harf xato" : "To'g'risi:"}</T>
           <DiffLetters answer={text} expected={w.word} />
           <T size={14} color={colors.inkSoft}>{w.ipa ? `${w.ipa} — ` : ''}{w.translation}</T>
         </View>

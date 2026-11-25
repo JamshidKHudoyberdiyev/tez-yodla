@@ -9,9 +9,9 @@ import { colors, themed } from '@/lib/theme';
 interface Game { key: string; title: string; sub: string; icon: React.ComponentProps<typeof Feather>['name']; href: Href; min: number; best?: (n: number) => string; tint: 'limeSoft' | 'blueSoft' | 'amberSoft' | 'purpleSoft' }
 
 const GAMES: Game[] = [
-  { key: 'speed', title: '60 soniya', sub: "Bir daqiqada qancha so'z?", icon: 'clock', href: '/game-speed', min: 6, best: (n) => `rekord ${n} ta`, tint: 'limeSoft' },
-  { key: 'listen', title: 'Eshit va yoz', sub: "So'zni tinglab, to'g'ri yozing", icon: 'headphones', href: '/game-listen', min: 4, best: (n) => `rekord ${n}/8`, tint: 'limeSoft' },
-  { key: 'pairs', title: 'Juftlikni top', sub: "Kartalarni ochib, juftini toping", icon: 'copy', href: '/game-pairs', min: 6, best: (n) => `rekord ${n} urinish`, tint: 'limeSoft' },
+  { key: 'speed', title: '60 soniya', sub: "Tezlikka so'z toping", icon: 'clock', href: '/game-speed', min: 6, best: (n) => `rekord ${n} ta`, tint: 'limeSoft' },
+  { key: 'listen', title: 'Eshit va yoz', sub: 'Tinglab yozing', icon: 'headphones', href: '/game-listen', min: 4, best: (n) => `rekord ${n}/8`, tint: 'limeSoft' },
+  { key: 'pairs', title: 'Juftlikni top', sub: 'Kartalarni ochib toping', icon: 'copy', href: '/game-pairs', min: 6, best: (n) => `rekord ${n} urinish`, tint: 'limeSoft' },
   { key: 'verbs', title: "Noto'g'ri fe'llar", sub: 'go — went — gone', icon: 'repeat', href: '/game-verbs', min: 0, best: (n) => `rekord ${n}/8`, tint: 'limeSoft' },
 ];
 
@@ -28,12 +28,11 @@ export default function Games() {
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 32 }}>
         <BackHeader title="O'yinlar" right={<T w="extrabold" size={13} color={colors.forestText}>{learned} ta so'z</T>} />
-        <T size={14} color={colors.muted} style={{ marginTop: -4 }}>O'rgangan so'zlaringiz bilan — mashg'ulotdan keyin bir oz o'ynang.</T>
 
         <View style={{ backgroundColor: colors.surface, borderRadius: 24, padding: 18, gap: 10, shadowColor: '#1E321E', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2 }}>
           <T w="bold" size={12} color={colors.forestText} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Kun o'yini</T>
           <T w="extrabold" size={20} accessibilityRole="header">Gap tuzish</T>
-          <T size={14} color={colors.muted} style={{ lineHeight: 20 }}>So'zlardan inglizcha gap yig'ing. So'zni gapda ishlatish uni eng mustahkam eslab qoldiradi.</T>
+          <T size={14} color={colors.muted} style={{ lineHeight: 20 }}>So'zlardan inglizcha gap yig'ing</T>
           <Button title={sentenceReady ? "O'ynash" : "Avval so'z o'rganing"} iconRight="arrow-right" disabled={!sentenceReady} onPress={() => router.push('/game-sentence')} />
         </View>
 
@@ -53,7 +52,7 @@ export default function Games() {
                 </View>
                 <View style={{ gap: 2 }}>
                   <T w="extrabold" size={16}>{g.title}</T>
-                  <T size={12} color={colors.muted} numberOfLines={2}>{g.sub}</T>
+                  <T size={12} color={colors.muted} numberOfLines={1}>{g.sub}</T>
                 </View>
                 <T w="bold" size={12} color={locked ? colors.muted : b !== undefined ? colors.forestText : colors.inkSoft}>
                   {locked ? `${g.min} ta so'zdan keyin` : b !== undefined && g.best ? g.best(b) : "O'ynash →"}
