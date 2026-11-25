@@ -23,8 +23,8 @@ export function SettingGroup({ label, children, danger }: { label?: string; chil
   );
 }
 
-export function SettingRow({ icon, tone = 'green', title, sub, subColor, value, onPress, right, last, danger, disabled }: {
-  icon?: IconName; tone?: Tone; title: string; sub?: string; subColor?: string; value?: string; onPress?: () => void; right?: ReactNode; last?: boolean; danger?: boolean; disabled?: boolean;
+export function SettingRow({ icon, tone = 'green', title, sub, subColor, subLines = 2, value, onPress, right, last, danger, disabled }: {
+  icon?: IconName; tone?: Tone; title: string; sub?: string; subColor?: string; subLines?: number; value?: string; onPress?: () => void; right?: ReactNode; last?: boolean; danger?: boolean; disabled?: boolean;
 }) {
   const t = TONES()[danger ? 'danger' : tone];
   const rowStyle = { flexDirection: 'row' as const, alignItems: 'center' as const, gap: 12, minHeight: 58, paddingHorizontal: 14, paddingVertical: 9, borderBottomWidth: last ? 0 : 1, borderBottomColor: colors.divider, opacity: disabled ? 0.55 : 1 };
@@ -37,7 +37,7 @@ export function SettingRow({ icon, tone = 'green', title, sub, subColor, value, 
       ) : null}
       <View style={{ flex: 1, minWidth: 0 }}>
         <T w="bold" size={15} color={danger ? colors.error : colors.ink}>{title}</T>
-        {sub ? <T size={12} w={subColor ? 'bold' : undefined} color={subColor ?? colors.muted}>{sub}</T> : null}
+        {sub ? <T size={12} w={subColor ? 'bold' : undefined} color={subColor ?? colors.muted} numberOfLines={subLines} ellipsizeMode="middle">{sub}</T> : null}
       </View>
       {right ?? (
         <>

@@ -61,17 +61,16 @@ export default function Settings() {
             {state.level} · {streak.current} kunlik streak
           </T>
         </View>
-        <T w="bold" size={13} color={colors.forestText}>Profil</T>
+        <Feather name="chevron-right" size={18} color={colors.muted} />
       </Pressable>
 
       {AUTH_REQUIRED && auth.session ? (
         <SettingGroup label="Hisob" danger={syncError}>
-          <SettingRow icon={auth.provider === 'telegram' ? 'send' : 'user'} tone="gray" title={auth.provider === 'telegram' ? 'Telegram hisobi' : 'Google hisobi'} sub={syncError ? 'Saqlanmadi' : (auth.accountLabel ?? '')} subColor={syncError ? colors.wrong : undefined}
+          <SettingRow icon={auth.provider === 'telegram' ? 'send' : 'user'} tone="gray" title={auth.provider === 'telegram' ? 'Telegram hisobi' : 'Google hisobi'} sub={syncError ? 'Saqlanmadi' : (auth.accountLabel ?? '')} subLines={1} subColor={syncError ? colors.wrong : undefined}
             right={<SyncBadge status={auth.status} onRetry={() => auth.saveNow()} />} />
           <SettingRow icon="log-out" tone="gray" title="Chiqish" onPress={() => setAskOut(true)} last />
         </SettingGroup>
       ) : null}
-      {AUTH_REQUIRED && auth.session ? <DeleteAccountRow /> : null}
 
       <SettingGroup label="O'rganish">
         <SettingRow icon="target" title="Kunlik maqsad" sub={`~${dailyMinutes(state.dailyNew)} daqiqa kuniga`} value={`${state.dailyNew} ta so'z`} onPress={() => router.push('/settings/goal')} />
@@ -98,6 +97,9 @@ export default function Settings() {
             setCsvNote(how === 'shared' ? `${state.customWords.length} ta so'z yuborildi` : `${state.customWords.length} ta so'z nusxalandi`);
           }} last />
       </SettingGroup>
+
+      {/* Xavfli amal — eng pastda, ko'zga tashlanmaydigan oddiy qator */}
+      {AUTH_REQUIRED && auth.session ? <DeleteAccountRow /> : null}
 
       <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Tez Yodla {appVersion()}</T>
       <Modal visible={askOut} transparent animationType="slide" onRequestClose={() => setAskOut(false)}>

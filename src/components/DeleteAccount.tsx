@@ -20,12 +20,12 @@ export function DeleteAccountRow() {
     <>
       <Pressable accessibilityRole="button" accessibilityLabel="Hisobni o'chirish. Bulutdagi ma'lumotlar butunlay o'chadi" onPress={() => setOpen(true)}
         style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 62, paddingHorizontal: 14, paddingVertical: 10,
-          backgroundColor: colors.surface, borderRadius: 22, borderWidth: 2, borderColor: colors.wrong, opacity: pressed ? 0.85 : 1 })}>
-        <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: colors.wrongSoft, alignItems: 'center', justifyContent: 'center' }}>
-          <Feather name="trash-2" size={18} color={colors.wrong} />
+          backgroundColor: colors.surface, borderRadius: 22, opacity: pressed ? 0.85 : 1 })}>
+        <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: colors.peach, alignItems: 'center', justifyContent: 'center' }}>
+          <Feather name="trash-2" size={18} color={colors.error} />
         </View>
         <View style={{ flex: 1 }}>
-          <T w="bold" size={15} color={colors.wrong}>Hisobni o'chirish</T>
+          <T w="bold" size={15} color={colors.error}>Hisobni o'chirish</T>
           <T size={12} color={colors.muted}>Bulutdagi ma'lumotlar butunlay o'chadi</T>
         </View>
       </Pressable>
