@@ -2,13 +2,12 @@ import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Platform, Pressable, TextInput, View } from 'react-native';
-import { BackHeader, Button, Card, Group, RoundIconButton, Screen, SectionLabel, T } from '@/components/ui';
+import { ActivityIndicator, Platform, Pressable, TextInput, View } from 'react-native';
+import { BackHeader, Button, Card, Group, Screen, T } from '@/components/ui';
 import type { Word } from '@/data/words';
 import { lookupEnglish, lookupWord, type LookupResult } from '@/lib/lookup';
 import { speak } from '@/lib/speech';
-import { FoundPhoto, toWordImage, trackDownload } from '@/lib/unsplash';
-import { PhotoPicker } from '@/components/PhotoPicker';
+import { SoundButton, wordSize } from '@/components/WordParts';
 import { Plant } from '@/components/Art';
 import { looksUzbek, suggestWords } from '@/lib/suggest';
 import { pickExample } from '@/lib/example';
@@ -58,18 +57,13 @@ function WriteTab() {
   const [translationTouched, setTranslationTouched] = useState(false);
   /** Tanlangan so'zning ma'nolari («yo'l; usul») — keraklisini belgilash uchun */
   const [meanings, setMeanings] = useState<{ text: string; on: boolean }[]>([]);
-  const [clip, setClip] = useState<string | null>(null);
-  const [photo, setPhoto] = useState<FoundPhoto | null>(null);
-
-  // Android'da: nusxalangan inglizcha so'z bo'lsa, qo'shishni taklif qiladi.
-  useEffect(() => {
-    if (Platform.OS !== 'android') return;
-    Clipboard.getStringAsync().then((v) => { if (isWordLike(v)) setClip(v.trim()); }).catch(() => {});
-  }, []);
+  /** Hech qayerda topilmagan so'z uchun o'zi yozadigan misol gap */
+  const [exampleOpen, setExampleOpen] = useState(false);
+  const [ownExample, setOwnExample] = useState('');
   const paste = async () => {
     try {
       const v = await Clipboard.getStringAsync();
-      if (v.trim()) { setQuery(v.trim().slice(0, 60)); setClip(null); }
+      if (v.trim()) setQuery(v.trim().slice(0, 60));
     } catch { /* ruxsat berilmadi */ }
   };
 
@@ -99,7 +93,7 @@ function WriteTab() {
     speak(w.word);
   };
 
-  const clear = () => { setPicked(null); setQuery(''); setTranslation(''); setAuto(null); setTranslationTouched(false); setMeanings([]); setPhoto(null); };
+  const clear = () => { setPicked(null); setQuery(''); setTranslation(''); setAuto(null); setTranslationTouched(false); setMeanings([]); setExampleOpen(false); setOwnExample(''); };
   const toggleMeaning = (i: number) => {
     const next = meanings.map((m, j) => (j === i ? { ...m, on: !m.on } : m));
     if (!next.some((m) => m.on)) return; // kamida bitta ma'no qolsin
@@ -159,199 +153,192 @@ function WriteTab() {
     addCustomWords([{
       word: text,
       translation: translation.trim() || base?.translation || '',
-      example: base?.example ?? found?.example,
+      example: base?.example ?? found?.example ?? (ownExample.trim() || undefined),
       exampleUz: base?.exampleUz,
       association: base?.association,
       soundsLike: base?.soundsLike,
       ipa: base?.ipa ?? found?.ipa,
       pos: base?.pos ?? found?.pos,
-      image: photo ? toWordImage(photo) : undefined,
     }]);
-    if (photo) trackDownload(photo);
     setRecent([text, ...recent.filter((r) => r !== text)].slice(0, 8));
     clear();
   };
 
+  const label = (t: string) => <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9, paddingHorizontal: 4, marginBottom: -6 }}>{t}</T>;
+  const plusTile = <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}><Feather name="plus" size={17} color={colors.forestText} /></View>;
+  const head = (word: string, sub?: string) => (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      <View style={{ flex: 1 }}>
+        <T w="extrabold" size={wordSize(word, 30)} style={{ letterSpacing: -0.6 }}>{word}</T>
+        {sub ? <T size={14} color={colors.muted}>{sub}</T> : null}
+      </View>
+      <SoundButton text={word} label="Talaffuzni eshitish" size={44} />
+    </View>
+  );
+  const divider = <View style={{ height: 1, backgroundColor: colors.divider }} />;
+
   return (
     <View style={{ gap: 14 }}>
-      <View style={{ gap: 6 }}>
-        <T w="semibold" size={13} color={colors.inkSoft}>Inglizcha yoki o'zbekcha so'z yozing</T>
-        <View style={[inputStyleOf(), { flexDirection: 'row', alignItems: 'center', gap: 10, borderColor: query ? colors.ink : colors.line, borderWidth: query ? 2 : 1 }]}>
-          <Feather name="search" size={20} color={colors.muted} />
-          <TextInput
-            value={query}
-            onChangeText={(v) => { setQuery(v); setPhoto(null); if (picked) { setPicked(null); setTranslation(''); } }}
-            placeholder="masalan: honey yoki qiz"
-            placeholderTextColor={colors.placeholder}
-            accessibilityLabel="So'z qidirish"
-            autoCapitalize="none"
-            autoCorrect={false}
-            autoFocus
-            style={[{ flex: 1, minWidth: 0, minHeight: 50, fontFamily: font.extrabold, fontSize: 20, color: colors.ink }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as object)]}
-          />
-          {query ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="Tozalash" hitSlop={10} onPress={clear}>
-              <Feather name="x-circle" size={20} color={colors.muted} />
-            </Pressable>
-          ) : (
-            <Pressable accessibilityRole="button" accessibilityLabel="Nusxalangan matnni qo'yish" hitSlop={8} onPress={paste}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 4, height: 32, paddingHorizontal: 10, borderRadius: 10, backgroundColor: colors.surfaceMuted }}>
-              <Feather name="clipboard" size={14} color={colors.inkSoft} />
-              <T w="bold" size={13} color={colors.inkSoft}>Qo'yish</T>
-            </Pressable>
-          )}
-        </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 56, paddingLeft: 14, paddingRight: 12, borderRadius: 16, backgroundColor: colors.surface, borderWidth: 1.5, borderColor: query ? colors.forest : colors.line }}>
+        <Feather name="search" size={19} color={colors.muted} />
+        <TextInput
+          value={query}
+          onChangeText={(v) => { setQuery(v); if (picked) { setPicked(null); setTranslation(''); } }}
+          placeholder="honey yoki qiz"
+          placeholderTextColor={colors.placeholder}
+          accessibilityLabel="So'z qidirish"
+          autoCapitalize="none"
+          autoCorrect={false}
+          autoFocus
+          style={[{ flex: 1, minWidth: 0, minHeight: 52, fontFamily: font.bold, fontSize: 19, color: colors.ink }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as object)]}
+        />
+        {query ? (
+          <Pressable accessibilityRole="button" accessibilityLabel="Tozalash" hitSlop={10} onPress={clear}>
+            <Feather name="x-circle" size={19} color={colors.placeholder} />
+          </Pressable>
+        ) : (
+          <Pressable accessibilityRole="button" accessibilityLabel="Nusxalangan matnni qo'yish" hitSlop={8} onPress={paste}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 32, paddingHorizontal: 10, borderRadius: 10, backgroundColor: colors.surfaceMuted }}>
+            <Feather name="clipboard" size={14} color={colors.inkSoft} />
+            <T w="bold" size={13} color={colors.inkSoft}>Qo'yish</T>
+          </Pressable>
+        )}
       </View>
 
-      {clip && !query ? (
-        <Pressable accessibilityRole="button" accessibilityLabel={`Nusxalangan so'z: ${clip}. Qo'shish`} onPress={() => { setQuery(clip); setClip(null); }}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 18, backgroundColor: colors.blueSoft }}>
-          <Feather name="clipboard" size={18} color={colors.blue} />
-          <T size={14} color={colors.blue} style={{ flex: 1 }}>Nusxalangan: <T w="extrabold" size={14} color={colors.blue}>«{clip}»</T> — qo'shasizmi?</T>
-          <Feather name="arrow-right" size={18} color={colors.blue} />
-        </Pressable>
-      ) : null}
-
       {suggestions.length && !forced ? (
-        <View accessibilityRole="list" style={{ backgroundColor: colors.surface, borderRadius: 20, overflow: 'hidden' }}>
-          {suggestions[0]?.by === 'uz' ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 2 }}>
-              <Feather name="repeat" size={12} color={colors.muted} />
-              <T w="bold" size={12} color={colors.muted}>«{query.trim()}» — inglizchasi:</T>
-            </View>
-          ) : null}
-          {suggestions.map((s, i) => (
-            <Pressable key={s.word.id} accessibilityRole="button" accessibilityLabel={`${s.word.word} — ${s.word.translation}`} onPress={() => pick(s.word)}
-              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.limeSoft : 'transparent' })}>
-              <View style={{ flex: 1 }}>
-                <T size={16} numberOfLines={1}><T w="extrabold" size={16}>{highlight(s.word.word, s.by === 'en' ? query : '')}</T>{s.word.pos ? <T size={12} color={colors.muted}>  {s.word.pos}</T> : null}</T>
-                <T size={14} color={colors.inkSoft} numberOfLines={1}>{s.by === 'uz' ? highlight(s.word.translation, query) : s.word.translation}</T>
-              </View>
-              {s.word.association ? <Feather name="zap" size={14} color={colors.amber} accessibilityLabel="Assotsiatsiyasi bor" /> : null}
-              <Feather name="plus-circle" size={22} color={colors.forestText} />
-            </Pressable>
-          ))}
-          {!exact && query.trim().length >= 2 ? (
-            <Pressable accessibilityRole="button" accessibilityLabel={`${query.trim()} so'zining o'zini qo'shish`} onPress={() => setOwn(query.trim())}
-              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.divider, backgroundColor: pressed ? colors.limeSoft : colors.surfaceMuted })}>
-              <View style={{ flex: 1 }}>
-                <T w="extrabold" size={16} numberOfLines={1}>«{query.trim()}»</T>
-                <T size={13} color={colors.muted}>Kerakli so'z yuqorida yo'qmi? Shu so'zning o'zini qo'shing</T>
-              </View>
-              <Feather name="arrow-right" size={20} color={colors.forestText} />
-            </Pressable>
-          ) : null}
-        </View>
+        <>
+          {label(suggestions[0]?.by === 'uz' ? `«${query.trim().toUpperCase()}» — INGLIZCHASI` : "LUG'ATDAN")}
+          <View accessibilityRole="list" style={{ backgroundColor: colors.surface, borderRadius: 20, overflow: 'hidden' }}>
+            {suggestions.map((s, i) => (
+              <Pressable key={s.word.id} accessibilityRole="button" accessibilityLabel={`${s.word.word} — ${s.word.translation}. Tanlash`} onPress={() => pick(s.word)}
+                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 11, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
+                <View style={{ flex: 1 }}>
+                  <T size={16} numberOfLines={1}><T w="bold" size={16}>{highlight(s.word.word, s.by === 'en' ? query : '')}</T>{s.word.pos ? <T size={12} color={colors.muted}>  {s.word.pos}</T> : null}</T>
+                  <T size={13.5} color={colors.muted} numberOfLines={1}>{s.by === 'uz' ? highlight(s.word.translation, query) : s.word.translation}</T>
+                </View>
+                {plusTile}
+              </Pressable>
+            ))}
+            {!exact && query.trim().length >= 2 ? (
+              <Pressable accessibilityRole="button" accessibilityLabel={`${query.trim()} so'zining o'zini qo'shish`} onPress={() => setOwn(query.trim())}
+                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
+                <View style={{ flex: 1 }}>
+                  <T w="bold" size={15} color={colors.forestText} numberOfLines={1}>«{query.trim()}» ni o'zim qo'shaman</T>
+                  <T size={12.5} color={colors.muted}>Kerakli so'z yuqorida yo'q bo'lsa</T>
+                </View>
+                <Feather name="arrow-right" size={19} color={colors.forestText} />
+              </Pressable>
+            ) : null}
+          </View>
+        </>
       ) : null}
 
       {picked ? (
-        <Card style={{ gap: 10 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-            <View style={{ flex: 1 }}>
-              <T w="extrabold" size={26}>{picked.word}</T>
-              <T size={14} color={colors.muted}>{[picked.ipa, picked.pos].filter(Boolean).join(' · ')}</T>
-            </View>
-            <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(picked.word)} />
-          </View>
+        <Card style={{ gap: 12 }}>
+          {head(picked.word, [picked.ipa, picked.pos].filter(Boolean).join(' · '))}
+          {divider}
           {meanings.length > 1 ? (
-            <View style={{ gap: 6 }}>
-              <T size={12} color={colors.muted}>Qaysi ma'nosini o'rganasiz? Keraksizini olib tashlang</T>
+            <View style={{ gap: 8 }}>
+              <T size={12.5} color={colors.muted}>Qaysi ma'nosini o'rganasiz?</T>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {meanings.map((m, i) => (
                   <Pressable key={m.text} accessibilityRole="checkbox" accessibilityState={{ checked: m.on }} onPress={() => toggleMeaning(i)}
-                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, height: 38, paddingHorizontal: 14, borderRadius: 999, borderWidth: 2, borderColor: m.on ? colors.forestLine : colors.line, backgroundColor: m.on ? colors.limeSoft : 'transparent' }}>
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, height: 38, paddingHorizontal: 14, borderRadius: 19, borderWidth: m.on ? 1.5 : 1, borderColor: m.on ? colors.forest : colors.line, backgroundColor: m.on ? colors.limeSoft : colors.surface }}>
                     {m.on ? <Feather name="check" size={14} color={colors.forestText} /> : null}
-                    <T w="bold" size={16} color={m.on ? colors.forestText : colors.muted}>{m.text}</T>
+                    <T w={m.on ? 'bold' : 'regular'} size={15} color={m.on ? colors.forestText : colors.muted}>{m.text}</T>
                   </Pressable>
                 ))}
               </View>
             </View>
-          ) : <T w="bold" size={20} color={colors.forestText}>{picked.translation}</T>}
-          {picked.association ? (
-            <View style={{ backgroundColor: colors.amberSoft, borderRadius: 14, padding: 10 }}>
-              <T size={13} color={colors.amber}><T w="extrabold" size={13} color={colors.amber}>Assotsiatsiya: </T>{picked.association}</T>
-            </View>
+          ) : <T w="bold" size={19} color={colors.forestText}>{picked.translation}</T>}
+          {picked.example ? (
+            <T size={14} color={colors.inkSoft} style={{ lineHeight: 20 }}>{picked.example}{picked.exampleUz ? <T size={14} color={colors.muted}> — {picked.exampleUz}</T> : null}</T>
           ) : null}
-          {picked.example ? <T size={14} color={colors.inkSoft}>{picked.example}</T> : null}
         </Card>
       ) : manual && enOpts && enOpts.q === query.trim() && (uzQ || enOpts.state === 'done') ? (
-        <Card style={{ gap: 12 }}>
-          <View style={{ gap: 2 }}>
-            <T size={13} color={colors.muted}>O'zbekcha so'z</T>
-            <T w="extrabold" size={24}>{query.trim()}</T>
-          </View>
-          {enOpts.state === 'loading' ? (
-            <T size={14} color={colors.muted}>Inglizchasi internetdan qidirilmoqda…</T>
-          ) : enOpts.options.length ? (
-            <View style={{ gap: 8 }}>
-              <T w="semibold" size={13} color={colors.inkSoft}>Inglizchasi — tanlang:</T>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                {enOpts.options.map((en) => (
-                  <Pressable key={en} accessibilityRole="button" accessibilityLabel={`${en} ni tanlash`} onPress={() => chooseEnglish(en)}
-                    style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, height: 44, paddingHorizontal: 16, borderRadius: 999, borderWidth: 2, borderColor: colors.forestLine, backgroundColor: pressed ? colors.limeSoft : colors.surface })}>
-                    <T w="extrabold" size={17} color={colors.forestText}>{en}</T>
-                    <Feather name="plus" size={16} color={colors.forestText} />
-                  </Pressable>
-                ))}
+        <>
+          {label(`«${query.trim().toUpperCase()}» — INGLIZCHASI`)}
+          <View style={{ backgroundColor: colors.surface, borderRadius: 20, overflow: 'hidden' }}>
+            {enOpts.state === 'loading' ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 16 }}>
+                <ActivityIndicator size="small" color={colors.forestText} />
+                <T size={14} color={colors.muted}>Internetdan qidirilmoqda…</T>
               </View>
-              <T size={12} color={colors.amber}>Internetdan topildi — to'g'riligini tekshirib oling</T>
+            ) : enOpts.options.length ? enOpts.options.map((en, i) => (
+              <Pressable key={en} accessibilityRole="button" accessibilityLabel={`${en} ni tanlash`} onPress={() => chooseEnglish(en)}
+                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 13, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
+                <T w="bold" size={16} style={{ flex: 1 }}>{en}</T>
+                {plusTile}
+              </Pressable>
+            )) : (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, padding: 16 }}>
+                <Feather name="info" size={14} color={colors.muted} />
+                <T size={14} color={colors.muted}>So'z topilmadi</T>
+              </View>
+            )}
+          </View>
+        </>
+      ) : manual ? (
+        <Card style={{ gap: 12 }}>
+          {head(query.trim(), found?.ipa || found?.pos ? [found.ipa, found.pos].filter(Boolean).join(' · ') : undefined)}
+          {divider}
+          {auto?.state === 'loading' ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 40 }}>
+              <ActivityIndicator size="small" color={colors.forestText} />
+              <T size={14} color={colors.muted}>Lug'atda yo'q — internetdan qidirilmoqda…</T>
             </View>
           ) : (
-            <T size={13} color={colors.muted} style={{ lineHeight: 19 }}>Inglizchasini topa olmadik (yoki internet yo'q). Inglizcha so'zni o'zingiz yozing — tarjimasi sifatida «{query.trim()}» qoladi.</T>
+            <View style={{ gap: 8 }}>
+              <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9 }}>TARJIMA</T>
+              <TextInput value={translation} onChangeText={(v) => { setTranslation(v); setTranslationTouched(true); }} placeholder="o'zbekcha tarjimasini yozing" placeholderTextColor={colors.placeholder}
+                accessibilityLabel="Tarjima" autoCapitalize="none" autoFocus={!found?.translation}
+                style={{ minHeight: 50, borderRadius: 14, borderWidth: 1.5, borderColor: translation ? colors.line : colors.forest, backgroundColor: colors.surface, paddingHorizontal: 14, fontFamily: font.semibold, fontSize: 17, color: colors.ink }} />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Feather name="info" size={13} color={colors.muted} />
+                <T size={12.5} color={colors.muted}>
+                  {found?.translation ? (translationTouched ? "O'zingiz tahrirladingiz" : 'Internetdan topildi — tekshirib oling') : "So'z topilmadi"}
+                </T>
+              </View>
+              {found?.example ? <T size={14} color={colors.inkSoft} style={{ lineHeight: 20 }}>{found.example}</T> : exampleOpen ? (
+                <TextInput value={ownExample} onChangeText={setOwnExample} placeholder="Misol gap (inglizcha)" placeholderTextColor={colors.placeholder} accessibilityLabel="Misol gap" autoCapitalize="sentences"
+                  style={{ minHeight: 50, borderRadius: 14, borderWidth: 1.5, borderColor: colors.line, backgroundColor: colors.surface, paddingHorizontal: 14, fontFamily: font.regular, fontSize: 16, color: colors.ink }} />
+              ) : (
+                <T w="bold" size={13} color={colors.forestText} accessibilityRole="button" onPress={() => setExampleOpen(true)}>+ Misol gap qo'shish</T>
+              )}
+            </View>
           )}
         </Card>
-      ) : manual ? (
-        <Card style={{ gap: 10 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-            <View style={{ flex: 1 }}>
-              <T w="extrabold" size={24}>{query.trim()}</T>
-              {found?.ipa || found?.pos ? <T size={14} color={colors.muted}>{[found.ipa, found.pos].filter(Boolean).join(' · ')}</T> : null}
-            </View>
-            <RoundIconButton icon="volume-2" label="Talaffuzni eshitish" bg={colors.limeSoft} fg={colors.forestText} onPress={() => speak(query.trim())} />
-          </View>
-          <View style={{ gap: 6 }}>
-            <T w="semibold" size={13} color={colors.inkSoft}>Tarjima</T>
-            <TextInput value={translation} onChangeText={(v) => { setTranslation(v); setTranslationTouched(true); }} placeholder={auto?.state === 'loading' ? 'tarjima qidirilmoqda…' : "o'zbekcha tarjimasi"} placeholderTextColor={colors.placeholder} accessibilityLabel="Tarjima" autoCapitalize="none" style={inputStyleOf()} />
-            <T size={12} color={auto?.state === 'done' && found?.translation ? colors.amber : colors.muted}>
-              {auto?.state === 'loading' ? 'Lug\'atda yo\'q — internetdan tarjima qidirilmoqda…'
-                : found?.translation ? (translationTouched ? 'O\'zingiz tahrirladingiz' : 'Avtomatik tarjima — to\'g\'riligini tekshirib oling')
-                : lookupQ ? 'Tarjima topilmadi (yoki internet yo\'q) — o\'zingiz yozing'
-                : 'Lug\'atda topilmadi — tarjimasini o\'zingiz yozing'}
-            </T>
-          </View>
-          {found?.example ? <T size={14} color={colors.inkSoft}>{found.example}</T> : null}
-        </Card>
       ) : null}
-
-      {(picked || manual) && !blocked ? <PhotoPicker key={text} word={text} pos={picked?.pos ?? found?.pos} value={photo} onChange={setPhoto} /> : null}
-
-      {status ? <StatusNote status={status} /> : null}
 
       {picked || manual ? (
-        <Button title="Yodlashga qo'shish" icon="plus" disabled={blocked || !text || !(translation.trim() || exact)} onPress={save} />
+        <Button title={blocked ? "Ro'yxatingizda bor" : "Yodlashga qo'shish"} iconRight={blocked ? undefined : 'arrow-right'} disabled={blocked || !text || !(translation.trim() || exact)} onPress={save} />
       ) : null}
 
-      {recent.length ? (
-        <View style={{ gap: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <SectionLabel>Hozir qo'shildi</SectionLabel>
+      {recent.length && !query ? (
+        <View style={{ gap: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 56, paddingHorizontal: 14, borderRadius: 16, backgroundColor: colors.limeSoft }}>
+            <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center' }}><Feather name="check" size={16} color="#FFFFFF" /></View>
+            <T size={14.5} color={colors.forestText} style={{ flex: 1 }}><T w="bold" size={14.5} color={colors.forestText}>{recent[0]}</T> qo'shildi — kunlik rejaga tushadi</T>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4 }}>
+            <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9 }}>HOZIR QO'SHILDI · {recent.length}</T>
             <T w="bold" size={13} color={colors.forestText} accessibilityRole="link" onPress={() => router.push('/my-words')}>Mening so'zlarim →</T>
           </View>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {recent.map((r) => (
-              <View key={r} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, height: 34, borderRadius: 999, backgroundColor: colors.limeSoft }}>
-                <Feather name="check" size={14} color={colors.forestText} />
-                <T w="bold" size={14} color={colors.forestText}>{r}</T>
+              <View key={r} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, height: 34, borderRadius: 17, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line }}>
+                <Feather name="check" size={13} color={colors.forestText} />
+                <T w="semibold" size={14}>{r}</T>
               </View>
             ))}
           </View>
         </View>
       ) : !query ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 22, backgroundColor: colors.surface }}>
-          <View style={{ width: 64, height: 64, borderRadius: 22, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}><Plant stage={0} size={56} /></View>
+          <Plant stage={0} size={56} />
           <View style={{ flex: 1, gap: 2 }}>
-            <T w="extrabold" size={15}>Har bir so'z — yangi urug'</T>
-            <T size={13} color={colors.muted} style={{ lineHeight: 18 }}>Yoza boshlang — lug'atdagi 1000+ so'zdan takliflar chiqadi. Tarjima, misol va assotsiatsiya o'zi qo'shiladi.</T>
+            <T w="bold" size={15}>Har bir so'z — yangi urug'</T>
+            <T size={13} color={colors.muted} style={{ lineHeight: 18 }}>Yoza boshlang — tarjima, misol va talaffuz o'zi qo'shiladi</T>
           </View>
         </View>
       ) : null}
@@ -365,10 +352,6 @@ function splitMeanings(t: string) {
 }
 
 /** Nusxalangan matn so'zga o'xshaydimi (1–3 ta inglizcha so'z) */
-function isWordLike(v: string) {
-  const t = v.trim();
-  return t.length >= 2 && t.length <= 40 && /^[a-z][a-z'-]*( [a-z][a-z'-]*){0,2}$/i.test(t);
-}
 
 /** Takliflarda yozilgan qismni qalin ko'rsatadi (boshi mos kelganda). */
 function highlight(word: string, q: string) {
@@ -377,21 +360,6 @@ function highlight(word: string, q: string) {
   return <><T w="extrabold" size={16} color={colors.forestText}>{word.slice(0, n)}</T>{word.slice(n)}</>;
 }
 
-function StatusNote({ status }: { status: Exclude<WordStatus, null> }) {
-  const text = {
-    learning: "Bu so'zni allaqachon o'rganyapsiz — takrorlashda chiqadi.",
-    mastered: "Bu so'zni allaqachon yodlab bo'lgansiz.",
-    inList: "Bu so'z ro'yxatingizda bor.",
-    known: "Avval «bilaman» deb belgilagansiz. Qo'shsangiz, qaytadan o'rganasiz.",
-  }[status];
-  const warn = status !== 'known';
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: 14, backgroundColor: warn ? colors.blueSoft : colors.amberSoft }}>
-      <Feather name="info" size={16} color={warn ? colors.blue : colors.amber} />
-      <T size={13} w="semibold" color={warn ? colors.blue : colors.amber} style={{ flex: 1 }}>{text}</T>
-    </View>
-  );
-}
 
 function Field({ label, value, onChange, placeholder, multiline, big }: { label: string; value: string; onChange: (s: string) => void; placeholder?: string; multiline?: boolean; big?: boolean }) {
   return (
