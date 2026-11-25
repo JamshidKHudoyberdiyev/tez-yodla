@@ -50,9 +50,6 @@ export default function LevelResult() {
           </Pop>
         </View>
         <T w="extrabold" size={26} style={{ textAlign: 'center', lineHeight: 32 }} accessibilityRole="header">Darajangiz: {levelName(level)}</T>
-        <T size={15} color={colors.inkSoft} style={{ textAlign: 'center', lineHeight: 21 }}>
-          Taxminan {Number(params.knownWords ?? 500).toLocaleString('ru-RU')} ta so'z bilasiz. Shunga mos so'zlardan boshlaymiz.
-        </T>
       </View>
 
       <View style={{ backgroundColor: colors.surface, borderRadius: 26, padding: 16 }}>
@@ -80,14 +77,15 @@ export default function LevelResult() {
 
       {retake ? null : <>
       <SectionLabel>Sizni qiziqtirgan mavzular (ixtiyoriy)</SectionLabel>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      {/* 2 ustun, hammasining eni bir xil — uzun nom ikki qatorga tushadi */}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 8 }}>
         {TOPICS.map((d) => {
           const on = topics.includes(d.id);
           return (
             <Pressable key={d.id} accessibilityRole="checkbox" accessibilityState={{ checked: on }} accessibilityLabel={d.title} onPress={() => toggleTopic(d.id)}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8, height: 46, paddingLeft: 8, paddingRight: 12, borderRadius: 15, borderWidth: 2, borderColor: on ? colors.forestLine : 'transparent', backgroundColor: on ? colors.limeSoft : colors.surface }}>
-              <IconTile mdi={d.icon} label={d.badge} bg={d.tint} fg={d.ink} size={30} />
-              <T w="extrabold" size={14} color={on ? colors.forestInk : colors.ink}>{d.title}</T>
+              style={{ width: '48.6%', flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 58, paddingVertical: 8, paddingLeft: 10, paddingRight: 10, borderRadius: 16, borderWidth: 2, borderColor: on ? colors.forestLine : 'transparent', backgroundColor: on ? colors.limeSoft : colors.surface }}>
+              <IconTile mdi={d.icon} label={d.badge} bg={d.tint} fg={d.ink} size={34} />
+              <T w="semibold" size={14} numberOfLines={3} color={on ? colors.forestInk : colors.ink} style={{ flex: 1, lineHeight: 18 }}>{d.title}</T>
               {on ? <Feather name="check" size={16} color={colors.forestText} /> : null}
             </Pressable>
           );
