@@ -51,6 +51,17 @@ export function capReviews<C>(reviews: C[], cap: number, reviewedToday: number, 
   return { today, queued: reviews.length - today.length };
 }
 
+/**
+ * Yangi so'zlarni 5 tadan guruhlaydi. Oxirida 1–2 ta so'z yolg'iz qolsa, oldingi guruhga qo'shiladi:
+ * 6 → [6], 7 → [7], 11 → [5, 6], 20 → [5, 5, 5, 5]. (1 ta so'z bilan 6 bosqich o'tish ma'nosiz.)
+ */
+export function groupWords<X>(items: X[], size = GROUP_SIZE): X[][] {
+  const out: X[][] = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  if (out.length > 1 && out[out.length - 1].length <= 2) out[out.length - 2].push(...out.pop()!);
+  return out;
+}
+
 /** Takrorlashning bir bo'limida eng ko'pi shuncha so'z (~3 daqiqa) */
 export const REVIEW_PART = 11;
 
@@ -124,8 +135,7 @@ export function todayPlan(input: PlanInput): TodayPlan {
       pos.set(d, i);
     }
   }
-  const groups: Word[][] = [];
-  for (let i = 0; i < newWords.length; i += GROUP_SIZE) groups.push(newWords.slice(i, i + GROUP_SIZE));
+  const groups = groupWords(newWords);
   const first = new Set(input.first ?? []);
   const rank = (c: Card) => (c.state === 'relearning' ? 0 : first.has(c.wordId) ? 1 : 2);
   const reviews = Object.values(input.cards)

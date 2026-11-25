@@ -1,4 +1,4 @@
-import { capReviews, computeStats, estimateLevel, learnedOn, splitParts, spreadBy, streak, todayPlan } from './plan';
+import { capReviews, computeStats, estimateLevel, groupWords, learnedOn, splitParts, spreadBy, streak, todayPlan } from './plan';
 import { completeLearning, gradeCard, newCard } from './srs';
 import { WORDS } from '../data/words';
 
@@ -111,5 +111,19 @@ describe('review parts', () => {
     const out = spreadBy(['w1', 'w2', 'w3', 't1', 't2', 'c1'], (x) => x[0]);
     expect(out).toEqual(['w1', 't1', 'w2', 't2', 'w3', 'c1']);
     expect(spreadBy(['w1', 'w2'], (x) => x[0])).toEqual(['w1', 'w2']);
+  });
+});
+
+describe('new word groups', () => {
+  const g = (k: number) => groupWords(Array.from({ length: k }, (_, i) => i)).map((x) => x.length);
+  it('keeps groups of 5 and never leaves 1–2 words alone', () => {
+    expect(g(0)).toEqual([]);
+    expect(g(2)).toEqual([2]);
+    expect(g(5)).toEqual([5]);
+    expect(g(6)).toEqual([6]);
+    expect(g(7)).toEqual([7]);
+    expect(g(8)).toEqual([5, 3]);
+    expect(g(11)).toEqual([5, 6]);
+    expect(g(20)).toEqual([5, 5, 5, 5]);
   });
 });
