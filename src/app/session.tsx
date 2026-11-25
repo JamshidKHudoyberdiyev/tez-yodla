@@ -558,7 +558,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
       <MatchStep
         key={group.map((x) => x.id).join()}
         group={group}
-        audio={state.prefs.naturalVoice !== false}
+        audio
         header={(found) => <><Header onClose={close} progress={found / group.length} label={`Moslash · ${found}/${group.length}`} seg={seg('Moslash')} /></>}
         onMistake={(id) => { stepStats.current.matchErrors += 1; markWrong(id); }}
         onDone={() => goNext('Moslash')}

@@ -1,22 +1,53 @@
 import { Feather } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { Segmented, SettingGroup, StepSlider, ToggleRow } from '@/components/SettingsUI';
-import { BackHeader, Screen, T } from '@/components/ui';
-import { isStudioVoiceEnabled, setStudioVoiceEnabled, snapRate, speak, SPEECH_RATES, voiceInfo, type VoiceInfo } from '@/lib/speech';
+import { SettingGroup, SettingRow, ToggleRow } from '@/components/SettingsUI';
+import { BackHeader, BottomSheet, IconTile, Screen, T } from '@/components/ui';
+import { snapRate, speak, voiceInfo, type VoiceInfo } from '@/lib/speech';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 
-const RATES = [...SPEECH_RATES];
-const RATE_LABELS = RATES.map((r) => `${r}×`);
-const rateName = (r: number) => (r === 1 ? 'Normal' : r < 1 ? 'Sekin' : 'Tez');
+/** O'rganish uchun yetarli tezliklar (0.5× va 2× o'rganishda deyarli kerak emas) */
+const RATES = [
+  { v: 0.75, label: 'Sekin' },
+  { v: 1, label: 'Oddiy' },
+  { v: 1.2, label: 'Tez' },
+  { v: 1.5, label: 'Juda tez' },
+];
+const ACCENTS = [
+  { v: 'us' as const, label: 'Amerika', badge: 'US' },
+  { v: 'uk' as const, label: 'Britaniya', badge: 'UK' },
+];
 const SAMPLE_WORD = 'beautiful';
+const SAMPLE_IPA = { us: '/ˈbjuːtɪfəl/', uk: '/ˈbjuːtɪf(ə)l/' };
 const SAMPLE_SENTENCE = 'The weather is beautiful today.';
+
+const nearestRate = (r: number) => RATES.reduce((a, b) => (Math.abs(b.v - r) < Math.abs(a.v - r) ? b : a));
+
+function Radio({ on }: { on: boolean }) {
+  return (
+    <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: on ? colors.forest : colors.track, alignItems: 'center', justifyContent: 'center' }}>
+      {on ? <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: colors.forest }} /> : null}
+    </View>
+  );
+}
+
+function PlayPill({ label, dark, onPress }: { label: string; dark?: boolean; onPress: () => void }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={`${label}ni eshitish`} onPress={onPress}
+      style={({ pressed }) => ({ height: 44, paddingHorizontal: 18, borderRadius: 22, flexDirection: 'row', alignItems: 'center', gap: 8,
+        backgroundColor: dark ? colors.forest : colors.limeSoft, opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] })}>
+      <Feather name="play" size={15} color={dark ? colors.lime : colors.forestText} />
+      <T w="bold" size={14.5} color={dark ? '#FFFFFF' : colors.forestText}>{label}</T>
+    </Pressable>
+  );
+}
 
 export default function Voice() {
   const { state, setPrefs } = useStore();
   const p = state.prefs;
   const [info, setInfo] = useState<VoiceInfo | null>(null);
+  const [sheet, setSheet] = useState<'accent' | 'rate' | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -26,194 +57,76 @@ export default function Voice() {
     };
   }, [p.accent]);
 
-  const ok = info?.status === 'ok';
-  const rate = snapRate(p.rate);
-  const naturalVoice = p.naturalVoice ?? true;
+  const rate = nearestRate(snapRate(p.rate));
+  const accent = ACCENTS.find((a) => a.v === p.accent) ?? ACCENTS[0];
+  // Eski 0.5× / 1.75× / 2× tanlovlari eng yaqin tezlikka o'tkaziladi
+  useEffect(() => {
+    if (p.rate !== rate.v) setPrefs({ rate: rate.v });
+  }, [p.rate, rate.v, setPrefs]);
 
   return (
     <Screen>
       <BackHeader title="Ovoz va talaffuz" />
 
-      {/* Tizimli TTS diagnostika paneli (gaplar va zaxira ovoz uchun) */}
-      <View
-        accessibilityLiveRegion="polite"
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 12,
-          padding: 14,
-          borderRadius: 20,
-          backgroundColor: !info ? colors.surface : ok ? colors.limeSoft : colors.amberSoft,
-        }}
-      >
-        <View
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 18,
-            backgroundColor: !info ? colors.bg : ok ? colors.forest : colors.error,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Feather
-            name={!info ? 'loader' : ok ? 'check' : 'alert-triangle'}
-            size={18}
-            color={ok ? colors.lime : '#FFFFFF'}
-          />
-        </View>
-        <View style={{ flex: 1 }}>
-          <T w="extrabold" size={15} color={ok ? colors.forestInk : colors.ink}>
-            {!info
-              ? 'Ovoz tekshirilmoqda…'
-              : ok
-              ? 'Inglizcha ovoz topildi'
-              : info.status === 'noEnglish'
-              ? "Inglizcha ovoz o'rnatilmagan"
-              : "Ovozni aniqlab bo'lmadi"}
-          </T>
-          <T size={12} color={ok ? colors.forestText : colors.muted}>
-            {ok
-              ? [info?.name, info?.language, info?.enhanced ? 'yuqori sifat' : null].filter(Boolean).join(' · ')
-              : "Pastdagi «Sinab ko'rish»ni bosing — eshitilsa, hammasi joyida"}
-          </T>
+      {/* Tinglab ko'rish: tanlangan talaffuz va tezlik shu yerda darhol eshitiladi */}
+      <View style={{ backgroundColor: colors.surface, borderRadius: 22, paddingVertical: 18, paddingHorizontal: 16, alignItems: 'center', gap: 2 }}>
+        <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9, alignSelf: 'flex-start' }}>TINGLAB KO'RING</T>
+        <T w="extrabold" size={38} style={{ letterSpacing: -1, marginTop: 4 }}>{SAMPLE_WORD}</T>
+        <T size={15} color={colors.muted}>{SAMPLE_IPA[accent.v]} · {accent.label} · {rate.v}×</T>
+        <View style={{ flexDirection: 'row', gap: 10, marginTop: 14 }}>
+          <PlayPill label="So'z" dark onPress={() => speak(SAMPLE_WORD)} />
+          <PlayPill label="Misol gap" onPress={() => speak(SAMPLE_SENTENCE)} />
         </View>
       </View>
 
-      <View style={{ backgroundColor: colors.surface, borderRadius: 22, padding: 16, gap: 16 }}>
-        <View style={{ gap: 8 }}>
-          <T w="extrabold" size={14}>Talaffuz turi</T>
-          <Segmented
-            options={[
-              { value: 'us', label: '🇺🇸 Amerika (US)' },
-              { value: 'uk', label: '🇬🇧 Britaniya (UK)' },
-            ]}
-            value={p.accent}
-            onChange={(v) => setPrefs({ accent: v as 'us' | 'uk' })}
-          />
-        </View>
-
-        <View style={{ gap: 6 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <T w="extrabold" size={14}>Tezlik</T>
-            <T w="bold" size={13} color={rate === 1 ? colors.muted : colors.forestText}>
-              {rate}× · {rateName(rate)}
-            </T>
+      {/* Telefon ovozi topilmasa — faqat shunda ogohlantirish (gaplar shu ovozda o'qiladi) */}
+      {info && info.status !== 'ok' ? (
+        <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', gap: 12, padding: 14, borderRadius: 18, backgroundColor: colors.peach }}>
+          <Feather name="alert-circle" size={18} color={colors.error} style={{ marginTop: 1 }} />
+          <View style={{ flex: 1, gap: 2 }}>
+            <T w="bold" size={14} color={colors.error}>{info.status === 'noEnglish' ? "Telefonda inglizcha ovoz yo'q" : "Telefon ovozini aniqlab bo'lmadi"}</T>
+            <T size={12.5} color={colors.inkSoft}>So'zlar baribir eshitiladi. Misol gaplar uchun telefon sozlamalarida «Matnni nutqqa aylantirish» → ingliz tilini yuklab oling.</T>
           </View>
-          <StepSlider
-            values={RATES}
-            value={rate}
-            labels={RATE_LABELS}
-            onChange={(v) => {
-              setPrefs({ rate: v });
-              setTimeout(() => speak(SAMPLE_WORD), 50);
-            }}
-          />
         </View>
+      ) : null}
 
-        {/* Sinash tugmalari: So'z (MP3) va Misol gap (TTS) */}
-        <View style={{ flexDirection: 'row', gap: 10 }}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="So'zni sinab ko'rish"
-            onPress={() => speak(SAMPLE_WORD)}
-            style={({ pressed }) => ({
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 10,
-              padding: 12,
-              borderRadius: 16,
-              backgroundColor: pressed ? colors.limeSoft : colors.bg,
-            })}
-          >
-            <View
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 19,
-                backgroundColor: colors.forest,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Feather name="play" size={16} color="#FFFFFF" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <T w="extrabold" size={13}>So'z</T>
-              <T size={11} color={colors.muted}>«{SAMPLE_WORD}»</T>
-            </View>
-          </Pressable>
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Gapni sinab ko'rish"
-            onPress={() => speak(SAMPLE_SENTENCE)}
-            style={({ pressed }) => ({
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 10,
-              padding: 12,
-              borderRadius: 16,
-              backgroundColor: pressed ? colors.limeSoft : colors.bg,
-            })}
-          >
-            <View
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 19,
-                backgroundColor: colors.onForestSoft,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Feather name="play" size={16} color={colors.forest} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <T w="extrabold" size={13}>Misol gap</T>
-              <T size={11} color={colors.muted} numberOfLines={1}>«{SAMPLE_SENTENCE}»</T>
-            </View>
-          </Pressable>
-        </View>
-      </View>
-
-      <SettingGroup>
-        <ToggleRow
-          title="Tabiiy studiya ovozi"
-          sub="So'zlarni haqiqiy inson talaffuzida o'qish"
-          value={naturalVoice}
-          onChange={(v) => {
-            setPrefs({ naturalVoice: v });
-            setStudioVoiceEnabled(v);
-          }}
-        />
-        <ToggleRow
-          title="Yangi so'zni o'zi o'qisin"
-          sub="Tanishish kartasi ochilganda"
-          value={p.autoSpeakNew}
-          onChange={(v) => setPrefs({ autoSpeakNew: v })}
-        />
-        <ToggleRow
-          title="Misol gapni ham o'qisin"
-          sub="So'zdan keyin, Tanishishda"
-          value={p.autoSpeakExample && p.autoSpeakNew}
-          disabled={!p.autoSpeakNew}
-          onChange={(v) => setPrefs({ autoSpeakExample: v })}
-        />
-        <ToggleRow
-          title="To'g'ri javobda o'qisin"
-          sub="Test va Yozishda"
-          value={p.autoSpeakCorrect}
-          onChange={(v) => setPrefs({ autoSpeakCorrect: v })}
-          last
-        />
+      <SettingGroup label="Ovoz">
+        <SettingRow icon="globe" title="Talaffuz" value={accent.label} onPress={() => setSheet('accent')} />
+        <SettingRow icon="fast-forward" title="Tezlik" value={`${rate.v}× · ${rate.label}`} onPress={() => setSheet('rate')} last />
       </SettingGroup>
 
-      <T size={12} color={colors.muted} style={{ paddingHorizontal: 6, lineHeight: 18 }}>
-        Yodla gibrid ovoz dvigatelidan foydalanadi: so'zlar toza inson talaffuzi (MP3) orqali yangraydi, gaplar va internetsiz paytda esa telefoningizdagi tizim ovozi avtomatik zaxira sifatida ishlaydi.
-      </T>
+      <SettingGroup label="O'zi o'qisin">
+        <ToggleRow title="Yangi so'z" sub="Tanishish kartasi ochilganda" value={p.autoSpeakNew} onChange={(v) => setPrefs({ autoSpeakNew: v })} />
+        <ToggleRow title="Misol gap" sub="So'zdan keyin, Tanishishda" value={p.autoSpeakExample && p.autoSpeakNew} disabled={!p.autoSpeakNew} onChange={(v) => setPrefs({ autoSpeakExample: v })} />
+        <ToggleRow title="To'g'ri javob" sub="Test va Yozishda" value={p.autoSpeakCorrect} onChange={(v) => setPrefs({ autoSpeakCorrect: v })} last />
+      </SettingGroup>
+
+      <BottomSheet visible={!!sheet} onClose={() => setSheet(null)} contentStyle={{ paddingHorizontal: 20, paddingTop: 10 }}>
+        <View style={{ alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: colors.track, marginBottom: 14 }} />
+        <T w="extrabold" size={20} style={{ marginBottom: 6 }}>{sheet === 'accent' ? 'Talaffuz' : 'Tezlik'}</T>
+        <View accessibilityRole="radiogroup" style={{ backgroundColor: colors.surface, borderRadius: 18, overflow: 'hidden' }}>
+          {sheet === 'accent'
+            ? ACCENTS.map((a, i) => (
+              <Pressable key={a.v} accessibilityRole="radio" accessibilityState={{ checked: a.v === accent.v }} accessibilityLabel={a.label}
+                onPress={() => { setPrefs({ accent: a.v }); setTimeout(() => speak(SAMPLE_WORD), 80); }}
+                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 58, paddingHorizontal: 16, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : colors.surface })}>
+                <IconTile label={a.badge} bg={colors.limeSoft} fg={colors.forestText} size={36} />
+                <T w={a.v === accent.v ? 'bold' : 'semibold'} size={16} style={{ flex: 1 }}>{a.label}</T>
+                <Radio on={a.v === accent.v} />
+              </Pressable>
+            ))
+            : RATES.map((r, i) => (
+              <Pressable key={r.v} accessibilityRole="radio" accessibilityState={{ checked: r.v === rate.v }} accessibilityLabel={`${r.v}×, ${r.label}`}
+                onPress={() => { setPrefs({ rate: r.v }); setTimeout(() => speak(SAMPLE_WORD), 80); }}
+                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 58, paddingHorizontal: 16, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : colors.surface })}>
+                <T w="bold" size={17} color={r.v === rate.v ? colors.forestText : colors.ink} style={{ width: 56 }}>{r.v}×</T>
+                <T size={15} color={colors.muted} style={{ flex: 1 }}>{r.label}</T>
+                <Radio on={r.v === rate.v} />
+              </Pressable>
+            ))}
+        </View>
+        <T size={13} color={colors.muted} style={{ marginTop: 10, marginBottom: 8, paddingHorizontal: 4 }}>Tanlasangiz, «{SAMPLE_WORD}» shu {sheet === 'accent' ? 'talaffuzda' : 'tezlikda'} o'qiladi</T>
+      </BottomSheet>
     </Screen>
   );
 }

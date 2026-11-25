@@ -257,8 +257,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Ovoz sozlamalari: talaffuz, tezlik va tabiiy studiya ovozi
   useEffect(() => {
-    configureSpeech({ accent: state.prefs.accent, rate: state.prefs.rate, naturalVoice: state.prefs.naturalVoice });
-  }, [state.prefs.accent, state.prefs.rate, state.prefs.naturalVoice]);
+    // Sifatli yozilgan ovoz har doim yoqiq (sozlamadan olib tashlandi); yo'q joyda telefon ovozi ishlaydi
+    configureSpeech({ accent: state.prefs.accent, rate: state.prefs.rate, naturalVoice: true });
+  }, [state.prefs.accent, state.prefs.rate]);
 
   // Foydalanuvchi o'zi saqlagan so'zlar birinchi o'rganiladi.
   const words = useMemo(() => [...state.customWords, ...WORDS], [state.customWords]);
