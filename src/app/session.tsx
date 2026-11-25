@@ -1430,7 +1430,9 @@ function ContextStep({ items, group, renderHeader, onDone }: { items: CtxItem[];
   };
   const chosen = picked ? group.find((w) => w.id === picked) : undefined;
   // Bo'linmaydigan bo'shliqlar: bo'sh joy qator oxirida ikkiga bo'linib ketmaydi
-  const slotText = checked ? `\u00A0${chosen ? chosen.word : x.match}\u00A0` : '_'.repeat(9);
+  const slotText = chosen ? chosen.word : x.match;
+  // Bo'sh joydan keyin bo'sh joysiz keladigan tinish belgisi («.», «,», «'s») javobga yopishib turadi
+  const [, afterGlued = '', afterRest = ''] = x.after.match(/^(\S*)([\s\S]*)$/) ?? [];
 
   return (
     <Screen
@@ -1459,14 +1461,21 @@ function ContextStep({ items, group, renderHeader, onDone }: { items: CtxItem[];
       </View>
       <Card style={{ borderRadius: 28, paddingVertical: 22, paddingHorizontal: 20, gap: 14 }}>
         {x.word.exampleUz ? <T size={15} color={colors.muted} style={{ lineHeight: 21 }}>{x.word.exampleUz}</T> : null}
-        <T size={22} style={{ lineHeight: 36 }}>
-          {x.before}
-          <T w="bold" size={22} color={checked ? (ok ? colors.forestText : colors.wrongInk) : colors.track}
-            style={{ backgroundColor: checked ? (ok ? colors.limeSoft : colors.wrongSoft) : 'transparent', textDecorationLine: checked && !ok ? 'line-through' : 'none' }}>
-            {slotText}
-          </T>
-          {x.after}
-        </T>
+        {/* Gap so'zma-so'z: javob joyi yumaloq burchakli «quti» (ichki matnda burchak yumaloqlanmaydi) */}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: 6, rowGap: 6 }}>
+          {x.before.split(/\s+/).filter(Boolean).map((t, i) => <T key={'b' + i} size={22} style={{ lineHeight: 32 }}>{t}</T>)}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {checked ? (
+              <View style={{ borderRadius: 10, paddingHorizontal: 8, backgroundColor: ok ? colors.limeSoft : colors.wrongSoft }}>
+                <T w="bold" size={22} color={ok ? colors.forestText : colors.wrongInk} style={{ lineHeight: 32, textDecorationLine: ok ? 'none' : 'line-through' }}>{slotText}</T>
+              </View>
+            ) : (
+              <View style={{ width: 96, height: 30, borderBottomWidth: 2, borderBottomColor: colors.track }} />
+            )}
+            {afterGlued ? <T size={22} style={{ lineHeight: 32 }}>{afterGlued}</T> : null}
+          </View>
+          {afterRest.split(/\s+/).filter(Boolean).map((t, i) => <T key={'a' + i} size={22} style={{ lineHeight: 32 }}>{t}</T>)}
+        </View>
         {checked && ok && x.word.example ? (
           <Pressable accessibilityRole="button" onPress={() => speak(x.word.example!)}
             style={({ pressed }) => ({ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8, height: 38, paddingHorizontal: 14, borderRadius: 13, backgroundColor: colors.surfaceMuted, opacity: pressed ? 0.8 : 1 })}>
@@ -1604,11 +1613,6 @@ function MatchPage({ group, audio, header, onMistake, onDone, pageLabel }: { gro
           borderWidth: isSel ? 2 : 1.5,
           borderColor: look ? look.ring : isBad ? colors.wrong : isSel ? colors.forest : colors.line,
           backgroundColor: look ? look.bg : isBad ? colors.wrongSoft : isSel ? colors.limeSoft : colors.surface }}>
-        {look ? (
-          <View style={{ position: 'absolute', top: 6, left: 8, width: 18, height: 18, borderRadius: 9, backgroundColor: look.fg, alignItems: 'center', justifyContent: 'center' }}>
-            <T w="extrabold" size={10} color={look.bg}>{order + 1}</T>
-          </View>
-        ) : null}
         {hidden ? (
           isSel ? <Breathe><Feather name="volume-2" size={32} color={colors.forestText} /></Breathe> : <Feather name="volume-2" size={30} color={isBad ? colors.wrongInk : colors.forestText} />
         ) : (
