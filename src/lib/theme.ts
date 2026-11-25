@@ -142,12 +142,16 @@ export function themed(c: string): string {
 /** Joriy mavzu — o'zgarganda matn komponentlari ham qayta chiziladi. */
 export const ThemeContext = createContext<Scheme>('light');
 
+/**
+ * Inter Manrope'dan qalinroq ko'rinadi — shuning uchun har bir nom bir pog'ona yengilroq qalinlikka bog'langan
+ * (eng qalini 700). Natija: telefonda «hamma joy qalin» bo'lib ketmaydi.
+ */
 export const font = {
   regular: 'Inter_400Regular',
-  medium: 'Inter_500Medium',
-  semibold: 'Inter_600SemiBold',
-  bold: 'Inter_700Bold',
-  extrabold: 'Inter_800ExtraBold',
+  medium: 'Inter_400Regular',
+  semibold: 'Inter_500Medium',
+  bold: 'Inter_600SemiBold',
+  extrabold: 'Inter_700Bold',
 };
 
 export const radius = { sm: 12, md: 18, lg: 22, xl: 26, xxl: 30, pill: 999 };

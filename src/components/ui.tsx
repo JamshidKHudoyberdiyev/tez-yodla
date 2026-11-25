@@ -202,7 +202,7 @@ export function Button({ title, onPress, variant = 'lime', icon, iconRight, disa
       style={({ pressed }) => [
         {
           height: small ? 40 : 56,
-          paddingHorizontal: small ? 16 : 20,
+          paddingHorizontal: small ? 16 : 18,
           borderRadius: small ? radius.pill : 20,
           backgroundColor: v.bg,
           borderWidth: v.border ? (variant === 'dangerOutline' ? 2 : 1) : 0,
@@ -218,7 +218,7 @@ export function Button({ title, onPress, variant = 'lime', icon, iconRight, disa
       ]}
     >
       {icon ? <Feather name={icon} size={small ? 16 : 18} color={v.fg} /> : null}
-      <T w="extrabold" size={small ? 14 : 17} color={v.fg}>{title}</T>
+      <T w="extrabold" size={small ? 14 : 17} color={v.fg} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ flexShrink: 1 }}>{title}</T>
       {iconRight ? <Feather name={iconRight} size={small ? 16 : 19} color={v.fg} /> : null}
     </Pressable>
   );

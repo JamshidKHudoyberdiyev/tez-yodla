@@ -367,7 +367,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
   if (phase === 'learn') {
     const w = group[idx];
     const nextBtn = (style?: { flex: number }) => (
-      <Button title={idx + 1 < group.length ? 'Tushundim, keyingisi' : steps[1] ? `${steps[1]}ga o'tish` : 'Tugatish'} style={style} onPress={() => {
+      <Button title={idx + 1 < group.length ? 'Keyingisi' : steps[1] ? `${steps[1]}ga o'tish` : 'Tugatish'} iconRight="arrow-right" style={style} onPress={() => {
         setKnownToast(null);
         if (idx + 1 < group.length) setIdx(idx + 1);
         else goNext('Tanishish');
@@ -393,7 +393,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
         ) : null}
         {kind === 'new' ? (
           <View style={{ flexDirection: 'row', gap: 12 }}>
-            <Button title="Bilaman" icon="check" variant="white" style={{ width: 118 }} onPress={() => knowWord(w)} />
+            <Button title="Bilaman" icon="check" variant="white" style={{ paddingHorizontal: 14 }} onPress={() => knowWord(w)} />
             {nextBtn({ flex: 1 })}
           </View>
         ) : nextBtn()}

@@ -119,6 +119,6 @@ const s = StyleSheet.create({
   fill: { flex: 1, backgroundColor: colors.forestDeep, alignItems: 'center', justifyContent: 'center' },
   tile: { width: SIZE, height: SIZE, borderRadius: Math.round(SIZE * 0.23), backgroundColor: TILE, overflow: 'hidden' },
   wordBox: { position: 'absolute', width: WORD_W, height: 26, alignItems: 'center', justifyContent: 'center' },
-  wordTxt: { fontFamily: 'Inter_800ExtraBold', fontSize: 20, lineHeight: 26 },
+  wordTxt: { fontFamily: 'Inter_700Bold', fontSize: 20, lineHeight: 26 },
   word: { position: 'absolute', top: SIZE + 20, left: -120, right: -120, alignItems: 'center' },
 });
