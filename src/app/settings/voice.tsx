@@ -1,7 +1,7 @@
-import { Feather } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { SettingGroup, SettingRow, ToggleRow } from '@/components/SettingsUI';
+import { SettingGroup, ToggleRow } from '@/components/SettingsUI';
 import { BackHeader, BottomSheet, IconTile, Screen, T } from '@/components/ui';
 import { snapRate, speak, voiceInfo, type VoiceInfo } from '@/lib/speech';
 import { useStore } from '@/lib/store';
@@ -32,12 +32,35 @@ function Radio({ on }: { on: boolean }) {
   );
 }
 
+/** Chiziqli ikonka och yashil kvadratda (Ionicons outline — Feather'da mikrofon va spidometr yo'q) */
+function Tile({ name }: { name: React.ComponentProps<typeof Ionicons>['name'] }) {
+  return (
+    <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}>
+      <Ionicons name={name} size={19} color={colors.forestText} />
+    </View>
+  );
+}
+
+/** Sozlama qatori: ikonka, nom, qiymat va › (bosilganda tanlov oynasi) */
+function PickRow({ icon, title, value, onPress, last }: { icon: React.ComponentProps<typeof Ionicons>['name']; title: string; value: string; onPress: () => void; last?: boolean }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={`${title}: ${value}`} onPress={onPress}
+      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 58, paddingHorizontal: 14, paddingVertical: 9,
+        borderBottomWidth: last ? 0 : 1, borderBottomColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
+      <Tile name={icon} />
+      <T w="bold" size={15} style={{ flex: 1 }}>{title}</T>
+      <T size={14} color={colors.muted} numberOfLines={1}>{value}</T>
+      <Feather name="chevron-right" size={18} color={colors.placeholder} />
+    </Pressable>
+  );
+}
+
 function PlayPill({ label, dark, onPress }: { label: string; dark?: boolean; onPress: () => void }) {
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={`${label}ni eshitish`} onPress={onPress}
       style={({ pressed }) => ({ height: 44, paddingHorizontal: 18, borderRadius: 22, flexDirection: 'row', alignItems: 'center', gap: 8,
         backgroundColor: dark ? colors.forest : colors.limeSoft, opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] })}>
-      <Feather name="play" size={15} color={dark ? colors.lime : colors.forestText} />
+      <Feather name="volume-2" size={17} color={dark ? colors.lime : colors.forestText} />
       <T w="bold" size={14.5} color={dark ? '#FFFFFF' : colors.forestText}>{label}</T>
     </Pressable>
   );
@@ -91,8 +114,8 @@ export default function Voice() {
       ) : null}
 
       <SettingGroup label="Ovoz">
-        <SettingRow icon="globe" title="Talaffuz" value={accent.label} onPress={() => setSheet('accent')} />
-        <SettingRow icon="fast-forward" title="Tezlik" value={`${rate.v}× · ${rate.label}`} onPress={() => setSheet('rate')} last />
+        <PickRow icon="mic-outline" title="Talaffuz" value={accent.label} onPress={() => setSheet('accent')} />
+        <PickRow icon="speedometer-outline" title="Tezlik" value={`${rate.v}× · ${rate.label}`} onPress={() => setSheet('rate')} last />
       </SettingGroup>
 
       <SettingGroup label="O'zi o'qisin">
@@ -119,7 +142,7 @@ export default function Voice() {
               <Pressable key={r.v} accessibilityRole="radio" accessibilityState={{ checked: r.v === rate.v }} accessibilityLabel={`${r.v}×, ${r.label}`}
                 onPress={() => { setPrefs({ rate: r.v }); setTimeout(() => speak(SAMPLE_WORD), 80); }}
                 style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 58, paddingHorizontal: 16, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : colors.surface })}>
-                <T w="bold" size={17} color={r.v === rate.v ? colors.forestText : colors.ink} style={{ width: 56 }}>{r.v}×</T>
+                <T w="bold" size={17} color={r.v === rate.v ? colors.forestText : colors.ink} style={{ width: 52 }}>{r.v}×</T>
                 <T size={15} color={colors.muted} style={{ flex: 1 }}>{r.label}</T>
                 <Radio on={r.v === rate.v} />
               </Pressable>
