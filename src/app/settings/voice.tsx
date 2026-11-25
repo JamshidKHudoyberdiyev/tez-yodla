@@ -212,7 +212,7 @@ export default function Voice() {
       </SettingGroup>
 
       <T size={12} color={colors.muted} style={{ paddingHorizontal: 6, lineHeight: 18 }}>
-        💡 Yodla gibrid ovoz dvigatelidan foydalanadi: so'zlar toza inson talaffuzi (MP3) orqali yangraydi, gaplar va internetsiz paytda esa telefoningizdagi tizim ovozi avtomatik zaxira sifatida ishlaydi.
+        Yodla gibrid ovoz dvigatelidan foydalanadi: so'zlar toza inson talaffuzi (MP3) orqali yangraydi, gaplar va internetsiz paytda esa telefoningizdagi tizim ovozi avtomatik zaxira sifatida ishlaydi.
       </T>
     </Screen>
   );

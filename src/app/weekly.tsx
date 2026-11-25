@@ -100,7 +100,7 @@ export default function Weekly() {
             <T size={12} color={colors.muted}>Ular takrorlashda tez-tez qaytib keladi. So'zni bosib, assotsiatsiyasini qayta ko'rib chiqing.</T>
           </>
         ) : (
-          <T size={14} color={colors.muted}>Bu hafta hech bir so'z unutilmadi 👏</T>
+          <T size={14} color={colors.muted}>Bu hafta hech bir so'z unutilmadi — barakalla!</T>
         )}
       </View>
 

@@ -2,19 +2,22 @@ import { Feather } from '@expo/vector-icons';
 import { router, type Href } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { HeroBg, Icon3D, type Icon3DName } from '@/components/Icon3D';
+import { HeroBg } from '@/components/Icon3D';
 import { BackHeader, Button, T } from '@/components/ui';
 import { useStore } from '@/lib/store';
-import { colors } from '@/lib/theme';
+import { colors, themed } from '@/lib/theme';
 
-interface Game { key: string; title: string; sub: string; icon: Icon3DName; href: Href; min: number; best?: (n: number) => string; tint: 'limeSoft' | 'blueSoft' | 'amberSoft' | 'purpleSoft' }
+interface Game { key: string; title: string; sub: string; icon: React.ComponentProps<typeof Feather>['name']; href: Href; min: number; best?: (n: number) => string; tint: 'limeSoft' | 'blueSoft' | 'amberSoft' | 'purpleSoft' }
 
 const GAMES: Game[] = [
-  { key: 'speed', title: '60 soniya', sub: "Bir daqiqada qancha so'z?", icon: 'timer', href: '/game-speed', min: 6, best: (n) => `rekord ${n} ta`, tint: 'limeSoft' },
+  { key: 'speed', title: '60 soniya', sub: "Bir daqiqada qancha so'z?", icon: 'clock', href: '/game-speed', min: 6, best: (n) => `rekord ${n} ta`, tint: 'limeSoft' },
   { key: 'listen', title: 'Eshit va yoz', sub: "So'zni tinglab, to'g'ri yozing", icon: 'headphones', href: '/game-listen', min: 4, best: (n) => `rekord ${n}/8`, tint: 'blueSoft' },
-  { key: 'pairs', title: 'Juftlikni top', sub: "Kartalarni ochib, juftini toping", icon: 'cards', href: '/game-pairs', min: 6, best: (n) => `rekord ${n} urinish`, tint: 'amberSoft' },
-  { key: 'verbs', title: "Noto'g'ri fe'llar", sub: 'go — went — gone', icon: 'change', href: '/game-verbs', min: 0, best: (n) => `rekord ${n}/8`, tint: 'purpleSoft' },
+  { key: 'pairs', title: 'Juftlikni top', sub: "Kartalarni ochib, juftini toping", icon: 'copy', href: '/game-pairs', min: 6, best: (n) => `rekord ${n} urinish`, tint: 'amberSoft' },
+  { key: 'verbs', title: "Noto'g'ri fe'llar", sub: 'go — went — gone', icon: 'repeat', href: '/game-verbs', min: 0, best: (n) => `rekord ${n}/8`, tint: 'purpleSoft' },
 ];
+
+/** Har bir o'yin ikonkasining rangi (kvadrat foniga mos) */
+const TINT_INK = () => ({ limeSoft: colors.forestText, blueSoft: colors.blue, amberSoft: colors.amber, purpleSoft: themed('#6B3FA8') });
 
 export default function Games() {
   const { state, wordById } = useStore();
@@ -46,7 +49,7 @@ export default function Games() {
                 style={({ pressed }) => ({ width: '48.5%', backgroundColor: colors.surface, borderRadius: 24, padding: 14, gap: 10, opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <View style={{ width: 52, height: 52, borderRadius: 18, backgroundColor: colors[g.tint], alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon3D name={g.icon} size={30} />
+                    <Feather name={g.icon} size={23} color={TINT_INK()[g.tint]} />
                   </View>
                   {locked ? <Feather name="lock" size={15} color={colors.muted} /> : null}
                 </View>

@@ -59,7 +59,7 @@ export default function Settings() {
         <View style={{ flex: 1 }}>
           <T w="extrabold" size={19} color="#FFFFFF" numberOfLines={1}>{state.name || 'Ismingizni kiriting'}</T>
           <T size={13} color={colors.onForestSoft} numberOfLines={1}>
-            {[state.level, `🔥 ${streak.current} kun`].join(' · ')}
+            {state.level} · {streak.current} kunlik streak
           </T>
         </View>
         <T w="bold" size={13} color={colors.lime}>Profil</T>

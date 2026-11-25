@@ -1,10 +1,9 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Children, isValidElement, ReactNode, useContext, useEffect, useRef, useState } from 'react';
-import { Image, Keyboard, KeyboardAvoidingView, Modal, Pressable, ScrollView, type ScrollViewInstance, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Modal, Pressable, ScrollView, type ScrollViewInstance, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, font, FontScaleContext, radius, themed, ThemeContext } from '../lib/theme';
-import { deck3D } from './Icon3D';
 
 export type IconName = keyof typeof Feather.glyphMap;
 
@@ -239,11 +238,17 @@ export function Card({ children, style, onPress }: { children: ReactNode; style?
 }
 
 /** `mdi` — MaterialCommunityIcons nomi (mavzu to'plamlari: qozon, samolyot, ...). */
+/** Minimal uslub: to'plam belgilarining chiziqli («outline») varianti */
+const OUTLINE: Record<string, string> = {
+  'pot-steam': 'pot-steam-outline', school: 'school-outline', briefcase: 'briefcase-outline', 'account-group': 'account-group-outline',
+  paw: 'paw-outline', city: 'city-variant-outline', 'tshirt-crew': 'tshirt-crew-outline', 'hospital-box': 'hospital-box-outline',
+  home: 'home-outline', cart: 'cart-outline', 'weather-sunny': 'weather-partly-cloudy',
+};
+
 export function IconTile({ icon, mdi, label, bg = colors.surfaceMuted, fg = colors.ink, size = 48 }: { icon?: IconName; mdi?: string; label?: string; bg?: string; fg?: string; size?: number }) {
   return (
     <View style={{ width: size, height: size, borderRadius: size * 0.33, backgroundColor: themed(bg), alignItems: 'center', justifyContent: 'center' }}>
-      {mdi && deck3D(mdi) ? <Image source={deck3D(mdi)![0]} resizeMode="contain" style={{ width: size * 0.58, height: size * 0.58 }} />
-        : mdi ? <MaterialCommunityIcons name={mdi as never} size={size * 0.52} color={themed(fg)} />
+      {mdi ? <MaterialCommunityIcons name={(OUTLINE[mdi] ?? mdi) as never} size={size * 0.52} color={themed(fg)} />
         : icon ? <Feather name={icon} size={size * 0.46} color={themed(fg)} /> : <T w="extrabold" size={size * 0.3} color={themed(fg)}>{label}</T>}
     </View>
   );

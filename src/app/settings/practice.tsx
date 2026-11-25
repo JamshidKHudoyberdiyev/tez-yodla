@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import { View } from 'react-native';
 import { Segmented, SettingGroup, SettingRow, Toggle } from '@/components/SettingsUI';
 import { BackHeader, Screen, T } from '@/components/ui';
@@ -46,7 +47,7 @@ export default function Practice() {
       </SettingGroup>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, borderRadius: 18, backgroundColor: count <= 2 ? colors.amberSoft : colors.limeSoft }}>
-        <T size={16}>⏱</T>
+        <Feather name="clock" size={17} color={count <= 2 ? colors.amber : colors.forestInk} />
         <T size={13} color={count <= 2 ? colors.amber : colors.forestInk} style={{ flex: 1 }}>
           Bitta guruh ~{Math.round(minutes)} daqiqa · {count} ta bosqich{count <= 2 ? ". Kam bosqich — so'z tezroq unutiladi." : ''}
         </T>

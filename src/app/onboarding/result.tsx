@@ -61,7 +61,7 @@ export default function LevelResult() {
 
       {fakes > 0 ? (
         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start', backgroundColor: '#FFF8E6', borderRadius: 18, padding: 14 }}>
-          <T size={18}>🕵️</T>
+          <Feather name="alert-circle" size={18} color="#6B5300" style={{ marginTop: 1 }} />
           <T size={13} color="#6B5300" style={{ flex: 1, lineHeight: 19 }}>
             <T w="extrabold" size={13} color="#6B5300">{fakes} ta soxta so'zni</T> «bilaman» dedingiz — natija shunga qarab tuzatildi. Keyingi safar faqat aniq bilganingizni belgilang.
           </T>

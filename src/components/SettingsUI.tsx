@@ -1,5 +1,4 @@
 import { Feather } from '@expo/vector-icons';
-import { has3D, Icon3D } from '@/components/Icon3D';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Platform, Pressable, TextInput, View } from 'react-native';
 import { IconName, T } from '@/components/ui';
@@ -32,7 +31,7 @@ export function SettingRow({ icon, tone = 'green', title, sub, subColor, value, 
     <>
       {icon ? (
         <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: t.bg, alignItems: 'center', justifyContent: 'center' }}>
-          {has3D(icon) && !danger ? <Icon3D name={icon} size={21} /> : <Feather name={icon} size={18} color={t.fg} />}
+          <Feather name={icon} size={18} color={t.fg} />
         </View>
       ) : null}
       <View style={{ flex: 1, minWidth: 0 }}>

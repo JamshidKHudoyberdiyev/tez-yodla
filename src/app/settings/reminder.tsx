@@ -9,6 +9,7 @@ import { getPermission, notificationsSupported, openSystemSettings, requestPermi
 import { dailyText, dueWordsOn, EVENING_HOUR, MAX_TIMES, sortTimes, timeLabel, type ReminderTime } from '@/lib/reminders';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
+import { HeroBg } from '@/components/Icon3D';
 
 const PRESETS: { label: string; t: ReminderTime }[] = [{ label: 'Ertalab', t: { h: 8, m: 0 } }, { label: 'Tushlikda', t: { h: 13, m: 0 } }, { label: 'Kechqurun', t: { h: 20, m: 0 } }];
 /** «Vaqt qo'shish» bosilganda g'ildirak shu vaqtlardan birinchi bo'shidan boshlanadi. */
@@ -57,7 +58,8 @@ export default function Reminder() {
       <BackHeader title="Kunlik eslatma" />
 
       {/* Namuna: telefonda qanday ko'rinadi */}
-      <View accessible accessibilityLabel={`Namuna: ${sample.title}. ${sample.body}`} style={{ backgroundColor: colors.forestDeep, borderRadius: 26, padding: 14, gap: 10 }}>
+      <View accessible accessibilityLabel={`Namuna: ${sample.title}. ${sample.body}`} style={{ backgroundColor: colors.forestDeep, borderRadius: 26, padding: 14, gap: 10, overflow: 'hidden' }}>
+        <HeroBg />
         <T w="bold" size={11} color={colors.onForestSoft} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Telefoningizda shunday ko'rinadi</T>
         <View style={{ flexDirection: 'row', gap: 10, padding: 12, borderRadius: 18, backgroundColor: colors.surface }}>
           <Logo size={36} />

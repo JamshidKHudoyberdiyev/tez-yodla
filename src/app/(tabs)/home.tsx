@@ -7,7 +7,7 @@ import Svg, { Line } from 'react-native-svg';
 import { PLANT_IMG, PLANT_RATIO, Ring } from '@/components/Art';
 import { StreakCard, StreakStrip } from '@/components/Streak';
 import { Avatar } from '@/components/Avatar';
-import { Button, T, type IconName } from '@/components/ui';
+import { Button, IconTile, T, type IconName } from '@/components/ui';
 import { gardenStages } from '@/lib/garden';
 import { capReviews, EVENING_FROM_HOUR, EXTRA_NEW, learnedOn, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
@@ -18,14 +18,6 @@ const HERO_BG = require('../../../assets/home/hero-bg.webp');
 /** Kitob o'qiyotgan miya (426×440) */
 const BRAIN = require('../../../assets/home/brain-sit.webp');
 const FLAME = require('../../../assets/home/flame.webp');
-const ICON = {
-  review: require('../../../assets/home/review.webp'),
-  mistake: require('../../../assets/home/mistake.webp'),
-  book: require('../../../assets/home/book.webp'),
-  games: require('../../../assets/home/games.webp'),
-  calendar: require('../../../assets/home/calendar.webp'),
-  gear: require('../../../assets/home/gear.webp'),
-};
 const hidden = { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' as const };
 
 function greeting(d = new Date()) {
@@ -84,7 +76,7 @@ export default function Home() {
           </Pressable>
           <Pressable accessibilityRole="button" accessibilityLabel="Sozlamalar" onPress={() => router.push('/settings')} hitSlop={4}
             style={({ pressed }) => ({ width: 44, height: 44, borderRadius: 22, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.85 : 1 })}>
-            <Image source={ICON.gear} {...hidden} style={{ width: 25, height: 24 }} />
+            <Feather name="settings" size={21} color={colors.ink} />
           </Pressable>
         </View>
 
@@ -141,7 +133,7 @@ export default function Home() {
         )}
 
         {eveningOn ? (
-          <Row icon={<View style={{ width: 40, height: 40, borderRadius: 14, backgroundColor: colors.night, alignItems: 'center', justifyContent: 'center' }}><Feather name="moon" size={20} color="#FFFFFF" /></View>}
+          <Row icon="moon"
             tint={colors.nightSoft} accent={colors.night} title="Mustahkamlash"
             sub={`Kechki · bugungi ${eveningCount} ta so'z · ~${Math.max(1, Math.round(eveningCount * 0.15))} daq`}
             label={`Kechki mustahkamlash: bugungi ${eveningCount} ta so'z. Boshlash`} onPress={() => router.push('/evening')} />
@@ -149,17 +141,17 @@ export default function Home() {
 
         {/* Takrorlash */}
         {reviewsLeft ? (
-          <Row icon={<Image source={ICON.review} {...hidden} style={{ width: 36, height: 33 }} />} tint={colors.blueSoft} accent={colors.blue}
+          <Row icon="rotate-ccw" tint={colors.blueSoft} accent={colors.blue}
             title="Takrorlash" sub={`${reviewsLeft} ta so'z · ~${reviewMinutes} daq${queued ? ` · navbatda yana ${queued} ta` : ''}`}
             label={`Takrorlash: ${reviewsLeft} ta so'z. Boshlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review' } })} />
         ) : queued ? (
-          <Row icon={<Image source={ICON.review} {...hidden} style={{ width: 36, height: 33 }} />} tint={colors.blueSoft} accent={colors.blue}
+          <Row icon="rotate-ccw" tint={colors.blueSoft} accent={colors.blue}
             title={`${reviewedToday} ta takrorlandi`} sub={`Navbatda yana ${queued} ta`} action={`Yana ${moreCount} ta`}
             label={`Bugungi takrorlash bajarildi. Yana ${moreCount} ta takrorlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review', more: '1' } })} />
         ) : null}
 
         {mistakeCount && state.mistakesDoneDay !== today ? (
-          <Row icon={<Image source={ICON.mistake} {...hidden} style={{ width: 26, height: 26 }} />} tint={colors.peach} accent={colors.error}
+          <Row icon="alert-circle" tint={colors.peach} accent={colors.error}
             title="Xatolarim" sub={`${mistakeCount} ta so'z · ko'p adashganlaringiz`}
             label={`Xatolarim: ${mistakeCount} ta so'z. Mashq qilish`} onPress={() => router.push('/mistakes')} />
         ) : null}
@@ -202,14 +194,14 @@ export default function Home() {
 
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {([
-            { icon: ICON.book, w: 26, h: 20, label: 'Matndan', href: { pathname: '/add', params: { tab: 'text' } } },
-            { icon: ICON.games, w: 27, h: 18, label: "O'yinlar", href: '/games' },
-            { icon: ICON.calendar, w: 21, h: 21, label: 'Hafta', href: '/weekly' },
-          ] as { icon: number; w: number; h: number; label: string; href: Href }[]).map((a) => (
+            { icon: 'book-open-variant', bg: '#E4EDFB', fg: '#1F55A8', label: 'Matndan', href: { pathname: '/add', params: { tab: 'text' } } },
+            { icon: 'gamepad-variant-outline', bg: '#F1E8FB', fg: '#6B3FA8', label: "O'yinlar", href: '/games' },
+            { icon: 'calendar-blank-outline', bg: '#F6EAD7', fg: '#8F4A12', label: 'Hafta', href: '/weekly' },
+          ] as { icon: string; bg: string; fg: string; label: string; href: Href }[]).map((a) => (
             <Pressable key={a.label} accessibilityRole="button" accessibilityLabel={a.label} onPress={() => router.push(a.href)}
-              style={({ pressed }) => ({ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, paddingHorizontal: 8, borderRadius: 18, backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 })}>
-              <Image source={a.icon} {...hidden} style={{ width: a.w, height: a.h }} />
-              <T w="extrabold" size={14} numberOfLines={1} style={{ flexShrink: 1 }}>{a.label}</T>
+              style={({ pressed }) => ({ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 48, paddingHorizontal: 6, borderRadius: 18, backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 })}>
+              <IconTile mdi={a.icon} bg={a.bg} fg={a.fg} size={28} />
+              <T w="extrabold" size={14} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ flexShrink: 1 }}>{a.label}</T>
             </Pressable>
           ))}
         </View>
@@ -270,15 +262,17 @@ function ResumeCard({ draft, onResume, onRestart }: { draft: SessionDraft; onRes
   );
 }
 
-/** Bosh sahifadagi qator (Takrorlash, Xatolarim, Mustahkamlash): oq hoshiya ichida rangli fon, 3D ikonka va o'ngda strelka yoki kichik tugma. */
+/** Bosh sahifadagi qator (Takrorlash, Xatolarim, Mustahkamlash): oq hoshiya ichida rangli fon, chiziqli ikonka va o'ngda strelka yoki kichik tugma. */
 function Row({ icon, tint, accent, title, sub, action, label, onPress }: {
-  icon: ReactNode; tint: string; accent: string; title: string; sub: string; action?: string; label: string; onPress: () => void;
+  icon: IconName; tint: string; accent: string; title: string; sub: string; action?: string; label: string; onPress: () => void;
 }) {
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
       style={({ pressed }) => ({ backgroundColor: colors.surface, borderRadius: 22, padding: 4, opacity: pressed ? 0.9 : 1 })}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 18, backgroundColor: tint, paddingVertical: 8, paddingLeft: 12, paddingRight: 10 }}>
-        <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>{icon}</View>
+        <View style={{ width: 42, height: 42, borderRadius: 14, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>
+          <Feather name={icon} size={20} color={accent} />
+        </View>
         <View style={{ flex: 1 }}>
           <T w="extrabold" size={16} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{title}</T>
           <T size={13} color={colors.inkSoft} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>{sub}</T>

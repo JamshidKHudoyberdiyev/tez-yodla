@@ -8,6 +8,7 @@ import { buildChoices, shuffle } from '@/lib/drill';
 import { isRecord } from '@/lib/games';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
+import { HeroBg } from '@/components/Icon3D';
 
 const SECONDS = 60;
 const MIN = 6;
@@ -71,7 +72,8 @@ function Run({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
     return (
       <Screen footer={<Button title="Boshlash" iconRight="play" onPress={() => setStarted(true)} />}>
         <GameHeader progress={0} label="" />
-        <View style={{ alignItems: 'center', gap: 12, padding: 24, borderRadius: 32, backgroundColor: colors.forest, marginTop: 20 }}>
+        <View style={{ alignItems: 'center', gap: 12, padding: 24, borderRadius: 32, backgroundColor: colors.forest, marginTop: 20, overflow: 'hidden' }}>
+          <HeroBg />
           <T w="extrabold" size={64} color={colors.lime} style={{ lineHeight: 72 }}>60</T>
           <T w="extrabold" size={22} color="#FFFFFF">soniya</T>
           <T size={14} color={colors.onForestSoft} style={{ textAlign: 'center', lineHeight: 20 }}>

@@ -1,4 +1,4 @@
-import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold, useFonts } from '@expo-google-fonts/manrope';
+import { useFonts } from 'expo-font';
 import { Redirect, Stack, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
@@ -39,7 +39,13 @@ function Root() {
 initMonitoring();
 
 function RootLayout() {
-  const [fontsLoaded] = useFonts({ Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold });
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular: require('../../assets/fonts/Inter_400Regular.ttf'),
+    Inter_500Medium: require('../../assets/fonts/Inter_500Medium.ttf'),
+    Inter_600SemiBold: require('../../assets/fonts/Inter_600SemiBold.ttf'),
+    Inter_700Bold: require('../../assets/fonts/Inter_700Bold.ttf'),
+    Inter_800ExtraBold: require('../../assets/fonts/Inter_800ExtraBold.ttf'),
+  });
   if (!fontsLoaded) return <SplashStatic />;
   return (
     <SafeAreaProvider>

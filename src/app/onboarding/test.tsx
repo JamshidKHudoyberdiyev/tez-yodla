@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
@@ -11,10 +12,10 @@ import { colors } from '@/lib/theme';
 const LEVEL_DECKS = ['a1', 'a2', 'b1', 'b2', 'c1', 'c2'];
 const POOL: TestWord[] = WORDS.filter((w) => LEVEL_DECKS.includes(w.deckId) && w.level).map((w) => ({ word: w.word, translation: w.translation, level: w.level! }));
 
-const RULES: [string, string][] = [
-  ['⏱', "30 ta so'z · taxminan 1 daqiqa"],
-  ['🎯', 'A1 dan C2 gacha — aniq daraja'],
-  ['🕵️', "Orasida soxta so'zlar ham bor — taxmin qilmang"],
+const RULES: [React.ComponentProps<typeof Feather>['name'], string][] = [
+  ['clock', "30 ta so'z · taxminan 1 daqiqa"],
+  ['target', 'A1 dan C2 gacha — aniq daraja'],
+  ['eye', "Orasida soxta so'zlar ham bor — taxmin qilmang"],
 ];
 
 /**
@@ -60,7 +61,7 @@ export default function LevelTest() {
             {RULES.map(([icon, text]) => (
               <View key={text} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}>
-                  <T size={17}>{icon}</T>
+                  <Feather name={icon} size={18} color={colors.forestText} />
                 </View>
                 <T w="semibold" size={15} style={{ flex: 1, lineHeight: 20 }}>{text}</T>
               </View>

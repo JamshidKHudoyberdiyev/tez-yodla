@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Image, LayoutAnimation, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { PLANT_IMG, PLANT_RATIO } from '@/components/Art';
 import { Card, H1, IconTile, T } from '@/components/ui';
 import { DECK_GROUPS, DECKS, type Deck, type DeckGroup, type Level } from '@/data/words';
 import { LEVEL_ORDER } from '@/lib/levelTest';
@@ -11,45 +10,17 @@ import { cardsByWord, deckProgress } from '@/lib/decks';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
-/** 3D ikonkalar: [rasm, eni/bo'yi] */
-const DECK_ICON: Record<string, [number, number]> = {
-  kitchen: [require('../../../assets/decks/kitchen.webp'), 1.028],
-  school: [require('../../../assets/decks/school.webp'), 0.982],
-  work: [require('../../../assets/decks/work.webp'), 1.009],
-  travel: [require('../../../assets/decks/travel.webp'), 1.514],
-  family: [require('../../../assets/decks/family.webp'), 1.009],
-  animals: [require('../../../assets/decks/animals.webp'), 1.179],
-  city: [require('../../../assets/decks/city.webp'), 1.087],
-  clothes: [require('../../../assets/decks/clothes.webp'), 1.244],
-  emotions: [require('../../../assets/decks/emotions.webp'), 1],
-  health: [require('../../../assets/decks/health.webp'), 1.057],
-  home: [require('../../../assets/decks/home.webp'), 1.131],
-  shopping: [require('../../../assets/decks/shopping.webp'), 1.067],
-  sport: [require('../../../assets/decks/sport.webp'), 1.009],
-  tech: [require('../../../assets/decks/tech.webp'), 1.273],
-  weather: [require('../../../assets/decks/weather.webp'), 1.12],
-};
-const GROUP_ICON: Record<DeckGroup, [number, number, string]> = {
-  daily: [require('../../../assets/decks/group-daily.webp'), 1.155, '#FDE4E3'],
-  study: [require('../../../assets/decks/group-study.webp'), 1.12, '#E2ECFC'],
-  travel: [require('../../../assets/decks/group-travel.webp'), 0.812, '#FDEBD7'],
-  level: [require('../../../assets/decks/group-level.webp'), 1.109, '#EEE6FC'],
-  exam: [require('../../../assets/decks/group-exam.webp'), 1.318, '#E2ECFC'],
+/** Guruh ikonkasi va ranglari: [ikonka, fon, rang] */
+const GROUP_ICON: Record<DeckGroup, [string, string, string]> = {
+  daily: ['heart-pulse', '#FBE4EC', '#B02F5C'],
+  study: ['book-open-variant', '#E4EDFB', '#1F55A8'],
+  travel: ['bag-suitcase-outline', '#DDF1F2', '#14707A'],
+  level: ['chart-bar', '#F1E8FB', '#6B3FA8'],
+  exam: ['school-outline', '#F6EAD7', '#8F4A12'],
 };
 const HERO_BG = require('../../../assets/home/hero-bg.webp');
-const BOOK = require('../../../assets/home/book.webp');
 const hidden = { accessibilityElementsHidden: true, importantForAccessibility: 'no-hide-descendants' as const };
 const shadow = { shadowColor: '#1E321E', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 };
-
-/** Ikonka yumshoq rangli kvadrat ichida (o'lchami kichik — minimal ko'rinish) */
-function Pic({ src, ratio, bg, size = 44, h = 26 }: { src: number; ratio: number; bg: string; size?: number; h?: number }) {
-  const w = Math.min(h * ratio, size - 10);
-  return (
-    <View style={{ width: size, height: size, borderRadius: Math.round(size * 0.32), backgroundColor: bg, alignItems: 'center', justifyContent: 'center' }}>
-      <Image source={src} {...hidden} resizeMode="contain" style={{ width: w, height: w / ratio }} />
-    </View>
-  );
-}
 
 export default function Decks() {
   const { state, words, today } = useStore();
@@ -112,7 +83,7 @@ export default function Decks() {
             {own ? (
               <Pressable accessibilityRole="button" accessibilityLabel={`Mening so'zlarim, ${own.total} ta so'z`} onPress={() => router.push('/my-words')}
                 style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 22, backgroundColor: colors.surface, opacity: pressed ? 0.9 : 1, ...shadow })}>
-                <Pic src={PLANT_IMG[1]} ratio={PLANT_RATIO[1]} bg={colors.limeSoft} h={28} />
+                <IconTile icon="bookmark" bg={colors.limeSoft} fg={colors.forestText} size={44} />
                 <View style={{ flex: 1 }}>
                   <T w="extrabold" size={16}>Mening so'zlarim</T>
                   <T w={own.due ? 'bold' : 'medium'} size={13} color={own.due ? colors.error : colors.muted}>
@@ -138,13 +109,13 @@ export default function Decks() {
               const inPlan = all.length - items.length;
               const isOpen = !!open[g.id];
               const sub = `${all.length} ta to'plam${inPlan ? ` · ${inPlan} tasi rejada` : ''}`;
-              const [gsrc, gratio, gbg] = GROUP_ICON[g.id];
+              const [gicon, gbg, gfg] = GROUP_ICON[g.id];
               return (
                 <View key={g.id} style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', ...shadow }}>
                   <Pressable accessibilityRole="button" accessibilityState={{ expanded: isOpen }} accessibilityLabel={`${g.title}, ${sub}`} onPress={() => toggle(g.id)}
                     style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 66, paddingVertical: 10, paddingLeft: 12, paddingRight: 12,
                       backgroundColor: isOpen ? colors.limeSoft : pressed ? colors.surfaceMuted : 'transparent' })}>
-                    <Pic src={gsrc} ratio={gratio} bg={gbg} h={26} />
+                    <IconTile mdi={gicon} bg={gbg} fg={gfg} size={44} />
                     <View style={{ flex: 1 }}>
                       <T w="extrabold" size={16}>{g.title}</T>
                       <T size={13} color={colors.muted}>{sub}</T>
@@ -166,7 +137,7 @@ export default function Decks() {
               style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, marginTop: 6, borderRadius: 24, overflow: 'hidden', backgroundColor: colors.forest, opacity: pressed ? 0.92 : 1 })}>
               <Image source={HERO_BG} {...hidden} resizeMode="cover" style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }} />
               <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center' }}>
-                <Image source={BOOK} {...hidden} style={{ width: 30, height: 23 }} />
+                <Feather name="book-open" size={22} color="#FFFFFF" />
               </View>
               <View style={{ flex: 1 }}>
                 <T w="extrabold" size={16} color="#FFFFFF">O'qiyotgan matningizdan</T>
@@ -186,8 +157,7 @@ export default function Decks() {
 type DeckInfo = { d: Deck; total: number; started: number; due: number; active: boolean; easy?: boolean };
 
 function DeckIcon({ d }: { d: Deck }) {
-  const pic = DECK_ICON[d.id];
-  return pic ? <Pic src={pic[0]} ratio={pic[1]} bg={d.tint} size={42} h={24} /> : <IconTile mdi={d.icon} label={d.badge} bg={d.tint} fg={d.ink} size={42} />;
+  return <IconTile mdi={d.icon} label={d.badge} bg={d.tint} fg={d.ink} size={42} />;
 }
 
 /** To'plamlar ro'yxati: ikonka, nom, «Rejada» belgisi, progress va so'z soni. Bosilsa — to'plam sahifasi. */

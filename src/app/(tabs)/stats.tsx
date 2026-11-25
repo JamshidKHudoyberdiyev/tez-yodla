@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Plant } from '@/components/Art';
-import { HeroBg, Icon3D } from '@/components/Icon3D';
+import { HeroBg } from '@/components/Icon3D';
 import { gardenStages } from '@/lib/garden';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Chip, H1, H2, StatPanel, T } from '@/components/ui';
@@ -11,7 +11,7 @@ import { computeStats } from '@/lib/plan';
 import { retention } from '@/lib/retention';
 import { Flame, FreezeChip } from '@/components/Streak';
 import { useStore } from '@/lib/store';
-import { colors } from '@/lib/theme';
+import { colors, themed } from '@/lib/theme';
 
 const WEEKDAYS = ['Ya', 'Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh'];
 
@@ -91,10 +91,10 @@ export default function Stats() {
         </Pressable>
         <View style={{ flexDirection: 'row', gap: 10 }}>
           <Pressable accessibilityRole="button" onPress={() => router.push('/weekly')} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: 50, paddingHorizontal: 14, borderRadius: 16, backgroundColor: colors.surface }}>
-            <Icon3D name="chart" size={22} /><T w="bold" size={14} style={{ flex: 1 }}>Hafta yakuni</T>
+            <Feather name="bar-chart-2" size={19} color={themed('#6B3FA8')} /><T w="bold" size={14} style={{ flex: 1 }}>Hafta yakuni</T>
           </Pressable>
           <Pressable accessibilityRole="button" onPress={() => router.push('/streak-calendar')} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: 50, paddingHorizontal: 14, borderRadius: 16, backgroundColor: colors.surface }}>
-            <Icon3D name="calendar" size={21} /><T w="bold" size={14} style={{ flex: 1 }}>Faollik tarixi</T>
+            <Feather name="calendar" size={18} color={colors.error} /><T w="bold" size={14} style={{ flex: 1 }}>Faollik tarixi</T>
           </Pressable>
         </View>
 

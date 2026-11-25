@@ -6,7 +6,6 @@ import { Association, DiffLetters, Example, PluralTag, SoundButton, WordHead, Wo
 import { Button, Card, Group, Progress, RoundIconButton, Screen, T, useSheetBottom } from '@/components/ui';
 import { DayGoal, Flame, FreezeChip, WeekStrip } from '@/components/Streak';
 import { Plant } from '@/components/Art';
-import { Icon3D } from '@/components/Icon3D';
 import { notificationsSupported, requestPermission } from '@/lib/notify';
 import { Breathe, buzz, Confetti, Flip, Grow, Pop, RollNumber, Shake, SlideUp } from '@/components/Motion';
 import { gardenIndex } from '@/lib/garden';
@@ -337,7 +336,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
                 <View key={x.t} style={{ width: '30%', flexGrow: 1, alignItems: 'center', gap: 4, paddingTop: 14, paddingBottom: 12, paddingHorizontal: 4, borderRadius: 18, backgroundColor: colors.surfaceMuted }}>
                   <T w="extrabold" size={11} color={colors.muted} style={{ position: 'absolute', top: 8, left: 10 }}>{i + 1}</T>
                   <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: x.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 2 }}>
-                    <Icon3D name={x.icon} size={26} />
+                    <Feather name={x.icon} size={21} color={x.fg} />
                   </View>
                   <T w="extrabold" size={14} numberOfLines={1}>{x.t}</T>
                   <T size={11} color={colors.muted} numberOfLines={1}>{x.s}</T>
@@ -708,7 +707,7 @@ function ReminderAsk() {
   return (
     <View style={{ backgroundColor: colors.surface, borderRadius: 24, padding: 16, gap: 12, borderWidth: 2, borderColor: colors.limeSoft }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}><Icon3D name="bell" size={28} /></View>
+        <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}><Feather name="bell" size={23} color={colors.forestText} /></View>
         <View style={{ flex: 1 }}>
           <T w="extrabold" size={16}>Ertaga eslatib qo'yaymi?</T>
           <T size={13} color={colors.muted} style={{ lineHeight: 18 }}>Takrorlash vaqti kelganda so'zlari bilan xabar beraman. Kuniga ko'pi bilan 2 ta.</T>

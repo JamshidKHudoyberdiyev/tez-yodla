@@ -143,11 +143,11 @@ export function themed(c: string): string {
 export const ThemeContext = createContext<Scheme>('light');
 
 export const font = {
-  regular: 'Manrope_400Regular',
-  medium: 'Manrope_500Medium',
-  semibold: 'Manrope_600SemiBold',
-  bold: 'Manrope_700Bold',
-  extrabold: 'Manrope_800ExtraBold',
+  regular: 'Inter_400Regular',
+  medium: 'Inter_500Medium',
+  semibold: 'Inter_600SemiBold',
+  bold: 'Inter_700Bold',
+  extrabold: 'Inter_800ExtraBold',
 };
 
 export const radius = { sm: 12, md: 18, lg: 22, xl: 26, xxl: 30, pill: 999 };
