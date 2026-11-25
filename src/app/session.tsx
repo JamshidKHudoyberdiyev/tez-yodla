@@ -381,14 +381,6 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
               <>
                 <Label text="BO'LIMLAR" />
                 <PlanStack rows={rows} />
-                <View style={{ gap: 8, paddingHorizontal: 4 }}>
-                  {["Har bo'lim ~3 daqiqa. Oxirida qisqa natija.", "Unutilgan so'zlar shu bo'lim oxirida darhol qayta yodlanadi.", "Istalgan bo'limdan keyin to'xtasangiz ham natija saqlanadi."].map((t) => (
-                    <View key={t} style={{ flexDirection: 'row', gap: 10 }}>
-                      <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.forestText, marginTop: 7 }} />
-                      <T size={13.5} color={colors.inkSoft} style={{ flex: 1, lineHeight: 19 }}>{t}</T>
-                    </View>
-                  ))}
-                </View>
               </>
             ) : (
               <>
