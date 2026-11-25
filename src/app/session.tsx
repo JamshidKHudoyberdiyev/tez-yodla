@@ -1597,10 +1597,10 @@ function MatchPage({ group, audio, header, onMistake, onDone, pageLabel }: { gro
     const hidden = audio && side === 'L' && !look;
     const fg = look ? look.fg : isSel ? colors.forestText : isBad ? colors.wrongInk : colors.ink;
     return (
-      <Shake key={side + w.id} trigger={isBad ? wrong : null}>
-      <Pop trigger={!!look} from={look ? 0.92 : 1}>
+      <Shake key={side + w.id} trigger={isBad ? wrong : null} style={{ flex: 1, maxHeight: 130 }}>
+      <Pop trigger={!!look} from={look ? 0.92 : 1} style={{ flex: 1 }}>
       <Pressable accessibilityRole="button" accessibilityLabel={look ? `${label}, ${order + 1}-juft topildi` : hidden ? "So'zni eshitish" : label} accessibilityState={{ selected: isSel, disabled: !!look }} onPress={() => tap(side, w.id)}
-        style={{ minHeight: 64, borderRadius: 18, paddingHorizontal: 10, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+        style={{ flex: 1, minHeight: 64, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
           borderWidth: isSel ? 2 : 1.5,
           borderColor: look ? look.ring : isBad ? colors.wrong : isSel ? colors.forest : colors.line,
           backgroundColor: look ? look.bg : isBad ? colors.wrongSoft : isSel ? colors.limeSoft : colors.surface }}>
@@ -1610,9 +1610,9 @@ function MatchPage({ group, audio, header, onMistake, onDone, pageLabel }: { gro
           </View>
         ) : null}
         {hidden ? (
-          isSel ? <Breathe><Feather name="volume-2" size={28} color={colors.forestText} /></Breathe> : <Feather name="volume-2" size={26} color={isBad ? colors.wrongInk : colors.forestText} />
+          isSel ? <Breathe><Feather name="volume-2" size={32} color={colors.forestText} /></Breathe> : <Feather name="volume-2" size={30} color={isBad ? colors.wrongInk : colors.forestText} />
         ) : (
-          <T w="semibold" size={label.length > 18 ? 15 : 16} numberOfLines={3} style={{ textAlign: 'center', flexShrink: 1, lineHeight: label.length > 18 ? 19 : 21 }} color={fg}>{label}</T>
+          <T w="semibold" size={label.length > 18 ? 16 : 17} numberOfLines={3} style={{ textAlign: 'center', flexShrink: 1, lineHeight: label.length > 18 ? 20 : 22 }} color={fg}>{label}</T>
         )}
         {side === 'L' && !hidden && (!look || audio) ? <Feather name="volume-2" size={14} color={look ? look.fg : isSel ? colors.forestText : colors.muted} /> : null}
       </Pressable>
@@ -1633,7 +1633,8 @@ function MatchPage({ group, audio, header, onMistake, onDone, pageLabel }: { gro
         </View>
         {audio ? null : <T size={14} color={colors.muted}>So'zni bosing, keyin uning tarjimasini</T>}
       </View>
-      <View style={{ flexDirection: 'row', gap: 12 }}>
+      {/* Kartalar ekranni pastgacha to'ldiradi (bittasi ko'pi bilan 130px) */}
+      <View style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
         <View style={{ flex: 1, gap: 12 }}>{colHead(audio ? 'ESHITING' : 'INGLIZCHA')}{left.map((w) => tile('L', w))}</View>
         <View style={{ flex: 1, gap: 12 }}>{colHead("O'ZBEKCHA")}{right.map((w) => tile('R', w))}</View>
       </View>
@@ -1642,13 +1643,7 @@ function MatchPage({ group, audio, header, onMistake, onDone, pageLabel }: { gro
           <Feather name="check-circle" size={18} color={colors.forestText} />
           <T w="semibold" size={14} color={colors.forestText} style={{ flex: 1 }}>Hammasi topildi! {errors ? `Xatolar: ${errors}` : 'Bitta ham xatosiz.'}</T>
         </View>
-      ) : (
-        <View accessible accessibilityLabel={`${found.length} / ${group.length} juft topildi, xatolar: ${errors}`} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-          <T size={13} color={colors.muted}>
-            {found.length} / {group.length} juft topildi · {errors ? <T w="extrabold" size={13} color={colors.wrongInk}>{errors} xato</T> : "xato yo'q"}
-          </T>
-        </View>
-      )}
+      ) : null}
     </Screen>
   );
 }
