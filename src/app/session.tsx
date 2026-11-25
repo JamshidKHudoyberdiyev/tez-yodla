@@ -328,15 +328,6 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
   // ---------- Ekranlar ----------
 
   if (phase === 'plan') {
-    // Sozlamalarda o'chirilgan bosqichlar ko'rsatilmaydi; «Matn» — misol gaplari yetarli bo'lsa.
-    const planSteps = [
-      { icon: 'eye' as const, t: 'Tanishish', s: 'karta', bg: colors.limeSoft, fg: colors.forestText, on: true },
-      { icon: 'zap' as const, t: 'Eslash', s: "o'zingiz", bg: colors.limeSoft, fg: colors.forestText, on: on.recall },
-      { icon: 'check-square' as const, t: 'Test', s: '4 variant', bg: colors.limeSoft, fg: colors.forestText, on: on.test },
-      { icon: 'link' as const, t: 'Moslash', s: 'juftlar', bg: colors.limeSoft, fg: colors.forestText, on: on.match },
-      { icon: 'edit-3' as const, t: 'Yozish', s: 'yozasiz', bg: colors.limeSoft, fg: colors.forestText, on: on.write },
-      { icon: 'align-left' as const, t: 'Matn', s: "gap ichida", bg: colors.limeSoft, fg: colors.forestText, on: on.context && !!initial.groups[0] && contextItems(initial.groups[0]).length >= MIN_CONTEXT },
-    ].filter((x) => x.on);
     const newCount = initial.groups.reduce((n, g) => n + g.length, 0);
     const reviewN = initial.reviews.length;
     const relearnN = initial.pendingRelearn.length;
@@ -427,21 +418,6 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
             </Card>
             <Label text="TARTIB" />
             <PlanStack rows={rows} />
-            {newCount ? (
-              <>
-                <Label text={`HAR BIR YANGI SO'Z ${planSteps.length} BOSQICHDAN O'TADI`} />
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  {planSteps.map((x) => (
-                    <View key={x.t} style={{ width: 56, alignItems: 'center', gap: 5 }}>
-                      <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>
-                        <Feather name={x.icon} size={18} color={colors.forestText} />
-                      </View>
-                      <T size={11} color={colors.muted} numberOfLines={1}>{x.t}</T>
-                    </View>
-                  ))}
-                </View>
-              </>
-            ) : null}
           </>
         )}
       </Screen>
@@ -519,7 +495,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
         <Button title="Javobni ko'rsatish" onPress={() => setRevealed(true)} />
       )}>
         <Header onClose={close} progress={done / group.length} label={`Eslash · ${Math.min(done + 1, group.length)}/${group.length}`} seg={seg('Eslash')} />
-        <RecallCard key={`${w.id}-${queue.length}`} word={w} revealed={revealed} showIpa tip="Avval o'zingiz eslang — miya qancha zo'riqsa, so'z shuncha mustahkam o'rnashadi." />
+        <RecallCard key={`${w.id}-${queue.length}`} word={w} revealed={revealed} showIpa />
       </Screen>
     );
   }
