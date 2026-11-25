@@ -163,7 +163,7 @@ export function Screen({ children, scroll = true, bg = colors.bg, padded = true,
   return avoidKeyboard ? <View ref={avoid.ref as never} onLayout={avoid.onLayout} collapsable={false} style={{ flex: 1, backgroundColor: bg, paddingBottom: avoid.overlap }}>{body}</View> : body;
 }
 
-type Variant = 'lime' | 'dark' | 'forest' | 'outline' | 'ghost' | 'white' | 'danger' | 'dangerOutline';
+type Variant = 'lime' | 'dark' | 'forest' | 'outline' | 'ghost' | 'white' | 'danger' | 'dangerOutline' | 'dangerSoft';
 
 // Funksiya: ranglar mavzuga qarab render paytida o'qiladi.
 // Qora tugma yo'q: «dark» ham to'q yashil (ikkinchi darajali tugma). `ledge` — pastidagi qalin qirra.
@@ -176,6 +176,8 @@ const variantStyle = (): Record<Variant, { bg: string; fg: string; border?: stri
   outline: { bg: colors.surface, fg: colors.ink, border: colors.line },
   ghost: { bg: 'transparent', fg: colors.inkSoft },
   white: { bg: colors.surface, fg: colors.ink },
+  // Xavfsiz, lekin «chiqib ketish» amali: oq fon, qizil matn, ramkasiz
+  dangerSoft: { bg: colors.surface, fg: colors.error },
 });
 
 export function Button({ title, onPress, variant = 'lime', icon, iconRight, disabled, small, style, accessibilityLabel }: {

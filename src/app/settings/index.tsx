@@ -2,10 +2,11 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { ActivityIndicator, Modal, Pressable, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
 import { DeleteAccountRow } from '@/components/DeleteAccount';
 import { SettingGroup, SettingRow } from '@/components/SettingsUI';
-import { BackHeader, Button, Screen, T } from '@/components/ui';
+import { BackHeader, Button, IconTile, Screen, T } from '@/components/ui';
 import { AUTH_REQUIRED, useAuth } from '@/lib/auth';
 import { appVersion } from '@/lib/monitoring';
 import { shareCustomWordsCsv } from '@/lib/exportCsv';
@@ -41,6 +42,7 @@ export default function Settings() {
   const { state, streak } = useStore();
   const auth = useAuth();
   const [askOut, setAskOut] = useState(false);
+  const insets = useSafeAreaInsets();
   const [leaving, setLeaving] = useState(false);
   const p = state.prefs;
   const syncError = auth.status === 'error';
@@ -104,13 +106,16 @@ export default function Settings() {
       <T size={12} color={colors.muted} style={{ textAlign: 'center' }}>Tez Yodla {appVersion()}</T>
       <Modal visible={askOut} transparent animationType="slide" onRequestClose={() => setAskOut(false)}>
         <Pressable accessibilityLabel="Yopish" onPress={() => setAskOut(false)} style={{ flex: 1, backgroundColor: 'rgba(19,26,21,0.45)' }} />
-        <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 20, paddingBottom: 30, gap: 14 }}>
-          <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: 'center' }} />
+        <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20 + insets.bottom, gap: 12 }}>
+          <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: 'center', marginBottom: 6 }} />
+          <IconTile icon="log-out" size={48} />
           <T w="extrabold" size={22} accessibilityRole="header">Hisobdan chiqasizmi?</T>
-          <T size={15} color={colors.muted} style={{ lineHeight: 22 }}>Progressingiz bulutda saqlangan. Qayta kirsangiz — hammasi joyida bo'ladi.</T>
-          <Button title={leaving ? 'Chiqilmoqda…' : 'Chiqish'} variant="dangerOutline" disabled={leaving}
-            onPress={async () => { setLeaving(true); try { await auth.signOut(); } finally { setLeaving(false); setAskOut(false); } }} />
-          <Button title="Bekor qilish" variant="white" onPress={() => setAskOut(false)} />
+          <T size={15} color={colors.muted} style={{ lineHeight: 22 }}>So'zlaringiz va natijalaringiz saqlanadi. Qayta kirsangiz, hammasi joyida bo'ladi.</T>
+          <View style={{ flexDirection: 'row', gap: 12, marginTop: 6 }}>
+            <Button title="Bekor" variant="white" style={{ flex: 1 }} onPress={() => setAskOut(false)} />
+            <Button title={leaving ? 'Chiqilmoqda…' : 'Chiqish'} variant="dangerSoft" style={{ flex: 1 }} disabled={leaving}
+              onPress={async () => { setLeaving(true); try { await auth.signOut(); } finally { setLeaving(false); setAskOut(false); } }} />
+          </View>
         </View>
       </Modal>
     </Screen>
