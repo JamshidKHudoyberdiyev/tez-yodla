@@ -1,4 +1,4 @@
-import { capReviews, computeStats, estimateLevel, learnedOn, streak, todayPlan } from './plan';
+import { capReviews, computeStats, estimateLevel, learnedOn, splitParts, spreadBy, streak, todayPlan } from './plan';
 import { completeLearning, gradeCard, newCard } from './srs';
 import { WORDS } from '../data/words';
 
@@ -91,5 +91,25 @@ describe('plan', () => {
     expect(s.learned).toBe(1);
     expect(s.accuracy).toBe(75);
     expect(s.week[6].count).toBe(1);
+  });
+});
+
+describe('review parts', () => {
+  it('splits evenly without tiny tails', () => {
+    const n = (k: number) => splitParts(Array.from({ length: k }, (_, i) => i)).map((p) => p.length);
+    expect(n(0)).toEqual([]);
+    expect(n(7)).toEqual([7]);
+    expect(n(11)).toEqual([11]);
+    expect(n(15)).toEqual([15]);
+    expect(n(16)).toEqual([8, 8]);
+    expect(n(32)).toEqual([11, 11, 10]);
+    expect(n(40)).toEqual([10, 10, 10, 10]);
+    const many = Array.from({ length: 25 }, (_, i) => i);
+    expect(splitParts(many).flat()).toEqual(many);
+  });
+  it('avoids the same question type back to back when possible', () => {
+    const out = spreadBy(['w1', 'w2', 'w3', 't1', 't2', 'c1'], (x) => x[0]);
+    expect(out).toEqual(['w1', 't1', 'w2', 't2', 'w3', 'c1']);
+    expect(spreadBy(['w1', 'w2'], (x) => x[0])).toEqual(['w1', 'w2']);
   });
 });

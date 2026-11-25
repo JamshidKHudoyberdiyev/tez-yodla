@@ -51,6 +51,36 @@ export function capReviews<C>(reviews: C[], cap: number, reviewedToday: number, 
   return { today, queued: reviews.length - today.length };
 }
 
+/** Takrorlashning bir bo'limida eng ko'pi shuncha so'z (~3 daqiqa) */
+export const REVIEW_PART = 11;
+
+/**
+ * Ro'yxatni teng bo'limlarga bo'ladi: 32 → 11, 11, 10 (oxirida 1–2 ta so'z yolg'iz qolmaydi). Tartib saqlanadi.
+ * 15 tagacha (~4 daqiqa) bo'linmaydi — kichik takrorlashni bo'lish ortiqcha.
+ */
+export function splitParts<X>(items: X[], size = REVIEW_PART): X[][] {
+  const pages = items.length <= size + 4 ? Math.min(1, items.length) : Math.ceil(items.length / size);
+  const out: X[][] = [];
+  for (let i = 0, at = 0; i < pages; i++) {
+    const n = Math.ceil((items.length - at) / (pages - i));
+    out.push(items.slice(at, at + n));
+    at += n;
+  }
+  return out;
+}
+
+/** Bir xil turdagi savollar ketma-ket kelmasin: har safar oldingisidan boshqa turdagi eng birinchi element olinadi. */
+export function spreadBy<X>(items: X[], key: (x: X) => string): X[] {
+  const rest = [...items];
+  const out: X[] = [];
+  while (rest.length) {
+    const prev = out.length ? key(out[out.length - 1]) : null;
+    const i = Math.max(0, rest.findIndex((x) => key(x) !== prev));
+    out.push(rest.splice(i, 1)[0]);
+  }
+  return out;
+}
+
 /** «Yana N ta so'z» tugmasi bir bosishda beradigan qo'shimcha yangi so'zlar */
 export const EXTRA_NEW = 5;
 

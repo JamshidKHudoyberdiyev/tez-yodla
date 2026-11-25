@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, Modal, Platform, Pressable, TextInput, View, useWindowDimensions } from 'react-native';
 import { Association, DiffLetters, Example, PluralTag, SoundButton, transSize, WordHead, wordSize, WordPhoto } from '@/components/WordParts';
-import { Button, Card, Group, Progress, RoundIconButton, Screen, T, useSheetBottom } from '@/components/ui';
+import { Button, Card, Group, IconTile, Progress, RoundIconButton, Screen, T, useSheetBottom } from '@/components/ui';
 import { DayGoal, Flame, FreezeChip, WeekStrip } from '@/components/Streak';
 import { Plant } from '@/components/Art';
 import { notificationsSupported, requestPermission } from '@/lib/notify';
@@ -12,7 +12,7 @@ import { gardenIndex } from '@/lib/garden';
 import { DAY_GOAL, milestoneLabel, MILESTONES, type StreakInfo } from '@/lib/streak';
 import { buildChoices, groupTimeline, intervalLabel, relativeDay, shuffle, uzDate } from '@/lib/drill';
 import { deckById, Word } from '@/data/words';
-import { capReviews, EXTRA_NEW, todayPlan } from '@/lib/plan';
+import { capReviews, EXTRA_NEW, splitParts, spreadBy, todayPlan } from '@/lib/plan';
 import { clozeOf, clozeParts, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence } from '@/lib/speech';
 import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
@@ -21,7 +21,7 @@ import { useStore } from '@/lib/store';
 import { activeDraft, type SessionDraft } from '@/lib/draft';
 import { colors, font } from '@/lib/theme';
 
-type Phase = 'plan' | 'learn' | 'recall' | 'test' | 'match' | 'write' | 'context' | 'groupDone' | 'review' | 'relearnIntro' | 'done';
+type Phase = 'plan' | 'learn' | 'recall' | 'test' | 'match' | 'write' | 'context' | 'groupDone' | 'review' | 'partDone' | 'relearnIntro' | 'done';
 type StepName = 'Tanishish' | 'Eslash' | 'Test' | 'Moslash' | 'Yozish' | 'Matn';
 /** «Matnda» qadami uchun misol gapida so'zi bor kamida shuncha so'z kerak */
 const MIN_CONTEXT = 3;
@@ -33,6 +33,13 @@ type GroupKind = 'new' | 'relearn';
 type ExitKind = 'group' | 'relearn' | 'review';
 const PHASE_STEP: Partial<Record<Phase, StepName>> = { learn: 'Tanishish', recall: 'Eslash', test: 'Test', match: 'Moslash', write: 'Yozish', context: 'Matn' };
 const STEP_PHASE: Record<StepName, Phase> = { Tanishish: 'learn', Eslash: 'recall', Test: 'test', Moslash: 'match', Yozish: 'write', Matn: 'context' };
+/** Takrorlashda shu so'zga qanday savol berilishi */
+function modeOfCard(c: CardT, w: Word | undefined): ReviewMode {
+  return reviewModeFor(c, !!w?.example && exampleHasWord(w.word, w.example));
+}
+/** Savol turlari reja ekranida: nomi, izohi va ikonkasi */
+const MODE_GROUP: Record<ReviewMode, 'test' | 'cloze' | 'write' | 'listen'> = { choice: 'test', reverse: 'test', cloze: 'cloze', write: 'write', listen: 'listen', listenChoice: 'listen' };
+const MODE_INFO = { test: { t: 'Test', s: 'variantdan tanlaysiz', icon: 'check-square' }, cloze: { t: 'Gap ichida', s: "bo'sh joyni to'ldirasiz", icon: 'align-left' }, write: { t: 'Yozish', s: 'tarjimadan yozasiz', icon: 'edit-3' }, listen: { t: 'Eshitish', s: 'eshitib topasiz', icon: 'volume-2' } } as const;
 
 const leave = () => (router.canGoBack() ? router.back() : router.replace('/home'));
 
@@ -128,6 +135,10 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
   const [lastGroupResult, setLastGroupResult] = useState<{ word: Word; ok: boolean }[]>([]);
   const [lastStats, setLastStats] = useState({ testOk: 0, matchErrors: 0, writeOk: 0 });
   const [reviewIdx, setReviewIdx] = useState(0);
+  /** Takrorlash 11 tadan bo'limlarga bo'linadi; har bo'lim ichida savol turlari aralashtiriladi */
+  const parts = useMemo(() => splitParts(initial.reviews).map((p) => spreadBy(p, (c) => modeOfCard(c, wordById(c.wordId)))), [initial]);
+  const [reviewPart, setReviewPart] = useState(0);
+  const partStats = useRef({ ok: 0, total: 0, grownFrom: 0 });
   const relearnIds = useRef<string[]>([...initial.pendingRelearn]);
   const totals = useRef({ learned: 0, reviewed: 0, forgotten: 0 });
   /** Takrorlashda bir bosqich o'sgan so'zlar — yakunda «bog'ingizda o'sdi» deb ko'rsatiladi */
@@ -273,12 +284,23 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
     else startNewGroups();
   };
 
+  const startPart = (i: number) => {
+    setReviewPart(i);
+    setReviewIdx(0);
+    setRevealed(false);
+    partStats.current = { ok: 0, total: 0, grownFrom: grown.current.length };
+    setPhase('review');
+  };
+
   const start = () => {
-    if (initial.reviews.length) {
-      setReviewIdx(0);
-      setRevealed(false);
-      setPhase('review');
-    } else afterReviews();
+    if (parts.length) startPart(0);
+    else afterReviews();
+  };
+
+  /** Bo'lim (va uning qayta yodlashi) tugagach: keyingi bo'lim yoki yangi so'zlar */
+  const afterPart = () => {
+    if (reviewPart + 1 < parts.length) startPart(reviewPart + 1);
+    else startNewGroups();
   };
 
   const finishWrite = () => {
@@ -292,7 +314,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
     } else {
       store.relearned(group.map((w) => w.id));
       relearnIds.current = [];
-      startNewGroups();
+      afterPart();
     }
   };
 
@@ -316,48 +338,118 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
       { icon: 'align-left' as const, t: 'Matn', s: "gap ichida", bg: colors.limeSoft, fg: colors.forestText, on: on.context && !!initial.groups[0] && contextItems(initial.groups[0]).length >= MIN_CONTEXT },
     ].filter((x) => x.on);
     const newCount = initial.groups.reduce((n, g) => n + g.length, 0);
-    const empty = !newCount && !initial.reviews.length && !initial.pendingRelearn.length;
+    const reviewN = initial.reviews.length;
+    const relearnN = initial.pendingRelearn.length;
+    const empty = !newCount && !reviewN && !relearnN;
+    const mins = Math.max(1, Math.ceil(newCount * 0.8 + reviewN * 0.25 + relearnN * 0.4));
+    const late = initial.reviews.filter((c) => c.due < today).length;
+    const reviewOnly = !!reviewN && !newCount && !relearnN;
+    const rows: PlanItem[] = [
+      ...parts.map((p, i) => ({ icon: 'rotate-ccw' as const, tone: 'blue' as const, title: parts.length > 1 ? (reviewOnly ? `${i + 1}-bo'lim` : `Takrorlash · ${i + 1}-bo'lim`) : 'Takrorlash',
+        sub: `${p.length} ta so'z · ${i === 0 && late && parts.length > 1 ? 'eng kechikkanlar' : `~${Math.max(1, Math.ceil(p.length * 0.25))} daq`}` })),
+      ...(relearnN ? [{ icon: 'alert-circle' as const, tone: 'peach' as const, title: 'Qayta yodlash', sub: `${relearnN} ta unutilgan so'z · ~${Math.max(1, Math.ceil(relearnN * 0.4))} daq` }] : []),
+      ...initial.groups.map((g, i) => ({ icon: 'plus' as const, tone: 'green' as const, title: `${groupBase + i + 1}-guruh`, sub: `${g.length} ta yangi so'z · ~${Math.ceil(g.length * 0.8)} daq` })),
+    ];
+    const modeCount = new Map<keyof typeof MODE_INFO, number>();
+    for (const c of initial.reviews) { const k = MODE_GROUP[modeOfCard(c, wordById(c.wordId))]; modeCount.set(k, (modeCount.get(k) ?? 0) + 1); }
+    const startTitle = reviewN ? (parts.length > 1 ? "1-bo'limni boshlash" : reviewOnly ? 'Takrorlashni boshlash' : 'Takrorlashdan boshlash') : relearnN ? 'Qayta yodlashni boshlash' : '1-guruhni boshlash';
     return (
-      <Screen footer={empty ? <Button title="Bosh sahifaga" onPress={close} /> : <Button title={initial.reviews.length ? 'Takrorlashni boshlash' : initial.pendingRelearn.length ? 'Qayta yodlashni boshlash' : '1-guruhni boshlash'} icon="play" onPress={start} />}>
-        <Header onClose={close} title={deckTitle ?? (only === 'review' ? 'Takrorlash' : only === 'new' ? "Yangi so'zlar" : "Bugungi mashg'ulot")} />
+      <Screen footer={empty ? <Button title="Bosh sahifaga" onPress={close} /> : <Button title={startTitle} iconRight="arrow-right" onPress={start} />}>
+        <Header onClose={close} title={deckTitle ?? (only === 'review' || reviewOnly ? 'Takrorlash' : only === 'new' ? "Yangi so'zlar" : "Bugungi mashg'ulot")} />
         {empty ? (
           <Card style={{ alignItems: 'center', gap: 10, paddingVertical: 32 }}>
             <Feather name="check-circle" size={40} color={colors.forestText} />
             <T w="extrabold" size={20}>Bugungi reja bajarildi</T>
             <T size={14} color={colors.muted} style={{ textAlign: 'center' }}>Ertaga yangi takrorlashlar keladi. Xohlasangiz, o'qiyotgan matningizdan so'z qo'shing.</T>
           </Card>
+        ) : reviewOnly ? (
+          <>
+            <Card style={{ gap: 14 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <IconTile icon="rotate-ccw" tone="blue" size={52} />
+                <View style={{ flex: 1 }}>
+                  <T w="extrabold" size={28} style={{ letterSpacing: -0.5 }}>{reviewN} ta so'z</T>
+                  <T size={14} color={colors.muted}>~{mins} daqiqa · {parts.length > 1 ? `${parts.length} bo'limga bo'lindi` : "har so'zga bitta savol"}</T>
+                </View>
+              </View>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                {late ? <CountChip n={late} label="kechikkan" bg={colors.peach} fg={colors.error} /> : null}
+                {reviewN - late ? <CountChip n={reviewN - late} label="bugungi" bg={colors.blueSoft} fg={colors.blue} /> : null}
+              </View>
+            </Card>
+            {parts.length > 1 ? (
+              <>
+                <Label text="BO'LIMLAR" />
+                <PlanStack rows={rows} />
+                <View style={{ gap: 8, paddingHorizontal: 4 }}>
+                  {["Har bo'lim ~3 daqiqa. Oxirida qisqa natija.", "Unutilgan so'zlar shu bo'lim oxirida darhol qayta yodlanadi.", "Istalgan bo'limdan keyin to'xtasangiz ham natija saqlanadi."].map((t) => (
+                    <View key={t} style={{ flexDirection: 'row', gap: 10 }}>
+                      <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.forestText, marginTop: 7 }} />
+                      <T size={13.5} color={colors.inkSoft} style={{ flex: 1, lineHeight: 19 }}>{t}</T>
+                    </View>
+                  ))}
+                </View>
+              </>
+            ) : (
+              <>
+                <Label text="SAVOL TURLARI" />
+                <Group>
+                  {(Object.keys(MODE_INFO) as (keyof typeof MODE_INFO)[]).filter((k) => modeCount.get(k)).map((k, i, a) => (
+                    <View key={k} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56, paddingHorizontal: 16, borderBottomWidth: i < a.length - 1 ? 1 : 0, borderBottomColor: colors.divider }}>
+                      <IconTile icon={MODE_INFO[k].icon} size={36} />
+                      <View style={{ flex: 1 }}>
+                        <T w="bold" size={15}>{MODE_INFO[k].t}</T>
+                        <T size={12.5} color={colors.muted}>{MODE_INFO[k].s}</T>
+                      </View>
+                      <T w="bold" size={15}>{modeCount.get(k)}</T>
+                    </View>
+                  ))}
+                </Group>
+                <Label text="BUGUNGI SO'ZLAR" />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                  {initial.reviews.slice(0, 8).map((c) => wordById(c.wordId)).filter(Boolean).map((x) => (
+                    <View key={x!.id} style={{ paddingHorizontal: 11, paddingVertical: 6, borderRadius: 999, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line }}>
+                      <T w="semibold" size={14}>{x!.word}</T>
+                    </View>
+                  ))}
+                  {reviewN > 8 ? (
+                    <View style={{ paddingHorizontal: 11, paddingVertical: 6, borderRadius: 999, backgroundColor: colors.limeSoft }}>
+                      <T w="bold" size={14} color={colors.forestText}>+{reviewN - 8}</T>
+                    </View>
+                  ) : null}
+                </View>
+                <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 4 }}>
+                  <Feather name="zap" size={15} color={colors.muted} style={{ marginTop: 2 }} />
+                  <T size={13} color={colors.muted} style={{ flex: 1, lineHeight: 18 }}>Eslasangiz so'z keyingi safar uzoqroq kutadi, unutsangiz bugun yana so'raladi.</T>
+                </View>
+              </>
+            )}
+          </>
         ) : (
           <>
+            <Card style={{ gap: 2 }}>
+              <T w="extrabold" size={28} style={{ letterSpacing: -0.5 }}>~{mins} daqiqa</T>
+              <T size={14} color={colors.muted}>
+                {[rows.length > 1 ? `${rows.length} bosqich` : null, reviewN ? `${reviewN} takrorlash` : null, newCount ? `${newCount} yangi so'z` : null].filter(Boolean).join(' · ')}
+              </T>
+            </Card>
+            <Label text="TARTIB" />
+            <PlanStack rows={rows} />
             {newCount ? (
               <>
-            <T w="extrabold" size={18} accessibilityRole="header">Har bir so'z {planSteps.length} bosqichdan o'tadi</T>
-            <Card style={{ padding: 12, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {planSteps.map((x, i) => (
-                <View key={x.t} style={{ width: '30%', flexGrow: 1, alignItems: 'center', gap: 4, paddingTop: 14, paddingBottom: 12, paddingHorizontal: 4, borderRadius: 18, backgroundColor: colors.surfaceMuted }}>
-                  <T w="extrabold" size={11} color={colors.muted} style={{ position: 'absolute', top: 8, left: 10 }}>{i + 1}</T>
-                  <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: x.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 2 }}>
-                    <Feather name={x.icon} size={21} color={x.fg} />
-                  </View>
-                  <T w="extrabold" size={14} numberOfLines={1}>{x.t}</T>
-                  <T size={11} color={colors.muted} numberOfLines={1}>{x.s}</T>
+                <Label text={`HAR BIR YANGI SO'Z ${planSteps.length} BOSQICHDAN O'TADI`} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  {planSteps.map((x) => (
+                    <View key={x.t} style={{ width: 56, alignItems: 'center', gap: 5 }}>
+                      <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>
+                        <Feather name={x.icon} size={18} color={colors.forestText} />
+                      </View>
+                      <T size={11} color={colors.muted} numberOfLines={1}>{x.t}</T>
+                    </View>
+                  ))}
                 </View>
-              ))}
-            </Card>
               </>
             ) : null}
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 4 }}>
-              <T w="extrabold" size={18}>Bugungi reja</T>
-              <T w="bold" size={13} color={colors.muted}>
-                {newCount ? `${newCount} so'z · ` : ''}~{Math.max(1, Math.ceil(newCount * 0.8 + initial.reviews.length * 0.25))} daq
-              </T>
-            </View>
-            <Group>
-              {[
-                ...(initial.reviews.length ? [{ title: 'Takrorlash', sub: `Vaqti kelgan ${initial.reviews.length} ta so'z · ~${Math.ceil(initial.reviews.length * 0.25)} daqiqa` }] : []),
-                ...(initial.pendingRelearn.length ? [{ title: 'Qayta yodlash', sub: `${initial.pendingRelearn.length} ta unutilgan so'z` }] : []),
-                ...initial.groups.map((g, i) => ({ title: `${i + 1}-guruh · ${g.length} ta yangi so'z`, sub: `~${Math.ceil(g.length * 0.8)} daqiqa` })),
-              ].map((r, i, a) => <PlanRow key={r.title} n={i + 1} title={r.title} sub={r.sub} active={i === 0} last={i === a.length - 1} />)}
-            </Group>
           </>
         )}
       </Screen>
@@ -594,7 +686,8 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
   }
 
   if (phase === 'review') {
-    const card = initial.reviews[reviewIdx];
+    const part = parts[reviewPart];
+    const card = part[reviewIdx];
     const w = wordById(card.wordId)!;
     const next = (g: Grade) => {
       const live = state.cards[card.wordId] ?? card;
@@ -603,16 +696,21 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
       if (to > from) grown.current.push({ word: w.word, from, to });
       store.review(card.wordId, g);
       totals.current.reviewed += 1;
+      partStats.current.total += 1;
+      if (g !== 'again') partStats.current.ok += 1;
       if (g === 'again') {
         totals.current.forgotten += 1;
         relearnIds.current = [...relearnIds.current, card.wordId];
       }
       setRevealed(false);
-      if (reviewIdx + 1 < initial.reviews.length) setReviewIdx(reviewIdx + 1);
-      else afterReviews();
+      if (reviewIdx + 1 < part.length) setReviewIdx(reviewIdx + 1);
+      else if (parts.length < 2) afterReviews();
+      // Oxirgi bo'lim xatosiz tugasa — natija ekranisiz davom etadi (yakunda umumiy natija bor)
+      else if (reviewPart + 1 === parts.length && !relearnIds.current.length) startNewGroups();
+      else setPhase('partDone');
     };
-    const mode = reviewModeFor(card, !!w.example && exampleHasWord(w.word, w.example));
-    const header = <Header onClose={close} progress={reviewIdx / initial.reviews.length} label={`Takrorlash · ${reviewIdx + 1}/${initial.reviews.length}`} />;
+    const mode = modeOfCard(card, w);
+    const header = <Header onClose={close} progress={reviewIdx / part.length} label={parts.length > 1 ? `${reviewPart + 1}-bo'lim · ${reviewIdx + 1}/${part.length}` : `Takrorlash · ${reviewIdx + 1}/${part.length}`} />;
     if (mode === 'choice' || mode === 'reverse' || mode === 'listenChoice') {
       const live = state.cards[card.wordId] ?? card;
       const gap = gradeCard(live, 'good', today, retentionFactor(state.reviewLog, today)).due - today;
@@ -630,13 +728,70 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
     return <WriteStep key={card.wordId + reviewIdx} word={w} mode={mode} header={<>{header}<ModeBadge mode={mode} /></>} onDone={next} />;
   }
 
+  if (phase === 'partDone') {
+    const st = partStats.current;
+    const ws = relearnIds.current.map((id) => wordById(id)).filter(Boolean) as Word[];
+    const grownN = grown.current.length - st.grownFrom;
+    const nextPart = reviewPart + 1 < parts.length ? parts[reviewPart + 1] : null;
+    const pct = st.total ? st.ok / st.total : 0;
+    return (
+      <Screen footer={
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          <Button title="To'xtatish" variant="white" style={{ paddingHorizontal: 18 }} onPress={() => setPhase('done')} />
+          <Button style={{ flex: 1 }} iconRight="arrow-right"
+            title={ws.length ? 'Qayta yodlash' : nextPart ? `${reviewPart + 2}-bo'limni boshlash` : 'Davom etish'}
+            onPress={() => (ws.length ? startGroup(ws, 'relearn') : afterPart())} />
+        </View>
+      }>
+        <Header onClose={close} title={`${reviewPart + 1}-bo'lim tugadi`} />
+        <Card style={{ alignItems: 'center', gap: 6, paddingVertical: 22 }}>
+          <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9 }}>ESLADINGIZ</T>
+          <T w="extrabold" size={48} color={colors.forestText} style={{ letterSpacing: -1.2, lineHeight: 56 }}>{st.ok} / {st.total}</T>
+          <View style={{ alignSelf: 'stretch', marginHorizontal: 12 }}><Progress value={pct} height={8} track={colors.line} /></View>
+          {grownN ? <T size={13.5} color={colors.muted} style={{ marginTop: 4 }}>{grownN} ta so'z bog'da o'sdi</T> : null}
+        </Card>
+        {ws.length ? (
+          <>
+            <Label text={`QAYTA YODLASH · ${ws.length}`} color={colors.error} />
+            <Group>
+              {ws.map((w, i) => (
+                <View key={w.id} style={{ flexDirection: 'row', alignItems: 'center', minHeight: 52, paddingHorizontal: 16, gap: 12, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider }}>
+                  <T w="bold" size={16} style={{ flex: 1 }}>{w.word}</T>
+                  <T size={14} color={colors.muted} style={{ flexShrink: 1, textAlign: 'right' }}>{w.translation}</T>
+                </View>
+              ))}
+            </Group>
+            <T size={13.5} color={colors.muted} style={{ paddingHorizontal: 4, lineHeight: 19 }}>
+              {ws.length === 1 ? 'Uni' : 'Ularni'} hozir qisqa qayta yodlaymiz (~{Math.max(1, Math.ceil(ws.length * 0.4))} daq){nextPart ? `, keyin ${reviewPart + 2}-bo'limga o'tasiz.` : '.'}
+            </T>
+          </>
+        ) : null}
+        {nextPart ? (
+          <>
+            <Label text="KEYINGISI" />
+            <Group>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 72, paddingHorizontal: 16 }}>
+                <IconTile icon="rotate-ccw" tone="blue" size={44} />
+                <View style={{ flex: 1 }}>
+                  <T w="bold" size={16}>{reviewPart + 2}-bo'lim</T>
+                  <T size={13} color={colors.muted}>{nextPart.length} ta so'z · ~{Math.max(1, Math.ceil(nextPart.length * 0.25))} daq</T>
+                </View>
+                <T size={13} color={colors.muted}>{reviewPart + 2}/{parts.length}</T>
+              </View>
+            </Group>
+          </>
+        ) : null}
+      </Screen>
+    );
+  }
+
   if (phase === 'relearnIntro') {
     const ws = relearnIds.current.map((id) => wordById(id)).filter(Boolean) as Word[];
     return (
       <Screen footer={<Button title="Qayta yodlash" icon="rotate-ccw" onPress={() => startGroup(ws, 'relearn')} />}>
         <Header onClose={close} title="Qayta yodlash" />
-        <Card style={{ gap: 10, backgroundColor: colors.amberBg, borderWidth: 1, borderColor: colors.amberLine }}>
-          <Feather name="rotate-ccw" size={28} color={colors.amber} />
+        <Card style={{ gap: 10 }}>
+          <IconTile icon="alert-circle" tone="peach" size={48} />
           <T w="extrabold" size={20}>{ws.length} ta so'z unutildi</T>
           <T size={15} color={colors.inkSoft}>Bu normal holat. Ularni hozir qisqa qilib qayta yodlaymiz: kartani ko'rib chiqasiz, keyin kichik test. Ertaga yana tekshiramiz.</T>
         </Card>
@@ -885,21 +1040,40 @@ export function Header({ onClose, progress, label, title, seg }: { onClose: () =
   );
 }
 
-function PlanRow({ n, title, sub, active, last }: { n: number; title: string; sub: string; active?: boolean; last?: boolean }) {
+type PlanItem = { icon: React.ComponentProps<typeof Feather>['name']; tone: 'green' | 'blue' | 'peach'; title: string; sub: string };
+
+/** Reja bosqichlari tagma-tag: chiziq bilan ulangan, birinchisi — «Hozir» */
+function PlanStack({ rows }: { rows: PlanItem[] }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderBottomWidth: last ? 0 : 1, borderBottomColor: colors.divider }}>
-      <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: active ? colors.forest : colors.surfaceMuted, alignItems: 'center', justifyContent: 'center' }}>
-        <T w="extrabold" size={15} color={active ? colors.lime : colors.muted}>{n}</T>
-      </View>
-      <View style={{ flex: 1 }}>
-        <T w="extrabold" size={16}>{title}</T>
-        <T size={12} color={colors.muted}>{sub}</T>
-      </View>
-      {active ? (
-        <View style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: colors.limeSoft }}>
-          <T w="extrabold" size={11} color={colors.forestText}>HOZIR</T>
+    <Group>
+      {rows.map((r, i) => (
+        <View key={r.title} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 72, paddingHorizontal: 16, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider }}>
+          {i < rows.length - 1 ? <View style={{ position: 'absolute', left: 37, top: 58, width: 2, height: 30, backgroundColor: colors.line }} /> : null}
+          <IconTile icon={r.icon} tone={r.tone} size={44} />
+          <View style={{ flex: 1 }}>
+            <T w="bold" size={16}>{r.title}</T>
+            <T size={13} color={colors.muted}>{r.sub}</T>
+          </View>
+          {i === 0 ? (
+            <View style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: colors.lime }}>
+              <T w="bold" size={12} color={colors.limeInk}>Hozir</T>
+            </View>
+          ) : <T size={13} color={colors.muted}>{i + 1}</T>}
         </View>
-      ) : null}
+      ))}
+    </Group>
+  );
+}
+
+function Label({ text, color }: { text: string; color?: string }) {
+  return <T w="bold" size={12} color={color ?? colors.muted} style={{ letterSpacing: 0.9, marginTop: 4, marginBottom: -4, paddingHorizontal: 4 }}>{text}</T>;
+}
+
+function CountChip({ n, label, bg, fg }: { n: number; label: string; bg: string; fg: string }) {
+  return (
+    <View style={{ flex: 1, height: 42, borderRadius: 12, backgroundColor: bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+      <T w="extrabold" size={16} color={fg}>{n}</T>
+      <T size={13} color={fg}>{label}</T>
     </View>
   );
 }
