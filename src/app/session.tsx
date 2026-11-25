@@ -1171,24 +1171,18 @@ export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Ex
   const parts = target.trim().split(/\s+/).length;
   const sizeHint = parts > 1 ? `${parts} ta so'z` : `${target.length} ta harf`;
   const ok = !!result && exact;
-  const ring = !result ? colors.forestLine : ok ? colors.lime : colors.wrong;
+  const ring = !result ? colors.line : ok ? colors.lime : colors.wrong;
 
   const footer = !result ? (
     <Button title="Tekshirish" disabled={!text.trim()} onPress={check} />
   ) : (
     <>
-      <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        {ok ? <Confetti trigger spread={40} /> : null}
-        <View style={{ flex: 1 }}>
-          <T w="bold" size={20} color={ok ? colors.forestText : colors.wrongInk}>{ok ? "To'g'ri!" : "Noto'g'ri"}</T>
-          {ok ? (
-            <T size={14} color={colors.forestText}>{word.word} — {word.translation}{hint > 0 ? ' · yordam bilan' : ''}</T>
-          ) : (
-            <T size={14} color={colors.inkSoft}>To'g'risi: <T w="extrabold" size={20} color={colors.forestText}>{target}</T></T>
-          )}
-        </View>
-        <SoundButton text={target} size={44} bg={ok ? colors.surface : colors.limeSoft} />
-      </View>
+      {ok ? <Confetti trigger spread={40} /> : null}
+      <ResultHead ok={ok}
+        sub={ok
+          ? <T size={14} color={colors.inkSoft}><T w="bold" size={14} color={colors.ink}>{word.word}</T> — {word.translation}{hint > 0 ? ' · yordam bilan' : ''}</T>
+          : <T size={14} color={colors.inkSoft}>To'g'risi: <T w="bold" size={16} color={colors.forestText}>{target}</T></T>}
+        right={<SoundButton text={target} size={40} bg={colors.surface} />} />
       <Button title="Davom etish" iconRight="arrow-right" onPress={() => finish(result)} />
     </>
   );
@@ -1212,7 +1206,7 @@ export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Ex
         ) : (
           <>
             <View style={{ alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <T w="bold" size={13} color={colors.muted}>Inglizcha qanday yoziladi?</T>
+              <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9 }}>INGLIZCHA YOZING</T>
               <SoundButton text={target} label="Tinglash" size={40} />
             </View>
             <T w="extrabold" size={wordSize(word.translation, 40)} color={colors.forestText} style={{ textAlign: 'center', lineHeight: Math.round(wordSize(word.translation, 40) * 1.15) }}>{word.translation}</T>
@@ -1236,8 +1230,8 @@ export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Ex
           accessibilityLabel="Javobingiz"
           placeholder="Shu yerga yozing"
           placeholderTextColor={colors.placeholder}
-          style={{ alignSelf: 'stretch', height: 64, borderRadius: 20, borderWidth: 2.5, borderColor: ring, backgroundColor: result && ok ? colors.limeSoft : colors.surface,
-            paddingHorizontal: 16, textAlign: 'center', fontFamily: font.extrabold, fontSize: 24, letterSpacing: 0.5, color: result && !ok ? colors.wrongInk : colors.ink }}
+          style={{ alignSelf: 'stretch', height: 60, borderRadius: 16, borderWidth: 1.5, borderColor: ring, backgroundColor: !result ? colors.surface : ok ? colors.limeSoft : colors.wrongSoft,
+            paddingHorizontal: 16, textAlign: 'center', fontFamily: font.bold, fontSize: 24, letterSpacing: 0.5, color: !result ? colors.ink : ok ? colors.forestText : colors.wrongInk }}
         />
         {hint > 0 && !result ? <T size={13} color={colors.inkSoft}>Boshlanishi: «{target.slice(0, hint)}…»</T> : null}
       </Card>
@@ -1249,6 +1243,22 @@ export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Ex
       ) : null}
       {hint > 0 && word.association && !result ? <Association word={word} /> : null}
     </Screen>
+  );
+}
+
+/** Javob paneli sarlavhasi — Test, Yozish va Gap ichida bir xil: doirada ✓/✕, «To'g'ri!» / «Noto'g'ri», ostida izoh */
+function ResultHead({ ok, sub, right }: { ok: boolean; sub?: React.ReactNode; right?: React.ReactNode }) {
+  return (
+    <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+      <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: ok ? colors.forest : colors.wrong, alignItems: 'center', justifyContent: 'center' }}>
+        <Feather name={ok ? 'check' : 'x'} size={20} color="#FFFFFF" />
+      </View>
+      <View style={{ flex: 1 }}>
+        <T w="bold" size={20} color={ok ? colors.forestText : colors.wrongInk}>{ok ? "To'g'ri!" : "Noto'g'ri"}</T>
+        {sub}
+      </View>
+      {right}
+    </View>
   );
 }
 
@@ -1306,21 +1316,16 @@ export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = 
       sheetBorder={picked ? (correct ? colors.lime : colors.wrong) : undefined}
       footer={picked ? (
         <SlideUp style={{ gap: 14 }}>
-          <View accessibilityLiveRegion="polite" style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            <View style={{ flex: 1 }}>
-              {correct ? <T w="extrabold" size={22} color={colors.forestText} style={{ lineHeight: 28 }}>Barakalla!</T> : (
-                <T w="bold" size={13} color={colors.wrongInk}>To'g'ri javob</T>
-              )}
-              {!correct ? <T w="extrabold" size={22} color={colors.ink} style={{ lineHeight: 27 }}>{word.word} — <T w="extrabold" size={22} color={colors.forestText}>{word.translation}</T></T> : null}
-              {correct && variant !== 'word' ? <T w="extrabold" size={17} color={colors.ink}>{word.word} — <T w="extrabold" size={17} color={colors.forestText}>{word.translation}</T></T> : null}
-              {correct && word.example && variant === 'word' ? <T size={13} color={colors.forestText} numberOfLines={2}>{word.example}{word.exampleUz ? ` — ${word.exampleUz}` : ''}</T> : null}
-              {correct && note ? <T size={13} color={colors.forestText}>{note}</T> : null}
-            </View>
-          </View>
-          {!correct && word.example ? (
-            <T size={13} color={colors.inkSoft} style={{ lineHeight: 19 }}>{word.example}{word.exampleUz ? ` — ${word.exampleUz}` : ''}</T>
+          <ResultHead ok={correct}
+            sub={correct
+              ? (variant !== 'word' ? <T size={14} color={colors.inkSoft}><T w="bold" size={14} color={colors.ink}>{word.word}</T> — {word.translation}</T> : note ? <T size={13.5} color={colors.inkSoft}>{note}</T> : null)
+              : <T size={14} color={colors.inkSoft}>To'g'risi: <T w="bold" size={14} color={colors.forestText}>{variant === 'reverse' ? word.word : word.translation}</T>{retryNote ? ' · oxirida yana so\'raladi' : ''}</T>} />
+          {word.example ? (
+            <T size={13.5} color={colors.inkSoft} style={{ lineHeight: 19 }} numberOfLines={3}>
+              {word.example}{word.exampleUz ? <T size={13.5} color={colors.muted}> — {word.exampleUz}</T> : null}
+            </T>
           ) : null}
-          {!correct && retryNote ? <T size={12} color={colors.muted}>Bu so'z guruh oxirida yana so'raladi.</T> : null}
+          {correct && variant !== 'word' && note ? <T size={13} color={colors.muted}>{note}</T> : null}
           <Button title="Davom etish" iconRight="arrow-right" onPress={() => finish(correct)} />
         </SlideUp>
       ) : undefined}>
@@ -1354,14 +1359,14 @@ export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = 
         {choices.map((c, i) => {
           const isAnswer = c === answer;
           const state = !picked ? 'idle' : isAnswer ? 'right' : c === picked ? 'wrong' : 'dim';
-          const bg = state === 'right' ? colors.limeSoft : colors.surface;
+          const bg = state === 'right' ? colors.limeSoft : state === 'wrong' ? colors.wrongSoft : colors.surface;
           const border = state === 'right' ? colors.lime : state === 'wrong' ? colors.wrong : colors.line;
           const option = (
             <Pressable accessibilityRole="radio" accessibilityState={{ checked: c === picked, disabled: !!picked }} accessibilityLabel={c} onPress={() => pick(c)}
               style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 58, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 18, borderWidth: 1.5, borderColor: border, backgroundColor: bg,
-                opacity: state === 'dim' ? 0.45 : 1, transform: [{ scale: pressed && !picked ? 0.98 : 1 }],
+                transform: [{ scale: pressed && !picked ? 0.98 : 1 }],
                 ...(state === 'right' ? { shadowColor: colors.forest, shadowOpacity: 0.18, shadowRadius: 12, shadowOffset: { width: 0, height: 8 }, elevation: 4 } : null) })}>
-              <T w={state === 'right' ? 'bold' : 'semibold'} size={17} style={{ flex: 1 }} color={state === 'right' ? colors.forestText : state === 'wrong' ? colors.wrongInk : colors.ink}>{c}</T>
+              <T w={state === 'right' ? 'bold' : 'semibold'} size={17} style={{ flex: 1 }} color={state === 'right' ? colors.forestText : state === 'wrong' ? colors.wrongInk : state === 'dim' ? colors.placeholder : colors.ink}>{c}</T>
               {state === 'right' && c === picked ? <T w="extrabold" size={13} color={colors.forestText}>+1</T> : null}
             </Pressable>
           );
