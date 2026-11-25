@@ -10,8 +10,8 @@ import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
 const STATUS: Record<WordStatus, { label: string; bg: () => string; fg: () => string }> = {
-  learned: { label: "O'rganildi", bg: () => colors.forest, fg: () => '#FFFFFF' },
-  learning: { label: "O'rganilyapti", bg: () => colors.limeSoft, fg: () => colors.forestText },
+  learned: { label: "O'rganildi", bg: () => colors.limeSoft, fg: () => colors.forestText },
+  learning: { label: "O'rganilyapti", bg: () => colors.surfaceMuted, fg: () => colors.inkSoft },
   new: { label: 'Yangi', bg: () => colors.bg, fg: () => colors.muted },
 };
 
@@ -68,7 +68,7 @@ export default function DeckScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
           <IconTile mdi={deck.icon} label={deck.badge} bg={deck.tint} fg={deck.ink} size={64} />
           <View style={{ flex: 1, gap: 2 }}>
-            <T w="extrabold" size={24} accessibilityRole="header">{deck.title}</T>
+            <T w="extrabold" size={22} accessibilityRole="header">{deck.title}</T>
             <T size={13} color={colors.muted}>{p.total} so'z · {deck.subtitle}</T>
           </View>
         </View>

@@ -309,11 +309,11 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
     // Sozlamalarda o'chirilgan bosqichlar ko'rsatilmaydi; «Matn» — misol gaplari yetarli bo'lsa.
     const planSteps = [
       { icon: 'eye' as const, t: 'Tanishish', s: 'karta', bg: colors.limeSoft, fg: colors.forestText, on: true },
-      { icon: 'zap' as const, t: 'Eslash', s: "o'zingiz", bg: colors.blueSoft, fg: colors.blue, on: on.recall },
+      { icon: 'zap' as const, t: 'Eslash', s: "o'zingiz", bg: colors.limeSoft, fg: colors.forestText, on: on.recall },
       { icon: 'check-square' as const, t: 'Test', s: '4 variant', bg: colors.limeSoft, fg: colors.forestText, on: on.test },
-      { icon: 'link' as const, t: 'Moslash', s: 'juftlar', bg: colors.blueSoft, fg: colors.blue, on: on.match },
-      { icon: 'edit-3' as const, t: 'Yozish', s: 'yozasiz', bg: colors.amberSoft, fg: colors.amber, on: on.write },
-      { icon: 'align-left' as const, t: 'Matn', s: "gap ichida", bg: colors.blueSoft, fg: colors.blue, on: on.context && !!initial.groups[0] && contextItems(initial.groups[0]).length >= MIN_CONTEXT },
+      { icon: 'link' as const, t: 'Moslash', s: 'juftlar', bg: colors.limeSoft, fg: colors.forestText, on: on.match },
+      { icon: 'edit-3' as const, t: 'Yozish', s: 'yozasiz', bg: colors.limeSoft, fg: colors.forestText, on: on.write },
+      { icon: 'align-left' as const, t: 'Matn', s: "gap ichida", bg: colors.limeSoft, fg: colors.forestText, on: on.context && !!initial.groups[0] && contextItems(initial.groups[0]).length >= MIN_CONTEXT },
     ].filter((x) => x.on);
     const newCount = initial.groups.reduce((n, g) => n + g.length, 0);
     const empty = !newCount && !initial.reviews.length && !initial.pendingRelearn.length;

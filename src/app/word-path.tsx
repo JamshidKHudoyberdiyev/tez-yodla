@@ -8,12 +8,12 @@ type Icon = React.ComponentProps<typeof Feather>['name'];
 /** «So'z yo'li»: takrorlashda so'z qanday shakllarda so'ralishi (lib/srs.ts → reviewModeFor) */
 export default function WordPath() {
   const steps: { when: string; name: string; desc: string; icon: Icon; bg: string; fg: string }[] = [
-    { when: 'Kechqurun', name: 'Test: tarjimasini toping', desc: "inglizcha → o'zbekcha, 4 variant", icon: 'moon', bg: colors.nightSoft, fg: colors.night },
-    { when: '1 kun', name: 'Teskari test', desc: "o'zbekcha → inglizcha, 4 variant", icon: 'repeat', bg: colors.blueSoft, fg: colors.blue },
+    { when: 'Kechqurun', name: 'Test: tarjimasini toping', desc: "inglizcha → o'zbekcha, 4 variant", icon: 'moon', bg: colors.limeSoft, fg: colors.forestText },
+    { when: '1 kun', name: 'Teskari test', desc: "o'zbekcha → inglizcha, 4 variant", icon: 'repeat', bg: colors.limeSoft, fg: colors.forestText },
     { when: '3 kun', name: 'Matnda', desc: "gapdagi bo'sh joyga so'zni yozasiz", icon: 'file-text', bg: colors.limeSoft, fg: colors.forestText },
-    { when: '1 hafta', name: 'Yozish', desc: "o'zbekchasini ko'rib inglizchasini yozasiz", icon: 'edit-3', bg: colors.amberSoft, fg: colors.amber },
-    { when: '2 hafta', name: 'Eshitib topish', desc: "faqat ovoz — ma'nosini tanlaysiz", icon: 'volume-2', bg: colors.blueSoft, fg: colors.blue },
-    { when: '1 oy', name: 'Yozish', desc: 'yordamsiz, to\'liq yozish', icon: 'edit-3', bg: colors.amberSoft, fg: colors.amber },
+    { when: '1 hafta', name: 'Yozish', desc: "o'zbekchasini ko'rib inglizchasini yozasiz", icon: 'edit-3', bg: colors.limeSoft, fg: colors.forestText },
+    { when: '2 hafta', name: 'Eshitib topish', desc: "faqat ovoz — ma'nosini tanlaysiz", icon: 'volume-2', bg: colors.limeSoft, fg: colors.forestText },
+    { when: '1 oy', name: 'Yozish', desc: 'yordamsiz, to\'liq yozish', icon: 'edit-3', bg: colors.limeSoft, fg: colors.forestText },
     { when: '3 oy', name: 'Nazorat: teskari test', desc: "o'tsa — so'z to'liq o'rganildi", icon: 'award', bg: colors.limeSoft, fg: colors.forestText },
   ];
   return (

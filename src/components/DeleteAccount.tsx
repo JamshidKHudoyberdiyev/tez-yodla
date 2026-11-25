@@ -96,7 +96,7 @@ function DeleteAccountSheet({ visible, onClose }: { visible: boolean; onClose: (
                   <Feather name="trash-2" size={26} color={colors.wrong} />
                 </View>
               )}
-              <T w="extrabold" size={24} accessibilityRole="header">Hisobingiz o'chirilsinmi?</T>
+              <T w="extrabold" size={22} accessibilityRole="header">Hisobingiz o'chirilsinmi?</T>
               {kb ? null : (
                 <View style={{ gap: 4 }}>
                   {items.map((i) => <T key={i} size={14} color={colors.inkSoft}>• {i}</T>)}

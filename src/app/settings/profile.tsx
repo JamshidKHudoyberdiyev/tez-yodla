@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import { Plant } from '@/components/Art';
-import { HeroBg } from '@/components/Icon3D';
 import { achievements, ArtGlyph, artBg, Avatar, AVATAR_ARTS, type Progress } from '@/components/Avatar';
 import { Flame } from '@/components/Streak';
 import { LEVELS, LevelLadder } from '@/components/Level';
@@ -45,22 +44,21 @@ export default function Profile() {
       </View>
 
       {/* Kim ekansiz */}
-      <View style={{ backgroundColor: colors.forest, borderRadius: 32, padding: 20, gap: 16, overflow: 'hidden' }}>
-        <HeroBg />
+      <View style={{ backgroundColor: colors.surface, borderRadius: 26, padding: 18, gap: 16, shadowColor: '#1E321E', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <Pressable accessibilityRole="button" accessibilityLabel="Avatarni o'zgartirish" onPress={() => setEditing(true)}>
-            <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} photo={p.avatarPhoto} size={84} onDark />
-            <View style={{ position: 'absolute', right: -6, bottom: -6, width: 30, height: 30, borderRadius: 15, backgroundColor: colors.lime, borderWidth: 3, borderColor: colors.forestLine, alignItems: 'center', justifyContent: 'center' }}>
+            <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} photo={p.avatarPhoto} size={84} />
+            <View style={{ position: 'absolute', right: -6, bottom: -6, width: 30, height: 30, borderRadius: 15, backgroundColor: colors.lime, borderWidth: 3, borderColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Feather name="edit-2" size={13} color={colors.forestDeep} />
             </View>
           </Pressable>
           <View style={{ flex: 1, minWidth: 0 }}>
-            <T w="extrabold" size={20} color="#FFFFFF" numberOfLines={2} style={{ lineHeight: 24 }}>{state.name || 'Ismingizni kiriting'}</T>
-            <T size={13} color={colors.onForestSoft}>{state.level} · {LEVELS[levelIdx]?.name}</T>
+            <T w="extrabold" size={20} numberOfLines={2} style={{ lineHeight: 24 }}>{state.name || 'Ismingizni kiriting'}</T>
+            <T size={13} color={colors.muted}>{state.level} · {LEVELS[levelIdx]?.name}</T>
             {sinceDays > 0 ? (
-              <View style={{ flexDirection: 'row', alignSelf: 'flex-start', alignItems: 'center', gap: 6, marginTop: 8, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.12)' }}>
-                <Feather name="calendar" size={12} color={colors.lime} />
-                <T w="bold" size={12} color="#FFFFFF">{sinceDays} kundan beri o'rganyapti</T>
+              <View style={{ flexDirection: 'row', alignSelf: 'flex-start', alignItems: 'center', gap: 6, marginTop: 8, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: colors.limeSoft }}>
+                <Feather name="calendar" size={12} color={colors.forestText} />
+                <T w="bold" size={12} color={colors.forestText}>{sinceDays} kundan beri o'rganyapti</T>
               </View>
             ) : null}
           </View>
@@ -133,11 +131,11 @@ export default function Profile() {
 
 function HeroStat({ icon, value, label, sub }: { icon: React.ReactNode; value: number; label: string; sub?: string }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', gap: 2, paddingVertical: 10, paddingHorizontal: 4, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.2)' }}>
+    <View style={{ flex: 1, alignItems: 'center', gap: 2, paddingVertical: 10, paddingHorizontal: 4, borderRadius: 16, backgroundColor: colors.surfaceMuted }}>
       {icon}
-      <T w="extrabold" size={22} color="#FFFFFF" style={{ lineHeight: 26 }}>{value}</T>
-      <T size={11} color={colors.onForestSoft} style={{ textAlign: 'center' }}>{label}</T>
-      {sub ? <T w="bold" size={10} color={colors.lime}>{sub}</T> : null}
+      <T w="extrabold" size={22} style={{ lineHeight: 26 }}>{value}</T>
+      <T size={11} color={colors.muted} style={{ textAlign: 'center' }}>{label}</T>
+      {sub ? <T w="bold" size={10} color={colors.forestText}>{sub}</T> : null}
     </View>
   );
 }

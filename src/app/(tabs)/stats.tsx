@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Plant } from '@/components/Art';
-import { HeroBg } from '@/components/Icon3D';
 import { gardenStages } from '@/lib/garden';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Chip, H1, H2, StatPanel, T } from '@/components/ui';
@@ -37,20 +36,19 @@ export default function Stats() {
 
         {/* Esda qolish: takrorlashlarda to'g'ri topilganlar ulushi (oxirgi 30 kun) */}
         <Pressable accessibilityRole="button" accessibilityLabel={enough ? `Esda qolish ${r.pct} foiz. So'z yo'li haqida` : "Esda qolish: hali ma'lumot kam. So'z yo'li haqida"} onPress={() => router.push('/word-path')}
-          style={({ pressed }) => ({ backgroundColor: colors.forest, borderRadius: 28, padding: 18, gap: 4, overflow: 'hidden', opacity: pressed ? 0.92 : 1 })}>
-          <HeroBg />
+          style={({ pressed }) => ({ backgroundColor: colors.surface, borderRadius: 24, padding: 18, gap: 4, shadowColor: '#1E321E', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2, opacity: pressed ? 0.92 : 1 })}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <T w="extrabold" size={12} color={colors.lime} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Esda qolish</T>
-            {trend !== null && trend !== 0 ? <Chip label={`${trend > 0 ? '+' : ''}${trend}% ${trend > 0 ? '↑' : '↓'}`} bg={colors.lime} fg={colors.limeInk} /> : null}
+            <T w="extrabold" size={12} color={colors.forestText} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Esda qolish</T>
+            {trend !== null && trend !== 0 ? <Chip label={`${trend > 0 ? '+' : ''}${trend}% ${trend > 0 ? '↑' : '↓'}`} bg={colors.limeSoft} fg={colors.forestText} /> : null}
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 10 }}>
-            <T w="extrabold" size={48} color="#FFFFFF" style={{ lineHeight: 56 }}>{enough ? `${r.pct}%` : '—'}</T>
-            <T size={14} color={colors.onForestSoft} style={{ flex: 1 }}>{enough ? "so'zlar esda qolmoqda" : "hali ma'lumot kam"}</T>
+            <T w="extrabold" size={44} color={colors.forestText} style={{ lineHeight: 52 }}>{enough ? `${r.pct}%` : '—'}</T>
+            <T size={14} color={colors.inkSoft} style={{ flex: 1 }}>{enough ? "so'zlar esda qolmoqda" : "hali ma'lumot kam"}</T>
           </View>
-          <T size={13} color={colors.onForestSoft} style={{ lineHeight: 18 }}>
+          <T size={13} color={colors.muted} style={{ lineHeight: 18 }}>
             {enough ? "Oxirgi 30 kun takrorlashlarida to'g'ri topilganlar ulushi. 85–90% — eng yaxshi oraliq." : `${10 - r.n} ta takrorlashdan keyin bu yerda so'zlaringiz qanchalik esda qolayotgani chiqadi.`}
           </T>
-          <T w="bold" size={12} color={colors.lime} style={{ marginTop: 4 }}>So'z yo'li qanday ishlaydi →</T>
+          <T w="bold" size={13} color={colors.forestText} style={{ marginTop: 4 }}>So'z yo'li qanday ishlaydi →</T>
         </Pressable>
 
         {enough && buckets.length ? (
@@ -84,25 +82,24 @@ export default function Stats() {
           style={{ flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: colors.surface, borderRadius: 26, padding: 16 }}>
           <Flame size={44} dim={!streak.todayDone} />
           <View style={{ flex: 1 }}>
-            <T w="extrabold" size={24}>{streak.current} kun</T>
+            <T w="extrabold" size={22}>{streak.current} kun</T>
             <T size={13} color={colors.muted}>Rekord {streak.best} · jami {streak.totalDays} kun</T>
           </View>
           <FreezeChip n={streak.freezes} />
         </Pressable>
         <View style={{ flexDirection: 'row', gap: 10 }}>
           <Pressable accessibilityRole="button" onPress={() => router.push('/weekly')} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: 50, paddingHorizontal: 14, borderRadius: 16, backgroundColor: colors.surface }}>
-            <Feather name="bar-chart-2" size={19} color={themed('#6B3FA8')} /><T w="bold" size={14} style={{ flex: 1 }}>Hafta yakuni</T>
+            <Feather name="bar-chart-2" size={19} color={colors.forestText} /><T w="bold" size={14} style={{ flex: 1 }}>Hafta yakuni</T>
           </Pressable>
           <Pressable accessibilityRole="button" onPress={() => router.push('/streak-calendar')} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, height: 50, paddingHorizontal: 14, borderRadius: 16, backgroundColor: colors.surface }}>
-            <Feather name="calendar" size={18} color={colors.error} /><T w="bold" size={14} style={{ flex: 1 }}>Faollik tarixi</T>
+            <Feather name="calendar" size={18} color={colors.forestText} /><T w="bold" size={14} style={{ flex: 1 }}>Faollik tarixi</T>
           </Pressable>
         </View>
 
-        <View style={{ backgroundColor: colors.forest, borderRadius: 30, padding: 18, gap: 14, overflow: 'hidden' }}>
-          <HeroBg />
+        <View style={{ backgroundColor: colors.surface, borderRadius: 24, padding: 16, gap: 12, shadowColor: '#1E321E', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <T w="bold" size={12} color={colors.onForestSoft} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Umumiy natija</T>
-            <Chip label={state.level} />
+            <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Umumiy natija</T>
+            <Chip label={state.level} bg={colors.limeSoft} fg={colors.forestText} />
           </View>
           <StatPanel items={[
             { value: s.learned, label: "o'rganilgan", accent: true },

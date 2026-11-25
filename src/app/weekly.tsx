@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Flame } from '@/components/Streak';
 import { SnowArt } from '@/components/Art';
-import { HeroBg } from '@/components/Icon3D';
 import { BackHeader, Button, Screen, T } from '@/components/ui';
 import { uzDate } from '@/lib/drill';
 import { practiced, weekDays, WEEKDAYS } from '@/lib/streak';
@@ -41,11 +40,10 @@ export default function Weekly() {
       </View>
       <T size={13} color={colors.muted} style={{ textAlign: 'center', marginTop: -4 }}>{uzDate(days[0])} – {uzDate(days[6])}</T>
 
-      <View style={{ backgroundColor: colors.forest, borderRadius: 26, padding: 18, gap: 14, overflow: 'hidden' }}>
-        <HeroBg />
+      <View style={{ backgroundColor: colors.surface, borderRadius: 24, padding: 16, gap: 12, shadowColor: '#1E321E', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <Flame size={28} />
-          <T w="extrabold" size={18} color="#FFFFFF" style={{ flex: 1 }}>{activeDays} / {passed} kun{prev ? '' : ` · streak ${s.current}`}</T>
+          <T w="extrabold" size={18} style={{ flex: 1 }}>{activeDays} / {passed} kun{prev ? '' : ` · streak ${s.current}`}</T>
         </View>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {[
@@ -53,9 +51,9 @@ export default function Weekly() {
             { v: sum('reviewed'), l: 'takrorlash' },
             { v: accuracy === null ? '—' : `${accuracy}%`, l: 'eslash' },
           ].map((x) => (
-            <View key={x.l} style={{ flex: 1, padding: 10, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.2)' }}>
-              <T w="extrabold" size={22} color="#FFFFFF">{x.v}</T>
-              <T size={12} color={colors.onForestSoft}>{x.l}</T>
+            <View key={x.l} style={{ flex: 1, padding: 10, borderRadius: 16, backgroundColor: colors.surfaceMuted }}>
+              <T w="extrabold" size={22} color={colors.forestText}>{x.v}</T>
+              <T size={12} color={colors.muted}>{x.l}</T>
             </View>
           ))}
         </View>

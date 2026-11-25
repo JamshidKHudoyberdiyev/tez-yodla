@@ -86,7 +86,7 @@ export default function Home() {
             onRestart={() => { setDraft(null); router.push({ pathname: '/session', params: draft.deck ? { deck: draft.deck } : draft.extra ? { extra: '1' } : { only: 'new' } }); }} />
         ) : (
         /* Bugungi yangi so'zlar (halqa faqat yangi so'zlarni sanaydi) */
-        <Hero mascot={newDone ? 112 : 142}>
+        <Hero mascot={newDone ? 100 : 118}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
             <View accessible accessibilityLabel={`Bugun ${newToday} ta yangi so'z o'rganildi, reja ${newTotal}`} style={{ width: 84, height: 84 }}>
               <Ring size={84} stroke={8} track="rgba(255,255,255,0.22)" value={newDone ? 1 : newToday / Math.max(1, newTotal)} />
@@ -103,7 +103,7 @@ export default function Home() {
               <T w="extrabold" size={12} color="#D7F76A" style={{ letterSpacing: 1, textTransform: 'uppercase' }}>
                 {outOfWords ? "So'zlar tugadi" : newDone ? 'Reja bajarildi' : "Yangi so'zlar"}
               </T>
-              <T w="extrabold" size={21} color="#FFFFFF" style={{ lineHeight: 26, marginTop: 2 }} accessibilityRole="header">
+              <T w="extrabold" size={19} color="#FFFFFF" style={{ lineHeight: 24, marginTop: 2 }} accessibilityRole="header">
                 {outOfWords ? (newToday ? 'Barakalla!' : "Yangi so'z qolmadi") : newDone ? 'Barakalla!' : newToday > 0 ? `Yana ${newLeft} ta so'z` : `${newLeft} ta yangi so'z`}
               </T>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
@@ -237,13 +237,13 @@ function HeroGhost({ icon, title, onPress }: { icon: IconName; title: string; on
 function ResumeCard({ draft, onResume, onRestart }: { draft: SessionDraft; onResume: () => void; onRestart: () => void }) {
   const at = draft.steps.indexOf(draft.step);
   return (
-    <Hero mascot={110}>
+    <Hero mascot={96}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.lime }} />
         <T w="extrabold" size={12} color="#D7F76A" style={{ letterSpacing: 1, textTransform: 'uppercase' }}>To'xtatilgan mashg'ulot</T>
       </View>
       <View style={{ gap: 4, marginTop: -6 }}>
-        <T w="extrabold" size={22} color="#FFFFFF" style={{ lineHeight: 28 }} accessibilityRole="header">{draft.groupIndex + 1}-guruh · {draft.step}</T>
+        <T w="extrabold" size={20} color="#FFFFFF" style={{ lineHeight: 26 }} accessibilityRole="header">{draft.groupIndex + 1}-guruh · {draft.step}</T>
         <T size={13} color="#E3F0E4">{draft.wordIds.length} ta yangi so'z · ~{draftMinutes(draft)} daqiqa qoldi</T>
       </View>
       <View accessible accessibilityLabel={`${draft.steps.length} bosqichdan ${at + 1}-bosqich: ${draft.step}`} style={{ gap: 6, maxWidth: 230 }}>

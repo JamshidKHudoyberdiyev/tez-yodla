@@ -18,8 +18,6 @@ import { colors } from '@/lib/theme';
 const INK = '#12351E';
 const MUTED = '#5E665F';
 const DUE = '#E4882A';
-const CLOUD_L = require('../../../assets/garden/cloud-left.webp');
-const CLOUD_R = require('../../../assets/garden/cloud-right.webp');
 const HILLS = require('../../../assets/garden/hills.webp');
 
 /** Bir qator: bosqich o'simligi + kartasi. C — o'simlik asosi (qator ichida), yo'lak C-16 dan o'tadi. */
@@ -51,7 +49,7 @@ export default function Garden() {
       {focused ? <StatusBar style="dark" /> : null}
       <Screen bg="transparent" edges={['top']} footer={dueTotal ? <Button title={`${dueTotal} ta so'zni sug'orish`} onPress={water} /> : undefined}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <T w="extrabold" size={32} color={INK} style={{ flex: 1, letterSpacing: -0.8, lineHeight: 40 }} accessibilityRole="header">So'zlar bog'i</T>
+          <T w="extrabold" size={26} color={INK} style={{ flex: 1, letterSpacing: -0.5, lineHeight: 34 }} accessibilityRole="header">So'zlar bog'i</T>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.8)' }}>
             <Leaf />
             <T w="extrabold" size={15} color={INK}>{total} so'z</T>
@@ -102,10 +100,9 @@ function Sky() {
     <Svg style={{ position: 'absolute', left: 0, top: 0 }} width="100%" height="100%" {...hidden}>
       <Defs>
         <LinearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor="#CDF0E0" />
-          <Stop offset="0.3" stopColor="#DFF4E2" />
-          <Stop offset="0.7" stopColor="#F0F5DD" />
-          <Stop offset="1" stopColor="#F9F6DF" />
+          {/* Minimal: ilovaning umumiy fonidan sal yashilroq — boshqa ekranlardan ajralib ketmaydi */}
+          <Stop offset="0" stopColor="#E8F2E4" />
+          <Stop offset="1" stopColor="#F4F4EA" />
         </LinearGradient>
       </Defs>
       <Rect x="0" y="0" width="100%" height="100%" fill="url(#sky)" />
@@ -175,14 +172,7 @@ function StageRow({ stage: s, index, width, today, onOpen }: { stage: GardenStag
   const cw = Math.min(216, left ? width - (cx + 56) - 12 : cx - 56 - 12);
   return (
     <View style={{ height: ROW, zIndex: 10 - index }}>
-      {index === 0 ? (
-        <>
-          <Image source={CLOUD_L} {...hidden} style={{ position: 'absolute', left: -10, top: C - 82, width: 78, height: 54 }} />
-          <Image source={CLOUD_R} {...hidden} style={{ position: 'absolute', right: 4, top: C - 72, width: 68, height: 45 }} />
-        </>
-      ) : (
-        <PathPiece width={width} fromX={xOf(index - 1)} toX={cx} />
-      )}
+      {index > 0 ? <PathPiece width={width} fromX={xOf(index - 1)} toX={cx} /> : null}
       <View {...hidden} style={{ position: 'absolute', left: cx - 75, top: C - ph + 20, width: 150, height: ph + 24 }}>
         <Svg width={150} height={44} style={{ position: 'absolute', left: 0, bottom: 0 }}>
           <Defs>

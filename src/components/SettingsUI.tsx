@@ -7,9 +7,10 @@ import { colors, font } from '@/lib/theme';
 export type Tone = 'green' | 'amber' | 'blue' | 'gray' | 'danger';
 const TONES = (): Record<Tone, { bg: string; fg: string }> => ({
   green: { bg: colors.limeSoft, fg: colors.forestText },
-  amber: { bg: colors.amberSoft, fg: colors.amber },
-  blue: { bg: colors.blueSoft, fg: colors.blue },
-  gray: { bg: colors.bg, fg: colors.ink },
+  // Minimal uslub: hamma qatorlar bir xil yashil kvadratda (rang ortiqcha shovqin bermasin)
+  amber: { bg: colors.limeSoft, fg: colors.forestText },
+  blue: { bg: colors.limeSoft, fg: colors.forestText },
+  gray: { bg: colors.limeSoft, fg: colors.forestText },
   danger: { bg: colors.amberSoft, fg: colors.error },
 });
 

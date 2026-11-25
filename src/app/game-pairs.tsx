@@ -92,8 +92,8 @@ function Board({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
               <Pressable accessibilityRole="button" accessibilityLabel={isOpen ? t.text : 'Yopiq karta'} accessibilityState={{ disabled: isMatched }} onPress={() => tap(t)} style={{ flex: 1 }}>
                 <Flip flipped={isOpen} style={{ flex: 1 }}
                   front={
-                    <View style={{ flex: 1, borderRadius: 20, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center', borderBottomWidth: 5, borderBottomColor: colors.forestDeep }}>
-                      <View style={{ opacity: 0.5 }}><Plant stage={1} size={40} /></View>
+                    <View style={{ flex: 1, borderRadius: 20, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center', borderBottomWidth: 4, borderBottomColor: colors.lime }}>
+                      <View style={{ opacity: 0.85 }}><Plant stage={1} size={36} /></View>
                     </View>
                   }
                   back={

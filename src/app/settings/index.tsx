@@ -12,7 +12,6 @@ import { timeLabel } from '@/lib/reminders';
 import { dailyMinutes } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
-import { HeroBg } from '@/components/Icon3D';
 
 /** Bulutga saqlash holati — hisob qatorining o'ng chetida: saqlangan / saqlanmoqda / xato (qayta urinish) */
 function SyncBadge({ status, onRetry }: { status: string; onRetry: () => void }) {
@@ -53,16 +52,15 @@ export default function Settings() {
       <BackHeader title="Sozlamalar" />
 
       <Pressable accessibilityRole="button" accessibilityLabel={`Profil: ${state.name || 'ism kiritilmagan'}, ${state.level}. Ochish`} onPress={() => router.push('/settings/profile')}
-        style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 26, backgroundColor: colors.forest, overflow: 'hidden', opacity: pressed ? 0.9 : 1 })}>
-        <HeroBg />
-        <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} photo={p.avatarPhoto} size={56} onDark />
+        style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 24, backgroundColor: colors.surface, shadowColor: '#1E321E', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 5 }, elevation: 2, opacity: pressed ? 0.9 : 1 })}>
+        <Avatar name={state.name} color={p.avatarColor} art={p.avatarArt} photo={p.avatarPhoto} size={56} />
         <View style={{ flex: 1 }}>
-          <T w="extrabold" size={19} color="#FFFFFF" numberOfLines={1}>{state.name || 'Ismingizni kiriting'}</T>
-          <T size={13} color={colors.onForestSoft} numberOfLines={1}>
+          <T w="extrabold" size={18} numberOfLines={1}>{state.name || 'Ismingizni kiriting'}</T>
+          <T size={13} color={colors.muted} numberOfLines={1}>
             {state.level} · {streak.current} kunlik streak
           </T>
         </View>
-        <T w="bold" size={13} color={colors.lime}>Profil</T>
+        <T w="bold" size={13} color={colors.forestText}>Profil</T>
       </Pressable>
 
       {AUTH_REQUIRED && auth.session ? (
@@ -107,7 +105,7 @@ export default function Settings() {
         <Pressable accessibilityLabel="Yopish" onPress={() => setAskOut(false)} style={{ flex: 1, backgroundColor: 'rgba(19,26,21,0.45)' }} />
         <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 20, paddingBottom: 30, gap: 14 }}>
           <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: 'center' }} />
-          <T w="extrabold" size={24} accessibilityRole="header">Hisobdan chiqasizmi?</T>
+          <T w="extrabold" size={22} accessibilityRole="header">Hisobdan chiqasizmi?</T>
           <T size={15} color={colors.muted} style={{ lineHeight: 22 }}>Progressingiz bulutda saqlangan. Qayta kirsangiz — hammasi joyida bo'ladi.</T>
           <Button title={leaving ? 'Chiqilmoqda…' : 'Chiqish'} variant="dangerOutline" disabled={leaving}
             onPress={async () => { setLeaving(true); try { await auth.signOut(); } finally { setLeaving(false); setAskOut(false); } }} />

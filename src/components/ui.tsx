@@ -218,7 +218,7 @@ export function Button({ title, onPress, variant = 'lime', icon, iconRight, disa
       ]}
     >
       {icon ? <Feather name={icon} size={small ? 16 : 18} color={v.fg} /> : null}
-      <T w="extrabold" size={small ? 14 : 17} color={v.fg} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ flexShrink: 1 }}>{title}</T>
+      <T w="extrabold" size={small ? 14 : 16} color={v.fg} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ flexShrink: 1 }}>{title}</T>
       {iconRight ? <Feather name={iconRight} size={small ? 16 : 19} color={v.fg} /> : null}
     </Pressable>
   );
@@ -245,7 +245,15 @@ const OUTLINE: Record<string, string> = {
   home: 'home-outline', cart: 'cart-outline', 'weather-sunny': 'weather-partly-cloudy',
 };
 
-export function IconTile({ icon, mdi, label, bg = colors.surfaceMuted, fg = colors.ink, size = 48 }: { icon?: IconName; mdi?: string; label?: string; bg?: string; fg?: string; size?: number }) {
+/**
+ * Ikonka kvadrati. Minimal uslub: ikonkali kvadratlar faqat 3 rangda — yashil (asosiy), ko'k (takrorlash), shaftoli (xatolar).
+ * Ikonka bo'lsa `bg`/`fg` e'tiborga olinmaydi, rang `tone` bilan tanlanadi; matnli belgi (A1, B2…) o'z rangida qoladi.
+ */
+export function IconTile({ icon, mdi, label, bg = colors.surfaceMuted, fg = colors.ink, size = 48, tone = 'green' }: { icon?: IconName; mdi?: string; label?: string; bg?: string; fg?: string; size?: number; tone?: 'green' | 'blue' | 'peach' }) {
+  if (icon || mdi) {
+    bg = tone === 'blue' ? colors.blueSoft : tone === 'peach' ? colors.peach : colors.limeSoft;
+    fg = tone === 'blue' ? colors.blue : tone === 'peach' ? colors.error : colors.forestText;
+  }
   return (
     <View style={{ width: size, height: size, borderRadius: size * 0.33, backgroundColor: themed(bg), alignItems: 'center', justifyContent: 'center' }}>
       {mdi ? <MaterialCommunityIcons name={(OUTLINE[mdi] ?? mdi) as never} size={size * 0.52} color={themed(fg)} />
@@ -280,7 +288,7 @@ export function SectionLabel({ children }: { children: string }) {
 }
 
 export function H1({ children, style, color }: { children: ReactNode; style?: StyleProp<TextStyle>; color?: string }) {
-  return <T w="extrabold" size={28} color={color} style={style} accessibilityRole="header">{children}</T>;
+  return <T w="extrabold" size={26} color={color} style={style} accessibilityRole="header">{children}</T>;
 }
 
 export function H2({ children, color }: { children: ReactNode; color?: string }) {
@@ -305,7 +313,7 @@ export function BackHeader({ title, onBack, right }: { title?: string; onBack?: 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
       <RoundIconButton icon="chevron-left" label="Orqaga" onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/')))} />
-      {title ? <T w="extrabold" size={22} style={{ flex: 1 }} accessibilityRole="header">{title}</T> : <View style={{ flex: 1 }} />}
+      {title ? <T w="extrabold" size={20} style={{ flex: 1 }} accessibilityRole="header">{title}</T> : <View style={{ flex: 1 }} />}
       {right}
     </View>
   );
@@ -344,11 +352,11 @@ export function Group({ children, style }: { children: ReactNode; style?: StyleP
 /** Yashil "hero" kartadagi shaffof statistika paneli */
 export function StatPanel({ items }: { items: { value: string | number; label: string; accent?: boolean }[] }) {
   return (
-    <View style={{ flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 20, paddingVertical: 14 }}>
+    <View style={{ flexDirection: 'row', paddingVertical: 4 }}>
       {items.map((it, i) => (
-        <View key={it.label} style={{ flex: 1, alignItems: 'center', gap: 2, borderRightWidth: i < items.length - 1 ? 1 : 0, borderRightColor: 'rgba(255,255,255,0.14)' }}>
-          <T w="extrabold" size={22} color={it.accent ? colors.lime : '#FFFFFF'}>{String(it.value)}</T>
-          <T size={11} color={colors.onForestSoft}>{it.label}</T>
+        <View key={it.label} style={{ flex: 1, alignItems: 'center', gap: 2, borderRightWidth: i < items.length - 1 ? 1 : 0, borderRightColor: colors.divider }}>
+          <T w="extrabold" size={22} color={it.accent ? colors.forestText : colors.ink}>{String(it.value)}</T>
+          <T size={12} color={colors.muted}>{it.label}</T>
         </View>
       ))}
     </View>
