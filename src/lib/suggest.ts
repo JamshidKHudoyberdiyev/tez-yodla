@@ -64,3 +64,34 @@ export function looksUzbek(text: string): boolean {
   if (/q(?!u)/.test(t)) return true;
   return /(moq|lik|siz|lar|ning|dagi|chi|chilik|langan|lash|li)$/.test(t) && !/(ing|tion|ness)$/.test(t);
 }
+
+function distance(a: string, b: string): number {
+  const d = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let prev = d[0];
+    d[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const tmp = d[j];
+      d[j] = Math.min(d[j] + 1, d[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = tmp;
+    }
+  }
+  return d[b.length];
+}
+
+/** Imlosi xato so'zga lug'atdan yaqin so'zlar: «killods» → kill, killer. */
+export function nearWords(query: string, words: readonly Word[], max = 3): string[] {
+  const q = norm(query);
+  if (q.length < 3) return [];
+  const seen = new Set<string>();
+  const scored: { w: string; d: number }[] = [];
+  for (const x of words) {
+    const w = norm(x.word);
+    if (seen.has(w) || w === q || w.includes(' ')) continue;
+    seen.add(w);
+    // Boshi bir xil (3 harf) bo'lsa — yaqinroq hisoblanadi
+    const d = distance(q, w) - (w.slice(0, 3) === q.slice(0, 3) ? 1 : 0);
+    if (d <= Math.max(1, Math.floor(q.length / 3))) scored.push({ w: x.word, d });
+  }
+  return scored.sort((a, b) => a.d - b.d || a.w.length - b.w.length).slice(0, max).map((x) => x.w);
+}

@@ -1279,10 +1279,16 @@ function HintChip({ icon, label, onPress, disabled }: { icon: React.ComponentPro
  * `groupOthers` va `pool` javob turida bo'lishi kerak (reverse — inglizcha so'zlar, qolganlari — tarjimalar).
  */
 export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = true, variant = 'word', note }: { word: Word; groupOthers: string[]; pool: string[]; header: React.ReactNode; onDone: (correct: boolean) => void; /** «guruh oxirida yana so'raladi» yozuvi (takrorlashda kerak emas) */ retryNote?: boolean; variant?: 'word' | 'reverse' | 'audio'; /** To'g'ri javobdan keyin ko'rsatiladigan qo'shimcha yozuv */ note?: string }) {
-  const { state } = useStore();
+  const { state, words } = useStore();
   const prefs = state.prefs;
   const answer = variant === 'reverse' ? word.word : word.translation;
-  const [choices] = useState(() => buildChoices(answer, groupOthers, pool, prefs.testOptions));
+  const [choices] = useState(() => {
+    // Bir so'zning boshqa ma'nosi (alohida karta) variantlarda chiqmaydi: «kill» → «o'ldirmoq» ham to'g'ri bo'lib qoladi
+    const key = (t: string) => t.trim().toLowerCase();
+    const siblings = variant === 'reverse' ? new Set<string>() : new Set(words.filter((x) => x.id !== word.id && key(x.word) === key(word.word)).map((x) => key(x.translation)));
+    const keep = (list: string[]) => (siblings.size ? list.filter((t) => !siblings.has(key(t))) : list);
+    return buildChoices(answer, keep(groupOthers), keep(pool), prefs.testOptions);
+  });
   const [picked, setPicked] = useState<string | null>(null);
   const correct = picked === answer;
   // «Eshitib toping»: so'z ekran ochilganda o'qiladi

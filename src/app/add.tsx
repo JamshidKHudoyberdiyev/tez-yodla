@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, TextInput, View } from 'react-native';
 import { BackHeader, Button, Card, Group, Screen, T } from '@/components/ui';
 import type { Word } from '@/data/words';
@@ -9,7 +9,7 @@ import { lookupEnglish, lookupWord, type LookupResult } from '@/lib/lookup';
 import { speak } from '@/lib/speech';
 import { SoundButton, wordSize } from '@/components/WordParts';
 import { Plant } from '@/components/Art';
-import { looksUzbek, suggestWords } from '@/lib/suggest';
+import { looksUzbek, nearWords, suggestWords } from '@/lib/suggest';
 import { pickExample } from '@/lib/example';
 import { useStore } from '@/lib/store';
 import { findUnknownWords, splitSentences, tokenize } from '@/lib/text';
@@ -41,23 +41,23 @@ export default function AddWord() {
   );
 }
 
-type WordStatus = 'learning' | 'mastered' | 'inList' | 'known' | null;
+const norm = (s: string) => s.trim().toLowerCase().replace(/[‘’ʻʼ`]/g, "'");
 
 function WriteTab() {
   const { state, words, addCustomWords } = useStore();
   const [query, setQuery] = useState('');
   const [picked, setPicked] = useState<Word | null>(null);
   const [translation, setTranslation] = useState('');
+  const [touched, setTouched] = useState(false);
+  const touchedRef = useRef(false);
+  touchedRef.current = touched;
   const [recent, setRecent] = useState<string[]>([]);
   const [own, setOwn] = useState('');
-  // Lug'atda yo'q so'z: internetdan tarjima, talaffuz va misol.
+  // Internetdan: tarjima, boshqa ma'nolar, talaffuz, misol.
   const [auto, setAuto] = useState<{ q: string; state: 'loading' | 'done' | 'fail'; data?: LookupResult } | null>(null);
   /** O'zbekcha yozilgan so'zning inglizcha variantlari (internetdan) */
   const [enOpts, setEnOpts] = useState<{ q: string; state: 'loading' | 'done' | 'fail'; options: string[] } | null>(null);
-  const [translationTouched, setTranslationTouched] = useState(false);
-  /** Tanlangan so'zning ma'nolari («yo'l; usul») — keraklisini belgilash uchun */
-  const [meanings, setMeanings] = useState<{ text: string; on: boolean }[]>([]);
-  /** Hech qayerda topilmagan so'z uchun o'zi yozadigan misol gap */
+  /** Misol mos kelmaganda (boshqa ma'no yoki o'zi yozgan) — o'zi yozadigan misol gap */
   const [exampleOpen, setExampleOpen] = useState(false);
   const [ownExample, setOwnExample] = useState('');
   const paste = async () => {
@@ -71,48 +71,44 @@ function WriteTab() {
   const exact = picked ?? suggestions.find((s) => s.by === 'en' && s.word.word.toLowerCase() === query.trim().toLowerCase())?.word ?? null;
   const text = (picked?.word ?? query).trim();
 
-  const status: WordStatus = useMemo(() => {
-    const t = text.toLowerCase();
-    if (!t) return null;
-    const ids = words.filter((w) => w.word.toLowerCase() === t).map((w) => w.id);
-    const cards = ids.map((id) => state.cards[id]).filter(Boolean);
-    if (cards.some((c) => c.state === 'mastered')) return 'mastered';
-    if (cards.some((c) => c.state !== 'new')) return 'learning';
-    if (state.customWords.some((w) => w.word.toLowerCase() === t)) return 'inList';
-    if (state.knownLemmas.includes(t)) return 'known';
-    return null;
-  }, [text, words, state.cards, state.customWords, state.knownLemmas]);
-  const blocked = status === 'learning' || status === 'mastered' || status === 'inList';
+  /** Ro'yxatdagi shu so'zning ma'nolari (qo'shilgan yoki o'rganilayotgan) */
+  const meaningsInList = (word: string) => {
+    const t = word.trim().toLowerCase();
+    if (!t) return [];
+    const list = [
+      ...state.customWords.filter((w) => w.word.toLowerCase() === t).map((w) => w.translation),
+      ...words.filter((w) => w.word.toLowerCase() === t && state.cards[w.id] && state.cards[w.id].state !== 'new').map((w) => w.translation),
+    ].map((x) => x.trim()).filter(Boolean);
+    return [...new Set(list)];
+  };
+  const existing = useMemo(() => meaningsInList(text), // eslint-disable-next-line react-hooks/exhaustive-deps
+    [text, state.customWords, state.cards, words]);
+  const inList = existing.length > 0;
+  const sameAsExisting = existing.some((e) => norm(e) === norm(translation));
 
+  const resetMeaning = () => { setTranslation(''); setTouched(false); setExampleOpen(false); setOwnExample(''); };
   const pick = (w: Word) => {
     setPicked(w);
     setQuery(w.word);
-    setTranslation(w.translation);
-    const parts = splitMeanings(w.translation);
-    setMeanings(parts.length > 1 ? parts.map((text) => ({ text, on: true })) : []);
+    resetMeaning();
+    // Bitta kartada bitta ma'no: asosiysi oldindan tanlanadi. Ro'yxatda bor bo'lsa — yangi ma'noni o'zi tanlaydi.
+    if (!meaningsInList(w.word).length) setTranslation(splitMeanings(w.translation)[0] ?? w.translation);
     speak(w.word);
   };
-
-  const clear = () => { setPicked(null); setQuery(''); setTranslation(''); setAuto(null); setTranslationTouched(false); setMeanings([]); setExampleOpen(false); setOwnExample(''); };
-  const toggleMeaning = (i: number) => {
-    const next = meanings.map((m, j) => (j === i ? { ...m, on: !m.on } : m));
-    if (!next.some((m) => m.on)) return; // kamida bitta ma'no qolsin
-    setMeanings(next);
-    setTranslation(next.filter((m) => m.on).map((m) => m.text).join('; '));
-  };
+  const clear = () => { setPicked(null); setQuery(''); setAuto(null); setOwn(''); resetMeaning(); };
 
   /** Takliflar orasida kerakli so'z yo'q — foydalanuvchi yozganining o'zini qo'shadi («ski», «suit») */
   const forced = own === query.trim() && !exact;
   const manual = !picked && query.trim().length >= 2 && (!suggestions.length || forced);
   // Lug'atda yo'q so'z: o'zbekchaga o'xshasa — inglizchasini qidiramiz, aks holda — tarjimasini.
   const uzQ = manual && looksUzbek(query) ? query.trim() : '';
-  const lookupQ = manual && !uzQ && /^[a-z][a-z' -]*$/i.test(query.trim()) ? query.trim() : '';
+  const isLocal = (w: string) => words.some((x) => x.word.toLowerCase() === w.toLowerCase());
   useEffect(() => {
     if (!uzQ) { setEnOpts((o) => (o && o.q === query.trim() ? o : null)); return; }
     const ctrl = new AbortController();
     setEnOpts({ q: uzQ, state: 'loading', options: [] });
     const t = setTimeout(() => {
-      lookupEnglish(uzQ, ctrl.signal).then((options) => { if (!ctrl.signal.aborted) setEnOpts({ q: uzQ, state: options.length ? 'done' : 'fail', options }); });
+      lookupEnglish(uzQ, ctrl.signal, isLocal).then((options) => { if (!ctrl.signal.aborted) setEnOpts({ q: uzQ, state: options.length ? 'done' : 'fail', options }); });
     }, 600);
     return () => { clearTimeout(t); ctrl.abort(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,43 +118,70 @@ function WriteTab() {
     const uz = query.trim();
     setEnOpts(null);
     const w = words.find((x) => x.word.toLowerCase() === en.toLowerCase());
-    if (w) { pick(w); return; }
+    if (w) { pick(w); if (splitMeanings(w.translation).some((m) => norm(m) === norm(uz))) setTranslation(uz); return; }
     setQuery(en);
+    setOwn(en);
+    resetMeaning();
     setTranslation(uz);
-    setTranslationTouched(true);
+    setTouched(true);
     speak(en);
   };
+
+  // Internetdan: lug'atdagi so'zga — boshqa ma'nolar; lug'atda yo'q so'zga — tarjima ham.
+  const lookupQ = picked ? picked.word : manual && !uzQ && /^[a-z][a-z' -]*$/i.test(query.trim()) ? query.trim() : '';
+  const lookupFor = picked ? 'pick' : 'manual';
   useEffect(() => {
     if (!lookupQ) { setAuto(null); return; }
     const ctrl = new AbortController();
     setAuto({ q: lookupQ, state: 'loading' });
+    if (lookupFor === 'manual' && !touchedRef.current) setTranslation('');
     const t = setTimeout(() => {
       lookupWord(lookupQ, ctrl.signal)
         .then((data) => {
+          if (ctrl.signal.aborted) return;
           setAuto({ q: lookupQ, state: data ? 'done' : 'fail', data: data ?? undefined });
-          // Inglizcha lug'atda ham, tarjimada ham topilmadi — ehtimol o'zbekcha so'z: inglizchasini qidiramiz.
-          if (!data?.ipa && !data?.pos && !data?.translation) {
-            lookupEnglish(lookupQ, ctrl.signal).then((options) => { if (options.length && !ctrl.signal.aborted) setEnOpts({ q: lookupQ, state: 'done', options }); });
+          if (lookupFor !== 'manual') return;
+          const real = data?.known || lookupQ.includes(' ');
+          // Inglizcha lug'at tanimadi — ehtimol o'zbekcha so'z: inglizchasini qidiramiz.
+          if (!data?.known) {
+            lookupEnglish(lookupQ, ctrl.signal, isLocal).then((options) => { if (options.length && !ctrl.signal.aborted) setEnOpts({ q: lookupQ, state: 'done', options }); });
           }
-          if (data?.translation) setTranslationTouched((touched) => { if (!touched) setTranslation(data.translation!); return touched; });
+          if (real && data?.translation && !touchedRef.current && !meaningsInList(lookupQ).length) setTranslation(splitMeanings(data.translation)[0] ?? data.translation);
         })
         .catch(() => { if (!ctrl.signal.aborted) setAuto({ q: lookupQ, state: 'fail' }); });
-    }, 600);
+    }, picked ? 0 : 600);
     return () => { clearTimeout(t); ctrl.abort(); };
-  }, [lookupQ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lookupQ, lookupFor]);
   const found = auto?.q === lookupQ && auto.state === 'done' ? auto.data : undefined;
+  const searching = manual && !!lookupQ && (auto?.q !== lookupQ || auto.state === 'loading');
+  /** Inglizcha lug'at bu so'zni tanimaydi — tasodifiy tarjimani ko'rsatmaymiz */
+  const notWord = manual && !!found && !found.known && !lookupQ.includes(' ');
+  const near = useMemo(() => (notWord ? nearWords(query, words) : []), [notWord, query, words]);
+
+  // Ma'nolar: lug'atdagilar + internetdagilar; ro'yxatdagi ma'no chiqmaydi.
+  const dictParts = picked ? splitMeanings(picked.translation) : [];
+  const webParts = notWord ? [] : [...(found?.translation ? splitMeanings(found.translation) : []), ...(found?.options ?? [])];
+  const chips = [...new Set([...dictParts, ...webParts].map((m) => m.trim()).filter(Boolean))]
+    .filter((m, i, a) => a.findIndex((x) => norm(x) === norm(m)) === i && !existing.some((e) => norm(e) === norm(m)))
+    .slice(0, 6);
+  // Misol faqat o'z ma'nosiga mos bo'lsa: lug'atdagi misol — lug'atdagi ma'noga, internetdagi — internet tarjimasiga.
+  const example = picked
+    ? (picked.example && (dictParts.some((p) => norm(p) === norm(translation)) || norm(picked.translation) === norm(translation)) ? { en: picked.example, uz: picked.exampleUz } : null)
+    : (found?.example && !notWord && found.translation && splitMeanings(found.translation).some((p) => norm(p) === norm(translation)) ? { en: found.example } : null);
+  const showEnList = manual && !!enOpts && enOpts.q === query.trim() && (!!uzQ || (enOpts.state === 'done' && !touched));
+  const showCard = !!picked || (manual && !showEnList);
 
   const save = () => {
-    const base = exact;
     addCustomWords([{
       word: text,
-      translation: translation.trim() || base?.translation || '',
-      example: base?.example ?? found?.example ?? (ownExample.trim() || undefined),
-      exampleUz: base?.exampleUz,
-      association: base?.association,
-      soundsLike: base?.soundsLike,
-      ipa: base?.ipa ?? found?.ipa,
-      pos: base?.pos ?? found?.pos,
+      translation: translation.trim(),
+      example: example?.en ?? (ownExample.trim() || undefined),
+      exampleUz: example?.uz,
+      association: example && picked ? picked.association : undefined,
+      soundsLike: example && picked ? picked.soundsLike : undefined,
+      ipa: picked?.ipa ?? found?.ipa,
+      pos: picked?.pos ?? found?.pos,
     }]);
     setRecent([text, ...recent.filter((r) => r !== text)].slice(0, 8));
     clear();
@@ -166,16 +189,108 @@ function WriteTab() {
 
   const label = (t: string) => <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9, paddingHorizontal: 4, marginBottom: -6 }}>{t}</T>;
   const plusTile = <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}><Feather name="plus" size={17} color={colors.forestText} /></View>;
-  const head = (word: string, sub?: string) => (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-      <View style={{ flex: 1 }}>
-        <T w="extrabold" size={wordSize(word, 30)} style={{ letterSpacing: -0.6 }}>{word}</T>
-        {sub ? <T size={14} color={colors.muted}>{sub}</T> : null}
-      </View>
-      <SoundButton text={word} label="Talaffuzni eshitish" size={44} />
+  const divider = <View style={{ height: 1, backgroundColor: colors.divider }} />;
+  const smallLabel = (left: string, right?: string) => (
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9 }}>{left}</T>
+      {right ? <T size={12} color={colors.muted}>{right}</T> : null}
     </View>
   );
-  const divider = <View style={{ height: 1, backgroundColor: colors.divider }} />;
+  const info = (t: string) => (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: -4 }}>
+      <Feather name="info" size={13} color={colors.muted} />
+      <T size={12.5} color={colors.muted}>{t}</T>
+    </View>
+  );
+  const fieldStyle = (big: boolean) => [{ flex: 1, minWidth: 0, minHeight: 48, fontFamily: big ? font.semibold : font.regular, fontSize: big ? 17 : 16, color: colors.ink }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as object)];
+
+  const sub = [picked?.ipa ?? found?.ipa, picked?.pos ?? found?.pos].filter(Boolean).join(' · ');
+  const many = chips.length >= 2 || (inList && chips.length > 0);
+  const card = showCard ? (
+    <Card style={{ gap: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <View style={{ flex: 1 }}>
+          <T w="extrabold" size={wordSize(text, 30)} style={{ letterSpacing: -0.6 }}>{text}</T>
+          {sub ? <T size={14} color={colors.muted}>{sub}</T> : null}
+        </View>
+        {notWord ? null : <SoundButton text={text} label="Talaffuzni eshitish" size={44} />}
+      </View>
+      {inList ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 14, backgroundColor: colors.limeSoft }}>
+          <Feather name="check" size={15} color={colors.forestText} />
+          <T size={13.5} color={colors.forestText} style={{ flex: 1 }}>Ro'yxatingizda bor: <T w="bold" size={13.5} color={colors.forestText}>{existing.join(', ')}</T></T>
+        </View>
+      ) : null}
+      {notWord ? (
+        <>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 14, backgroundColor: colors.peach }}>
+            <Feather name="info" size={15} color={colors.error} />
+            <T size={13.5} color={colors.error} style={{ flex: 1 }}>Bunday so'z topilmadi — imloni tekshiring</T>
+          </View>
+          {near.length ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <T size={13} color={colors.muted}>Balki:</T>
+              {near.map((w) => (
+                <Pressable key={w} accessibilityRole="button" accessibilityLabel={`${w} ni tanlash`} onPress={() => { const x = words.find((y) => y.word === w); if (x) pick(x); }}
+                  style={{ height: 32, paddingHorizontal: 12, borderRadius: 16, justifyContent: 'center', backgroundColor: colors.limeSoft }}>
+                  <T w="bold" size={14} color={colors.forestText}>{w}</T>
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
+        </>
+      ) : null}
+      {divider}
+      {searching ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 40 }}>
+          <ActivityIndicator size="small" color={colors.forestText} />
+          <T size={14} color={colors.muted}>Internetdan qidirilmoqda…</T>
+        </View>
+      ) : (
+        <>
+          {smallLabel(inList ? "YANGI MA'NO" : many ? "MA'NOSI" : 'TARJIMA', inList ? "alohida karta bo'ladi" : many ? 'bittasini tanlang' : undefined)}
+          {many ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {chips.map((m) => {
+                const on = norm(m) === norm(translation);
+                return (
+                  <Pressable key={m} accessibilityRole="radio" accessibilityState={{ checked: on }} onPress={() => { setTranslation(m); setTouched(true); }}
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, height: 36, paddingHorizontal: 13, borderRadius: 18, borderWidth: on ? 1.5 : 1, borderColor: on ? colors.forest : colors.line, backgroundColor: on ? colors.limeSoft : colors.surface }}>
+                    {on ? <Feather name="check" size={13} color={colors.forestText} /> : null}
+                    <T w={on ? 'bold' : 'regular'} size={14.5} color={on ? colors.forestText : colors.inkSoft}>{m}</T>
+                  </Pressable>
+                );
+              })}
+            </View>
+          ) : null}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 50, paddingLeft: 14, paddingRight: 10, borderRadius: 14, borderWidth: 1.5, borderColor: translation ? colors.line : colors.forest, backgroundColor: colors.surface }}>
+            <TextInput value={translation} onChangeText={(v) => { setTranslation(v); setTouched(true); }}
+              placeholder={inList ? "boshqa ma'nosini yozing" : notWord ? "o'zingiz bilsangiz, tarjimasini yozing" : "o'zbekcha tarjimasini yozing"}
+              placeholderTextColor={colors.placeholder} accessibilityLabel="Tarjima" autoCapitalize="none" style={fieldStyle(true)} />
+            {translation ? (
+              <Pressable accessibilityRole="button" accessibilityLabel="Tarjimani o'chirish" hitSlop={10} onPress={() => { setTranslation(''); setTouched(true); }}>
+                <Feather name="x-circle" size={19} color={colors.placeholder} />
+              </Pressable>
+            ) : null}
+          </View>
+          {sameAsExisting ? info("Bu ma'no ro'yxatingizda bor")
+            : manual && !notWord && found?.translation && !touched && translation ? info('Internetdan topildi — tekshirib oling')
+              : manual && auto?.q === lookupQ && auto.state === 'fail' ? info("So'z topilmadi") : null}
+          {example ? (
+            <T size={14} color={colors.inkSoft} style={{ lineHeight: 20 }}>{example.en}{example.uz ? <T size={14} color={colors.muted}> — {example.uz}</T> : null}</T>
+          ) : exampleOpen ? (
+            <>
+              {smallLabel('MISOL GAP', 'ixtiyoriy')}
+              <TextInput value={ownExample} onChangeText={setOwnExample} placeholder="Misol gap (inglizcha)" placeholderTextColor={colors.placeholder} accessibilityLabel="Misol gap" autoCapitalize="sentences" autoFocus
+                style={[{ minHeight: 50, borderRadius: 14, borderWidth: 1.5, borderColor: colors.line, backgroundColor: colors.surface, paddingHorizontal: 14, fontFamily: font.regular, fontSize: 16, color: colors.ink }, Platform.OS === 'web' && ({ outlineStyle: 'none' } as object)]} />
+            </>
+          ) : (
+            <T w="bold" size={13} color={colors.forestText} accessibilityRole="button" onPress={() => setExampleOpen(true)}>+ Misol gap qo'shish</T>
+          )}
+        </>
+      )}
+    </Card>
+  ) : null;
 
   return (
     <View style={{ gap: 14 }}>
@@ -183,7 +298,7 @@ function WriteTab() {
         <Feather name="search" size={19} color={colors.muted} />
         <TextInput
           value={query}
-          onChangeText={(v) => { setQuery(v); if (picked) { setPicked(null); setTranslation(''); } }}
+          onChangeText={(v) => { setQuery(v); if (picked) { setPicked(null); resetMeaning(); } }}
           placeholder="honey yoki qiz"
           placeholderTextColor={colors.placeholder}
           accessibilityLabel="So'z qidirish"
@@ -233,29 +348,7 @@ function WriteTab() {
         </>
       ) : null}
 
-      {picked ? (
-        <Card style={{ gap: 12 }}>
-          {head(picked.word, [picked.ipa, picked.pos].filter(Boolean).join(' · '))}
-          {divider}
-          {meanings.length > 1 ? (
-            <View style={{ gap: 8 }}>
-              <T size={12.5} color={colors.muted}>Qaysi ma'nosini o'rganasiz?</T>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                {meanings.map((m, i) => (
-                  <Pressable key={m.text} accessibilityRole="checkbox" accessibilityState={{ checked: m.on }} onPress={() => toggleMeaning(i)}
-                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, height: 38, paddingHorizontal: 14, borderRadius: 19, borderWidth: m.on ? 1.5 : 1, borderColor: m.on ? colors.forest : colors.line, backgroundColor: m.on ? colors.limeSoft : colors.surface }}>
-                    {m.on ? <Feather name="check" size={14} color={colors.forestText} /> : null}
-                    <T w={m.on ? 'bold' : 'regular'} size={15} color={m.on ? colors.forestText : colors.muted}>{m.text}</T>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-          ) : <T w="bold" size={19} color={colors.forestText}>{picked.translation}</T>}
-          {picked.example ? (
-            <T size={14} color={colors.inkSoft} style={{ lineHeight: 20 }}>{picked.example}{picked.exampleUz ? <T size={14} color={colors.muted}> — {picked.exampleUz}</T> : null}</T>
-          ) : null}
-        </Card>
-      ) : manual && enOpts && enOpts.q === query.trim() && (uzQ || enOpts.state === 'done') ? (
+      {showEnList ? (
         <>
           {label(`«${query.trim().toUpperCase()}» — INGLIZCHASI`)}
           <View style={{ backgroundColor: colors.surface, borderRadius: 20, overflow: 'hidden' }}>
@@ -278,40 +371,10 @@ function WriteTab() {
             )}
           </View>
         </>
-      ) : manual ? (
-        <Card style={{ gap: 12 }}>
-          {head(query.trim(), found?.ipa || found?.pos ? [found.ipa, found.pos].filter(Boolean).join(' · ') : undefined)}
-          {divider}
-          {auto?.state === 'loading' ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 40 }}>
-              <ActivityIndicator size="small" color={colors.forestText} />
-              <T size={14} color={colors.muted}>Lug'atda yo'q — internetdan qidirilmoqda…</T>
-            </View>
-          ) : (
-            <View style={{ gap: 8 }}>
-              <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9 }}>TARJIMA</T>
-              <TextInput value={translation} onChangeText={(v) => { setTranslation(v); setTranslationTouched(true); }} placeholder="o'zbekcha tarjimasini yozing" placeholderTextColor={colors.placeholder}
-                accessibilityLabel="Tarjima" autoCapitalize="none" autoFocus={!found?.translation}
-                style={{ minHeight: 50, borderRadius: 14, borderWidth: 1.5, borderColor: translation ? colors.line : colors.forest, backgroundColor: colors.surface, paddingHorizontal: 14, fontFamily: font.semibold, fontSize: 17, color: colors.ink }} />
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Feather name="info" size={13} color={colors.muted} />
-                <T size={12.5} color={colors.muted}>
-                  {found?.translation ? (translationTouched ? "O'zingiz tahrirladingiz" : 'Internetdan topildi — tekshirib oling') : "So'z topilmadi"}
-                </T>
-              </View>
-              {found?.example ? <T size={14} color={colors.inkSoft} style={{ lineHeight: 20 }}>{found.example}</T> : exampleOpen ? (
-                <TextInput value={ownExample} onChangeText={setOwnExample} placeholder="Misol gap (inglizcha)" placeholderTextColor={colors.placeholder} accessibilityLabel="Misol gap" autoCapitalize="sentences"
-                  style={{ minHeight: 50, borderRadius: 14, borderWidth: 1.5, borderColor: colors.line, backgroundColor: colors.surface, paddingHorizontal: 14, fontFamily: font.regular, fontSize: 16, color: colors.ink }} />
-              ) : (
-                <T w="bold" size={13} color={colors.forestText} accessibilityRole="button" onPress={() => setExampleOpen(true)}>+ Misol gap qo'shish</T>
-              )}
-            </View>
-          )}
-        </Card>
-      ) : null}
+      ) : card}
 
-      {picked || manual ? (
-        <Button title={blocked ? "Ro'yxatingizda bor" : "Yodlashga qo'shish"} iconRight={blocked ? undefined : 'arrow-right'} disabled={blocked || !text || !(translation.trim() || exact)} onPress={save} />
+      {showCard && !searching ? (
+        <Button title={inList ? "Yangi karta qo'shish" : "Yodlashga qo'shish"} iconRight="arrow-right" disabled={!text || !translation.trim() || sameAsExisting} onPress={save} />
       ) : null}
 
       {recent.length && !query ? (

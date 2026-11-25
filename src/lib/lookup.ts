@@ -7,6 +7,10 @@
 
 export interface LookupResult {
   translation?: string;
+  /** Boshqa ma'nolar (asosiy tarjima ham shu ro'yxatda, birinchi) */
+  options?: string[];
+  /** Inglizcha lug'at bu so'zni taniydimi — tanimasa, tasodifiy tarjimaga ishonmaymiz */
+  known?: boolean;
   ipa?: string;
   pos?: string;
   example?: string;
@@ -69,6 +73,25 @@ export function parseDictionary(json: unknown): Omit<LookupResult, 'translation'
   return { ipa: ipa || undefined, pos: pos ? POS_UZ[pos] ?? pos : undefined, example };
 }
 
+/** MyMemory javobidan o'zbekcha ma'nolar: asosiy tarjima + muqobillari, ko'pi bilan `max` ta. */
+export function parseUzOptions(json: unknown, query: string, max = 5): string[] {
+  const j = json as { responseStatus?: number | string; responseData?: { translatedText?: string }; matches?: { translation?: string; quality?: number | string }[] };
+  if (!j || Number(j.responseStatus) !== 200) return [];
+  const raw = [j.responseData?.translatedText, ...(j.matches ?? []).filter((m) => Number(m.quality ?? 0) >= 50).map((m) => m.translation)];
+  const out: string[] = [];
+  for (const r of raw) {
+    for (let t of cyrToLat(decodeEntities(r ?? '')).split(/[;,]/)) {
+      t = t.replace(/\s+/g, ' ').replace(/[.!?:]+$/, '').trim().toLowerCase();
+      if (!t || /mymemory|query length|invalid/i.test(t)) continue;
+      if (!/^[a-z' -]+$/.test(t) || t.split(' ').length > 4) continue; // faqat lotincha qisqa ma'no
+      if (t === query.trim().toLowerCase() || out.includes(t)) continue;
+      out.push(t);
+      if (out.length >= max) return out;
+    }
+  }
+  return out;
+}
+
 async function getJson(url: string, signal?: AbortSignal): Promise<unknown> {
   const res = await fetch(url, { signal });
   if (!res.ok) return null;
@@ -78,15 +101,26 @@ async function getJson(url: string, signal?: AbortSignal): Promise<unknown> {
 export async function lookupWord(word: string, signal?: AbortSignal): Promise<LookupResult | null> {
   const q = word.trim();
   const [tr, dict] = await Promise.allSettled([
-    getJson(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|uz`, signal).then((j) => parseMyMemory(j, q)),
+    getJson(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|uz`, signal).then((j) => ({ main: parseMyMemory(j, q), options: parseUzOptions(j, q) })),
     getJson(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(q.toLowerCase())}`, signal).then(parseDictionary),
   ]);
-  const translation = tr.status === 'fulfilled' ? tr.value ?? undefined : undefined;
+  const translation = tr.status === 'fulfilled' ? tr.value.main ?? undefined : undefined;
+  const options = tr.status === 'fulfilled' ? tr.value.options : [];
   const info = dict.status === 'fulfilled' ? dict.value : null;
   if (!translation && !info) return null;
   // Misol gapda so'zning o'zi bo'lmasa (lug'at boshqa shaklini bergan: born → «bearing») — misolni olmaymiz
   if (info?.example && !new RegExp(`\\b${q.toLowerCase().replace(/[^a-z' -]/g, '')}`, 'i').test(info.example)) info.example = undefined;
-  return { translation, ...(info ?? {}) };
+  return { translation, options, known: !!info, ...(info ?? {}) };
+}
+
+/** Inglizcha lug'at (dictionaryapi) so'zni taniydimi. */
+export async function isEnglishWord(word: string, signal?: AbortSignal): Promise<boolean> {
+  try {
+    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.trim().toLowerCase())}`, { signal });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 /** MyMemory javobidan inglizcha variantlar (asosiy tarjima + muqobillari), ko'pi bilan `max` ta. */
@@ -108,11 +142,14 @@ export function parseEnglishOptions(json: unknown, query: string, max = 3): stri
 }
 
 /** O'zbekcha so'zning inglizchasi (lug'atimizda bo'lmasa): uz → en. */
-export async function lookupEnglish(uz: string, signal?: AbortSignal): Promise<string[]> {
+export async function lookupEnglish(uz: string, signal?: AbortSignal, isLocal: (w: string) => boolean = () => false): Promise<string[]> {
   const q = uz.trim();
   try {
     const j = await getJson(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=uz|en`, signal);
-    return parseEnglishOptions(j, q);
+    const options = parseEnglishOptions(j, q);
+    // Faqat haqiqiy inglizcha so'zlar: lug'atimizda bor yoki inglizcha lug'at taniydi («killahj» chiqmaydi)
+    const ok = await Promise.all(options.map((o) => (isLocal(o) || o.includes(' ') ? Promise.resolve(true) : isEnglishWord(o, signal))));
+    return options.filter((_, i) => ok[i]);
   } catch {
     return [];
   }

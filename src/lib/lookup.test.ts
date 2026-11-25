@@ -1,4 +1,4 @@
-import { decodeEntities, parseEnglishOptions, cyrToLat, parseDictionary, parseMyMemory } from './lookup';
+import { decodeEntities, parseEnglishOptions, cyrToLat, parseDictionary, parseMyMemory, parseUzOptions } from './lookup';
 
 describe('lookup', () => {
   it('transliterates Uzbek Cyrillic', () => {
@@ -36,4 +36,11 @@ test("HTML belgilari ochiladi: tutuq belgisi to'g'ri chiqadi", () => {
   expect(decodeEntities('tug&#39;ilgan')).toBe("tug'ilgan");
   expect(decodeEntities('o&#x27;qimoq &amp; yozmoq')).toBe("o'qimoq & yozmoq");
   expect(parseMyMemory({ responseStatus: 200, responseData: { translatedText: 'tug&#39;ilgan' } }, 'born')).toBe("tug'ilgan");
+});
+
+describe('parseUzOptions', () => {
+  it('collects short Latin Uzbek meanings from translation and matches', () => {
+    const j = { responseStatus: 200, responseData: { translatedText: "O'ldirmoq" }, matches: [{ translation: 'nobud qilmoq, vaqt o&#39;tkazmoq', quality: 80 }, { translation: 'kill', quality: 90 }, { translation: 'yomon', quality: 10 }] };
+    expect(parseUzOptions(j, 'kill')).toEqual(["o'ldirmoq", 'nobud qilmoq', "vaqt o'tkazmoq"]);
+  });
 });

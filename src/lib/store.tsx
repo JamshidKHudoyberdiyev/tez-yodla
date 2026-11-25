@@ -351,10 +351,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }),
     addCustomWords: (list) =>
       setState((s) => {
-        const existing = new Set(s.customWords.map((w) => w.word.toLowerCase()));
+        // Bir so'zning boshqa ma'nosi — alohida karta («kill — o'ldirmoq», «kill — vaqt o'tkazmoq»)
+        const keyOf = (w: { word: string; translation: string }) => `${w.word.toLowerCase()}|${w.translation.trim().toLowerCase()}`;
+        const existing = new Set(s.customWords.map(keyOf));
         const fresh: Word[] = list
-          .filter((w) => !existing.has(w.word.toLowerCase()))
-          .map((w) => ({ ...w, id: `mine:${w.word.toLowerCase()}:${Date.now()}`, deckId: 'mine' }));
+          .filter((w) => !existing.has(keyOf(w)))
+          .map((w, i) => ({ ...w, id: `mine:${w.word.toLowerCase()}:${Date.now()}${i ? `-${i}` : ''}`, deckId: 'mine' }));
         const activeDecks = s.activeDecks.includes('mine') ? s.activeDecks : [...s.activeDecks, 'mine'];
         return withEvent({ ...s, customWords: [...fresh, ...s.customWords], activeDecks }, 'words_saved', { count: fresh.length });
       }),
