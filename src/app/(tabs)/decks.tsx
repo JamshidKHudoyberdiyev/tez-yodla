@@ -126,8 +126,7 @@ export default function Decks() {
                   </Pressable>
                   {isOpen ? (
                     !items.length ? <T size={13} color={colors.muted} style={{ padding: 16 }}>Hammasi kunlik rejada</T>
-                      : g.id === 'level' ? <LevelCards items={items} />
-                        : <DeckRows items={items} bare />
+                      : <DeckRows items={items} bare />
                   ) : null}
                 </View>
               );
@@ -178,8 +177,8 @@ function DeckRows({ items, bare }: { items: DeckInfo[]; bare?: boolean }) {
                 </View>
               ) : null}
               {easy ? (
-                <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, backgroundColor: '#FFF1D6' }}>
-                  <T w="extrabold" size={10} color="#8A5A00" numberOfLines={1}>Siz uchun oson</T>
+                <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, backgroundColor: colors.surfaceMuted }}>
+                  <T w="bold" size={10} color={colors.inkSoft} numberOfLines={1}>Siz uchun oson</T>
                 </View>
               ) : null}
             </View>
@@ -199,22 +198,3 @@ function DeckRows({ items, bare }: { items: DeckInfo[]; bare?: boolean }) {
   );
 }
 
-/** «Daraja bo'yicha» ochilganda: A1–C2 kartalari yonma-yon (surib ko'riladi) */
-function LevelCards({ items }: { items: DeckInfo[] }) {
-  return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, padding: 12 }}>
-      {items.map(({ d, total, started, due }) => (
-        <Pressable key={d.id} accessibilityRole="button" accessibilityLabel={`${d.title}, ${started} / ${total} so'z`}
-          onPress={() => router.push({ pathname: '/deck/[id]', params: { id: d.id } })}
-          style={({ pressed }) => ({ width: 96, paddingVertical: 14, borderRadius: 18, backgroundColor: d.tint, alignItems: 'center', gap: 4, opacity: pressed ? 0.85 : 1 })}>
-          <T w="extrabold" size={22} color={d.ink} style={{ lineHeight: 28 }}>{d.badge}</T>
-          <T w="bold" size={11} color={d.ink} numberOfLines={1}>{d.title.split('· ')[1] ?? d.subtitle}</T>
-          <View style={{ width: 60, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.7)', overflow: 'hidden', marginTop: 6 }}>
-            <View style={{ width: `${Math.max(started ? 4 : 0, Math.round((started / total) * 100))}%`, height: 5, backgroundColor: d.ink }} />
-          </View>
-          <T size={11} color={due ? colors.error : '#4A524B'} style={{ marginTop: 2 }}>{due ? `${due} ta takror` : `${started} / ${total}`}</T>
-        </Pressable>
-      ))}
-    </ScrollView>
-  );
-}

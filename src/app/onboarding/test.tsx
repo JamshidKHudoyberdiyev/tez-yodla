@@ -23,9 +23,10 @@ const RULES: [React.ComponentProps<typeof Feather>['name'], string][] = [
  * har 5-«Bilaman»dan keyin tarjima so'raladi. Hisob — lib/levelTest.ts.
  */
 export default function LevelTest() {
-  const { retake } = useLocalSearchParams<{ retake?: string }>();
+  const { retake, go } = useLocalSearchParams<{ retake?: string; go?: string }>();
   const items = useMemo(() => buildTest(POOL), []);
-  const [started, setStarted] = useState(false);
+  // Kirishdan keyingi «Xush kelibsiz» ekranida qoidalar ko'rsatilgan — kirish ekranisiz darhol savol
+  const [started, setStarted] = useState(go === '1');
   const [i, setI] = useState(0);
   const [answers, setAnswers] = useState<TestAnswer[]>([]);
   const [yesCount, setYesCount] = useState(0);

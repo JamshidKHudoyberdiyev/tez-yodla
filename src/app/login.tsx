@@ -6,7 +6,7 @@ import { ActivityIndicator, Animated, BackHandler, Easing, Image, Pressable, Tex
 import Svg, { Circle, Defs, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { Logo, Wordmark } from '@/components/Art';
 import { Pop } from '@/components/Motion';
-import { Button, Screen, T } from '@/components/ui';
+import { Button, IconTile, Screen, T } from '@/components/ui';
 import { AUTH_REQUIRED, useAuth, type TelegramVerify } from '@/lib/auth';
 import { cleanCode } from '@/lib/authLinks';
 import { useStore } from '@/lib/store';
@@ -263,6 +263,21 @@ const Brand = () => (
 );
 
 const WELCOME_BG = require('../../assets/login-bg.webp');
+
+/**
+ * Salomlashish uchun ism: faqat birinchi so'z (familiya kerak emas).
+ * Juda uzun bo'lsa (15 harfdan ko'p) — ismsiz «Xush kelibsiz!».
+ */
+function greetName(full?: string): string {
+  const first = (full ?? '').trim().split(/\s+/)[0] ?? '';
+  return first.length > 15 ? '' : first;
+}
+
+const WELCOME_RULES: [React.ComponentProps<typeof Feather>['name'], string, string][] = [
+  ['clock', "30 ta so'z", 'Taxminan 1 daqiqa'],
+  ['check', '«Bilaman» yoki «Bilmayman»', "Faqat ma'nosini aniq bilsangiz — «Bilaman»"],
+  ['eye', "Soxta so'zlar ham bor", 'Taxmin qilsangiz, natija buziladi'],
+];
 const WELCOME_BRAIN = require('../../assets/login-brain.webp');
 const HEAD = '#1E4A2B';
 
@@ -388,17 +403,27 @@ export default function Login() {
   if (auth.session && auth.initial) {
     if (auth.initial === 'fresh' || !state.onboarded) {
       return (
-        <Screen scroll={false} footer={<Button title="Testni boshlash" onPress={() => router.replace('/onboarding/test')} />}>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+        <Screen footer={<Button title="Testni boshlash" iconRight="arrow-right" onPress={() => router.replace({ pathname: '/onboarding/test', params: { go: '1' } })} />}>
+          <View style={{ alignItems: 'center', gap: 8, marginTop: 24 }}>
             <Pop from={0.6}>
-              <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: colors.lime }}>
-                <T w="extrabold" size={36} color="#FFFFFF">{(state.name || auth.accountLabel || '?')[0].toUpperCase()}</T>
-              </View>
+              <Image source={WELCOME_BRAIN} resizeMode="contain" style={{ width: 150, height: 150 }} accessibilityIgnoresInvertColors />
             </Pop>
-            <T w="extrabold" size={28} style={{ textAlign: 'center', lineHeight: 34 }} accessibilityRole="header">
-              Xush kelibsiz{state.name ? `, ${state.name}` : ''}!
+            <T w="extrabold" size={28} style={{ textAlign: 'center', lineHeight: 34, marginTop: 6 }} accessibilityRole="header">
+              {greetName(state.name) ? `Xush kelibsiz,\n${greetName(state.name)}!` : 'Xush kelibsiz!'}
             </T>
-            <T size={15} color={colors.muted} style={{ textAlign: 'center', lineHeight: 22 }}>Darajangizni aniqlaymiz</T>
+            <T size={15} color={colors.muted} style={{ textAlign: 'center', lineHeight: 21, paddingHorizontal: 12 }}>Avval darajangizni aniqlaymiz — shunga mos so'zlardan boshlaysiz</T>
+          </View>
+          {/* Test qoidalari shu yerda — testning alohida kirish ekrani o'tkazib yuboriladi */}
+          <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden', marginTop: 8 }}>
+            {WELCOME_RULES.map(([icon, title, sub], k) => (
+              <View key={title} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 62, paddingHorizontal: 16, paddingVertical: 10, borderTopWidth: k ? 1 : 0, borderTopColor: colors.divider }}>
+                <IconTile icon={icon} size={40} />
+                <View style={{ flex: 1 }}>
+                  <T w="bold" size={15}>{title}</T>
+                  <T size={12.5} color={colors.muted}>{sub}</T>
+                </View>
+              </View>
+            ))}
           </View>
         </Screen>
       );
