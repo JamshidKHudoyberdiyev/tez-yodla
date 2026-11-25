@@ -87,7 +87,7 @@ function Wheel({ count, value, onChange, label }: { count: number; value: number
             const scale = y.interpolate({ inputRange: range, outputRange: [0.58, 0.74, 1, 0.74, 0.58], extrapolate: 'clamp' });
             return (
               <Pressable key={k} onPress={() => jump(k, true)} importantForAccessibility="no" accessibilityElementsHidden>
-                <Animated.Text style={{ height: ITEM, lineHeight: ITEM, textAlign: 'center', fontFamily: font.extrabold, fontSize: 42, color: colors.ink, opacity, transform: [{ scale }], fontVariant: ['tabular-nums'] }}>
+                <Animated.Text style={{ height: ITEM, lineHeight: ITEM, textAlign: 'center', fontFamily: font.bold, fontSize: 38, color: colors.forestText, opacity, transform: [{ scale }], fontVariant: ['tabular-nums'] }}>
                   {pad(k % count)}
                 </Animated.Text>
               </Pressable>
@@ -100,7 +100,9 @@ function Wheel({ count, value, onChange, label }: { count: number; value: number
   );
 }
 
-/** Pastdan chiqadigan oyna: soat va daqiqa g'ildiraklari, «Bekor» va «21:41 ni saqlash». */
+const PRESETS: { label: string; t: ReminderTime }[] = [{ label: 'Ertalab', t: { h: 8, m: 0 } }, { label: 'Tushlikda', t: { h: 13, m: 0 } }, { label: 'Kechqurun', t: { h: 20, m: 0 } }];
+
+/** Pastdan chiqadigan oyna: tez tanlovlar, soat va daqiqa g'ildiraklari, «Bekor» va «Saqlash». */
 export function TimeSheet({ visible, initial, title, taken, onCancel, onSave }: {
   visible: boolean;
   initial: ReminderTime;
@@ -112,7 +114,10 @@ export function TimeSheet({ visible, initial, title, taken, onCancel, onSave }: 
 }) {
   const [h, setH] = useState(initial.h);
   const [m, setM] = useState(initial.m);
-  useEffect(() => { if (visible) { setH(initial.h); setM(initial.m); } }, [visible, initial.h, initial.m]);
+  // Tez tanlov bosilganda g'ildiraklar shu vaqtdan qayta boshlanadi (key o'zgaradi)
+  const [seed, setSeed] = useState<ReminderTime>(initial);
+  useEffect(() => { if (visible) { setH(initial.h); setM(initial.m); setSeed(initial); } }, [visible, initial.h, initial.m]);
+  const pick = (t: ReminderTime) => { setH(t.h); setM(t.m); setSeed(t); };
   const label = timeLabel(h, m);
   const dup = taken.some((t) => t.h === h && t.m === m);
   const bottom = useSheetBottom();
@@ -125,24 +130,36 @@ export function TimeSheet({ visible, initial, title, taken, onCancel, onSave }: 
           <T w="extrabold" size={20}>{title}</T>
 
           {/* Key: har ochilishda g'ildiraklar tanlangan vaqtdan boshlansin */}
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            {PRESETS.map((p) => {
+              const on = p.t.h === h && p.t.m === m;
+              return (
+                <Pressable key={p.label} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={`${p.label}, ${timeLabel(p.t.h, p.t.m)}`} onPress={() => pick(p.t)}
+                  style={({ pressed }) => ({ flex: 1, height: 56, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: on ? 2 : 1,
+                    borderColor: on ? colors.forest : colors.line, backgroundColor: on ? colors.limeSoft : colors.surface, opacity: pressed ? 0.85 : 1 })}>
+                  <T w="bold" size={14} color={on ? colors.forestText : colors.ink}>{p.label}</T>
+                  <T size={12} color={on ? colors.forestText : colors.muted}>{timeLabel(p.t.h, p.t.m)}</T>
+                </Pressable>
+              );
+            })}
+          </View>
+
           {visible ? (
-            <View key={`${initial.h}:${initial.m}`} style={{ backgroundColor: colors.surface, borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10 }}>
+            <View key={`${seed.h}:${seed.m}`} style={{ backgroundColor: colors.surface, borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10 }}>
               <View pointerEvents="none" style={{ position: 'absolute', left: 12, right: 12, top: 10 + ITEM * 2, height: ITEM, borderRadius: 16, backgroundColor: colors.limeSoft }} />
               <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                <Wheel count={24} value={initial.h} onChange={setH} label="Soat" />
+                <Wheel count={24} value={seed.h} onChange={setH} label="Soat" />
                 <View style={{ height: ITEM * VISIBLE, justifyContent: 'center', paddingHorizontal: 4 }}>
-                  <T w="extrabold" size={38} color={colors.ink}>:</T>
+                  <T w="bold" size={34} color={colors.forestText}>:</T>
                 </View>
-                <Wheel count={60} value={initial.m} onChange={setM} label="Daqiqa" />
+                <Wheel count={60} value={seed.m} onChange={setM} label="Daqiqa" />
               </View>
             </View>
           ) : null}
 
-          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-            <Pressable accessibilityRole="button" onPress={onCancel} style={({ pressed }) => ({ flex: 1, height: 56, borderRadius: 20, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}>
-              <T w="extrabold" size={16} color={colors.inkSoft}>Bekor</T>
-            </Pressable>
-            <Button title={dup ? `${label} allaqachon bor` : `${label} ni saqlash`} disabled={dup} onPress={() => onSave({ h, m })} style={{ flex: 2 }} />
+          <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Button title="Bekor" variant="outline" onPress={onCancel} style={{ flex: 1 }} />
+            <Button title={dup ? `${label} allaqachon bor` : 'Saqlash'} disabled={dup} onPress={() => onSave({ h, m })} style={{ flex: 2 }} />
           </View>
         </Pressable>
       </Pressable>
