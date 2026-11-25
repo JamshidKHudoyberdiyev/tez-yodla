@@ -43,7 +43,7 @@ export default function SentenceGame() {
 
   if (!rounds.length) {
     return (
-      <Screen footer={<Button title="Orqaga" variant="dark" onPress={() => router.back()} />}>
+      <Screen footer={<Button title="Orqaga" onPress={() => router.back()} />}>
         <Card style={{ alignItems: 'center', gap: 10, marginTop: 40 }}>
           <Feather name="shuffle" size={32} color={colors.forestText} />
           <T w="extrabold" size={18}>Avval bir nechta so'z o'rganing</T>
@@ -81,7 +81,7 @@ export default function SentenceGame() {
   return (
     <Screen footer={checked === null
       ? <Button title="Tekshirish" disabled={picked.length !== parts.length} onPress={check} />
-      : <Button title={r + 1 < rounds.length ? 'Keyingi gap' : 'Natija'} variant="dark" onPress={next} />}>
+      : <Button title={r + 1 < rounds.length ? 'Keyingi gap' : 'Natija'} onPress={next} />}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
         <RoundIconButton icon="x" label="O'yindan chiqish" onPress={() => router.back()} />
         <View style={{ flex: 1 }}><Progress value={r / rounds.length} height={8} track={colors.line} /></View>

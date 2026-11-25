@@ -10,6 +10,10 @@ describe('pickExample', () => {
     expect(goodSentence(s, 'grammar')).toBe(false);
     expect(pickExample('grammar', { sentence: s })).toEqual({});
   });
+  it('rejects dictionary fragments', () => {
+    expect(goodSentence('To stove feathers.', 'stove')).toBe(false);
+    expect(goodSentence('A bowl.', 'bowl')).toBe(false);
+  });
   it('uses a short web example, then a short user sentence', () => {
     expect(pickExample('grammar', { web: 'Her grammar is excellent.' })).toEqual({ example: 'Her grammar is excellent.' });
     expect(pickExample('stubborn', { sentence: 'He is very stubborn.' })).toEqual({ example: 'He is very stubborn.' });

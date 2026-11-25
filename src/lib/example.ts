@@ -9,7 +9,10 @@ export function goodSentence(s: string | undefined, word: string): boolean {
   if (!s) return false;
   const t = s.trim();
   if (t.length < 8 || t.length > MAX_EXAMPLE) return false;
-  if (t.split(/\s+/).length > 14) return false;
+  const n = t.split(/\s+/).length;
+  if (n > 14) return false;
+  // «To stove feathers.» kabi lug'at bo'laklari gap emas: kamida 4 so'z, «To ...» bilan boshlanmasin
+  if (n < 4 || /^to\s/i.test(t)) return false;
   if ((t.match(/[,:;()]/g) ?? []).length > 2) return false;
   return t.toLowerCase().includes(word.toLowerCase().slice(0, Math.max(3, word.length - 2)));
 }

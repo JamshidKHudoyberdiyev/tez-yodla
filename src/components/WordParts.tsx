@@ -1,4 +1,4 @@
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { Image, Linking, Pressable, useWindowDimensions, View } from 'react-native';
 import { Word } from '../data/words';
 import { speak } from '../lib/speech';
@@ -6,13 +6,25 @@ import { letterLayout } from '../lib/letters';
 import { pluralOf } from '../lib/plural';
 import { diffLetters } from '../lib/srs';
 import { colors } from '../lib/theme';
-import { Chip, T } from './ui';
+import { goodSentence } from '../lib/example';
+import { T } from './ui';
 
-/** Karnaycha tugmasi — yumaloq burchakli kvadrat (so'z yoki gapni o'qiydi). */
+/** Asosiy so'z o'lchami harf soniga qarab: hech qachon kesilmaydi, juda uzuni ikki qatorga tushadi. */
+export function wordSize(text: string, max = 48): number {
+  const n = text.trim().length;
+  const s = n <= 8 ? 48 : n <= 11 ? 40 : n <= 14 ? 34 : 28;
+  return Math.min(s, max);
+}
+/** Tarjima o'lchami: qisqasi 24, uzuni 20 (ikki qatorga tushadi). */
+export function transSize(text: string): number {
+  return text.trim().length <= 22 ? 24 : 20;
+}
+
+/** Karnaycha tugmasi — hamma joyda bir xil: och yashil doira (so'z yoki gapni o'qiydi). */
 export function SoundButton({ text, label = 'Eshitish', size = 48, bg = colors.limeSoft, fg = colors.forestText, slow = false }: { text: string; label?: string; size?: number; bg?: string; fg?: string; slow?: boolean }) {
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} hitSlop={6} onPress={() => speak(text, slow)}
-      style={({ pressed }) => ({ width: size, height: size, borderRadius: Math.round(size * 0.32), backgroundColor: bg, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.75 : 1, transform: [{ scale: pressed ? 0.95 : 1 }] })}>
+      style={({ pressed }) => ({ width: size, height: size, borderRadius: size / 2, backgroundColor: bg, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.75 : 1, transform: [{ scale: pressed ? 0.95 : 1 }] })}>
       <Feather name="volume-2" size={Math.round(size * 0.44)} color={fg} />
     </Pressable>
   );
@@ -21,13 +33,13 @@ export function SoundButton({ text, label = 'Eshitish', size = 48, bg = colors.l
 /** Gap ichidagi o'rganilayotgan so'zni ajratib ko'rsatadi (katta-kichik harf farqsiz). */
 function Highlight({ text, word, size }: { text: string; word: string; size: number }) {
   const w = word.trim();
-  if (!w) return <T w="semibold" size={size}>{text}</T>;
+  if (!w) return <T size={size}>{text}</T>;
   const esc = w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const parts = text.split(new RegExp(`(\\b${esc}\\w*)`, 'i'));
   return (
-    <T w="semibold" size={size} style={{ lineHeight: Math.round(size * 1.4) }}>
+    <T size={size} style={{ lineHeight: Math.round(size * 1.4) }}>
       {parts.map((p, i) => (i % 2 === 1
-        ? <T key={i} w="extrabold" size={size} color={colors.forestText} style={{ backgroundColor: colors.limeSoft }}>{p}</T>
+        ? <T key={i} w="bold" size={size} color={colors.forestText}>{p}</T>
         : p))}
     </T>
   );
@@ -37,13 +49,12 @@ export function WordHead({ word, big = false, badge }: { word: Word; big?: boole
   return (
     <View style={{ flexDirection: 'row', alignItems: big ? 'center' : 'flex-start', gap: 12 }}>
       <View style={{ flex: 1, gap: big ? 2 : 4 }}>
-        {badge ? <View style={big ? { marginBottom: 6 } : undefined}><Chip label={badge} bg={colors.blueSoft} fg={colors.blue} /></View> : null}
-        {/* Uzun so'z ikkinchi qatorga tushmaydi — shrift o'zi kichrayadi */}
-        <T w="extrabold" size={big ? 44 : 32} numberOfLines={big ? 1 : undefined} adjustsFontSizeToFit={big} minimumFontScale={0.55}
-          style={{ lineHeight: big ? 50 : 40, letterSpacing: -0.5 }}>{word.word}</T>
+        {badge ? <T w="bold" size={12} color={colors.forestText} style={{ letterSpacing: 0.9, textTransform: 'uppercase', marginBottom: big ? 4 : 0 }}>{badge}</T> : null}
+        {/* O'lcham so'z uzunligiga qarab tanlanadi — kesilmaydi, juda uzuni ikki qatorga tushadi */}
+        <T w="extrabold" size={wordSize(word.word, big ? 44 : 32)} style={{ lineHeight: Math.round(wordSize(word.word, big ? 44 : 32) * 1.15), letterSpacing: -0.8 }}>{word.word}</T>
         {word.ipa || word.pos ? <T size={15} color={colors.muted}>{[word.ipa, word.pos].filter(Boolean).join(' · ')}</T> : null}
       </View>
-      <SoundButton text={word.word} label="Talaffuzni eshitish" size={52} bg={colors.forest} fg={colors.lime} />
+      <SoundButton text={word.word} label="Talaffuzni eshitish" size={52} />
     </View>
   );
 }
@@ -52,13 +63,13 @@ export function WordHead({ word, big = false, badge }: { word: Word; big?: boole
 export function Association({ word }: { word: Word }) {
   if (!word.association) return null;
   return (
-    <View style={{ backgroundColor: colors.amberBg, borderWidth: 1, borderColor: colors.amberLine, borderRadius: 18, padding: 14, gap: 6 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <MaterialCommunityIcons name="lightbulb-on-outline" size={18} color={colors.amber} />
-        <T w="extrabold" size={13} color={colors.amber}>Eslab qolish</T>
+    <View style={{ backgroundColor: colors.surfaceMuted, borderRadius: 16, padding: 14, gap: 6 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+        <Feather name="zap" size={15} color={colors.forestText} />
+        <T w="bold" size={13} color={colors.forestText}>Eslab qolish</T>
       </View>
       <T size={15}>
-        {word.soundsLike ? <T w="extrabold" size={15}>{word.word} ≈ «{word.soundsLike}» — </T> : null}
+        {word.soundsLike ? <T w="bold" size={15}>{word.word} ≈ «{word.soundsLike}» — </T> : null}
         {word.association}
       </T>
     </View>
@@ -68,18 +79,18 @@ export function Association({ word }: { word: Word }) {
 /** `card` — Tanishish ekranida: alohida oq karta, gap 17, tarjimasi 14 */
 export function Example({ word, card = false }: { word: Word; card?: boolean }) {
   if (!word.example) return null;
+  // Internet lug'atidan kelgan chala bo'lak («To stove feathers.») ko'rsatilmaydi
+  if (!word.exampleUz && !goodSentence(word.example, word.word)) return null;
   return (
     <View style={card
       ? { flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: colors.surface, borderRadius: 26, paddingVertical: 16, paddingHorizontal: 18 }
       : { flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: colors.bg, borderRadius: 18, padding: 14 }}>
       <View style={{ flex: 1, gap: card ? 6 : 4 }}>
-        {card
-          ? <T w="bold" size={13} color={colors.muted}>Misol</T>
-          : <T w="bold" size={11} color={colors.muted} style={{ letterSpacing: 1, textTransform: 'uppercase' }}>Misol</T>}
+        <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9, textTransform: 'uppercase' }}>Misol</T>
         <Highlight text={word.example} word={word.word} size={card ? 17 : 16} />
         {word.exampleUz ? <T size={14} color={colors.muted}>{word.exampleUz}</T> : null}
       </View>
-      <SoundButton text={word.example} label="Misol gapni eshitish" size={card ? 42 : 44} bg={card ? colors.surfaceMuted : colors.surface} />
+      <SoundButton text={word.example} label="Misol gapni eshitish" size={card ? 40 : 44} bg={card ? colors.limeSoft : colors.surface} />
     </View>
   );
 }
@@ -89,10 +100,10 @@ export function PluralTag({ word }: { word: Word }) {
   const p = pluralOf(word);
   if (!p) return null;
   return (
-    <View style={{ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, height: 30, paddingHorizontal: 10, borderRadius: 10, borderWidth: 1.5, borderColor: colors.line }}
+    <View style={{ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, height: 30, paddingHorizontal: 10, borderRadius: 10, borderWidth: 1, borderColor: colors.line }}
       accessibilityLabel={`Ko'plik shakli: ${p}`}>
       <T size={13} color={colors.muted}>ko'plik</T>
-      <T w="extrabold" size={15}>{p}</T>
+      <T w="bold" size={14}>{p}</T>
     </View>
   );
 }
