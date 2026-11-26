@@ -145,7 +145,7 @@ def recognize_single_file(key: str, region: str, audio_path: str, lang: str) -> 
     confidence = 0.0
     reason_str = "NoMatch"
 
-    for attempt in range(4):
+    for attempt in range(6):
         try:
             stt_config = speechsdk.SpeechConfig(subscription=key, region=region)
             stt_config.output_format = speechsdk.OutputFormat.Detailed
@@ -172,14 +172,17 @@ def recognize_single_file(key: str, region: str, audio_path: str, lang: str) -> 
                 cancellation = speechsdk.CancellationDetails(result)
                 err_details = cancellation.error_details or ""
                 if "4429" in err_details or "concurrent" in err_details.lower():
-                    time.sleep(1.2 + attempt * 1.5)
+                    time.sleep(1.5 + attempt * 2.0)
+                    continue
+                if "401" in err_details or "authentication" in err_details.lower():
+                    time.sleep(2.0 + attempt * 2.5)
                     continue
                 recognized_text = f"[CANCELED: {err_details}]"
                 confidence = 0.0
                 break
         except Exception as e:
-            if attempt < 3:
-                time.sleep(1.0)
+            if attempt < 5:
+                time.sleep(1.5 + attempt * 1.5)
                 continue
             recognized_text = f"[EXCEPTION: {e}]"
             confidence = 0.0
@@ -289,6 +292,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Barcha ishlab chiqarish fayllarini tekshirish (us, uk, uz)")
     parser.add_argument("--en", action="store_true", help="Faqat inglizcha ishlab chiqarish fayllarini tekshirish (us, uk)")
     parser.add_argument("--new-only", action="store_true", help="Faqat yangi qo'shilgan so'zlarni tekshirish")
+    parser.add_argument("--canceled-only", action="store_true", help="Faqat CANCELED/xato bergan so'zlarni qayta tekshirish")
     parser.add_argument("--dir", type=str, default=None, help="Bitta papkani tekshirish")
     parser.add_argument("--lang", type=str, default=None, help="STT tili (en-US, en-GB, uz-UZ)")
     parser.add_argument("--no-retry", action="store_true", help="Mos kelmaganlarni qayta sintez qilmaslik")
@@ -351,29 +355,45 @@ def main():
 
     tasks = []
     skipped_count = 0
-    for d, lang, voice, wmap in dir_targets:
-        if not os.path.exists(d):
-            print(f"OGOHLANTIRISH: Papka mavjud emas: {d}")
-            continue
-        files = sorted([f for f in os.listdir(d) if f.endswith(".mp3")])
-        for f in files:
-            slug = os.path.splitext(f)[0]
-            if only_new and new_slugs and slug not in new_slugs:
-                continue
-            fpath = os.path.join(d, f)
-            if fpath in verified_cache:
-                skipped_count += 1
-                continue
-            expected = wmap.get(slug, slug.replace("-", " "))
-            tasks.append({
-                "path": fpath,
-                "slug": slug,
-                "expected": expected,
-                "lang": lang,
-                "voice": voice,
-            })
 
-    total_all_files = len(tasks) + skipped_count
+    if args.canceled_only:
+        for fpath, item in list(verified_cache.items()):
+            rec = item.get("tanilgan", "")
+            if rec.startswith("[CANCELED") or rec.startswith("[EXCEPTION") or "401" in rec or "4429" in rec:
+                tasks.append({
+                    "path": fpath,
+                    "slug": item.get("slug") or os.path.splitext(os.path.basename(fpath))[0],
+                    "expected": item.get("kutilgan", ""),
+                    "lang": item.get("lang", "en-US"),
+                    "voice": "en-US-AvaNeural" if item.get("lang") == "en-US" else "en-GB-SoniaNeural" if item.get("lang") == "en-GB" else "uz-UZ-MadinaNeural",
+                })
+                del verified_cache[fpath]
+        skipped_count = len(verified_cache)
+        total_all_files = len(tasks) + skipped_count
+        print(f"Qayta tekshiriladigan CANCELED so'zlar soni: {len(tasks)} ta")
+    else:
+        for d, lang, voice, wmap in dir_targets:
+            if not os.path.exists(d):
+                print(f"OGOHLANTIRISH: Papka mavjud emas: {d}")
+                continue
+            files = sorted([f for f in os.listdir(d) if f.endswith(".mp3")])
+            for f in files:
+                slug = os.path.splitext(f)[0]
+                if only_new and new_slugs and slug not in new_slugs:
+                    continue
+                fpath = os.path.join(d, f)
+                if fpath in verified_cache:
+                    skipped_count += 1
+                    continue
+                expected = wmap.get(slug, slug.replace("-", " "))
+                tasks.append({
+                    "path": fpath,
+                    "slug": slug,
+                    "expected": expected,
+                    "lang": lang,
+                    "voice": voice,
+                })
+        total_all_files = len(tasks) + skipped_count
     print("=== AZURE SPEECH-TO-TEXT AVTOMATIK TEKSHIRUV ===")
     print(f"Jami fayllar: {total_all_files} ta")
     print(f"O'tkazib yuborildi (avval tekshirilgan): {skipped_count} ta")
@@ -418,7 +438,10 @@ def main():
                 except Exception as e:
                     print(f"\nXatolik: {e}")
 
-                if idx % 50 == 0 or idx == len(tasks):
+                if args.workers == 1:
+                    time.sleep(0.25)
+
+                if idx % 10 == 0 or idx == len(tasks):
                     save_progress()
                     percent = (idx / len(tasks)) * 100
                     total_done = skipped_count + idx
