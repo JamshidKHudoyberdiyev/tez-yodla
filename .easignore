@@ -1,0 +1,65 @@
+# EAS Build ignore (.gitignore + build-uchun ortiqcha fayllar)
+# DIQQAT: .easignore mavjud bo'lsa EAS .gitignore ni o'qimaydi.
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
+
+# Maxfiy kalitlar
+.env
+.env.*
+!.env.example
+
+# Eski fayllar (repoga kerak emas)
+_eski/
+
+# Audio test packs (assets/audio/us, uk, uz va pack-*.mp3 saqlanadi)
+assets/audio/pack_test/
+assets/audio/en_test2/
+
+# Icon variants
+assets/icon-variants/
+
+# Python cache & CSV
+scripts/__pycache__/
+scripts/audio-verify-progress.json
+*.csv
+
+# Tests
+test/
