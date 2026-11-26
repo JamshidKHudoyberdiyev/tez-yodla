@@ -77,7 +77,7 @@ export const WORK: Word[] = t('work', 'A2', [
 export const TRAVEL: Word[] = t('travel', 'A2', [
   { word: 'passport', translation: 'pasport', ipa: '/ˈpɑːspɔːt/', pos: 'ot', example: "Don't forget your passport.", exampleUz: 'Pasportingizni unutmang.' },
   { word: 'ticket', translation: 'chipta', ipa: '/ˈtɪkɪt/', pos: 'ot', example: 'I bought a train ticket.', exampleUz: 'Poyezd chiptasini sotib oldim.' },
-  { word: 'luggage', translation: 'yuk, bagaj', ipa: '/ˈlʌɡɪdʒ/', pos: 'ot', example: 'Your luggage is too heavy.', exampleUz: "Yukingiz juda og'ir." },
+  { word: 'luggage', translation: 'yuk', ipa: '/ˈlʌɡɪdʒ/', pos: 'ot', example: 'Your luggage is too heavy.', exampleUz: "Yukingiz juda og'ir." },
   { word: 'flight', translation: 'parvoz, reys', ipa: '/flaɪt/', pos: 'ot', example: 'Our flight is at six in the morning.', exampleUz: 'Reysimiz ertalab soat oltida.' },
   { word: 'airport', translation: 'aeroport', ipa: '/ˈeəpɔːt/', pos: 'ot', example: 'We arrived at the airport early.', exampleUz: 'Aeroportga erta yetib keldik.' },
   { word: 'hotel', translation: 'mehmonxona', ipa: '/həʊˈtel/', pos: 'ot', example: 'The hotel is near the sea.', exampleUz: 'Mehmonxona dengizga yaqin.' },
@@ -96,7 +96,7 @@ export const TRAVEL: Word[] = t('travel', 'A2', [
   { word: 'guide', translation: "gid, yo'lboshchi", ipa: '/ɡaɪd/', pos: 'ot', example: 'Our guide speaks three languages.', exampleUz: 'Gidimiz uch tilda gapiradi.' },
   { word: 'souvenir', translation: "esdalik sovg'a", ipa: '/ˌsuːvəˈnɪə/', pos: 'ot', example: 'I bought a souvenir for my mother.', exampleUz: "Onamga esdalik sovg'a oldim." },
   { word: 'abroad', translation: 'chet elda, chet elga', ipa: '/əˈbrɔːd/', pos: 'ravish', example: 'Have you ever been abroad?', exampleUz: "Hech chet elda bo'lganmisiz?" },
-  { word: 'sightseeing', translation: "diqqatga sazovor joylarni ko'rish", ipa: '/ˈsaɪtsiːɪŋ/', pos: 'ot', example: 'We went sightseeing in the old city.', exampleUz: 'Eski shaharni aylanib tomosha qildik.' },
+  { word: 'sightseeing', translation: 'diqqatga sazovor joylar sayri', ipa: '/ˈsaɪtsiːɪŋ/', pos: 'ot', example: 'We went sightseeing in the old city.', exampleUz: 'Eski shaharni aylanib tomosha qildik.' },
   { word: 'currency', translation: 'valyuta', ipa: '/ˈkʌrənsi/', pos: 'ot', example: 'What currency do they use there?', exampleUz: 'U yerda qaysi valyuta ishlatiladi?' },
   { word: 'backpack', translation: 'ryukzak', ipa: '/ˈbækpæk/', pos: 'ot', example: 'He carries a big backpack.', exampleUz: "U katta ryukzak ko'tarib yuradi." },
   { word: 'reception', translation: 'qabulxona (mehmonxonada)', ipa: '/rɪˈsepʃn/', pos: 'ot', example: 'Leave your key at reception.', exampleUz: 'Kalitingizni qabulxonaga qoldiring.' },

@@ -4,11 +4,11 @@
 # icon: home
 word	translation	pos	ipa	example	exampleUz	association	plural	level
 balcony	balkon	ot	/ˈbælkəni/	She drinks tea on the balcony every morning.	U har kuni ertalab balkonda choy ichadi.			A2
-basement	yerto'la, podval	ot	/ˈbeɪsmənt/	We keep extra boxes down in the basement.	Ortiqcha qutilarni yerto'lada saqlaymiz.	«Besh»ta qutini yerto'laga tushirdik		B1
+basement	yerto'la	ot	/ˈbeɪsmənt/	We keep extra boxes down in the basement.	Ortiqcha qutilarni yerto'lada saqlaymiz.	«Besh»ta qutini yerto'laga tushirdik		B1
 ceiling	shift, tom shifti	ot	/ˈsiːlɪŋ/	A bright lamp hangs from the white ceiling.	Oq shiftda yorqin chiroq osilib turibdi.			A2
 curtain	parda	ot	/ˈkɜːtn/	Open the blue curtain to let light in.	Yorug'lik kirishi uchun ko'k pardani oching.	«Karton» qutini parda orqasiga yashirdi		A2
 mirror	ko'zgu, oyna	ot	/ˈmɪrə/	He looked at his face in the mirror.	U ko'zguda o'z yuziga qaradi.			A2
-wardrobe	kiyim javoni, shkaf	ot	/ˈwɔːdrəʊb/	Hang your coats inside the wooden wardrobe.	Paltolaringizni yog'och kiyim javoni ichiga iling.			A2
+wardrobe	kiyim javoni	ot	/ˈwɔːdrəʊb/	Hang your coats inside the wooden wardrobe.	Paltolaringizni yog'och kiyim javoni ichiga iling.			A2
 shelf	tokcha, javon	ot	/ʃelf/	Put the English books on the top shelf.	Inglizcha kitoblarni eng yuqori tokchaga qo'ying.		shelves	A2
 armchair	kreslo, suyanchiq stul	ot	/ˈɑːmtʃeə/	Grandfather fell asleep in his comfortable armchair.	Bobom qulay kreslosida uxlab qoldi.	«Armiya»dan kelgan yigit kresloga o'tirdi		A2
 cushion	yostiqcha, divan yostig'i	ot	/ˈkʊʃn/	She bought a soft yellow cushion for the sofa.	U divan uchun yumshoq sariq yostiqcha sotib oldi.	«Kushon» podsholari divanga yostiqcha qo'ygan		B1
@@ -18,7 +18,7 @@ iron	dazmol; dazmollamoq	ot, fe'l	/ˈaɪən/	I need to iron my shirt for tomorro
 washing machine	kir yuvish mashinasi	ot	/ˈwɒʃɪŋ məˈʃiːn/	Put the dirty clothes in the washing machine.	Kir kiyimlarni kir yuvish mashinasiga soling.			A2
 broom	supurgi	ot	/bruːm/	She used a new broom to sweep the stairs.	U zinalarni supurish uchun yangi supurgi ishlatdi.	«Biram» yaxshi supuradi bu yangi supurgi!		B1
 dustpan	kurakcha (supirindi uchun)	ot	/ˈdʌstpæn/	Sweep the dust into the black dustpan now.	Changni hozir qora kurakchaga supurib oling.	«Dast» ko'tarib supirindini kurakchaga soldi		B1
-mop	pol yuvgich, shvabra	ot	/mɒp/	He washed the kitchen floor with a mop.	U oshxona polini shvabra bilan yuvdi.			B1
+mop	pol yuvgich	ot	/mɒp/	He washed the kitchen floor with a mop.	U oshxona polini pol yuvgich bilan yuvdi.			B1
 bucket	chelak	ot	/ˈbʌkɪt/	Fill the plastic bucket with warm water please.	Iltimos, plastik chelakni iliq suvga to'ldiring.			B1
 bin	axlat qutisi	ot	/bɪn/	Throw the empty paper into the bin.	Bo'sh qog'ozni axlat qutisiga tashlang.			A2
 towel	sochiq	ot	/ˈtaʊəl/	Dry your wet hands with a clean towel.	Ho'l qo'llaringizni toza sochiq bilan quriting.			A2
@@ -30,12 +30,12 @@ fireplace	kamin, o'choq	ot	/ˈfaɪəpleɪs/	We sat together near the warm stone 
 chimney	mo'ri	ot	/ˈtʃɪmni/	Dark grey smoke rose from the brick chimney.	G'ishtli mo'ridan to'q kulrang tutun ko'tarildi.			B1
 fence	panjara, devor-to'siq	ot	/fens/	Our father painted the wooden garden fence white.	Otam yog'och bog' panjarasini oqqa bo'yadi.			B1
 garage	garaj	ot	/ˈɡærɑːʒ/	Park the blue car inside the garage tonight.	Bugun oqshom ko'k mashinani garaj ichiga qo'ying.			A2
-corridor	yo'lak, koridor	ot	/ˈkɒrɪdɔː/	Walk down the long corridor to find the room.	Xonani topish uchun uzun yo'lak bo'ylab yuring.			B1
+corridor	yo'lak	ot	/ˈkɒrɪdɔː/	Walk down the long corridor to find the room.	Xonani topish uchun uzun yo'lak bo'ylab yuring.			B1
 attic	chordoq	ot	/ˈætɪk/	Grandmother keeps old photo albums in the attic.	Buvim eski fotoalbomlarni chordoqda saqlaydilar.	«Etik»larni chordoqqa olib chiqib qo'ydi		B1
 doorstep	bo'sag'a, ostonadagi zina	ot	/ˈdɔːstep/	The postman left the letter on our doorstep.	Pochtachi xatni bo'sag'amizda qoldirib ketdi.			B1
 doorknob	eshik tutqichi	ot	/ˈdɔːnɒb/	Turn the round brass doorknob to open it.	Ochish uchun dumaloq eshik tutqichini buring.			B1
 socket	rozetka	ot	/ˈsɒkɪt/	Do not touch that electrical socket with water.	U elektr rozetkasiga suvli qo'l bilan tegmang.	«Sokin» xonada telefonni rozetkaga uladi		B1
-plug	elektr vilkasi; tiqin	ot	/plʌɡ/	Push the black plug into the wall socket.	Qora elektr vilkasini devor rozetkasiga tiqing.	«Plov» pishiradigan pech vilkasini tiqdi		B1
+plug	elektr ulagich; tiqin	ot	/plʌɡ/	Push the black plug into the wall socket.	Qora elektr vilkasini devor rozetkasiga tiqing.	«Plov» pishiradigan pech vilkasini tiqdi		B1
 radiator	radiator, isitish batareyasi	ot	/ˈreɪdieɪtə/	Put the wet gloves near the warm radiator.	Ho'l qo'lqoplarni issiq radiator yoniga qo'ying.	«Radio» eshitib issiq radiator yonida isindi		B1
 tile	koshin, plitka	ot	/taɪl/	The kitchen wall is covered with white tiles.	Oshxona devori oq koshin bilan qoplangan.	«Tilla» rangli plitkalar hammomga terildi		B1
 doorbell	eshik qo'ng'irog'i	ot	/ˈdɔːbel/	Someone rang the loud doorbell twice just now.	Hozirgina kimdir baland eshik qo'ng'irog'ini ikki marta chaldi.			A2

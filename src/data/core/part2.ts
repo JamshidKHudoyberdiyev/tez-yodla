@@ -1,4 +1,4 @@
-import { A, D, Row, V } from './types';
+import { A, D, N, Row, V } from './types';
 
 // Eng ko'p ishlatiladigan fe'llar va sifatlar
 const rows: Row[] = [
@@ -24,7 +24,7 @@ const rows: Row[] = [
   ['begin', 'boshlamoq', V, 'The lesson begins at nine.', "Dars soat to'qqizda boshlanadi."],
   ['help', 'yordam bermoq', V, 'Can you help me?', 'Menga yordam bera olasizmi?'],
   ['talk', 'gaplashmoq', V, 'We need to talk.', 'Gaplashishimiz kerak.'],
-  ['turn', 'burilmoq; navbat', V, 'Turn left here.', 'Bu yerda chapga buriling.'],
+  ['turn', 'burilmoq; navbat', `${V}, ${N}`, 'Turn left here.', 'Bu yerda chapga buriling.'],
   ['start', 'boshlamoq', V, "Let's start the meeting.", "Yig'ilishni boshlaymiz."],
   ['show', "ko'rsatmoq", V, 'Show me your photos.', "Rasmlaringizni ko'rsating."],
   ['hear', 'eshitmoq', V, 'I can hear music.', 'Musiqa eshityapman.'],

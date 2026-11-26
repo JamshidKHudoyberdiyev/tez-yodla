@@ -1,4 +1,4 @@
-import { N, Row } from './types';
+import { D, N, Row } from './types';
 
 // Ish, ta'lim, jamiyat va mavhum otlar
 const rows: Row[] = [
@@ -99,8 +99,8 @@ const rows: Row[] = [
   ['illness', 'kasallik', N, 'He has a serious illness.', 'Uning og\'ir kasalligi bor.'],
   ['cold', 'shamollash', N, 'I have a cold.', 'Shamollab qoldim.'],
   ['body', 'tana', N, 'Take care of your body.', "Tanangizga g'amxo'rlik qiling."],
-  ['bottle', 'shisha, butilka', N, 'A bottle of water, please.', 'Bir shisha suv, iltimos.'],
-  ['card', 'karta, otkritka', N, 'Can I pay by card?', "Karta bilan to'lasam bo'ladimi?"],
+  ['bottle', 'shisha idish', N, 'A bottle of water, please.', 'Bir shisha suv, iltimos.'],
+  ['card', 'karta, tabriknoma', N, 'Can I pay by card?', "Karta bilan to'lasam bo'ladimi?"],
   ['bill', "hisob (to'lov)", N, 'Can I have the bill, please?', "Hisobni olib kelsangiz?"],
   ['change', 'qaytim', N, 'Here is your change.', 'Mana qaytimingiz.'],
   ['flat', 'kvartira', N, 'We live in a small flat.', 'Kichik kvartirada yashaymiz.'],
@@ -116,8 +116,8 @@ const rows: Row[] = [
   ['bottom', 'pastki qism, tub', N, 'Sign at the bottom of the page.', 'Sahifaning pastiga imzo qo\'ying.'],
   ['middle', "o'rta", N, 'Stand in the middle.', "O'rtada turing."],
   ['front', 'old tomon', N, 'Sit in the front.', "Oldinda o'tiring."],
-  ['inside', 'ichki tomon; ichkarida', N, "Let's go inside.", 'Ichkariga kiraylik.'],
-  ['outside', 'tashqari; tashqarida', N, 'The children are outside.', 'Bolalar tashqarida.'],
+  ['inside', 'ichki tomon; ichkarida', `${N}, ${D}`, "Let's go inside.", 'Ichkariga kiraylik.'],
+  ['outside', 'tashqari; tashqarida', `${N}, ${D}`, 'The children are outside.', 'Bolalar tashqarida.'],
 ];
 
 export default rows;

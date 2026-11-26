@@ -3,7 +3,7 @@
 # group: daily
 # icon: city
 word	translation	pos	ipa	example	exampleUz	association	plural	level
-pavement	piyodalar yo'lkasi, trotuar	ot	/ˈpeɪvmənt/	Always walk on the pavement to stay safe.	Xavfsiz bo'lish uchun doim piyodalar yo'lkasidan yuring.			A2
+pavement	piyodalar yo'lkasi	ot	/ˈpeɪvmənt/	Always walk on the pavement to stay safe.	Xavfsiz bo'lish uchun doim piyodalar yo'lkasidan yuring.			A2
 crossroads	chorraha	ot	/ˈkrɒsrəʊdz/	Turn right when you reach the busy crossroads.	Gavjum chorrahaga yetganda o'ngga buriling.			B1
 traffic lights	svetofor	ot	/ˈtræfɪk laɪts/	Stop your car when the traffic lights turn red.	Svetofor qizil yonganda mashinangizni to'xtating.		-	A2
 roundabout	aylanma yo'l	ot	/ˈraʊndəbaʊt/	Take the second exit at the roundabout today.	Bugun aylanma yo'ldan ikkinchi chiqishga buriling.			B1
@@ -20,7 +20,7 @@ tunnel	tunnel	ot	/ˈtʌnl/	The black train went into the long dark tunnel.	Qora 
 fountain	favvora	ot	/ˈfaʊntɪn/	Children threw small coins into the cool water fountain.	Bolalar salqin suv favvorasi ichiga kichik tangalar tashlashdi.			A2
 square	maydon	ot	/skweə/	Many tourists gathered in the central city square.	Markaziy shahar maydoniga ko'plab sayyohlar to'plandi.	«Skver» - shahar markazidagi daraxtzor maydon		A2
 passenger	yo'lovchi	ot	/ˈpæsɪndʒə/	Every passenger must buy a ticket before travelling.	Har bir yo'lovchi safardan oldin chipta olishi shart.			A2
-route	yo'nalish, marshrut	ot	/ruːt/	This bus route goes directly to the train station.	Bu avtobus yo'nalishi to'g'ri temir yo'l vokzaliga boradi.			A2
+route	yo'nalish	ot	/ruːt/	This bus route goes directly to the train station.	Bu avtobus yo'nalishi to'g'ri temir yo'l vokzaliga boradi.			A2
 fare	yo'lkira	ot	/feə/	How much is the bus fare to the airport?	Aeroportgacha avtobus yo'lkirasi qancha turadi?			B1
 commute	qatnamoq (ishga har kuni)	fe'l	/kəˈmjuːt/	Thousands of people commute to the capital city every day.	Har kuni minglab odamlar poytaxtga qatnaydi.			B1
 crowd	olomon, tiqilinch	ot	/kraʊd/	A huge crowd stood outside the new museum entrance.	Yangi muzey kirish eshigi oldida katta olomon turardi.			A2
@@ -36,7 +36,7 @@ street lamp	ko'cha chirog'i	ot	/striːt læmp/	A yellow street lamp lit up the d
 monument	haykal, yodgorlik	ot	/ˈmɒnjumənt/	A stone monument honours the heroes of the country.	Tosh yodgorlik mamlakat qahramonlarini sharaflaydi.			B1
 district	tuman, hudud	ot	/ˈdɪstrɪkt/	Our new school is located in the central district.	Yangi maktabimiz markaziy tumanda joylashgan.			B1
 neighbourhood	mahalla, atrof	ot	/ˈneɪbəhʊd/	This quiet neighbourhood is very safe for small children.	Bu sokin mahalla yosh bolalar uchun juda xavfsiz.			A2
-traffic jam	yo'l tirbandligi, probka	ot	/ˈtræfɪk dʒæm/	We were stuck in a long traffic jam today.	Biz bugun uzoq yo'l tirbandligida qolib ketdik.	«Jem» kabi quyuq tirbandlikda qolib ketdi		A2
+traffic jam	yo'l tirbandligi	ot	/ˈtræfɪk dʒæm/	We were stuck in a long traffic jam today.	Biz bugun uzoq yo'l tirbandligida qolib ketdik.	«Jem» kabi quyuq tirbandlikda qolib ketdi		A2
 rush hour	tig'iz payt	ot	/rʌʃ ˈaʊə/	Buses are always crowded during the morning rush hour.	Ertalabki tig'iz paytda avtobuslar doimo to'la bo'ladi.			B1
 fine	jarima	ot	/faɪn/	He had to pay a heavy fine for speeding.	U tezlikni oshirgani uchun katta jarima to'lashga majbur bo'ldi.			B1
 bypass	aylanma yo'l	ot	/ˈbaɪpɑːs/	Take the town bypass to avoid all central traffic.	Markazdagi tirbandlikdan qochish uchun shahar aylanma yo'lidan yuring.			B1

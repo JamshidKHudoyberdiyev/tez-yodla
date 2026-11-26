@@ -7,8 +7,10 @@ const IRREGULAR: Record<string, string> = {
   knife: 'knives', wife: 'wives', life: 'lives', leaf: 'leaves', half: 'halves', shelf: 'shelves', wolf: 'wolves',
   loaf: 'loaves', thief: 'thieves', calf: 'calves', scarf: 'scarves', self: 'selves',
   potato: 'potatoes', tomato: 'tomatoes', hero: 'heroes', echo: 'echoes', mosquito: 'mosquitoes',
-  sheep: 'sheep', fish: 'fish', deer: 'deer', series: 'series', species: 'species', crisis: 'crises',
-  analysis: 'analyses', phenomenon: 'phenomena', criterion: 'criteria', datum: 'data',
+  sheep: 'sheep', fish: 'fish', deer: 'deer', aircraft: 'aircraft', offspring: 'offspring',
+  series: 'series', species: 'species', crisis: 'crises', basis: 'bases',
+  analysis: 'analyses', hypothesis: 'hypotheses', synthesis: 'syntheses',
+  phenomenon: 'phenomena', criterion: 'criteria', datum: 'data',
   'way out': 'ways out', 'passer-by': 'passers-by', 'mother-in-law': 'mothers-in-law',
 };
 
@@ -37,6 +39,30 @@ const NO_PLURAL = new Set([
   // ko'pincha yagona yoki mavhum ma'noda ishlatiladi
   'work', 'internet', 'blood', 'sun', 'moon', 'earth', 'north', 'south', 'east', 'west', 'middle', 'inside', 'outside',
   'past', 'future', 'energy', 'environment', 'grass', 'hair', 'plov', 'dawn', 'gaze',
+  // -s bilan tugaydigan va faqat ko'plikdagi / o'zgarmas otlar
+  'data', 'media', 'criteria', 'statistics', 'politics', 'norms', 'crossroads', 'headquarters',
+  // modda, tabiat va ob-havo hodisalari
+  'acid', 'adrenaline', 'alcohol', 'ash', 'carbon', 'coal', 'copper', 'dna', 'drizzle', 'flesh', 'fog', 'frost',
+  'fuel', 'fur', 'hail', 'humidity', 'lightning', 'mist', 'resin', 'steam', 'sulphur', 'thunder', 'wood',
+  // B1-C2 va mavzuli to'plamlardagi sanalmaydigan mavhum otlar
+  'abuse', 'access', 'accountability', 'agility', 'aid', 'angst', 'anonymity', 'anthropology', 'anxiety', 'aptitude',
+  'assistance', 'austerity', 'authenticity', 'availability', 'bankruptcy', 'bliss', 'choreography', 'chronology',
+  'cinematography', 'circulation', 'compliance', 'confinement', 'consciousness', 'consensus', 'consent', 'content',
+  'continuity', 'cooperation', 'corruption', 'courtesy', 'coverage', 'credibility', 'criticism', 'currency',
+  'degradation', 'depression', 'deprivation', 'dissemination', 'diversity', 'domination', 'duration', 'ease', 'eminence',
+  'equity', 'ethos', 'euphoria', 'existence', 'exploitation', 'fatigue', 'fruition', 'fusion', 'gambling', 'grief',
+  'guidance', 'harassment', 'hindsight', 'hostility', 'hypocrisy', 'hysteria', 'immigration', 'inclusion', 'indulgence',
+  'inflation', 'injustice', 'intellect', 'intuition', 'irony', 'jargon', 'jealousy', 'journalism', 'joy',
+  'jurisdiction', 'laundry', 'leadership', 'legislation', 'liaison', 'likelihood', 'literature', 'luxury', 'maintenance',
+  'malice', 'management', 'manipulation', 'mediation', 'melancholy', 'membership', 'meteorology', 'methodology',
+  'mythology', 'nostalgia', 'notoriety', 'panic', 'participation', 'persecution', 'personnel', 'philanthropy',
+  'philosophy', 'pity', 'plumbing', 'popularity', 'precision', 'presence', 'prevention', 'profitability',
+  'proliferation', 'psychology', 'purity', 'rapture', 'realism', 'reconciliation', 'recourse', 'redundancy', 'relief',
+  'remorse', 'reputation', 'resilience', 'resistance', 'restoration', 'retail', 'retention', 'retirement', 'rhetoric',
+  'salvation', 'sarcasm', 'scrutiny', 'security', 'simplicity', 'solitude', 'speculation', 'sponsorship', 'stability',
+  'storage', 'subordination', 'surgery', 'surveillance', 'terrain', 'testimony', 'therapy', 'topography', 'transit',
+  'transportation', 'trauma', 'truth', 'turmoil', 'utilization', 'vegetation', 'ventilation', 'vicinity', 'welfare',
+  'zoology',
 ]);
 
 /** Ko'plik shaklini oddiy qoidalar bilan hosil qiladi (bitta so'z uchun) */

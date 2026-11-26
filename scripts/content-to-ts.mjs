@@ -79,7 +79,7 @@ if (bad.length) {
 }
 
 fs.mkdirSync(OUT, { recursive: true });
-const keep = new Set(['index.ts', ...parsed.map((p) => `${p.id}.ts`)]);
+const keep = new Set(['index.ts', 'audio.ts', ...parsed.map((p) => `${p.id}.ts`)]);
 for (const f of fs.readdirSync(OUT)) if (f.endsWith('.ts') && !keep.has(f)) fs.rmSync(path.join(OUT, f));
 
 // Rang to'plam id'idan olinadi — yangi fayl qo'shilganda boshqa to'plamlarning rangi o'zgarmaydi

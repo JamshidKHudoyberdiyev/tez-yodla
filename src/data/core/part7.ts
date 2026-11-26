@@ -121,7 +121,7 @@ const rows: Row[] = [
   ['suddenly', "to'satdan", D, 'Suddenly it started to rain.', "To'satdan yomg'ir yog'a boshladi."],
   ['finally', 'nihoyat', D, 'Finally, we are home.', 'Nihoyat, uydamiz.'],
   ['immediately', 'darhol', D, 'Come here immediately!', 'Darhol bu yerga keling!'],
-  ['carefully', 'diqqat bilan, ehtiyotkorlik bilan', D, 'Listen carefully.', 'Diqqat bilan tinglang.'],
+  ['carefully', 'diqqat bilan, ehtiyotkorona', D, 'Listen carefully.', 'Diqqat bilan tinglang.'],
   ['easily', 'osongina', D, 'You can easily do it.', 'Buni osongina qila olasiz.'],
   ['early', 'erta', D, 'I went to bed early.', 'Erta yotdim.'],
   ['away', 'uzoqqa, nari', D, 'Go away!', 'Keting!'],
