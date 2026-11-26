@@ -18,7 +18,7 @@ const rows: Row[] = [
   ['drive', 'mashina haydamoq', V, 'Can you drive?', 'Mashina hayday olasizmi?', '/draɪv/'],
   ['fly', 'uchmoq', V, 'Birds fly south in winter.', 'Qushlar qishda janubga uchadi.', '/flaɪ/'],
   ['travel', 'sayohat qilmoq', V, 'I love to travel.', "Sayohat qilishni yaxshi ko'raman.", '/ˈtrævəl/'],
-  ['visit', 'tashrif buyurmoq, borib kelmoq', V, 'We visit our grandparents on Sundays.', 'Yakshanba kunlari buvamnikiga boramiz.', '/ˈvɪzɪt/'],
+  ['visit', 'tashrif buyurmoq, borib kelmoq', V, 'We visit our grandparents on Sundays.', 'Yakshanba kunlari bobom va buvimnikiga boramiz.', '/ˈvɪzɪt/'],
   ['arrive', 'yetib kelmoq', V, 'The train arrives at ten.', "Poyezd soat o'nda yetib keladi.", '/əˈraɪv/'],
   ['enter', 'kirmoq', V, 'Please enter the room.', 'Iltimos, xonaga kiring.', '/ˈentə/'],
   ['throw', 'otmoq, tashlamoq', V, 'Throw the ball to me.', 'To\'pni menga oting.', '/θrəʊ/'],
