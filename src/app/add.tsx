@@ -499,7 +499,8 @@ function TextTab({ initialText, top, onAgain }: { initialText?: string; top?: Re
     if (!reading) return new Set<string>();
     const learned = Object.values(state.cards).filter((c) => c.state !== 'new').map((c) => wordById(c.wordId)?.word.toLowerCase()).filter(Boolean) as string[];
     const known = new Set([...state.knownLemmas, ...learned]);
-    return new Set(findUnknownWords(text, known, new Set(dictionary.keys())).map((u) => u.lemma));
+    // O'zbekcha so'zlar (rasmdagi izohlar) «notanish inglizcha so'z» emas
+    return new Set(findUnknownWords(text, known, new Set(dictionary.keys())).filter((u) => !looksUzbek(u.lemma)).map((u) => u.lemma));
   }, [reading, text, state.cards, state.knownLemmas, dictionary, wordById]);
 
   const picked = new Set(picks.map((p) => p.lemma));

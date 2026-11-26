@@ -3,14 +3,17 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { extractTextFromImage, isSupported } from 'expo-text-extractor';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Easing, Image, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, T } from '@/components/ui';
-import { cleanBlocks, putScan } from '@/lib/scan';
+import { COMMON_WORDS } from '@/data/common';
+import { cleanBlocks, putScan, type ScanBlock } from '@/lib/scan';
+import { useStore } from '@/lib/store';
+import { lemmatize } from '@/lib/text';
 import { colors } from '@/lib/theme';
 
-type Block = { text: string; words: number; on: boolean };
+type Block = ScanBlock;
 type Phase = 'camera' | 'reading' | 'select';
 
 const DARK = '#1E211D';
@@ -27,6 +30,13 @@ export default function Scan() {
   const [uri, setUri] = useState<string | null>(null);
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [busy, setBusy] = useState(false);
+  const [showShort, setShowShort] = useState(false);
+  const { words: dict } = useStore();
+  // So'z inglizchami: lug'atimizda yoki keng tarqalgan so'zlar orasida (shakli o'zgargan bo'lsa ham)
+  const english = useMemo(() => {
+    const set = new Set(dict.map((w) => w.word.toLowerCase()));
+    return (w: string) => set.has(w) || COMMON_WORDS.has(w) || set.has(lemmatize(w)) || COMMON_WORDS.has(lemmatize(w));
+  }, [dict]);
 
   const read = async (photo: string) => {
     setUri(photo);
@@ -34,14 +44,14 @@ export default function Scan() {
     try {
       // Android moduli oddiy fayl yo'lini kutadi («file://»siz)
       const path = Platform.OS === 'android' ? photo.replace(/^file:\/\//, '') : photo;
-      const found = cleanBlocks(isSupported ? await extractTextFromImage(path) : []);
+      const found = cleanBlocks(isSupported ? await extractTextFromImage(path) : [], english);
       if (!found.length) {
         putScan({ uri: photo, empty: true });
         router.back();
         return;
       }
-      // Hammasi qisqa bo'lsa (masalan, skrinshotdagi bir necha so'z) — barchasini belgilaymiz
-      setBlocks(found.some((b) => b.on) ? found : found.map((b) => ({ ...b, on: true })));
+      setBlocks(found);
+      setShowShort(false);
       setPhase('select');
     } catch {
       putScan({ uri: photo, empty: true });
@@ -106,6 +116,21 @@ export default function Scan() {
   if (phase === 'select') {
     const chosen = blocks.filter((b) => b.on);
     const words = chosen.reduce((n, b) => n + b.words, 0);
+    const idx = blocks.map((_, i) => i);
+    const longOrder = [...idx.filter((i) => !blocks[i].short && blocks[i].on), ...idx.filter((i) => !blocks[i].short && !blocks[i].on)];
+    const shortIdx = idx.filter((i) => blocks[i].short);
+    const blockView = (i: number) => {
+      const b = blocks[i];
+      return (
+        <Pressable key={i} accessibilityRole="checkbox" accessibilityState={{ checked: b.on }} onPress={() => setBlocks((xs) => xs.map((x, j) => (j === i ? { ...x, on: !x.on } : x)))}
+          style={{ flexDirection: 'row', gap: 10, padding: 14, borderRadius: 14, backgroundColor: b.on ? '#FBF8F1' : 'rgba(255,255,255,0.06)', borderWidth: 2, borderColor: b.on ? colors.lime : 'rgba(255,255,255,0.18)', borderStyle: b.on ? 'solid' : 'dashed' }}>
+          <View style={{ width: 22, height: 22, borderRadius: 7, marginTop: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: b.on ? colors.forest : 'transparent', borderWidth: b.on ? 0 : 1.5, borderColor: 'rgba(255,255,255,0.5)' }}>
+            {b.on ? <Feather name="check" size={14} color={colors.lime} /> : null}
+          </View>
+          <T size={15} color={b.on ? '#2E2E2E' : 'rgba(255,255,255,0.55)'} style={{ flex: 1, lineHeight: 22 }} numberOfLines={b.on ? undefined : 2}>{b.text}</T>
+        </Pressable>
+      );
+    };
     return (
       <View style={{ flex: 1, backgroundColor: DARK }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: insets.top + 12, paddingHorizontal: 20, paddingBottom: 12 }}>
@@ -116,21 +141,33 @@ export default function Scan() {
           </View>
           {uri ? <Image source={{ uri }} style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: '#2A2D28' }} /> : null}
         </View>
-        <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 4, gap: 10 }}>
-          {blocks.map((b, i) => (
-            <Pressable key={i} accessibilityRole="checkbox" accessibilityState={{ checked: b.on }} onPress={() => setBlocks((xs) => xs.map((x, j) => (j === i ? { ...x, on: !x.on } : x)))}
-              style={{ flexDirection: 'row', gap: 10, padding: 14, borderRadius: 14, backgroundColor: b.on ? '#FBF8F1' : 'rgba(255,255,255,0.06)', borderWidth: 2, borderColor: b.on ? colors.lime : 'rgba(255,255,255,0.18)', borderStyle: b.on ? 'solid' : 'dashed' }}>
-              <View style={{ width: 22, height: 22, borderRadius: 7, marginTop: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: b.on ? colors.forest : 'transparent', borderWidth: b.on ? 0 : 1.5, borderColor: 'rgba(255,255,255,0.5)' }}>
-                {b.on ? <Feather name="check" size={14} color={colors.lime} /> : null}
-              </View>
-              <T size={15} color={b.on ? '#2E2E2E' : 'rgba(255,255,255,0.55)'} style={{ flex: 1, lineHeight: 22, textDecorationLine: b.on ? 'none' : 'line-through' }} numberOfLines={b.on ? undefined : 2}>{b.text}</T>
+        <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 4, paddingBottom: 32, gap: 10 }}>
+          {!chosen.length && !blocks.some((b) => b.on) ? (
+            <T w="bold" size={12} color="rgba(255,255,255,0.55)" style={{ letterSpacing: 0.9, marginBottom: -2 }}>INGLIZCHA TOPILMADI</T>
+          ) : null}
+          {/* Belgilanganlari tepada, keyin qolgan uzun bo'laklar; qisqa yozuvlar — yig'ma qatorda */}
+          {longOrder.map((i) => blockView(i))}
+          {shortIdx.length ? (
+            <Pressable accessibilityRole="button" accessibilityState={{ expanded: showShort }} onPress={() => setShowShort(!showShort)}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 48, paddingHorizontal: 14, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.08)' }}>
+              <T w="semibold" size={14.5} color="rgba(255,255,255,0.85)" style={{ flex: 1 }}>{showShort ? 'Qisqa yozuvlarni yashirish' : `+ ${shortIdx.length} ta qisqa yozuv`}</T>
+              <Feather name={showShort ? 'chevron-up' : 'chevron-down'} size={18} color="rgba(255,255,255,0.7)" />
             </Pressable>
-          ))}
+          ) : null}
+          {showShort ? shortIdx.map((i) => blockView(i)) : null}
+          {!blocks.some((b) => b.on && !b.short) && !chosen.length ? (
+            <View style={{ flexDirection: 'row', gap: 10, padding: 14, borderRadius: 14, backgroundColor: 'rgba(239,150,90,0.14)' }}>
+              <Feather name="info" size={17} color="#F0A06A" />
+              <T size={13.5} color="#F6C9A6" style={{ flex: 1, lineHeight: 19 }}>Rasmda inglizcha matn kam. Kerakli bo'lakni o'zingiz belgilang.</T>
+            </View>
+          ) : null}
         </ScrollView>
         <View style={{ backgroundColor: colors.bg, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 18, paddingBottom: insets.bottom + 16, gap: 14 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Feather name="check" size={16} color={colors.forestText} />
-            <T size={14} color={colors.inkSoft}><T w="bold" size={14}>{chosen.length} ta bo'lak</T> · {words} so'z tanlandi</T>
+            {chosen.length ? <Feather name="check" size={16} color={colors.forestText} /> : null}
+            {chosen.length
+              ? <T size={14} color={colors.inkSoft}><T w="bold" size={14}>{chosen.length} ta bo'lak</T> · {words} so'z tanlandi</T>
+              : <T size={14} color={colors.muted}>Hech narsa tanlanmagan</T>}
           </View>
           <View style={{ flexDirection: 'row', gap: 12 }}>
             <Button title="Qayta olish" variant="white" style={{ flex: 1 }} onPress={() => { setBlocks([]); setUri(null); setPhase('camera'); }} />
