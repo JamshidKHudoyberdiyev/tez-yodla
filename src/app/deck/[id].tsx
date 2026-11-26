@@ -9,11 +9,7 @@ import { EXTRA_NEW, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 
-const STATUS: Record<WordStatus, { label: string; bg: () => string; fg: () => string }> = {
-  learned: { label: "O'rganildi", bg: () => colors.limeSoft, fg: () => colors.forestText },
-  learning: { label: "O'rganilyapti", bg: () => colors.surfaceMuted, fg: () => colors.inkSoft },
-  new: { label: 'Yangi', bg: () => colors.bg, fg: () => colors.muted },
-};
+const STATUS: Record<WordStatus, string> = { learned: "O'rganildi", learning: "O'rganilmoqda", new: 'Yangi' };
 
 /** Ro'yxatda bir yo'la ko'rsatiladigan so'zlar soni */
 const PAGE = 40;
@@ -72,20 +68,22 @@ export default function DeckScreen() {
             <T size={13} color={colors.muted}>{p.total} so'z · {deck.subtitle}</T>
           </View>
         </View>
-        <View style={{ gap: 6 }}>
-          <View style={{ flexDirection: 'row', height: 8, borderRadius: 4, backgroundColor: colors.bg, overflow: 'hidden' }}>
-            <View style={{ width: `${p.total ? (p.learned / p.total) * 100 : 0}%`, backgroundColor: colors.forest }} />
-            <View style={{ width: `${p.total ? (p.learning / p.total) * 100 : 0}%`, backgroundColor: colors.lime }} />
+        {p.started ? (
+          <View style={{ gap: 6 }}>
+            <View style={{ flexDirection: 'row', height: 6, borderRadius: 3, backgroundColor: colors.bg, overflow: 'hidden' }}>
+              <View style={{ width: `${p.total ? (p.learned / p.total) * 100 : 0}%`, backgroundColor: colors.forest }} />
+              <View style={{ width: `${p.total ? (p.learning / p.total) * 100 : 0}%`, backgroundColor: colors.lime }} />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <T size={12.5} color={colors.muted}><T w="bold" size={12.5}>{p.learned}</T> o'rganildi · <T w="bold" size={12.5}>{p.learning}</T> o'rganilmoqda</T>
+              <T size={12.5} color={colors.muted}>{pct}%</T>
+            </View>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <T size={12} color={colors.muted}><T w="extrabold" size={12}>{p.learned}</T> o'rganildi · <T w="extrabold" size={12}>{p.learning}</T> o'rganilyapti</T>
-            <T size={12} color={colors.muted}>{pct}%</T>
-          </View>
-        </View>
+        ) : <T size={13.5} color={colors.muted}>Hali boshlanmagan</T>}
         <Pressable accessibilityRole="switch" accessibilityState={{ checked: active }} accessibilityLabel="Kunlik rejada" onPress={() => toggleDeck(deck.id)}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48, borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: 12 }}>
           <Feather name="calendar" size={20} color={colors.forestText} />
-          <T w="extrabold" size={15} style={{ flex: 1 }}>Kunlik rejada</T>
+          <T w="semibold" size={15} style={{ flex: 1 }}>Kunlik rejada</T>
           <View style={{ width: 50, height: 30, borderRadius: 15, padding: 3, backgroundColor: active ? colors.forest : colors.line, alignItems: active ? 'flex-end' : 'flex-start' }}>
             <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: active ? colors.lime : '#FFFFFF' }} />
           </View>
@@ -93,23 +91,24 @@ export default function DeckScreen() {
       </View>
 
 
-      <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 4 }}>
-        <T w="extrabold" size={18}>So'zlar</T>
-        <T w="bold" size={13} color={colors.muted}>{list.length} ta</T>
-      </View>
+      <T w="bold" size={12} color={colors.muted} style={{ letterSpacing: 0.9, paddingHorizontal: 4, marginTop: 6, marginBottom: -4 }}>SO'ZLAR · {list.length}</T>
       <View style={{ backgroundColor: colors.surface, borderRadius: 22, overflow: 'hidden' }}>
         {list.length ? shown.map((w, i) => {
-          const s = STATUS[wordStatus(cardOf(w, state.cards, byWord))];
+          const st = wordStatus(cardOf(w, state.cards, byWord));
           return (
-            <Pressable key={w.id} accessibilityRole="button" accessibilityLabel={`${w.word}, ${w.translation}, ${s.label}`} onPress={() => router.push({ pathname: '/word/[id]', params: { id: w.id } })}
-              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
+            <Pressable key={w.id} accessibilityRole="button" accessibilityLabel={`${w.word}, ${w.translation}, ${STATUS[st]}`} onPress={() => router.push({ pathname: '/word/[id]', params: { id: w.id } })}
+              style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 62, paddingVertical: 10, paddingLeft: 16, paddingRight: 12, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider, backgroundColor: pressed ? colors.surfaceMuted : 'transparent' })}>
               <View style={{ flex: 1 }}>
-                <T w="extrabold" size={16}>{w.word}</T>
-                <T size={13} color={colors.muted} numberOfLines={1}>{w.translation}</T>
+                <T w="bold" size={16.5} numberOfLines={1}>{w.word}</T>
+                <T size={14} color={colors.inkSoft} numberOfLines={1}>{w.translation}</T>
               </View>
-              <View style={{ height: 24, paddingHorizontal: 9, borderRadius: 8, justifyContent: 'center', backgroundColor: s.bg() }}>
-                <T w="extrabold" size={11} color={s.fg()}>{s.label}</T>
-              </View>
+              {st === 'learned' ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Feather name="check" size={13} color={colors.forestText} />
+                  <T w="bold" size={12.5} color={colors.forestText}>{STATUS[st]}</T>
+                </View>
+              ) : <T size={12.5} color={st === 'learning' ? colors.inkSoft : colors.muted}>{STATUS[st]}</T>}
+              <Feather name="chevron-right" size={17} color={colors.placeholder} />
             </Pressable>
           );
         }) : <T size={14} color={colors.muted} style={{ padding: 16 }}>Hech narsa topilmadi</T>}
