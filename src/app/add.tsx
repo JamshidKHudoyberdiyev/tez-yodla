@@ -275,7 +275,8 @@ function WriteTab() {
           </View>
           {sameAsExisting ? info("Bu ma'no ro'yxatingizda bor")
             : manual && !notWord && found?.translation && !touched && translation ? info('Internetdan topildi — tekshirib oling')
-              : manual && auto?.q === lookupQ && auto.state === 'fail' ? info("So'z topilmadi") : null}
+              : manual && auto?.q === lookupQ && auto.state === 'fail' ? info("So'z topilmadi")
+                : manual && !notWord && found && !found.translation && !translation ? info("Tarjima topilmadi — o'zingiz yozing") : null}
           {example ? (
             <T size={14} color={colors.inkSoft} style={{ lineHeight: 20 }}>{example.en}{example.uz ? <T size={14} color={colors.muted}> — {example.uz}</T> : null}</T>
           ) : exampleOpen ? (

@@ -51,14 +51,34 @@ export function decodeEntities(s: string): string {
     .replace(/[\u2018\u2019\u02BB\u02BC`]/g, "'");
 }
 
+/** Tarjima xotirasida diniy matnlar ko'p (Qur'on tarjimalari) — bunday «ma'no» lug'atga yaramaydi. */
+const RELIGIOUS = /(alloh|olloh|xudo|oyat|qur'?on|jannat|do'zax|payg'ambar|rasul|iymon|namoz|ibodat|rabb|taolo|mo'min|kofir|qiyomat|farishta|savob|gunoh|zotdir)/;
+
+/**
+ * Lug'atdagidek oddiy ma'no: 1–3 so'z, faqat lotincha harflar, gap emas, diniy ibora emas.
+ * «(Ushbu oyat ma'nosida…», «ana o'shalarga adn jannatlar bordir» — o'tmaydi.
+ */
+export function cleanMeaning(raw: string | undefined | null, query: string): string | null {
+  if (!raw) return null;
+  let t = cyrToLat(decodeEntities(raw)).replace(/\s+/g, ' ').trim();
+  if (/MYMEMORY|QUERY LENGTH|INVALID/i.test(t)) return null;
+  t = t.replace(/[.!]+$/, '').trim();
+  if (/[«»()"“”:;?!.\[\]0-9–—]/.test(t)) return null; // gap yoki izoh
+  t = t.toLowerCase();
+  if (!/^[a-z' -]+$/.test(t) || t.length > 30 || t.split(' ').length > 3) return null;
+  if (RELIGIOUS.test(t) || t === query.trim().toLowerCase()) return null;
+  return t;
+}
+
 export function parseMyMemory(json: unknown, query: string): string | null {
   const j = json as { responseStatus?: number | string; responseData?: { translatedText?: string } };
   if (!j || Number(j.responseStatus) !== 200) return null;
-  let t = j.responseData?.translatedText?.trim();
-  if (!t || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID/i.test(t)) return null;
-  t = cyrToLat(decodeEntities(t)).replace(/\s+/g, ' ').replace(/[.!]$/, '').trim();
-  if (t.toLowerCase() === query.trim().toLowerCase()) return null; // tarjima qilinmagan
-  return t.charAt(0) === t.charAt(0).toUpperCase() && query.charAt(0) === query.charAt(0).toLowerCase() ? t.charAt(0).toLowerCase() + t.slice(1) : t;
+  // «u, ana u» — birinchi toza ma'no
+  for (const part of decodeEntities(j.responseData?.translatedText ?? '').split(/[;,]/)) {
+    const t = cleanMeaning(part, query);
+    if (t) return t;
+  }
+  return null;
 }
 
 export function parseDictionary(json: unknown): Omit<LookupResult, 'translation'> | null {
@@ -73,18 +93,22 @@ export function parseDictionary(json: unknown): Omit<LookupResult, 'translation'
   return { ipa: ipa || undefined, pos: pos ? POS_UZ[pos] ?? pos : undefined, example };
 }
 
-/** MyMemory javobidan o'zbekcha ma'nolar: asosiy tarjima + muqobillari, ko'pi bilan `max` ta. */
-export function parseUzOptions(json: unknown, query: string, max = 5): string[] {
-  const j = json as { responseStatus?: number | string; responseData?: { translatedText?: string }; matches?: { translation?: string; quality?: number | string }[] };
+/**
+ * MyMemory javobidan o'zbekcha ma'nolar: asosiy tarjima + muqobillari, ko'pi bilan `max` ta.
+ * Muqobillar faqat AYNAN shu so'zning tarjimasi bo'lsa olinadi (uzun gaplarning tarjimasi emas).
+ */
+export function parseUzOptions(json: unknown, query: string, max = 4): string[] {
+  type M = { segment?: string; translation?: string; quality?: number | string };
+  const j = json as { responseStatus?: number | string; responseData?: { translatedText?: string }; matches?: M[] };
   if (!j || Number(j.responseStatus) !== 200) return [];
-  const raw = [j.responseData?.translatedText, ...(j.matches ?? []).filter((m) => Number(m.quality ?? 0) >= 50).map((m) => m.translation)];
+  const q = query.trim().toLowerCase();
+  const same = (seg?: string) => (seg ?? '').trim().toLowerCase().replace(/[.!?]+$/, '') === q;
+  const raw = [j.responseData?.translatedText, ...(j.matches ?? []).filter((m) => same(m.segment) && Number(m.quality ?? 0) >= 50).map((m) => m.translation)];
   const out: string[] = [];
   for (const r of raw) {
-    for (let t of cyrToLat(decodeEntities(r ?? '')).split(/[;,]/)) {
-      t = t.replace(/\s+/g, ' ').replace(/[.!?:]+$/, '').trim().toLowerCase();
-      if (!t || /mymemory|query length|invalid/i.test(t)) continue;
-      if (!/^[a-z' -]+$/.test(t) || t.split(' ').length > 4) continue; // faqat lotincha qisqa ma'no
-      if (t === query.trim().toLowerCase() || out.includes(t)) continue;
+    for (const part of decodeEntities(r ?? '').split(/[;,]/)) {
+      const t = cleanMeaning(part, query);
+      if (!t || out.includes(t)) continue;
       out.push(t);
       if (out.length >= max) return out;
     }
@@ -104,8 +128,8 @@ export async function lookupWord(word: string, signal?: AbortSignal): Promise<Lo
     getJson(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|uz`, signal).then((j) => ({ main: parseMyMemory(j, q), options: parseUzOptions(j, q) })),
     getJson(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(q.toLowerCase())}`, signal).then(parseDictionary),
   ]);
-  const translation = tr.status === 'fulfilled' ? tr.value.main ?? undefined : undefined;
   const options = tr.status === 'fulfilled' ? tr.value.options : [];
+  const translation = tr.status === 'fulfilled' ? tr.value.main ?? options[0] : undefined;
   const info = dict.status === 'fulfilled' ? dict.value : null;
   if (!translation && !info) return null;
   // Misol gapda so'zning o'zi bo'lmasa (lug'at boshqa shaklini bergan: born → «bearing») — misolni olmaymiz

@@ -40,7 +40,15 @@ test("HTML belgilari ochiladi: tutuq belgisi to'g'ri chiqadi", () => {
 
 describe('parseUzOptions', () => {
   it('collects short Latin Uzbek meanings from translation and matches', () => {
-    const j = { responseStatus: 200, responseData: { translatedText: "O'ldirmoq" }, matches: [{ translation: 'nobud qilmoq, vaqt o&#39;tkazmoq', quality: 80 }, { translation: 'kill', quality: 90 }, { translation: 'yomon', quality: 10 }] };
+    const j = { responseStatus: 200, responseData: { translatedText: "O'ldirmoq" }, matches: [{ segment: 'kill', translation: 'nobud qilmoq, vaqt o&#39;tkazmoq', quality: 80 }, { segment: 'Kill', translation: 'kill', quality: 90 }, { segment: 'kill', translation: 'yomon', quality: 10 }, { segment: 'They kill the snake', translation: 'ular ilonni', quality: 90 }] };
     expect(parseUzOptions(j, 'kill')).toEqual(["o'ldirmoq", 'nobud qilmoq', "vaqt o'tkazmoq"]);
+  });
+  it('drops religious phrases, sentences and long glosses', () => {
+    const j = { responseStatus: 200, responseData: { translatedText: 'Ana o‘shalarga Adn jannatlar bordir' }, matches: [
+      { segment: 'that', translation: '(Ushbu oyat ma\'nosida «nishonlar» deb tarjima qilgan ibora', quality: 80 },
+      { segment: 'that', translation: 'u, ana u', quality: 80 },
+      { segment: 'that', translation: 'Alloh g‘olib va hikmatli zotdir', quality: 80 }] };
+    expect(parseUzOptions(j, 'that')).toEqual(['u', 'ana u']);
+    expect(parseMyMemory(j, 'that')).toBeNull();
   });
 });
