@@ -1,5 +1,5 @@
-/** [so'z, tarjima, so'z turkumi, misol gap, misolning tarjimasi] */
-export type Row = [string, string, string, string, string];
+/** [so'z, tarjima, so'z turkumi, misol gap, misolning tarjimasi, britancha IPA?] */
+export type Row = [string, string, string, string, string, string?];
 
 export const N = 'ot';
 export const V = "fe'l";

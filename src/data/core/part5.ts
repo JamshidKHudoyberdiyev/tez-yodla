@@ -1,4 +1,4 @@
-import { Row, V } from './types';
+import { N, Row, V } from './types';
 
 // Kundalik harakatlar (fe'llar)
 const rows: Row[] = [
@@ -91,7 +91,7 @@ const rows: Row[] = [
   ['knock', 'taqillatmoq', V, 'Knock before you enter.', 'Kirishdan oldin taqillating.'],
   ['ring', "jiringlamoq; qo'ng'iroq qilmoq", V, 'The phone is ringing.', 'Telefon jiringlayapti.'],
   ['print', 'chop etmoq', V, 'Please print this page.', 'Iltimos, bu sahifani chop eting.'],
-  ['type', 'terib yozmoq', V, 'He types very fast.', 'U juda tez yozadi.'],
+  ['type', 'tur, xil', N, 'What type of music do you like?', 'Qanday turdagi musiqani yoqtirasiz?'],
   ['download', "yuklab olmoq", V, 'Download the app.', 'Ilovani yuklab oling.'],
   ['search', 'qidirmoq', V, 'Search for it online.', 'Uni internetdan qidiring.'],
   ['post', "jo'natmoq; joylamoq", V, 'I posted a photo.', 'Surat joyladim.'],

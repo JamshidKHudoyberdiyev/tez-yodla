@@ -98,7 +98,7 @@ const w = (deckId: string, level: Level, list: Omit<Word, 'id' | 'deckId' | 'lev
  */
 /** Daraja to'plamlarining yangi so'zlari (leveled/*.ts) */
 const LEVEL_WORDS: Word[] = LEVEL_ROWS.flatMap(([deckId, rows]) =>
-  rows.map(([word, translation, pos, example, exampleUz]) => ({ id: `${deckId}:${word}`, word, translation, pos, example, exampleUz, deckId, level: deckId.toUpperCase() as Level })));
+  rows.map(([word, translation, pos, example, exampleUz, ipa]) => ({ id: `${deckId}:${word}`, word, translation, ...(ipa ? { ipa } : {}), pos, example, exampleUz, deckId, level: deckId.toUpperCase() as Level })));
 
 const CORE_WORDS: Word[] = CORE_ENTRIES.map((e) => {
   const deckId = coreDeckOf(e.word);

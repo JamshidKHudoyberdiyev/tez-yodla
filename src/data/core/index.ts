@@ -56,14 +56,14 @@ export const CORE_ASSOCIATIONS: Record<string, [string, string]> = {
   hole: ['xol', "Yuzidagi qora xol teshikka o'xshab ko'rinadi."],
 };
 
-export type CoreEntry = { word: string; translation: string; pos: string; example: string; exampleUz: string; soundsLike?: string; association?: string };
+export type CoreEntry = { word: string; translation: string; pos: string; example: string; exampleUz: string; ipa?: string; soundsLike?: string; association?: string };
 
 function build(): { entries: CoreEntry[]; duplicates: string[] } {
   const seen = new Set<string>();
   const duplicates: string[] = [];
   const entries: CoreEntry[] = [];
   const all: Row[] = [...part1, ...part2, ...part3, ...part4, ...part5, ...part6, ...part7, ...part8];
-  for (const [word, translation, pos, example, exampleUz] of all) {
+  for (const [word, translation, pos, example, exampleUz, ipa] of all) {
     const key = word.toLowerCase();
     if (seen.has(key)) {
       duplicates.push(word);
@@ -71,7 +71,7 @@ function build(): { entries: CoreEntry[]; duplicates: string[] } {
     }
     seen.add(key);
     const a = CORE_ASSOCIATIONS[key];
-    entries.push({ word, translation, pos, example, exampleUz, ...(a ? { soundsLike: a[0], association: a[1] } : {}) });
+    entries.push({ word, translation, pos, example, exampleUz, ...(ipa ? { ipa } : {}), ...(a ? { soundsLike: a[0], association: a[1] } : {}) });
   }
   return { entries, duplicates };
 }
