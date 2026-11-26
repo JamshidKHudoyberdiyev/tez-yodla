@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, TextInput, View } from 'react-native';
+import { useCameraPermissions } from 'expo-camera';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Image, Platform, Pressable, TextInput, View } from 'react-native';
 import { BackHeader, Button, Card, Group, Screen, T } from '@/components/ui';
 import type { Word } from '@/data/words';
 import { lookupEnglish, lookupWord, type LookupResult } from '@/lib/lookup';
@@ -11,6 +12,7 @@ import { SoundButton, wordSize } from '@/components/WordParts';
 import { Plant } from '@/components/Art';
 import { looksUzbek, nearWords, suggestWords } from '@/lib/suggest';
 import { pickExample } from '@/lib/example';
+import { type ScanResult, takeScan } from '@/lib/scan';
 import { useStore } from '@/lib/store';
 import { findUnknownWords, splitSentences, tokenize } from '@/lib/text';
 import { colors, font } from '@/lib/theme';
@@ -25,18 +27,35 @@ const inputStyleOf = () => ({
 export default function AddWord() {
   const params = useLocalSearchParams<{ tab?: Tab }>();
   const [tab, setTab] = useState<Tab>(params.tab === 'text' ? 'text' : 'write');
+  // «Rasm»: kamera ekranidan qaytgan natija
+  const [scan, setScan] = useState<ScanResult | null>(null);
+  const [cam, requestCam] = useCameraPermissions();
+  useFocusEffect(useCallback(() => {
+    const r = takeScan();
+    if (r) { setScan(r); setTab('photo'); }
+  }, []));
+  const openCamera = () => router.push('/scan');
+  const openGallery = () => router.push({ pathname: '/scan', params: { gallery: '1' } });
+  const selectTab = (id: Tab) => {
+    setTab(id);
+    // Ruxsat bor bo'lsa — «Rasm» bosilishi bilan kamera ochiladi
+    if (id === 'photo' && tab !== 'photo' && !scan && cam?.granted && Platform.OS !== 'web') openCamera();
+  };
   return (
     <Screen>
       <BackHeader title="So'z qo'shish" />
       <View style={{ flexDirection: 'row', backgroundColor: colors.line, borderRadius: 14, padding: 4, gap: 4 }} accessibilityRole="tablist">
         {([['write', 'Yozish'], ['text', 'Matndan'], ['photo', 'Rasm']] as [Tab, string][]).map(([id, label]) => (
-          <Pressable key={id} accessibilityRole="tab" accessibilityState={{ selected: tab === id }} onPress={() => setTab(id)}
+          <Pressable key={id} accessibilityRole="tab" accessibilityState={{ selected: tab === id }} onPress={() => selectTab(id)}
             style={{ flex: 1, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: tab === id ? colors.surface : 'transparent' }}>
             <T w={tab === id ? 'extrabold' : 'medium'} size={14} color={tab === id ? colors.ink : colors.inkSoft}>{label}</T>
           </Pressable>
         ))}
       </View>
-      {tab === 'write' ? <WriteTab /> : tab === 'text' ? <TextTab /> : <PhotoTab onUseText={() => setTab('text')} />}
+      {tab === 'write' ? <WriteTab /> : tab === 'text' ? <TextTab /> : (
+        <PhotoTab scan={scan} granted={!!cam?.granted} onCamera={openCamera} onGallery={openGallery}
+          onAllow={async () => { const r = await requestCam(); if (r.granted) openCamera(); }} />
+      )}
     </Screen>
   );
 }
@@ -457,10 +476,10 @@ interface Pick {
   webExample?: string;
 }
 
-function TextTab() {
+function TextTab({ initialText, top, onAgain }: { initialText?: string; top?: ReactNode; onAgain?: () => void } = {}) {
   const { state, words, addCustomWords, wordById } = useStore();
-  const [text, setText] = useState('');
-  const [reading, setReading] = useState(false);
+  const [text, setText] = useState(initialText ?? '');
+  const [reading, setReading] = useState(!!initialText);
   const [picks, setPicks] = useState<Pick[]>([]);
   const [saved, setSaved] = useState<string[] | null>(null);
 
@@ -540,7 +559,8 @@ function TextTab() {
           </View>
           <Button title="Hozir o'rganish" iconRight="arrow-right" onPress={() => router.replace('/session')} style={{ alignSelf: 'stretch', marginTop: 16 }} />
         </Card>
-        <Button title="Yana matn qo'shish" variant="ghost" onPress={() => setSaved(null)} />
+        {onAgain ? <Button title="Yana suratga olish" icon="camera" variant="ghost" onPress={onAgain} />
+          : <Button title="Yana matn qo'shish" variant="ghost" onPress={() => setSaved(null)} />}
       </View>
     );
   }
@@ -577,6 +597,7 @@ function TextTab() {
 
   return (
     <View style={{ gap: 14 }}>
+      {top}
       <Card style={{ gap: 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
           <T w="semibold" size={13} color={colors.muted}>Bilmagan so'zni bosing</T>
@@ -655,18 +676,90 @@ function TextTab() {
   );
 }
 
-function PhotoTab({ onUseText }: { onUseText: () => void }) {
-  return (
-    <View style={{ gap: 14 }}>
-      <View style={{ height: 200, borderRadius: 28, backgroundColor: '#2B2E29', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-        <Feather name="camera" size={40} color={colors.lime} />
-        <T w="extrabold" size={18} color="#FFFFFF">Rasmdan so'z olish</T>
-        <T size={13} color="#DADDD4">Keyingi yangilanishda</T>
+function PhotoTab({ scan, granted, onAllow, onCamera, onGallery }: {
+  scan: ScanResult | null; granted: boolean; onAllow: () => void; onCamera: () => void; onGallery: () => void;
+}) {
+  const pill = (
+    <Pressable accessibilityRole="button" accessibilityLabel="Qayta suratga olish" onPress={onCamera} hitSlop={6}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 32, paddingHorizontal: 10, borderRadius: 10, backgroundColor: colors.surfaceMuted }}>
+      <Feather name="camera" size={14} color={colors.inkSoft} />
+      <T w="bold" size={13} color={colors.inkSoft}>Qayta</T>
+    </Pressable>
+  );
+
+  // Natija — «Matndan» bilan bir xil tanlash ekrani
+  if (scan?.text) {
+    const top = (
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 8, paddingRight: 10, borderRadius: 16, backgroundColor: colors.surface }}>
+        <Image source={{ uri: scan.uri }} style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: colors.surfaceMuted }} />
+        <View style={{ flex: 1 }}>
+          <T w="bold" size={14}>Rasmdan olindi</T>
+          <T size={12.5} color={colors.muted}>{scan.words} so'z topildi</T>
+        </View>
+        {pill}
       </View>
-      <T size={15} color={colors.inkSoft}>
-        Tez orada kitob sahifasini suratga olsangiz, ilova rasmdagi matnni o'qib, notanish so'zlarni o'zi belgilaydi. Hozircha matnni nusxalab «Matndan» bo'limiga qo'ying — natija bir xil.
-      </T>
-      <Button title="Matndan qo'shish" icon="file-text" variant="dark" onPress={onUseText} />
+    );
+    return <TextTab key={scan.id} initialText={scan.text} top={top} onAgain={onCamera} />;
+  }
+
+  // Matn topilmadi
+  if (scan?.empty) {
+    return (
+      <View style={{ gap: 14 }}>
+        <Image source={{ uri: scan.uri }} resizeMode="cover" style={{ height: 200, borderRadius: 22, backgroundColor: colors.surfaceMuted }} />
+        <View style={{ flexDirection: 'row', gap: 10, padding: 14, borderRadius: 16, backgroundColor: colors.peach }}>
+          <Feather name="info" size={18} color={colors.error} />
+          <View style={{ flex: 1 }}>
+            <T w="bold" size={15} color={colors.error}>Matn topilmadi</T>
+            <T size={13.5} color={colors.error}>Sahifani yaqinroq va yorug'da suratga oling.</T>
+          </View>
+        </View>
+        <Button title="Qayta suratga olish" iconRight="arrow-right" onPress={onCamera} />
+        <Button title="Galereyadan tanlash" variant="ghost" onPress={onGallery} />
+      </View>
+    );
+  }
+
+  // Birinchi marta — kameraga ruxsat
+  if (!granted) {
+    return (
+      <View style={{ gap: 6 }}>
+        <Card style={{ alignItems: 'center', gap: 6, paddingVertical: 26 }}>
+          <View style={{ width: 56, height: 56, borderRadius: 18, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+            <Feather name="camera" size={26} color={colors.forestText} />
+          </View>
+          <T w="bold" size={19}>Kameraga ruxsat kerak</T>
+          <T size={14} color={colors.muted} style={{ textAlign: 'center', lineHeight: 20, paddingHorizontal: 10 }}>Kitob sahifasini suratga olib, undagi so'zlarni qo'shish uchun.</T>
+          <Button title="Ruxsat berish" iconRight="arrow-right" onPress={onAllow} style={{ alignSelf: 'stretch', marginTop: 14 }} />
+        </Card>
+        <Button title="Galereyadan tanlash" icon="image" variant="ghost" onPress={onGallery} />
+      </View>
+    );
+  }
+
+  // Kameradan qaytildi (natijasiz) — tanlov
+  const option = (icon: 'camera' | 'image', title: string, sub: string, onPress: () => void) => (
+    <Pressable accessibilityRole="button" accessibilityLabel={title} onPress={onPress}
+      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 88, paddingHorizontal: 16, borderRadius: 22, backgroundColor: pressed ? colors.surfaceMuted : colors.surface })}>
+      <View style={{ width: 52, height: 52, borderRadius: 17, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center' }}>
+        <Feather name={icon} size={24} color={colors.forestText} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <T w="bold" size={17}>{title}</T>
+        <T size={13.5} color={colors.muted}>{sub}</T>
+      </View>
+      <Feather name="chevron-right" size={18} color={colors.placeholder} />
+    </Pressable>
+  );
+  return (
+    <View style={{ gap: 12 }}>
+      <T size={14} color={colors.muted} style={{ paddingHorizontal: 4 }}>Kitob yoki daftar sahifasini suratga oling — matnni o'qib, bilmagan so'zlarni tanlaysiz.</T>
+      {option('camera', 'Suratga olish', 'Kamerani ochish', onCamera)}
+      {option('image', 'Galereyadan tanlash', 'Tayyor rasm yoki skrinshot', onGallery)}
+      <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 4, marginTop: 4 }}>
+        <Feather name="info" size={14} color={colors.muted} />
+        <T size={12.5} color={colors.muted} style={{ flex: 1 }}>Rasm telefonning o'zida o'qiladi, hech qayerga yuborilmaydi.</T>
+      </View>
     </View>
   );
 }

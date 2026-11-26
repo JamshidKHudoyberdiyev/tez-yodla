@@ -61,9 +61,17 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Profil rasmini tanlash uchun galereyaga ruxsat kerak.",
-          "cameraPermission": "Profil rasmini suratga olish uchun kameraga ruxsat kerak.",
+          "photosPermission": "Rasmdagi matndan so'z olish uchun galereyaga ruxsat kerak.",
+          "cameraPermission": "Kitob sahifasini suratga olish uchun kameraga ruxsat kerak.",
           "microphonePermission": false
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Kitob sahifasini suratga olib, undagi so'zlarni qo'shish uchun kameraga ruxsat kerak.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
       ]
     ],
