@@ -15,7 +15,9 @@ import { deckById, Word } from '@/data/words';
 import { capReviews, EXTRA_NEW, splitParts, spreadBy, todayPlan } from '@/lib/plan';
 import { clozeOf, clozeParts, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence, stopSpeech } from '@/lib/speech';
-import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
+import { Grade, gradeCard, gradeTyped, isDue, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
+import { pairOf, verbByBase } from '@/lib/verbs';
+import { FillStep as VerbFill, PairStep as VerbPair, WriteStep as VerbWrite } from '@/components/VerbSteps';
 import { retentionFactor } from '@/lib/retention';
 import { useStore } from '@/lib/store';
 import { activeDraft, type SessionDraft } from '@/lib/draft';
@@ -34,6 +36,9 @@ type ExitKind = 'group' | 'relearn' | 'review';
 const PHASE_STEP: Partial<Record<Phase, StepName>> = { learn: 'Tanishish', recall: 'Eslash', test: 'Test', match: 'Moslash', write: 'Yozish', context: 'Matn' };
 const STEP_PHASE: Record<StepName, Phase> = { Tanishish: 'learn', Eslash: 'recall', Test: 'test', Moslash: 'match', Yozish: 'write', Matn: 'context' };
 /** Takrorlashda shu so'zga qanday savol berilishi */
+/** Umumiy takrorlashdagi noto'g'ri fe'l kartasi: wordId = «verb:buy» */
+const VERB_PREFIX = 'verb:';
+const isVerbCard = (c: CardT) => c.wordId.startsWith(VERB_PREFIX);
 function modeOfCard(c: CardT, w: Word | undefined): ReviewMode {
   return reviewModeFor(c, !!w?.example && exampleHasWord(w.word, w.example));
 }
@@ -105,9 +110,11 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
     const noReviews = !!deck || only === 'new';
     // Kunlik takrorlash chegarasi: ortig'i navbatda qoladi (`more` — «Yana N ta» bosilgan)
     const due = capReviews(p.reviews.filter((c) => wordById(c.wordId)), state.prefs.reviewCap, state.log[today]?.reviewed ?? 0, !!more).today;
+    // Vaqti kelgan noto'g'ri fe'llar ham shu takrorlashga qo'shiladi
+    const verbsDue = Object.values(state.verbs).filter((c) => isDue(c, today) && verbByBase(c.wordId)).map((c) => ({ ...c, wordId: VERB_PREFIX + c.wordId }));
     return {
       groups: only === 'review' ? [] : p.groups,
-      reviews: noReviews ? [] : due.filter((c) => c.state !== 'relearning'),
+      reviews: noReviews ? [] : [...due.filter((c) => c.state !== 'relearning'), ...verbsDue],
       pendingRelearn: noReviews ? [] : due.filter((c) => c.state === 'relearning').map((c) => c.wordId),
       resume: null as SessionDraft | null,
     };
@@ -136,11 +143,11 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
   const [lastStats, setLastStats] = useState({ testOk: 0, matchErrors: 0, writeOk: 0 });
   const [reviewIdx, setReviewIdx] = useState(0);
   /** Takrorlash 11 tadan bo'limlarga bo'linadi; har bo'lim ichida savol turlari aralashtiriladi */
-  const parts = useMemo(() => splitParts(initial.reviews).map((p) => spreadBy(p, (c) => modeOfCard(c, wordById(c.wordId)))), [initial]);
+  const parts = useMemo(() => splitParts(initial.reviews).map((p) => spreadBy(p, (c) => (isVerbCard(c) ? 'verb' : modeOfCard(c, wordById(c.wordId))))), [initial]);
   const [reviewPart, setReviewPart] = useState(0);
   const partStats = useRef({ ok: 0, total: 0, grownFrom: 0 });
   const relearnIds = useRef<string[]>([...initial.pendingRelearn]);
-  const totals = useRef({ learned: 0, reviewed: 0, forgotten: 0 });
+  const totals = useRef({ learned: 0, reviewed: 0, forgotten: 0, verbs: 0 });
   /** Takrorlashda bir bosqich o'sgan so'zlar — yakunda «bog'ingizda o'sdi» deb ko'rsatiladi */
   const grown = useRef<{ word: string; from: number; to: number }[]>([]);
 
@@ -330,6 +337,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
   if (phase === 'plan') {
     const newCount = initial.groups.reduce((n, g) => n + g.length, 0);
     const reviewN = initial.reviews.length;
+    const verbN = initial.reviews.filter(isVerbCard).length;
     const relearnN = initial.pendingRelearn.length;
     const empty = !newCount && !reviewN && !relearnN;
     const mins = Math.max(1, Math.ceil(newCount * 0.8 + reviewN * 0.25 + relearnN * 0.4));
@@ -342,7 +350,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
       ...initial.groups.map((g, i) => ({ icon: 'plus' as const, tone: 'green' as const, title: `${groupBase + i + 1}-guruh`, sub: `${g.length} ta yangi so'z · ~${Math.ceil(g.length * 0.8)} daq` })),
     ];
     const modeCount = new Map<keyof typeof MODE_INFO, number>();
-    for (const c of initial.reviews) { const k = MODE_GROUP[modeOfCard(c, wordById(c.wordId))]; modeCount.set(k, (modeCount.get(k) ?? 0) + 1); }
+    for (const c of initial.reviews) { if (isVerbCard(c)) continue; const k = MODE_GROUP[modeOfCard(c, wordById(c.wordId))]; modeCount.set(k, (modeCount.get(k) ?? 0) + 1); }
     const startTitle = reviewN ? (parts.length > 1 ? "1-bo'limni boshlash" : reviewOnly ? 'Takrorlashni boshlash' : 'Takrorlashdan boshlash') : relearnN ? 'Qayta yodlashni boshlash' : '1-guruhni boshlash';
     return (
       <Screen footer={empty ? <Button title="Bosh sahifaga" onPress={close} /> : <Button title={startTitle} iconRight="arrow-right" onPress={start} />}>
@@ -359,7 +367,8 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
                 <IconTile icon="rotate-ccw" tone="blue" size={52} />
                 <View style={{ flex: 1 }}>
-                  <T w="extrabold" size={28} style={{ letterSpacing: -0.5 }}>{reviewN} ta so'z</T>
+                  <T w="extrabold" size={28} style={{ letterSpacing: -0.5 }}>{reviewN - verbN ? `${reviewN - verbN} ta so'z` : `${verbN} ta fe'l`}</T>
+                  {verbN && reviewN - verbN ? <T w="bold" size={14} color={colors.forestText}>+ {verbN} ta noto'g'ri fe'l</T> : null}
                   <T size={14} color={colors.muted}>~{mins} daqiqa · {parts.length > 1 ? `${parts.length} bo'limga bo'lindi` : "har so'zga bitta savol"}</T>
                 </View>
               </View>
@@ -387,12 +396,22 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
                       <T w="bold" size={15}>{modeCount.get(k)}</T>
                     </View>
                   ))}
+                  {verbN ? (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56, paddingHorizontal: 16, borderTopWidth: modeCount.size ? 1 : 0, borderTopColor: colors.divider }}>
+                      <IconTile icon="repeat" size={36} />
+                      <View style={{ flex: 1 }}>
+                        <T w="bold" size={15}>Noto'g'ri fe'llar</T>
+                        <T size={12.5} color={colors.muted}>gapni to'ldirasiz yoki shakllarini yozasiz</T>
+                      </View>
+                      <T w="bold" size={15}>{verbN}</T>
+                    </View>
+                  ) : null}
                 </Group>
                 <Label text="BUGUNGI SO'ZLAR" />
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                  {initial.reviews.slice(0, 8).map((c) => wordById(c.wordId)).filter(Boolean).map((x) => (
-                    <View key={x!.id} style={{ paddingHorizontal: 11, paddingVertical: 6, borderRadius: 999, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line }}>
-                      <T w="semibold" size={14}>{x!.word}</T>
+                  {initial.reviews.slice(0, 8).map((c) => ({ id: c.wordId, t: isVerbCard(c) ? c.wordId.slice(VERB_PREFIX.length) : wordById(c.wordId)?.word })).filter((x) => x.t).map((x) => (
+                    <View key={x.id} style={{ paddingHorizontal: 11, paddingVertical: 6, borderRadius: 999, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line }}>
+                      <T w="semibold" size={14}>{x.t}</T>
                     </View>
                   ))}
                   {reviewN > 8 ? (
@@ -656,6 +675,33 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
   if (phase === 'review') {
     const part = parts[reviewPart];
     const card = part[reviewIdx];
+    const advance = () => {
+      setRevealed(false);
+      if (reviewIdx + 1 < part.length) setReviewIdx(reviewIdx + 1);
+      else if (parts.length < 2) afterReviews();
+      // Oxirgi bo'lim xatosiz tugasa — natija ekranisiz davom etadi (yakunda umumiy natija bor)
+      else if (reviewPart + 1 === parts.length && !relearnIds.current.length) startNewGroups();
+      else setPhase('partDone');
+    };
+    const vHeader = <Header onClose={close} progress={reviewIdx / part.length} label={parts.length > 1 ? `${reviewPart + 1}-bo'lim · ${reviewIdx + 1}/${part.length}` : `Takrorlash · ${reviewIdx + 1}/${part.length}`} />;
+    if (isVerbCard(card)) {
+      // Noto'g'ri fe'l: yangi o'rganilgani — gaplar, keyin juftlik, mustahkamrog'i — ikkala shaklni yozish
+      const base = card.wordId.slice(VERB_PREFIX.length);
+      const verb = verbByBase(base)!;
+      const done = (ok: boolean) => {
+        store.reviewVerb(base, ok);
+        if (!ok) store.noteVerb(base, false);
+        else if (state.verbMistakes[base]) store.noteVerb(base, true);
+        totals.current.verbs += 1;
+        partStats.current.total += 1;
+        if (ok) partStats.current.ok += 1;
+        advance();
+      };
+      const k = card.wordId + reviewIdx;
+      if (card.stage >= 2) return <VerbWrite key={k} verb={verb} header={vHeader} prefix="FE'L · " onDone={done} />;
+      if (card.stage === 1 && pairOf(verb)) return <VerbPair key={k} verb={verb} header={vHeader} prefix="FE'L · " onDone={done} />;
+      return <VerbFill key={k} verb={verb} header={vHeader} prefix="FE'L · " onDone={done} />;
+    }
     const w = wordById(card.wordId)!;
     const next = (g: Grade) => {
       const live = state.cards[card.wordId] ?? card;
@@ -670,12 +716,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
         totals.current.forgotten += 1;
         relearnIds.current = [...relearnIds.current, card.wordId];
       }
-      setRevealed(false);
-      if (reviewIdx + 1 < part.length) setReviewIdx(reviewIdx + 1);
-      else if (parts.length < 2) afterReviews();
-      // Oxirgi bo'lim xatosiz tugasa — natija ekranisiz davom etadi (yakunda umumiy natija bor)
-      else if (reviewPart + 1 === parts.length && !relearnIds.current.length) startNewGroups();
-      else setPhase('partDone');
+      advance();
     };
     const mode = modeOfCard(card, w);
     const header = <Header onClose={close} progress={reviewIdx / part.length} label={parts.length > 1 ? `${reviewPart + 1}-bo'lim · ${reviewIdx + 1}/${part.length}` : `Takrorlash · ${reviewIdx + 1}/${part.length}`} />;
@@ -785,7 +826,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
     <Screen footer={<Button title={counted ? 'Ajoyib!' : 'Bosh sahifaga'} onPress={() => router.replace('/home')} />}>
       {counted ? <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: 120, height: 1 }}><Confetti trigger spread={130} /></View> : null}
       <StreakResult counted={counted} first={counted && after.totalDays === 1} milestone={milestone} freezeGained={freezeGained} info={after} before={before.current} today={today}
-        summary={t.reviewed ? `${t.reviewed} ta so'z o'z vaqtida takrorlandi.` : t.learned ? `Bugun ${t.learned} ta yangi so'z o'rgandingiz.` : ''}
+        summary={t.reviewed || t.verbs ? `${t.reviewed ? `${t.reviewed} ta so'z` : ''}${t.reviewed && t.verbs ? ' va ' : ''}${t.verbs ? `${t.verbs} ta fe'l` : ''} o'z vaqtida takrorlandi.` : t.learned ? `Bugun ${t.learned} ta yangi so'z o'rgandingiz.` : ''}
         onMore={() => router.replace('/session')} />
       {!counted ? (
         <View style={{ backgroundColor: colors.forest, borderRadius: 30, padding: 22, alignItems: 'center', gap: 12 }}>

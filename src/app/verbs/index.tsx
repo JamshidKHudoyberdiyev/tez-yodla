@@ -4,7 +4,6 @@ import { Fragment, useMemo, useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import { BackHeader, Group, Screen, T } from '@/components/ui';
 import { Formula, TintRow, VerbRow } from '@/components/VerbParts';
-import { isDue } from '@/lib/srs';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 import { GROUPS, searchVerbs, VERBS, verbByBase, verbsOf, verbStatus, type GroupId } from '@/lib/verbs';
@@ -12,16 +11,15 @@ import { GROUPS, searchVerbs, VERBS, verbByBase, verbsOf, verbStatus, type Group
 /** Guruh namunasi — ro'yxatda ko'rsatiladi */
 const SAMPLE: Record<GroupId, string> = { aaa: 'cut', ought: 'buy', aba: 'come', td: 'feel', abb: 'make', abc: 'sing', n: 'take' };
 
-/** «Noto'g'ri fe'llar» bo'limi: qidiruv, progress, Takrorlash / Qiyinlar, Guruhlar | Hammasi */
+/** «Noto'g'ri fe'llar» bo'limi: qidiruv, progress, Qiyinlar, Guruhlar | Hammasi */
 export default function VerbsHub() {
-  const { state, today } = useStore();
+  const { state } = useStore();
   const [q, setQ] = useState('');
   const [tab, setTab] = useState<'groups' | 'all'>('groups');
   const status = (base: string) => verbStatus(state.verbs[base]);
   const learned = VERBS.filter((v) => status(v.base) === 'learned').length;
   const learning = VERBS.filter((v) => status(v.base) === 'learning').length;
   const started = learned + learning;
-  const due = Object.values(state.verbs).filter((c) => isDue(c, today) && verbByBase(c.wordId)).length;
   const hard = Object.keys(state.verbMistakes).filter((b) => verbByBase(b)).length;
   const results = useMemo(() => searchVerbs(q), [q]);
   const open = (base: string) => router.push({ pathname: '/verbs/[base]', params: { base } });
@@ -76,8 +74,6 @@ export default function VerbsHub() {
             </View>
           </View>
 
-          {due ? <TintRow icon="rotate-ccw" tint={colors.blueSoft} accent={colors.blue} title="Takrorlash" sub={`${due} ta fe'l · ~${Math.max(1, Math.round(due * 0.7))} daq`}
-            onPress={() => router.push({ pathname: '/verb-session', params: { mode: 'review' } })} /> : null}
           {hard ? <TintRow icon="alert-circle" tint={colors.peach} accent={colors.error} title="Qiyinlar" sub={`${hard} ta fe'l · xato qilganlaringiz`}
             onPress={() => router.push({ pathname: '/verb-session', params: { mode: 'hard' } })} /> : null}
 

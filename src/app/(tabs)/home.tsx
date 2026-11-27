@@ -63,8 +63,7 @@ export default function Home() {
   const verbsDue = Object.values(state.verbs).filter((c) => isDue(c, today)).length;
   const verbsLearned = VERBS.filter((v) => verbStatus(state.verbs[v.base]) === 'learned').length;
   const verbsLearning = VERBS.filter((v) => verbStatus(state.verbs[v.base]) === 'learning').length;
-  const verbsSub = verbsDue ? `${verbsDue} ta fe'l takrorlash · ${verbsLearned + verbsLearning} / ${VERBS.length}`
-    : verbsLearned + verbsLearning ? `${verbsLearned + verbsLearning} / ${VERBS.length} o'rganildi` : `${VERBS.length} ta fe'l · guruhlab o'rganing`;
+  const verbsSub = verbsLearned + verbsLearning ? `${verbsLearned + verbsLearning} / ${VERBS.length} o'rganildi` : `${VERBS.length} ta fe'l · guruhlab o'rganing`;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
@@ -148,10 +147,10 @@ export default function Home() {
         ) : null}
 
         {/* Takrorlash */}
-        {reviewsLeft ? (
+        {reviewsLeft || verbsDue ? (
           <Row icon="rotate-ccw" tint={colors.blueSoft} accent={colors.blue}
-            title="Takrorlash" sub={`${reviewsLeft} ta so'z · ~${reviewMinutes} daq${queued ? ` · navbatda yana ${queued} ta` : ''}`}
-            label={`Takrorlash: ${reviewsLeft} ta so'z. Boshlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review' } })} />
+            title="Takrorlash" sub={`${[reviewsLeft ? `${reviewsLeft} ta so'z` : '', verbsDue ? `${verbsDue} ta fe'l` : ''].filter(Boolean).join(' · ')} · ~${reviewMinutes + Math.round(verbsDue * 0.5)} daq${queued ? ` · navbatda yana ${queued} ta` : ''}`}
+            label={`Takrorlash: ${reviewsLeft} ta so'z, ${verbsDue} ta fe'l. Boshlash`} onPress={() => router.push({ pathname: '/session', params: { only: 'review' } })} />
         ) : queued ? (
           <Row icon="rotate-ccw" tint={colors.blueSoft} accent={colors.blue}
             title={`${reviewedToday} ta takrorlandi`} sub={`Navbatda yana ${queued} ta`} action={`Yana ${moreCount} ta`}
