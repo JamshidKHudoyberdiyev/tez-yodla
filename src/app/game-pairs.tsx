@@ -82,7 +82,7 @@ function Board({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
         <T w="extrabold" size={22} accessibilityRole="header">Juftini toping</T>
         <T size={13.5} color={colors.muted}>So'z va tarjimasini oching · {moves} urinish</T>
       </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 10 }}>
         {tiles.map((t) => {
           const isMatched = matched.has(t.wordId);
           const isOpen = open.includes(t.key) || isMatched;

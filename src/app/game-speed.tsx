@@ -92,7 +92,7 @@ function Run({ words, onAgain }: { words: Word[]; onAgain: () => void }) {
           <T w="extrabold" size={44} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5} style={{ lineHeight: 52, letterSpacing: -1, textAlign: 'center', alignSelf: 'stretch' }} accessibilityRole="header">{w.word}</T>
         </View>
       </Pop>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 10 }}>
         {choices.map((c) => {
           const state = !flash ? 'idle' : c === w.translation ? 'right' : c === flash.choice ? 'wrong' : 'dim';
           return (

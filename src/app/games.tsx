@@ -36,7 +36,7 @@ export default function Games() {
           <Button title={sentenceReady ? "O'ynash" : "Avval so'z o'rganing"} iconRight="arrow-right" disabled={!sentenceReady} onPress={() => router.push('/game-sentence')} />
         </View>
 
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 10 }}>
           {GAMES.map((g) => {
             const locked = learned < g.min;
             const b = best[g.key];

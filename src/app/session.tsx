@@ -1503,7 +1503,7 @@ function ContextStep({ items, group, renderHeader, onDone }: { items: CtxItem[];
           return (
             <Pressable key={w.id} accessibilityRole="button" accessibilityState={{ selected: isPicked, disabled: checked }} disabled={checked}
               onPress={() => setPicked(w.id)}
-              style={({ pressed }) => ({ width: '48%', flexGrow: 1, height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8,
+              style={({ pressed }) => ({ width: '45%', flexGrow: 1, height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8,
                 backgroundColor: st === 'ok' ? colors.limeSoft : st === 'bad' ? colors.wrongSoft : colors.surface,
                 borderWidth: st === 'picked' ? 2 : 1.5,
                 borderColor: st === 'picked' ? colors.forest : st === 'ok' ? colors.lime : st === 'bad' ? colors.wrong : colors.line,

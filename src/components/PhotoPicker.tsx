@@ -58,7 +58,7 @@ export function PhotoPicker({ word, pos, value, onChange }: { word: string; pos?
 
       {state === 'loading' && !photos.length ? (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          {Array.from({ length: 6 }, (_, i) => <View key={i} style={{ width: '31%', aspectRatio: 1, borderRadius: 16, backgroundColor: colors.bg }} />)}
+          {Array.from({ length: 6 }, (_, i) => <View key={i} style={{ width: '30%', aspectRatio: 1, borderRadius: 16, backgroundColor: colors.bg }} />)}
         </View>
       ) : photos.length ? (
         <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, opacity: state === 'loading' ? 0.5 : 1 }}>
@@ -66,7 +66,7 @@ export function PhotoPicker({ word, pos, value, onChange }: { word: string; pos?
             const on = value?.id === p.id;
             return (
               <Pressable key={p.id} accessibilityRole="radio" accessibilityState={{ checked: on }} accessibilityLabel={`Rasm, muallif ${p.author}`} onPress={() => onChange(on ? null : p)}
-                style={{ width: '31%', aspectRatio: 1, borderRadius: 16, overflow: 'hidden', backgroundColor: p.color ?? colors.bg, borderWidth: on ? 3 : 0, borderColor: colors.forestLine }}>
+                style={{ width: '30%', aspectRatio: 1, borderRadius: 16, overflow: 'hidden', backgroundColor: p.color ?? colors.bg, borderWidth: on ? 3 : 0, borderColor: colors.forestLine }}>
                 <Image source={{ uri: p.thumb }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
                 {on ? (
                   <View style={{ position: 'absolute', top: 6, right: 6, width: 24, height: 24, borderRadius: 12, backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center' }}>
