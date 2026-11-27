@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { Pressable, View } from 'react-native';
 import { T, type IconName } from '@/components/ui';
 import { WORDS } from '@/data/words';
-import { speak, speakSequence } from '@/lib/speech';
+import { speakTts, speakTtsSequence } from '@/lib/speech';
 import { first, FORM_LABELS, formsOf, sentencesOf, type Letter, type Verb, type VerbStatus } from '@/lib/verbs';
 import { colors } from '@/lib/theme';
 
@@ -14,11 +14,11 @@ const formSize = (w: string) => (w.length <= 7 ? 20 : Math.max(13, Math.round(20
 /** Sarlavha: understand → 36 */
 const headSize = (w: string) => (w.length <= 7 ? 44 : w.length <= 10 ? 36 : 30);
 
-/** Qolip belgisi: A · B · B */
+/** Guruh belgisi: A · B · B */
 export function Formula({ letters, size = 22 }: { letters: Letter[]; size?: number }) {
   const look = (l: Letter) => (l === 'A' ? { bg: colors.surfaceMuted, fg: colors.ink, bd: colors.line } : l === 'B' ? { bg: colors.forest, fg: '#FFFFFF', bd: colors.forest } : { bg: colors.lime, fg: colors.limeInk, bd: colors.lime });
   return (
-    <View style={{ flexDirection: 'row', gap: 4 }} accessibilityLabel={`Qolip ${letters.join(' ')}`}>
+    <View style={{ flexDirection: 'row', gap: 4 }} accessibilityLabel={`Guruh ${letters.join(' ')}`}>
       {letters.map((l, i) => {
         const c = look(l);
         return (
@@ -35,7 +35,7 @@ export function Formula({ letters, size = 22 }: { letters: Letter[]; size?: numb
 export function Speaker({ texts, size = 44, label = 'Eshitish' }: { texts: string[]; size?: number; label?: string }) {
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} hitSlop={6}
-      onPress={() => (texts.length > 1 ? speakSequence(texts) : speak(texts[0]))}
+      onPress={() => (texts.length > 1 ? speakTtsSequence(texts) : speakTts(texts[0]))}
       style={({ pressed }) => ({ width: size, height: size, borderRadius: size / 2, backgroundColor: colors.limeSoft, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.75 : 1 })}>
       <Feather name="volume-2" size={Math.round(size * 0.44)} color={colors.forestText} />
     </Pressable>
@@ -54,7 +54,7 @@ export function FormsRow({ verb }: { verb: Verb }) {
         return (
           <Fragment key={i}>
             {i ? <Feather name="chevron-right" size={14} color={colors.faint} /> : null}
-            <Pressable accessibilityRole="button" accessibilityLabel={`${FORM_LABELS[i]}: ${f.replace('/', ' yoki ')}. Eshitish`} onPress={() => speak(a)}
+            <Pressable accessibilityRole="button" accessibilityLabel={`${FORM_LABELS[i]}: ${f.replace('/', ' yoki ')}. Eshitish`} onPress={() => speakTts(a)}
               style={({ pressed }) => ({ flex: 1, minWidth: 0, height: two ? 84 : 74, borderRadius: 14, backgroundColor: on ? colors.limeSoft : colors.surfaceMuted, alignItems: 'center', justifyContent: 'center', gap: 3, paddingHorizontal: 4, opacity: pressed ? 0.8 : 1 })}>
               <T w="bold" size={10.5} color={colors.muted} style={{ letterSpacing: 0.8 }}>{FORM_LABELS[i]}</T>
               <T w="extrabold" size={formSize(a)} color={on ? colors.forestText : colors.ink} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{a}</T>

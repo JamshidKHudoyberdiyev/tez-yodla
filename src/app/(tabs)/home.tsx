@@ -63,8 +63,8 @@ export default function Home() {
   const verbsDue = Object.values(state.verbs).filter((c) => isDue(c, today)).length;
   const verbsLearned = VERBS.filter((v) => verbStatus(state.verbs[v.base]) === 'learned').length;
   const verbsLearning = VERBS.filter((v) => verbStatus(state.verbs[v.base]) === 'learning').length;
-  const verbsSub = verbsDue ? `${verbsDue} ta fe'l takrorlash · ${verbsLearned} / ${VERBS.length}`
-    : verbsLearned + verbsLearning ? `${verbsLearned} / ${VERBS.length} o'rganildi · ${verbsLearning} ta jarayonda` : `${VERBS.length} ta fe'l · qolip bo'yicha o'rganing`;
+  const verbsSub = verbsDue ? `${verbsDue} ta fe'l takrorlash · ${verbsLearned + verbsLearning} / ${VERBS.length}`
+    : verbsLearned + verbsLearning ? `${verbsLearned + verbsLearning} / ${VERBS.length} o'rganildi` : `${VERBS.length} ta fe'l · guruhlab o'rganing`;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>

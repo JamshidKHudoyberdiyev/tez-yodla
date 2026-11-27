@@ -98,9 +98,34 @@ function options(slow: boolean, onDone?: () => void): Speech.SpeechOptions {
   };
 }
 
+/** Har to'xtatishda oshadi: ketma-ket o'qish to'xtatilgandan keyin davom etib ketmasin */
+let gen = 0;
+
 export function stopSpeech() {
+  gen++;
   stopNativeAudio();
   Speech.stop();
+}
+
+/** Faqat telefon ovozi (MP3siz): bir nechta so'z va gap bir xil ovozda eshitilsin */
+export function speakTts(text: string, slow = false) {
+  stopSpeech();
+  if (voices && !voices.some(isEnglish)) report('noEnglishVoice');
+  Speech.speak(text, options(slow));
+  if (!voices) loadVoices();
+}
+
+/** Bir nechta matnni bitta (telefon) ovozida ketma-ket o'qiydi: buy… bought… bought */
+export function speakTtsSequence(texts: string[]) {
+  const list = texts.filter(Boolean);
+  if (!list.length) return;
+  stopSpeech();
+  const my = gen;
+  const next = (i: number) => {
+    if (i >= list.length || my !== gen) return;
+    Speech.speak(list[i], options(false, () => setTimeout(() => next(i + 1), 350)));
+  };
+  next(0);
 }
 
 export function speak(text: string, slow = false) {
@@ -138,9 +163,10 @@ export function speakSequence(texts: string[]) {
   const list = texts.filter(Boolean);
   if (!list.length) return;
   stopSpeech();
+  const my = gen;
 
   const next = (i: number) => {
-    if (i >= list.length) return;
+    if (i >= list.length || my !== gen) return;
     const item = list[i];
 
     if (i === 0 && (isWordLike(item) || hasLocalAudio(item, accent))) {

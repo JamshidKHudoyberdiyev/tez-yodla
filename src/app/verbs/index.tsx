@@ -9,10 +9,10 @@ import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
 import { GROUPS, searchVerbs, VERBS, verbByBase, verbsOf, verbStatus, type GroupId } from '@/lib/verbs';
 
-/** Qolip namunasi — ro'yxatda ko'rsatiladi */
+/** Guruh namunasi — ro'yxatda ko'rsatiladi */
 const SAMPLE: Record<GroupId, string> = { aaa: 'cut', ought: 'buy', aba: 'come', td: 'feel', abb: 'make', abc: 'sing', n: 'take' };
 
-/** «Noto'g'ri fe'llar» bo'limi: qidiruv, progress, Takrorlash / Qiyinlar, Qoliplar | Hammasi */
+/** «Noto'g'ri fe'llar» bo'limi: qidiruv, progress, Takrorlash / Qiyinlar, Guruhlar | Hammasi */
 export default function VerbsHub() {
   const { state, today } = useStore();
   const [q, setQ] = useState('');
@@ -20,6 +20,7 @@ export default function VerbsHub() {
   const status = (base: string) => verbStatus(state.verbs[base]);
   const learned = VERBS.filter((v) => status(v.base) === 'learned').length;
   const learning = VERBS.filter((v) => status(v.base) === 'learning').length;
+  const started = learned + learning;
   const due = Object.values(state.verbs).filter((c) => isDue(c, today) && verbByBase(c.wordId)).length;
   const hard = Object.keys(state.verbMistakes).filter((b) => verbByBase(b)).length;
   const results = useMemo(() => searchVerbs(q), [q]);
@@ -62,12 +63,12 @@ export default function VerbsHub() {
         )
       ) : (
         <>
-          <View style={{ backgroundColor: colors.surface, borderRadius: 22, padding: 18, gap: 12 }} accessibilityLabel={`${learned} ta fe'l o'rganildi, jami ${VERBS.length}`}>
+          <View style={{ backgroundColor: colors.surface, borderRadius: 22, padding: 18, gap: 12 }} accessibilityLabel={`${started} ta fe'l o'rganildi, jami ${VERBS.length}`}>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
-              <T w="extrabold" size={26}>{learned}</T>
+              <T w="extrabold" size={26}>{started}</T>
               <T w="semibold" size={15} color={colors.faint}>/ {VERBS.length} o'rganildi</T>
               <View style={{ flex: 1 }} />
-              {learning ? <T size={13} color={colors.muted}>{learning} ta jarayonda</T> : null}
+              {learned ? <T size={13} color={colors.muted}>{learned} tasi mustahkam</T> : null}
             </View>
             <View style={{ height: 8, borderRadius: 4, backgroundColor: colors.divider, flexDirection: 'row', overflow: 'hidden' }}>
               <View style={{ width: `${(learned / VERBS.length) * 100}%`, backgroundColor: colors.forest }} />
@@ -80,11 +81,11 @@ export default function VerbsHub() {
           {hard ? <TintRow icon="alert-circle" tint={colors.peach} accent={colors.error} title="Qiyinlar" sub={`${hard} ta fe'l · xato qilganlaringiz`}
             onPress={() => router.push({ pathname: '/verb-session', params: { mode: 'hard' } })} /> : null}
 
-          <View style={{ flexDirection: 'row', padding: 4, gap: 4, borderRadius: 14, backgroundColor: colors.divider }} accessibilityRole="tablist">
-            {([['groups', 'Qoliplar'], ['all', `Hammasi · ${VERBS.length}`]] as const).map(([k, l]) => (
+          <View style={{ flexDirection: 'row', padding: 4, gap: 4, borderRadius: 16, backgroundColor: colors.surface }} accessibilityRole="tablist">
+            {([['groups', 'Guruhlar'], ['all', `Hammasi · ${VERBS.length}`]] as const).map(([k, l]) => (
               <Pressable key={k} accessibilityRole="tab" accessibilityState={{ selected: tab === k }} onPress={() => setTab(k)}
-                style={{ flex: 1, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center', backgroundColor: tab === k ? colors.surface : 'transparent' }}>
-                <T w={tab === k ? 'extrabold' : 'semibold'} size={14.5} color={tab === k ? colors.ink : colors.muted}>{l}</T>
+                style={{ flex: 1, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: tab === k ? colors.forest : 'transparent' }}>
+                <T w={tab === k ? 'extrabold' : 'semibold'} size={14.5} color={tab === k ? '#FFFFFF' : colors.muted}>{l}</T>
               </Pressable>
             ))}
           </View>
@@ -93,7 +94,7 @@ export default function VerbsHub() {
             <Group>
               {GROUPS.map((g, i) => {
                 const list = verbsOf(g.id);
-                const done = list.filter((v) => status(v.base) === 'learned').length;
+                const done = list.filter((v) => status(v.base) !== 'new').length;
                 const s = verbByBase(SAMPLE[g.id]);
                 return (
                   <Pressable key={g.id} accessibilityRole="button" accessibilityLabel={`${g.title}: ${list.length} ta fe'l, ${done} tasi o'rganildi`}

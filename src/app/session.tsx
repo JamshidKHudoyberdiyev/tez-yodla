@@ -14,7 +14,7 @@ import { buildChoices, groupTimeline, intervalLabel, relativeDay, shuffle, uzDat
 import { deckById, Word } from '@/data/words';
 import { capReviews, EXTRA_NEW, splitParts, spreadBy, todayPlan } from '@/lib/plan';
 import { clozeOf, clozeParts, exampleHasWord } from '@/lib/text';
-import { speak, speakSequence } from '@/lib/speech';
+import { speak, speakSequence, stopSpeech } from '@/lib/speech';
 import { Grade, gradeCard, gradeTyped, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
 import { retentionFactor } from '@/lib/retention';
 import { useStore } from '@/lib/store';
@@ -1136,6 +1136,8 @@ function SayAloud({ word }: { word: string }) {
  * Yordam («Keyingi harf») ishlatilib to'g'ri yozilsa — ekranda «To'g'ri!», takrorlash bahosi esa 'hard'.
  */
 export function WriteStep({ word, mode, header, onDone }: { word: Word; mode: Exclude<ReviewMode, 'choice' | 'reverse' | 'listenChoice'>; header: React.ReactNode; onDone: (g: Grade, exact: boolean) => void }) {
+  // Keyingi savolga o'tilganda oldingi o'qish to'xtaydi
+  useEffect(() => () => stopSpeech(), []);
   const [text, setText] = useState('');
   const [result, setResult] = useState<Grade | null>(null);
   const [exact, setExact] = useState(false);
@@ -1279,6 +1281,8 @@ function HintChip({ icon, label, onPress, disabled }: { icon: React.ComponentPro
  * `groupOthers` va `pool` javob turida bo'lishi kerak (reverse — inglizcha so'zlar, qolganlari — tarjimalar).
  */
 export function TestStep({ word, groupOthers, pool, header, onDone, retryNote = true, variant = 'word', note }: { word: Word; groupOthers: string[]; pool: string[]; header: React.ReactNode; onDone: (correct: boolean) => void; /** «guruh oxirida yana so'raladi» yozuvi (takrorlashda kerak emas) */ retryNote?: boolean; variant?: 'word' | 'reverse' | 'audio'; /** To'g'ri javobdan keyin ko'rsatiladigan qo'shimcha yozuv */ note?: string }) {
+  // Keyingi savolga o'tilganda oldingi o'qish to'xtaydi
+  useEffect(() => () => stopSpeech(), []);
   const { state, words } = useStore();
   const prefs = state.prefs;
   const answer = variant === 'reverse' ? word.word : word.translation;
@@ -1407,6 +1411,8 @@ function contextItems(group: Word[]): CtxItem[] {
  * Bu bosqichdagi xatolar «Xatolarim»ga yozilmaydi.
  */
 function ContextStep({ items, group, renderHeader, onDone }: { items: CtxItem[]; group: Word[]; renderHeader: (label: string) => React.ReactNode; onDone: () => void }) {
+  // Keyingi savolga o'tilganda oldingi o'qish to'xtaydi
+  useEffect(() => () => stopSpeech(), []);
   const [queue, setQueue] = useState<number[]>(() => items.map((_, i) => i));
   const [retried] = useState<Set<number>>(() => new Set());
   const [results, setResults] = useState<Record<number, boolean>>({});

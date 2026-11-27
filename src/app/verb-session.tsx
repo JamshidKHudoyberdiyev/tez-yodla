@@ -8,19 +8,19 @@ import { Button, Group, RoundIconButton, Screen, SectionLabel, T } from '@/compo
 import { FormsLine, Speaker, VerbExamples, VerbHead } from '@/components/VerbParts';
 import { shuffle } from '@/lib/drill';
 import { formMatches } from '@/lib/games';
-import { speak, speakSequence } from '@/lib/speech';
+import { speakTts, speakTtsSequence, stopSpeech } from '@/lib/speech';
 import { GROUP_SIZE, isDue } from '@/lib/srs';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
-import { chipsOf, chunksOf, formOk, formsOf, pairOf, sentencesOf, verbByBase, verbsOf, verbStatus, type Verb } from '@/lib/verbs';
+import { chipsOf, first, formOk, formsOf, pairOf, sentencesOf, verbByBase, verbsOf, verbStatus, type Verb } from '@/lib/verbs';
 
 type Mode = 'learn' | 'review' | 'hard' | 'practice';
-type Step = 'learn' | 'build' | 'fill' | 'pair' | 'write';
-const TITLE: Record<Step, string> = { learn: 'Tanishish', build: "Yig'ish", fill: 'Gaplar', pair: 'Juftlik', write: 'Yozish' };
+type Step = 'learn' | 'past' | 'fill' | 'pair' | 'write';
+const TITLE: Record<Step, string> = { learn: 'Tanishish', past: "O'tgan shakl", fill: 'Gaplar', pair: 'Juftlik', write: 'Yozish' };
 
 /**
  * Noto'g'ri fe'llar mashg'uloti.
- * O'rganish: Tanishish → Yig'ish → Gaplar → Juftlik (chalkash juftligi bo'lsa) → Yozish.
+ * O'rganish: Tanishish → O'tgan shakl (yozish) → Gaplar → Juftlik (chalkash juftligi bo'lsa) → Yozish.
  * Takrorlash / Qiyinlar / Mashq: Gaplar → Juftlik → Yozish.
  */
 export default function VerbSession() {
@@ -45,7 +45,7 @@ export default function VerbSession() {
 
   const steps = useMemo<Step[]>(() => {
     const pair = verbs.some((v) => pairOf(v));
-    return [...(mode === 'learn' ? (['learn', 'build'] as Step[]) : []), 'fill', ...(pair ? (['pair'] as Step[]) : []), 'write'];
+    return [...(mode === 'learn' ? (['learn', 'past'] as Step[]) : []), 'fill', ...(pair ? (['pair'] as Step[]) : []), 'write'];
   }, [verbs, mode]);
 
   const [stepIdx, setStepIdx] = useState(0);
@@ -93,7 +93,7 @@ export default function VerbSession() {
       <Screen footer={<Button title="Orqaga" variant="outline" onPress={() => router.back()} />}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 }}>
           <Feather name="check-circle" size={40} color={colors.forestText} />
-          <T w="extrabold" size={20}>{mode === 'review' ? "Bugun takrorlash yo'q" : mode === 'hard' ? "Qiyin fe'llar yo'q" : "Bu qolipda yangi fe'l qolmadi"}</T>
+          <T w="extrabold" size={20}>{mode === 'review' ? "Bugun takrorlash yo'q" : mode === 'hard' ? "Qiyin fe'llar yo'q" : "Bu guruhda yangi fe'l qolmadi"}</T>
         </View>
       </Screen>
     );
@@ -121,10 +121,15 @@ export default function VerbSession() {
     return <LearnStep key={key} verb={verb} header={header}
       onKnown={() => { const kn = [...known, verb.base]; setKnown(kn); next(kn); }} onNext={() => next()} />;
   }
-  if (step === 'build') return <BuildStep key={key} verb={verb} header={header} onDone={answered} />;
+  if (step === 'past') return <PastStep key={key} verb={verb} header={header} onDone={answered} />;
   if (step === 'fill') return <FillStep key={key} verb={verb} header={header} onDone={answered} />;
   if (step === 'pair') return <PairStep key={key} verb={verb} header={header} onDone={answered} />;
   return <WriteStep key={key} verb={verb} header={header} onDone={answered} />;
+}
+
+/** Keyingi savolga o'tilganda (yoki chiqilganda) o'qish to'xtaydi */
+function useStopOnLeave() {
+  useEffect(() => () => stopSpeech(), []);
 }
 
 /** Natija paneli sarlavhasi */
@@ -161,8 +166,9 @@ function Label({ children }: { children: string }) {
 
 // ——— 1. Tanishish ———
 function LearnStep({ verb, header, onKnown, onNext }: { verb: Verb; header: ReactNode; onKnown: () => void; onNext: () => void }) {
+  useStopOnLeave();
   const { state } = useStore();
-  useEffect(() => { if (state.prefs.autoSpeakNew) speakSequence(formsOf(verb)); }, [verb.base]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (state.prefs.autoSpeakNew) speakTtsSequence(formsOf(verb)); }, [verb.base]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Screen footer={
       <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -177,78 +183,48 @@ function LearnStep({ verb, header, onKnown, onNext }: { verb: Verb; header: Reac
   );
 }
 
-// ——— 2. Bo'laklardan yig'ish ———
-function BuildStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onDone: (ok: boolean) => void }) {
-  const c = useMemo(() => chunksOf(verb), [verb]);
-  const tiles = useMemo(() => shuffle([...c.parts, ...c.extra]).map((t, id) => ({ id, t })), [c]);
-  const [slots, setSlots] = useState<number[]>([]);
+// ——— 2. O'tgan shaklni yozish ———
+function PastStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onDone: (ok: boolean) => void }) {
+  useStopOnLeave();
+  const [text, setText] = useState('');
   const [result, setResult] = useState<boolean | null>(null);
-  const full = slots.length === c.parts.length;
-  const answer = slots.map((id) => tiles[id].t).join('');
+  const target = first(verb.past);
   const check = () => {
-    const ok = answer === c.target;
+    if (!text.trim() || result !== null) return;
+    const ok = formMatches(text, verb.past);
     setResult(ok);
     buzz(ok ? 'success' : 'light');
-    speakSequence(formsOf(verb));
+    speakTtsSequence(formsOf(verb));
   };
   const footer = resultFooter(result,
-    <T size={14} color={colors.inkSoft}><T w="bold" size={14} color={colors.ink}>{verb.base} → {verb.past} → {verb.part}</T></T>,
+    result ? <T size={14} color={colors.inkSoft}><T w="bold" size={14} color={colors.ink}>{verb.base} → {verb.past} → {verb.part}</T></T>
+      : <T size={14} color={colors.inkSoft}>To'g'risi: <T w="bold" size={16} color={colors.forestText}>{verb.past}</T></T>,
     () => onDone(!!result),
-    <Button title="Tekshirish" disabled={!full} onPress={check} />);
+    <Button title="Tekshirish" disabled={!text.trim()} onPress={check} />);
   return (
-    <Screen footer={footer} {...sheet(result)}>
+    <Screen avoidKeyboard footer={footer} {...sheet(result)}>
       {header}
-      <View style={{ backgroundColor: colors.surface, borderRadius: 26, padding: 20, gap: 8, alignItems: 'center' }}>
-        <View style={{ alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ flex: 1 }}><Label>O'TGAN SHAKLINI YIG'ING</Label></View>
+      <View style={{ backgroundColor: colors.surface, borderRadius: 26, padding: 20, gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flex: 1 }}><Label>O'TGAN SHAKLINI YOZING</Label></View>
           <Speaker texts={[verb.base]} size={40} label="Fe'lni eshitish" />
         </View>
-        <T w="extrabold" size={28} color={colors.forestText} style={{ textAlign: 'center' }}>{verb.uz}</T>
-        <T size={16} color={colors.muted}>{verb.base} → <T w="extrabold" size={16}>?</T></T>
-        <View style={{ flexDirection: 'row', gap: 5, marginTop: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
-          {c.parts.map((_, i) => {
-            const id = slots[i];
-            const filled = id !== undefined;
-            const active = i === slots.length && result === null;
-            const tone = result === null ? null : result ? 'ok' : 'bad';
-            return (
-              <Pressable key={i} disabled={!filled || result !== null} accessibilityRole="button" accessibilityLabel={filled ? `${tiles[id].t}, qaytarish` : `${i + 1}-joy, bo'sh`}
-                onPress={() => setSlots(slots.filter((_, k) => k !== i))}
-                style={{ minWidth: 60, height: 58, paddingHorizontal: 14, borderRadius: 14, alignItems: 'center', justifyContent: 'center',
-                  borderWidth: filled ? 2 : active ? 2 : 1.5, borderStyle: filled || active ? 'solid' : 'dashed',
-                  borderColor: tone === 'ok' ? colors.lime : tone === 'bad' ? colors.wrong : filled || active ? colors.forest : colors.track,
-                  backgroundColor: tone === 'ok' ? colors.limeSoft : tone === 'bad' ? colors.wrongSoft : active ? colors.limeSoft : colors.surface }}>
-                {filled ? <T w="extrabold" size={26} color={tone === 'ok' ? colors.forestText : tone === 'bad' ? colors.wrongInk : colors.ink}>{tiles[id].t}</T> : null}
-              </Pressable>
-            );
-          })}
-        </View>
-        {result === false ? <T size={14} color={colors.muted} style={{ marginTop: 6 }}>To'g'risi: <T w="extrabold" size={16} color={colors.forestText}>{c.target}</T></T> : null}
+        <T w="extrabold" size={30} color={colors.forestText} style={{ textAlign: 'center' }} numberOfLines={2} adjustsFontSizeToFit>{verb.uz}</T>
+        <T size={16} color={colors.muted} style={{ textAlign: 'center' }}>{verb.base} → <T w="extrabold" size={16}>?</T></T>
+        <TextInput value={text} onChangeText={setText} editable={result === null} autoFocus autoCapitalize="none" autoCorrect={false} spellCheck={false}
+          returnKeyType="done" onSubmitEditing={check} placeholder={`${target.length} ta harf`} placeholderTextColor={colors.placeholder} accessibilityLabel="O'tgan shakl"
+          style={{ marginTop: 10, height: 64, borderRadius: 18, borderWidth: 2, textAlign: 'center', fontFamily: font.bold, fontSize: 24,
+            color: result === null ? colors.ink : result ? colors.forestText : colors.wrongInk,
+            borderColor: result === null ? (text ? colors.forest : colors.line) : result ? colors.lime : colors.wrong,
+            backgroundColor: result === null ? colors.surface : result ? colors.limeSoft : colors.wrongSoft }} />
       </View>
-      {result === null ? (
-        <>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12, marginTop: 8 }}>
-            {tiles.map(({ id, t }) => {
-              const used = slots.includes(id);
-              return (
-                <Pressable key={id} disabled={used || full} accessibilityRole="button" accessibilityLabel={t}
-                  onPress={() => setSlots([...slots, id])}
-                  style={({ pressed }) => ({ minWidth: 72, height: 60, paddingHorizontal: 20, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: colors.line,
-                    backgroundColor: used ? colors.divider : colors.surface, borderBottomWidth: used ? 1.5 : 4, opacity: pressed ? 0.8 : 1 })}>
-                  <T w="bold" size={24} color={used ? colors.divider : colors.ink}>{t}</T>
-                </Pressable>
-              );
-            })}
-          </View>
-          <T size={13} color={colors.faint} style={{ textAlign: 'center' }}>Bo'lakni bosing. Qaytarish uchun yuqoridagisini bosing.</T>
-        </>
-      ) : null}
     </Screen>
   );
 }
 
 // ——— 3. Gaplarni to'ldirish ———
 function FillStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onDone: (ok: boolean) => void }) {
+  useStopOnLeave();
   const sents = useMemo(() => sentencesOf(verb.base), [verb]);
   const chips = useMemo(() => shuffle(chipsOf(verb)).map((t, id) => ({ id, t })), [verb]);
   const [blanks, setBlanks] = useState<(number | null)[]>(() => sents.map(() => null));
@@ -261,7 +237,7 @@ function FillStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onD
     setResult(r);
     const ok = r.every(Boolean);
     buzz(ok ? 'success' : 'light');
-    speakSequence(formsOf(verb));
+    speakTtsSequence(formsOf(verb));
   };
   const ok = !!result && result.every(Boolean);
   const footer = resultFooter(result ? ok : null,
@@ -321,6 +297,7 @@ function FillStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onD
 
 // ——— 4. Chalkash juftlik ———
 function PairStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onDone: (ok: boolean) => void }) {
+  useStopOnLeave();
   const pair = useMemo(() => pairOf(verb), [verb]);
   const opts = useMemo(() => (pair ? shuffle([pair.answer, pair.other]) : []), [pair]);
   const [picked, setPicked] = useState<string | null>(null);
@@ -331,7 +308,7 @@ function PairStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onD
     if (picked) return;
     setPicked(o);
     buzz(o === pair.answer ? 'success' : 'light');
-    speak(s.text);
+    speakTts(s.text);
   };
   const footer = result === null ? null : (
     <>
@@ -367,6 +344,7 @@ function PairStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onD
 
 // ——— 5. Yozish ———
 function WriteStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; onDone: (ok: boolean) => void }) {
+  useStopOnLeave();
   const [past, setPast] = useState('');
   const [part, setPart] = useState('');
   const [r, setR] = useState<{ past: boolean; part: boolean } | null>(null);
@@ -376,7 +354,7 @@ function WriteStep({ verb, header, onDone }: { verb: Verb; header: ReactNode; on
     const res = { past: formMatches(past, verb.past), part: formMatches(part, verb.part) };
     setR(res);
     buzz(res.past && res.part ? 'success' : 'light');
-    speakSequence(formsOf(verb));
+    speakTtsSequence(formsOf(verb));
   };
   const ok = !!r && r.past && r.part;
   const footer = resultFooter(r ? ok : null,
