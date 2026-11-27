@@ -5,13 +5,15 @@ import { Image, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Line } from 'react-native-svg';
 import { PLANT_IMG, PLANT_RATIO, Ring } from '@/components/Art';
-import { StreakCard, StreakStrip } from '@/components/Streak';
+import { StreakCard } from '@/components/Streak';
 import { Avatar } from '@/components/Avatar';
 import { Button, IconTile, T, type IconName } from '@/components/ui';
 import { gardenStages } from '@/lib/garden';
 import { capReviews, EVENING_FROM_HOUR, EXTRA_NEW, learnedOn, todayPlan } from '@/lib/plan';
 import { useStore } from '@/lib/store';
 import { activeDraft, draftMinutes, type SessionDraft } from '@/lib/draft';
+import { isDue } from '@/lib/srs';
+import { VERBS, verbStatus } from '@/lib/verbs';
 import { colors } from '@/lib/theme';
 
 const HERO_BG = require('../../../assets/home/hero-bg.webp');
@@ -57,6 +59,12 @@ export default function Home() {
   const eveningOn = eveningCount > 0 && state.evening?.day !== today && new Date().getHours() >= EVENING_FROM_HOUR;
   const garden = useMemo(() => gardenStages(state.cards, today), [state.cards, today]);
   const gardenTotal = garden.reduce((n, g) => n + g.ids.length, 0);
+  // Noto'g'ri fe'llar: takrorlash bo'lsa — shuni, bo'lmasa progress
+  const verbsDue = Object.values(state.verbs).filter((c) => isDue(c, today)).length;
+  const verbsLearned = VERBS.filter((v) => verbStatus(state.verbs[v.base]) === 'learned').length;
+  const verbsLearning = VERBS.filter((v) => verbStatus(state.verbs[v.base]) === 'learning').length;
+  const verbsSub = verbsDue ? `${verbsDue} ta fe'l takrorlash · ${verbsLearned} / ${VERBS.length}`
+    : verbsLearned + verbsLearning ? `${verbsLearned} / ${VERBS.length} o'rganildi · ${verbsLearning} ta jarayonda` : `${VERBS.length} ta fe'l · qolip bo'yicha o'rganing`;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
@@ -156,7 +164,12 @@ export default function Home() {
             label={`Xatolarim: ${mistakeCount} ta so'z. Mashq qilish`} onPress={() => router.push('/mistakes')} />
         ) : null}
 
-        {streak.offer ? <StreakCard info={streak} today={today} onRepair={repairStreak} onRestart={dismissBreak} /> : <StreakStrip info={streak} today={today} />}
+        {streak.offer ? <StreakCard info={streak} today={today} onRepair={repairStreak} onRestart={dismissBreak} /> : null}
+
+        {/* Noto'g'ri fe'llar */}
+        <Row icon="repeat" tint={colors.limeSoft} accent={colors.forestText}
+          title="Noto'g'ri fe'llar" sub={verbsSub}
+          label={`Noto'g'ri fe'llar: ${verbsSub}`} onPress={() => router.push('/verbs')} />
 
         {/* So'zlar bog'i */}
         <Pressable accessibilityRole="button" accessibilityLabel={`So'zlar bog'i: ${gardenTotal} ta so'z`} onPress={() => router.push('/garden')}

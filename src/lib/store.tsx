@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { WORDS, Word, Level, normalizeDecks } from '../data/words';
-import { Card, completeLearning, completeRelearning, dayNumber, Grade, gradeCard, newCard } from './srs';
+import { Card, completeLearning, completeRelearning, dayNumber, Grade, gradeCard, INTERVALS, MASTERED_INTERVAL, newCard } from './srs';
 import { DayLog } from './plan';
 import { computeStreak, StreakInfo } from './streak';
 import { applyTheme, FontScaleContext, ThemeContext, type Scheme } from './theme';
@@ -46,6 +46,10 @@ export interface AppState {
   evening?: { day: number; missed: string[] };
   /** To'xtatilgan mashg'ulot (lib/draft.ts) — bosh sahifada «Davom ettirish» */
   draft?: SessionDraft | null;
+  /** Noto'g'ri fe'llar: fe'l (asos shakli) → takrorlash kartasi */
+  verbs: Record<string, Card>;
+  /** «Qiyinlar»: fe'l → xatolar soni */
+  verbMistakes: Record<string, number>;
   prefs: Prefs;
 }
 
@@ -129,6 +133,8 @@ const initialState: AppState = {
   streakDismissed: [],
   mistakes: {},
   reviewLog: [],
+  verbs: {},
+  verbMistakes: {},
   prefs: defaultPrefs,
 };
 
@@ -208,6 +214,12 @@ interface Store {
   markKnown: (lemmas: string[]) => void;
   /** «Bilaman» bekor qilindi / o'rganishga qaytarildi */
   unmarkKnown: (lemma: string) => void;
+  /** Fe'llar guruhi o'rganildi: o'rganilganlar takrorlashga tushadi, «Bilaman» — bilingan deb belgilanadi */
+  learnVerbs: (learned: string[], known: string[]) => void;
+  /** Fe'l takrorlandi: xato bo'lsa ertaga yana chiqadi */
+  reviewVerb: (base: string, ok: boolean) => void;
+  /** Fe'l mashqidagi xato/to'g'ri javob — «Qiyinlar» ro'yxati uchun */
+  noteVerb: (base: string, ok: boolean) => void;
   track: (name: string, props?: AnalyticsEvent['props']) => void;
   /** Joriy mavzu (tizim sozlamasi hisobga olingan) */
   scheme: Scheme;
@@ -379,7 +391,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     restoreBackup: (restored) => setState(withEvent(restored, 'backup_restored', { cards: Object.keys(restored.cards).length })),
     resetProgress: () =>
-      setState((s) => withEvent({ ...s, cards: {}, log: {}, knownLemmas: [], doneDays: [], streakRepairs: [], streakDismissed: [], reviewLog: [], evening: undefined, draft: null }, 'progress_reset')),
+      setState((s) => withEvent({ ...s, cards: {}, log: {}, knownLemmas: [], doneDays: [], streakRepairs: [], streakDismissed: [], reviewLog: [], evening: undefined, draft: null, verbs: {}, verbMistakes: {} }, 'progress_reset')),
     setDraft: (d) => setState((s) => ({ ...s, draft: d })),
     markDayDone: () =>
       setState((s) => (s.doneDays.includes(today) ? s : { ...s, doneDays: [...s.doneDays.slice(-120), today] })),
@@ -391,6 +403,27 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setState((s) => ({ ...s, knownLemmas: Array.from(new Set([...s.knownLemmas, ...lemmas.map((l) => l.toLowerCase())])) })),
     unmarkKnown: (lemma) =>
       setState((s) => ({ ...s, knownLemmas: s.knownLemmas.filter((l) => l !== lemma.toLowerCase()) })),
+    learnVerbs: (learned, known) =>
+      setState((s) => {
+        const verbs = { ...s.verbs };
+        for (const b of learned) verbs[b] = completeLearning(verbs[b] ?? newCard(b), today);
+        for (const b of known) verbs[b] = { ...newCard(b), state: 'mastered', stage: INTERVALS.length, due: today + MASTERED_INTERVAL, reviews: 1, lastReviewed: today, learnedOn: today };
+        return withEvent({ ...s, verbs }, 'verbs_learned', { count: learned.length, known: known.length });
+      }),
+    reviewVerb: (base, ok) =>
+      setState((s) => {
+        const cur = s.verbs[base];
+        if (!cur) return s;
+        const graded = gradeCard(cur, ok ? 'good' : 'again', today);
+        return { ...s, verbs: { ...s.verbs, [base]: ok ? graded : completeRelearning(graded, today) } };
+      }),
+    noteVerb: (base, ok) =>
+      setState((s) => {
+        const n = (s.verbMistakes[base] ?? 0) + (ok ? -1 : 1);
+        const verbMistakes = { ...s.verbMistakes };
+        if (n > 0) verbMistakes[base] = n; else delete verbMistakes[base];
+        return { ...s, verbMistakes };
+      }),
     track,
     reset: () => setState(initialState),
   };

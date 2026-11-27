@@ -52,6 +52,11 @@ export function mergeStates(cloud: AppState, local: AppState): AppState {
       ? { newLearned: Math.max(o.newLearned, l.newLearned), reviewed: Math.max(o.reviewed, l.reviewed), correct: Math.max(o.correct, l.correct), total: Math.max(o.total, l.total) }
       : l;
   }
+  const verbs: Record<string, Card> = { ...(cloud.verbs ?? {}) };
+  for (const [id, c] of Object.entries(local.verbs ?? {})) {
+    const other = verbs[id];
+    if (!other || rank(c) > rank(other)) verbs[id] = c;
+  }
   const customIds = new Set(cloud.customWords.map((w) => w.id));
   return {
     ...cloud,
@@ -65,6 +70,8 @@ export function mergeStates(cloud: AppState, local: AppState): AppState {
     streakRepairs: union(cloud.streakRepairs, local.streakRepairs),
     streakDismissed: union(cloud.streakDismissed, local.streakDismissed),
     mistakes: { ...local.mistakes, ...cloud.mistakes },
+    verbs,
+    verbMistakes: { ...(local.verbMistakes ?? {}), ...(cloud.verbMistakes ?? {}) },
     reviewLog: [...cloud.reviewLog, ...local.reviewLog].sort((a, b) => a.d - b.d).slice(-4000),
     events: local.events,
   };
