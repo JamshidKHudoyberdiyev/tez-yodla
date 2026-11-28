@@ -129,15 +129,16 @@ function Done({ mode, verbs, known, wrong, group }: { mode: Mode; verbs: Verb[];
   const { state } = useStore();
   const learned = verbs.filter((v) => !known.includes(v.base));
   const more = mode === 'learn' ? verbsOf(group).filter((v) => !state.verbs[v.base]).length : 0;
-  const title = mode === 'learn' ? `${learned.length} ta fe'l ekildi` : mode === 'review' ? `${verbs.length} ta fe'l takrorlandi` : 'Mashq tugadi';
-  const sub = mode === 'learn' ? 'Ertaga birinchi takrorlash' : wrong.length ? 'Xato qilinganlari tezroq qaytadi' : 'Hammasi to\'g\'ri!';
+  const allKnown = mode === 'learn' && !learned.length;
+  const title = allKnown ? `${known.length} ta fe'l bilaman` : mode === 'learn' ? `${learned.length} ta fe'l ekildi` : mode === 'review' ? `${verbs.length} ta fe'l takrorlandi` : 'Mashq tugadi';
+  const sub = allKnown ? 'Ular takrorlashda kam chiqadi' : mode === 'learn' ? 'Ertaga birinchi takrorlash' : wrong.length ? 'Xato qilinganlari tezroq qaytadi' : 'Hammasi to\'g\'ri!';
   const ok = learned.length - wrong.length;
   return (
     <Screen footer={
       <View style={{ flexDirection: 'row', gap: 10 }}>
         <Button title="Yetarli" variant="white" style={{ flex: 1 }} onPress={() => router.back()} />
         {more ? <Button title="Keyingi 5 ta" iconRight="arrow-right" style={{ flex: 1.6 }}
-          onPress={() => router.replace({ pathname: '/verb-session', params: { mode: 'learn', group } })} /> : null}
+          onPress={() => router.replace({ pathname: '/verb-session', params: { mode: 'learn', group, k: String(Date.now()) } })} /> : null}
       </View>
     }>
       <T w="extrabold" size={22} accessibilityRole="header">Mashg'ulot tugadi</T>
@@ -149,7 +150,7 @@ function Done({ mode, verbs, known, wrong, group }: { mode: Mode; verbs: Verb[];
             <T size={13.5} color={colors.muted}>{sub}</T>
           </View>
         </View>
-        {learned.length ? (
+        {learned.length && !allKnown ? (
           <View style={{ flexDirection: 'row', gap: 8 }}>
             {[[`${Math.max(0, ok)}/${learned.length}`, "to'g'ri"], [String(wrong.length), 'xato'], ...(known.length ? [[String(known.length), 'bilaman']] : [])].map(([v, l]) => (
               <View key={l} style={{ flex: 1, height: 36, borderRadius: 10, backgroundColor: colors.surfaceMuted, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>

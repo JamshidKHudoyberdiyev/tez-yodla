@@ -22,6 +22,8 @@ describe('verbs', () => {
     expect(groupOf('feel', 'felt', 'felt')).toBe('td');
     expect(groupOf('take', 'took', 'taken')).toBe('n');
     expect(groupOf('sing', 'sang', 'sung')).toBe('abc');
+    expect(groupOf('begin', 'began', 'begun')).toBe('abc');
+    expect(chipsOf(VERBS.find((v) => v.base === 'burn')!)).toContain('burning');
   });
   it('bo\'laklar so\'zni to\'liq tuzadi', () => {
     for (const v of VERBS) {

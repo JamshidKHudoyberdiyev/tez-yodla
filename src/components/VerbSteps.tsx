@@ -98,7 +98,7 @@ export function PastStep({ verb, header, onDone }: { verb: Verb; header: ReactNo
         <T w="extrabold" size={30} color={colors.forestText} style={{ textAlign: 'center' }} numberOfLines={2} adjustsFontSizeToFit>{verb.uz}</T>
         <T size={16} color={colors.muted} style={{ textAlign: 'center' }}>{verb.base} → <T w="extrabold" size={16}>?</T></T>
         <TextInput value={text} onChangeText={setText} editable={result === null} autoFocus autoCapitalize="none" autoCorrect={false} spellCheck={false}
-          returnKeyType="done" onSubmitEditing={check} placeholder={`${target.length} ta harf`} placeholderTextColor={colors.placeholder} accessibilityLabel="O'tgan shakl"
+          returnKeyType="done" onSubmitEditing={check} placeholder={verb.past.includes('/') ? "o'tgan shakl" : `${target.length} ta harf`} placeholderTextColor={colors.placeholder} accessibilityLabel="O'tgan shakl"
           style={{ marginTop: 10, height: 64, borderRadius: 18, borderWidth: 2, textAlign: 'center', fontFamily: font.bold, fontSize: 24,
             color: result === null ? colors.ink : result ? colors.forestText : colors.wrongInk,
             borderColor: result === null ? (text ? colors.forest : colors.line) : result ? colors.lime : colors.wrong,

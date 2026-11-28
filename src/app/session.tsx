@@ -844,7 +844,7 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
       <View style={{ flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 20, paddingVertical: 12 }}>
         {[
           { v: t.learned, l: "yangi so'z" },
-          { v: t.reviewed, l: 'takrorlandi' },
+          { v: t.reviewed + t.verbs, l: 'takrorlandi' },
           { v: t.forgotten, l: 'qayta yodlandi' },
         ].map((x, i) => (
           <View key={x.l} style={{ flex: 1, alignItems: 'center', borderRightWidth: i < 2 ? 1 : 0, borderRightColor: colors.divider }}>

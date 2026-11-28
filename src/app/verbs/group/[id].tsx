@@ -6,6 +6,7 @@ import { useStore } from '@/lib/store';
 import { colors } from '@/lib/theme';
 import { first, groupById, verbsOf, verbStatus } from '@/lib/verbs';
 import { GROUP_SIZE } from '@/lib/srs';
+import { shuffle } from '@/lib/drill';
 
 /** Guruh sahifasi: qoida, misollar, fe'llar ro'yxati va o'rganish tugmasi */
 export default function VerbGroup() {
@@ -27,9 +28,9 @@ export default function VerbGroup() {
   return (
     <Screen footer={
       <View style={{ gap: 6 }}>
-        {n ? <T size={12.5} color={colors.faint} style={{ textAlign: 'center' }}>Tanishish · O'tgan shakl · Gaplar · Yozish</T> : null}
+        {n ? <T size={12.5} color={colors.faint} style={{ textAlign: 'center' }}>Tanishish · O'tgan shakl · Gaplar · Juftlik · Yozish</T> : null}
         <Button title={n ? `${n} ta fe'l o'rganish` : 'Takrorlash'} iconRight="arrow-right"
-          onPress={() => router.push({ pathname: '/verb-session', params: n ? { mode: 'learn', group: g.id } : { mode: 'practice', list: list.slice(0, 10).map((v) => v.base).join(',') } })} />
+          onPress={() => router.push({ pathname: '/verb-session', params: n ? { mode: 'learn', group: g.id } : { mode: 'practice', list: shuffle(list).slice(0, 10).map((v) => v.base).join(',') } })} />
       </View>
     }>
       <BackHeader title={g.title} />

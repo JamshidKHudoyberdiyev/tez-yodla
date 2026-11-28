@@ -27,7 +27,7 @@ export interface VerbGroup {
 
 /** Osondan qiyinga */
 export const GROUPS: VerbGroup[] = [
-  { id: 'aaa', title: 'Uchalasi bir xil', rule: "Uchala shakl bir xil yoziladi va o'qiladi.", formula: ['A', 'A', 'A'] },
+  { id: 'aaa', title: 'Uchalasi bir xil', rule: "Uchala shakl bir xil yoziladi. Faqat read o'qilishi o'zgaradi: /riːd/ → /red/.", formula: ['A', 'A', 'A'] },
   { id: 'ought', title: '-ought / -aught', rule: "2- va 3-shakl bir xil, oxiri \u2011ought yoki \u2011aught.", formula: ['A', 'B', 'B'] },
   { id: 'aba', title: '1- va 3-shakl bir xil', rule: "III shakl birinchisi bilan bir xil, faqat o'tgan shakl boshqacha.", formula: ['A', 'B', 'A'] },
   { id: 'td', title: '-t / -d bilan tugaydi', rule: "2- va 3-shakl bir xil, oxiri \u2011t yoki \u2011d.", formula: ['A', 'B', 'B'] },
@@ -44,6 +44,8 @@ export function groupOf(base: string, past: string, part: string): GroupId {
   const q = first(part);
   if (base === p && p === q) return 'aaa';
   if (base === q && p !== base) return 'aba';
+  // i → a → u (begin, drink, sing, swim): «-n» bilan tugasa ham — unli o'zgaradigan guruh
+  if (base.includes('i') && p === base.replace('i', 'a') && q === base.replace('i', 'u')) return 'abc';
   if (p === q && /(ought|aught)$/.test(p)) return 'ought';
   if (p === q && /[td]$/.test(p) && !/(ood|ld|old)$/.test(p)) return 'td';
   if (p === q) return 'abb';
@@ -86,6 +88,9 @@ export function sentencesOf(base: string): VerbSentence[] {
 
 /** Shakllar (o'qish uchun): «buy, bought, bought» */
 export const formsOf = (v: Verb) => [v.base, first(v.past), first(v.part)];
+
+/** -ing shakli (chalg'ituvchi uchun): make → making, burn → burning */
+export const ingOf = (base: string) => (base.endsWith('e') && base !== 'be' ? base.slice(0, -1) : base) + 'ing';
 
 /** Qoidali qilib xato yasash: buy → buyed, make → maked */
 export function regularOf(base: string): string {
@@ -157,7 +162,8 @@ export function chipsOf(v: Verb): string[] {
   const s = sentencesOf(v.base);
   const chips = s.map((x) => x.word);
   const reg = regularOf(v.base);
-  if (!chips.includes(reg)) chips.push(reg);
+  // burn → burned to'g'ri javob bo'lsa, chalg'ituvchi sifatida -ing shakli qo'yiladi
+  chips.push(chips.includes(reg) ? ingOf(v.base) : reg);
   const pair = pairOf(v);
   if (pair && !chips.includes(pair.other)) chips.push(pair.other);
   return chips;

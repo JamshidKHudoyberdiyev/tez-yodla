@@ -8,7 +8,9 @@ import { first, FORM_LABELS, formsOf, sentencesOf, VERBS, type Letter, type Verb
 import { colors } from '@/lib/theme';
 
 const IPA = new Map(WORDS.filter((w) => w.ipa).map((w) => [w.word.toLowerCase(), w.ipa as string]));
-export const ipaOf = (base: string) => IPA.get(base);
+/** Lug'atda talaffuzi yo'q fe'llar */
+const IPA_EXTRA: Record<string, string> = { bite: '/baɪt/', dig: '/dɪɡ/', tear: '/teə/' };
+export const ipaOf = (base: string) => IPA.get(base) ?? IPA_EXTRA[base];
 /** Uzun shakl katakka sig'sin: understood → 15 */
 const formSize = (w: string) => (w.length <= 7 ? 20 : Math.max(13, Math.round(20 - (w.length - 7) * 1.9)));
 /** Sarlavha: understand → 36 */
@@ -54,7 +56,7 @@ export function FormsRow({ verb }: { verb: Verb }) {
         return (
           <Fragment key={i}>
             {i ? <Feather name="chevron-right" size={14} color={colors.faint} /> : null}
-            <Pressable accessibilityRole="button" accessibilityLabel={`${FORM_LABELS[i]}: ${f.replace('/', ' yoki ')}. Eshitish`} onPress={() => speakTts(a)}
+            <Pressable accessibilityRole="button" accessibilityLabel={`${FORM_LABELS[i]}: ${f.replace('/', ' yoki ')}. Eshitish`} onPress={() => (b ? speakTtsSequence([a, b]) : speakTts(a))}
               style={({ pressed }) => ({ flex: 1, minWidth: 0, height: two ? 84 : 74, borderRadius: 14, backgroundColor: on ? colors.limeSoft : colors.surfaceMuted, alignItems: 'center', justifyContent: 'center', gap: 3, paddingHorizontal: 4, opacity: pressed ? 0.8 : 1 })}>
               <T w="bold" size={10.5} color={colors.muted} style={{ letterSpacing: 0.8 }}>{FORM_LABELS[i]}</T>
               <T w="extrabold" size={formSize(a)} color={on ? colors.forestText : colors.ink} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{a}</T>
@@ -81,7 +83,7 @@ export function VerbHead({ verb, label }: { verb: Verb; label?: string }) {
       <T size={15} color={colors.muted}>{ipa ? `${ipa} · fe'l` : "fe'l"}</T>
       <T w="bold" size={22} color={colors.forestText} style={{ marginTop: 8, marginBottom: 12 }}>{verb.uz}</T>
       <FormsRow verb={verb} />
-      {two ? <T size={12.5} color={colors.muted} style={{ marginTop: 8 }}>Ikkalasi ham to'g'ri · {two[0]} — UK, {two[1]} — US</T> : null}
+      {two ? <T size={12.5} color={colors.muted} style={{ marginTop: 8 }}>{verb.base === 'be' ? 'was — I, he, she, it bilan · were — you, we, they bilan' : `Ikkalasi ham to'g'ri · ${two[0]} — UK, ${two[1]} — US`}</T> : null}
     </View>
   );
 }

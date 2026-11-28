@@ -27,6 +27,7 @@ function Root() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="login" options={{ gestureEnabled: false, animation: 'fade' }} />
       <Stack.Screen name="session" options={{ gestureEnabled: false }} />
+      <Stack.Screen name="verb-session" options={{ gestureEnabled: false }} />
       <Stack.Screen name="add" options={{ presentation: 'modal' }} />
       <Stack.Screen name="scan" options={{ presentation: 'fullScreenModal', animation: 'fade', contentStyle: { backgroundColor: '#1E211D' } }} />
     </Stack>
