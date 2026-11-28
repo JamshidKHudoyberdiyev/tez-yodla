@@ -4,7 +4,7 @@ import { Pressable, View } from 'react-native';
 import { T, type IconName } from '@/components/ui';
 import { WORDS } from '@/data/words';
 import { speakTts, speakTtsSequence } from '@/lib/speech';
-import { first, FORM_LABELS, formsOf, sentencesOf, type Letter, type Verb, type VerbStatus } from '@/lib/verbs';
+import { first, FORM_LABELS, formsOf, sentencesOf, VERBS, type Letter, type Verb, type VerbStats, type VerbStatus } from '@/lib/verbs';
 import { colors } from '@/lib/theme';
 
 const IPA = new Map(WORDS.filter((w) => w.ipa).map((w) => [w.word.toLowerCase(), w.ipa as string]));
@@ -155,5 +155,27 @@ export function TintRow({ icon, tint, accent, title, sub, onPress }: { icon: Ico
         </View>
       </View>
     </Pressable>
+  );
+}
+
+/** Fe'llar holati chizig'i: mustahkam · takrorlanmoqda · qiyin */
+export function VerbStatsBar({ st }: { st: VerbStats }) {
+  const pct = (n: number) => `${(n / VERBS.length) * 100}%` as const;
+  return (
+    <View style={{ height: 10, borderRadius: 5, backgroundColor: colors.divider, flexDirection: 'row', overflow: 'hidden', gap: st.started ? 2 : 0 }}>
+      {st.strong ? <View style={{ width: pct(st.strong), backgroundColor: colors.forest }} /> : null}
+      {st.growing ? <View style={{ width: pct(st.growing), backgroundColor: colors.lime }} /> : null}
+      {st.hard ? <View style={{ width: pct(st.hard), backgroundColor: colors.error, opacity: 0.55 }} /> : null}
+    </View>
+  );
+}
+
+/** «bu hafta +5» */
+export function WeekPill({ n }: { n: number }) {
+  if (!n) return null;
+  return (
+    <View style={{ height: 26, paddingHorizontal: 10, borderRadius: 13, backgroundColor: colors.limeSoft, justifyContent: 'center' }}>
+      <T w="bold" size={12.5} color={colors.forestText}>bu hafta +{n}</T>
+    </View>
   );
 }

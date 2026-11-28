@@ -60,7 +60,7 @@ export default function VerbSession() {
   const finish = (kn: string[], wr: string[]) => {
     if (saved.current) return;
     saved.current = true;
-    if (mode === 'learn') learnVerbs(verbs.filter((v) => !kn.includes(v.base)).map((v) => v.base), kn);
+    if (mode === 'learn') learnVerbs(verbs.filter((v) => !kn.includes(v.base)).map((v) => v.base), kn, wr);
     for (const v of verbs) {
       if (kn.includes(v.base)) continue;
       const ok = !wr.includes(v.base);

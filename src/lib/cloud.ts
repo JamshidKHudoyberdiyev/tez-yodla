@@ -72,6 +72,7 @@ export function mergeStates(cloud: AppState, local: AppState): AppState {
     mistakes: { ...local.mistakes, ...cloud.mistakes },
     verbs,
     verbMistakes: { ...(local.verbMistakes ?? {}), ...(cloud.verbMistakes ?? {}) },
+    verbAnswers: (cloud.verbAnswers?.length ?? 0) >= (local.verbAnswers?.length ?? 0) ? (cloud.verbAnswers ?? []) : (local.verbAnswers ?? []),
     reviewLog: [...cloud.reviewLog, ...local.reviewLog].sort((a, b) => a.d - b.d).slice(-4000),
     events: local.events,
   };

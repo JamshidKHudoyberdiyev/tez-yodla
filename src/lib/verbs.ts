@@ -186,3 +186,35 @@ export function searchVerbs(q: string): Verb[] {
   const hit = (v: Verb) => [v.base, ...v.past.split('/'), ...v.part.split('/')].some((f) => f.includes(t)) || v.uz.toLowerCase().includes(t);
   return VERBS.filter(hit).sort((a, b) => Number(!a.base.startsWith(t)) - Number(!b.base.startsWith(t)));
 }
+
+export interface VerbStats {
+  /** Boshlangan (kartasi bor) fe'llar */
+  started: number;
+  /** 7+ kun yodda turganlar */
+  strong: number;
+  /** Hali o'sayotganlar */
+  growing: number;
+  /** «Qiyinlar»dagilar */
+  hard: number;
+  /** Oxirgi 7 kunda o'rganilganlar */
+  week: number;
+  /** Oxirgi 30 javob aniqligi, % (10 tadan kam javob bo'lsa — null) */
+  accuracy: number | null;
+  /** Eng ko'p xato qilingan fe'l */
+  hardest?: Verb;
+}
+
+export function verbStats(cards: Record<string, Card>, mistakes: Record<string, number>, answers: [number, string, boolean][], today: number): VerbStats {
+  let strong = 0, growing = 0, hard = 0, week = 0;
+  for (const c of Object.values(cards)) {
+    if (!BY_BASE.has(c.wordId)) continue;
+    if (mistakes[c.wordId]) hard++;
+    else if (c.state === 'mastered' || c.stage >= 2) strong++;
+    else growing++;
+    if (c.learnedOn != null && c.learnedOn > today - 7) week++;
+  }
+  const last = answers.slice(-30);
+  const accuracy = last.length >= 10 ? Math.round((last.filter((a) => a[2]).length / last.length) * 100) : null;
+  const top = Object.entries(mistakes).filter(([b]) => BY_BASE.has(b)).sort((a, b) => b[1] - a[1])[0];
+  return { started: strong + growing + hard, strong, growing, hard, week, accuracy, hardest: top ? BY_BASE.get(top[0]) : undefined };
+}

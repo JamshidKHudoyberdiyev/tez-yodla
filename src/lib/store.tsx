@@ -50,6 +50,8 @@ export interface AppState {
   verbs: Record<string, Card>;
   /** «Qiyinlar»: fe'l → xatolar soni */
   verbMistakes: Record<string, number>;
+  /** Fe'l javoblari (oxirgi 60 ta): [kun, fe'l, to'g'rimi] — aniqlik uchun */
+  verbAnswers: [number, string, boolean][];
   prefs: Prefs;
 }
 
@@ -117,6 +119,9 @@ export const defaultPrefs: Prefs = {
 /** Zaxira fayli formati */
 export interface Backup { app: 'yodla'; version: 1; exportedAt: number; state: Omit<AppState, 'events'> }
 
+/** Fe'l aniqligi uchun saqlanadigan oxirgi javoblar soni */
+const VERB_ANSWERS = 60;
+
 const initialState: AppState = {
   onboarded: false,
   name: '',
@@ -135,6 +140,7 @@ const initialState: AppState = {
   reviewLog: [],
   verbs: {},
   verbMistakes: {},
+  verbAnswers: [],
   prefs: defaultPrefs,
 };
 
@@ -215,7 +221,7 @@ interface Store {
   /** «Bilaman» bekor qilindi / o'rganishga qaytarildi */
   unmarkKnown: (lemma: string) => void;
   /** Fe'llar guruhi o'rganildi: o'rganilganlar takrorlashga tushadi, «Bilaman» — bilingan deb belgilanadi */
-  learnVerbs: (learned: string[], known: string[]) => void;
+  learnVerbs: (learned: string[], known: string[], wrong?: string[]) => void;
   /** Fe'l takrorlandi: xato bo'lsa ertaga yana chiqadi */
   reviewVerb: (base: string, ok: boolean) => void;
   /** Fe'l mashqidagi xato/to'g'ri javob — «Qiyinlar» ro'yxati uchun */
@@ -391,7 +397,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     restoreBackup: (restored) => setState(withEvent(restored, 'backup_restored', { cards: Object.keys(restored.cards).length })),
     resetProgress: () =>
-      setState((s) => withEvent({ ...s, cards: {}, log: {}, knownLemmas: [], doneDays: [], streakRepairs: [], streakDismissed: [], reviewLog: [], evening: undefined, draft: null, verbs: {}, verbMistakes: {} }, 'progress_reset')),
+      setState((s) => withEvent({ ...s, cards: {}, log: {}, knownLemmas: [], doneDays: [], streakRepairs: [], streakDismissed: [], reviewLog: [], evening: undefined, draft: null, verbs: {}, verbMistakes: {}, verbAnswers: [] }, 'progress_reset')),
     setDraft: (d) => setState((s) => ({ ...s, draft: d })),
     markDayDone: () =>
       setState((s) => (s.doneDays.includes(today) ? s : { ...s, doneDays: [...s.doneDays.slice(-120), today] })),
@@ -403,19 +409,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setState((s) => ({ ...s, knownLemmas: Array.from(new Set([...s.knownLemmas, ...lemmas.map((l) => l.toLowerCase())])) })),
     unmarkKnown: (lemma) =>
       setState((s) => ({ ...s, knownLemmas: s.knownLemmas.filter((l) => l !== lemma.toLowerCase()) })),
-    learnVerbs: (learned, known) =>
+    learnVerbs: (learned, known, wrong = []) =>
       setState((s) => {
         const verbs = { ...s.verbs };
+        const answers = [...(s.verbAnswers ?? []), ...learned.map((b): [number, string, boolean] => [today, b, !wrong.includes(b)])].slice(-VERB_ANSWERS);
         for (const b of learned) verbs[b] = completeLearning(verbs[b] ?? newCard(b), today);
         for (const b of known) verbs[b] = { ...newCard(b), state: 'mastered', stage: INTERVALS.length, due: today + MASTERED_INTERVAL, reviews: 1, lastReviewed: today, learnedOn: today };
-        return withEvent({ ...s, verbs }, 'verbs_learned', { count: learned.length, known: known.length });
+        return withEvent({ ...s, verbs, verbAnswers: answers }, 'verbs_learned', { count: learned.length, known: known.length });
       }),
     reviewVerb: (base, ok) =>
       setState((s) => {
         const cur = s.verbs[base];
         if (!cur) return s;
         const graded = gradeCard(cur, ok ? 'good' : 'again', today);
-        return { ...s, verbs: { ...s.verbs, [base]: ok ? graded : completeRelearning(graded, today) } };
+        const verbAnswers = [...(s.verbAnswers ?? []), [today, base, ok] as [number, string, boolean]].slice(-VERB_ANSWERS);
+        return { ...s, verbs: { ...s.verbs, [base]: ok ? graded : completeRelearning(graded, today) }, verbAnswers };
       }),
     noteVerb: (base, ok) =>
       setState((s) => {

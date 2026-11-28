@@ -1,4 +1,4 @@
-import { chipsOf, chunksOf, first, formOk, GROUPS, groupOf, pairOf, searchVerbs, sentencesOf, VERBS, verbsOf, verbStatus } from './verbs';
+import { chipsOf, chunksOf, first, formOk, GROUPS, groupOf, pairOf, searchVerbs, sentencesOf, VERBS, verbsOf, verbStats, verbStatus } from './verbs';
 import { newCard } from './srs';
 
 describe('verbs', () => {
@@ -48,5 +48,14 @@ describe('verbs', () => {
     expect(verbStatus({ ...newCard('x'), state: 'review', stage: 2 })).toBe('learned');
     expect(searchVerbs('ought').map((v) => v.base)).toEqual(expect.arrayContaining(['buy', 'bring', 'think', 'fight']));
     expect(searchVerbs('sindir').map((v) => v.base)).toEqual(['break']);
+  });
+  it('statistika', () => {
+    const c = (b: string, stage: number, learnedOn: number) => ({ ...newCard(b), state: 'review' as const, stage, learnedOn });
+    const cards = { buy: c('buy', 2, 100), go: c('go', 0, 98), cut: c('cut', 1, 90), foo: c('foo', 3, 100) };
+    const answers: [number, string, boolean][] = Array.from({ length: 12 }, (_, i) => [100, 'buy', i % 4 !== 0]);
+    const st = verbStats(cards, { cut: 2, go: 1 }, answers, 100);
+    expect(st).toMatchObject({ started: 3, strong: 1, growing: 0, hard: 2, week: 2, accuracy: 75 });
+    expect(st.hardest?.base).toBe('cut');
+    expect(verbStats({}, {}, [], 100).accuracy).toBeNull();
   });
 });

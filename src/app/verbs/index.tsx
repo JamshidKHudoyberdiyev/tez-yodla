@@ -3,23 +3,21 @@ import { router } from 'expo-router';
 import { Fragment, useMemo, useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import { BackHeader, Group, Screen, T } from '@/components/ui';
-import { Formula, TintRow, VerbRow } from '@/components/VerbParts';
+import { Formula, TintRow, VerbRow, VerbStatsBar, WeekPill } from '@/components/VerbParts';
 import { useStore } from '@/lib/store';
 import { colors, font } from '@/lib/theme';
-import { GROUPS, searchVerbs, VERBS, verbByBase, verbsOf, verbStatus, type GroupId } from '@/lib/verbs';
+import { GROUPS, searchVerbs, VERBS, verbByBase, verbsOf, verbStats, verbStatus, type GroupId } from '@/lib/verbs';
 
 /** Guruh namunasi — ro'yxatda ko'rsatiladi */
 const SAMPLE: Record<GroupId, string> = { aaa: 'cut', ought: 'buy', aba: 'come', td: 'feel', abb: 'make', abc: 'sing', n: 'take' };
 
 /** «Noto'g'ri fe'llar» bo'limi: qidiruv, progress, Qiyinlar, Guruhlar | Hammasi */
 export default function VerbsHub() {
-  const { state } = useStore();
+  const { state, today } = useStore();
   const [q, setQ] = useState('');
   const [tab, setTab] = useState<'groups' | 'all'>('groups');
   const status = (base: string) => verbStatus(state.verbs[base]);
-  const learned = VERBS.filter((v) => status(v.base) === 'learned').length;
-  const learning = VERBS.filter((v) => status(v.base) === 'learning').length;
-  const started = learned + learning;
+  const st = verbStats(state.verbs, state.verbMistakes, state.verbAnswers ?? [], today);
   const hard = Object.keys(state.verbMistakes).filter((b) => verbByBase(b)).length;
   const results = useMemo(() => searchVerbs(q), [q]);
   const open = (base: string) => router.push({ pathname: '/verbs/[base]', params: { base } });
@@ -61,17 +59,31 @@ export default function VerbsHub() {
         )
       ) : (
         <>
-          <View style={{ backgroundColor: colors.surface, borderRadius: 22, padding: 18, gap: 12 }} accessibilityLabel={`${started} ta fe'l o'rganildi, jami ${VERBS.length}`}>
+          <View style={{ backgroundColor: colors.surface, borderRadius: 22, padding: 18, gap: 14 }}
+            accessibilityLabel={`${st.started} ta fe'l o'rganildi, jami ${VERBS.length}. Mustahkam ${st.strong}, takrorlashda ${st.growing}, qiyin ${st.hard}`}>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
-              <T w="extrabold" size={26}>{started}</T>
-              <T w="semibold" size={15} color={colors.faint}>/ {VERBS.length} o'rganildi</T>
-              <View style={{ flex: 1 }} />
-              {learned ? <T size={13} color={colors.muted}>{learned} tasi mustahkam</T> : null}
+              <T w="extrabold" size={30} style={{ letterSpacing: -0.6 }}>{st.started}</T>
+              <T w="semibold" size={15} color={colors.faint} style={{ flex: 1 }}>/ {VERBS.length} fe'l o'rganildi</T>
+              <WeekPill n={st.week} />
             </View>
-            <View style={{ height: 8, borderRadius: 4, backgroundColor: colors.divider, flexDirection: 'row', overflow: 'hidden' }}>
-              <View style={{ width: `${(learned / VERBS.length) * 100}%`, backgroundColor: colors.forest }} />
-              <View style={{ width: `${(learning / VERBS.length) * 100}%`, backgroundColor: colors.lime }} />
+            <VerbStatsBar st={st} />
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {([[st.strong, 'Mustahkam', colors.forest, 1], [st.growing, 'Takrorlashda', colors.lime, 1], [st.hard, 'Qiyin', colors.error, 0.55]] as const).map(([n, l, c, o]) => (
+                <View key={l} style={{ flex: 1, borderRadius: 14, backgroundColor: colors.surfaceMuted, paddingVertical: 9, paddingHorizontal: 10 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c, opacity: o }} />
+                    <T w="extrabold" size={20}>{n}</T>
+                  </View>
+                  <T w="semibold" size={11.5} color={colors.muted} numberOfLines={1} adjustsFontSizeToFit>{l}</T>
+                </View>
+              ))}
             </View>
+            {st.accuracy !== null ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.divider }}>
+                <Feather name="target" size={15} color={colors.muted} />
+                <T size={13} color={colors.muted}>Aniqlik <T w="extrabold" size={13}>{st.accuracy}%</T> · oxirgi 30 javob</T>
+              </View>
+            ) : null}
           </View>
 
           {hard ? <TintRow icon="alert-circle" tint={colors.peach} accent={colors.error} title="Qiyinlar" sub={`${hard} ta fe'l · xato qilganlaringiz`}

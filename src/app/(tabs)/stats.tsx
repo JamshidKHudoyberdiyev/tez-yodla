@@ -11,6 +11,8 @@ import { retention } from '@/lib/retention';
 import { Flame, FreezeChip } from '@/components/Streak';
 import { useStore } from '@/lib/store';
 import { colors, themed } from '@/lib/theme';
+import { VerbStatsBar, WeekPill } from '@/components/VerbParts';
+import { VERBS, verbStats } from '@/lib/verbs';
 
 const WEEKDAYS = ['Ya', 'Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh'];
 
@@ -23,6 +25,7 @@ export default function Stats() {
   const totalInDecks = words.filter((w) => state.activeDecks.includes(w.deckId)).length;
   const fresh = Math.max(0, totalInDecks - s.learned);
   const garden = useMemo(() => gardenStages(state.cards, today), [state.cards, today]);
+  const vs = useMemo(() => verbStats(state.verbs, state.verbMistakes, state.verbAnswers ?? [], today), [state.verbs, state.verbMistakes, state.verbAnswers, today]);
   const r = useMemo(() => retention(state.reviewLog ?? [], today), [state.reviewLog, today]);
   const enough = r.n >= 10;
   const trend = enough && r.pct !== null && r.prevPct !== null ? r.pct - r.prevPct : null;
@@ -148,6 +151,31 @@ export default function Stats() {
             <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: colors.track }} />
             <T size={12} color={colors.inkSoft} style={{ flex: 1 }}>Faol to'plamlarda hali ekilmagan: <T w="extrabold" size={12}>{fresh} ta so'z</T></T>
           </View>
+        </Pressable>
+
+        {/* Noto'g'ri fe'llar */}
+        <Pressable accessibilityRole="button" accessibilityLabel={`Noto'g'ri fe'llar: ${vs.started} / ${VERBS.length}. Bo'limni ochish`} onPress={() => router.push('/verbs')}
+          style={({ pressed }) => ({ backgroundColor: colors.surface, borderRadius: 26, padding: 16, gap: 12, opacity: pressed ? 0.9 : 1 })}>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <H2>Noto'g'ri fe'llar</H2>
+            <T w="bold" size={12} color={colors.forestText}>Bo'limga →</T>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
+            <T w="extrabold" size={26}>{vs.started}</T>
+            <T w="semibold" size={14} color={colors.faint} style={{ flex: 1 }}>/ {VERBS.length}</T>
+            <WeekPill n={vs.week} />
+          </View>
+          <VerbStatsBar st={vs} />
+          <T size={12.5} color={colors.muted}><T w="extrabold" size={12.5}>{vs.strong}</T> mustahkam   <T w="extrabold" size={12.5}>{vs.growing}</T> takrorlashda   <T w="extrabold" size={12.5}>{vs.hard}</T> qiyin</T>
+          {vs.accuracy !== null || vs.hardest ? (
+            <View style={{ paddingTop: 10, borderTopWidth: 1, borderTopColor: colors.divider }}>
+              <T size={13} color={colors.muted}>
+                {vs.accuracy !== null ? <>Aniqlik <T w="extrabold" size={13}>{vs.accuracy}%</T></> : null}
+                {vs.accuracy !== null && vs.hardest ? ' · ' : ''}
+                {vs.hardest ? <>eng qiyini: <T w="extrabold" size={13}>{vs.hardest.base} · {vs.hardest.past}</T></> : null}
+              </T>
+            </View>
+          ) : null}
         </Pressable>
 
         <Card style={{ gap: 6 }}>
