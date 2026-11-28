@@ -92,6 +92,21 @@ export function spreadBy<X>(items: X[], key: (x: X) => string): X[] {
   return out;
 }
 
+/** `extra` elementlarini `base` orasiga teng oraliqda joylaydi (masalan, fe'llar so'zlar orasiga): bo'limlarga bo'linganda hammasi oxirgisiga tushmasin. */
+export function interleave<X>(base: X[], extra: X[]): X[] {
+  if (!extra.length) return [...base];
+  if (!base.length) return [...extra];
+  const out: X[] = [];
+  const step = (base.length + extra.length) / extra.length;
+  let e = 0;
+  for (let i = 0, b = 0; i < base.length + extra.length; i++) {
+    const wantExtra = e < extra.length && i >= Math.floor(step * e + step / 2) - 1;
+    if ((wantExtra || b >= base.length) && e < extra.length) out.push(extra[e++]);
+    else out.push(base[b++]);
+  }
+  return out;
+}
+
 /** «Yana N ta so'z» tugmasi bir bosishda beradigan qo'shimcha yangi so'zlar */
 export const EXTRA_NEW = 5;
 

@@ -12,7 +12,7 @@ import { gardenIndex } from '@/lib/garden';
 import { DAY_GOAL, milestoneLabel, MILESTONES, type StreakInfo } from '@/lib/streak';
 import { buildChoices, groupTimeline, intervalLabel, relativeDay, shuffle, uzDate } from '@/lib/drill';
 import { deckById, Word } from '@/data/words';
-import { capReviews, EXTRA_NEW, splitParts, spreadBy, todayPlan } from '@/lib/plan';
+import { capReviews, EXTRA_NEW, interleave, splitParts, spreadBy, todayPlan } from '@/lib/plan';
 import { clozeOf, clozeParts, exampleHasWord } from '@/lib/text';
 import { speak, speakSequence, stopSpeech } from '@/lib/speech';
 import { Grade, gradeCard, gradeTyped, isDue, reviewModeFor, ReviewMode, type Card as CardT } from '@/lib/srs';
@@ -110,11 +110,11 @@ function SessionBody({ askExit }: { askExit: (k: ExitKind, where?: string) => vo
     const noReviews = !!deck || only === 'new';
     // Kunlik takrorlash chegarasi: ortig'i navbatda qoladi (`more` — «Yana N ta» bosilgan)
     const due = capReviews(p.reviews.filter((c) => wordById(c.wordId)), state.prefs.reviewCap, state.log[today]?.reviewed ?? 0, !!more).today;
-    // Vaqti kelgan noto'g'ri fe'llar ham shu takrorlashga qo'shiladi
+    // Vaqti kelgan noto'g'ri fe'llar ham shu takrorlashga qo'shiladi — so'zlar orasiga teng tarqatiladi
     const verbsDue = Object.values(state.verbs).filter((c) => isDue(c, today) && verbByBase(c.wordId)).map((c) => ({ ...c, wordId: VERB_PREFIX + c.wordId }));
     return {
       groups: only === 'review' ? [] : p.groups,
-      reviews: noReviews ? [] : [...due.filter((c) => c.state !== 'relearning'), ...verbsDue],
+      reviews: noReviews ? [] : interleave(due.filter((c) => c.state !== 'relearning'), verbsDue),
       pendingRelearn: noReviews ? [] : due.filter((c) => c.state === 'relearning').map((c) => c.wordId),
       resume: null as SessionDraft | null,
     };

@@ -127,3 +127,20 @@ describe('new word groups', () => {
     expect(g(20)).toEqual([5, 5, 5, 5]);
   });
 });
+
+describe('interleave', () => {
+  const { interleave } = jest.requireActual('./plan') as typeof import('./plan');
+  it("qo'shimchalarni teng tarqatadi", () => {
+    const out = interleave(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'], ['X', 'Y', 'Z']);
+    expect(out).toHaveLength(17);
+    expect(out.filter((x) => x.length === 1 && x === x.toUpperCase())).toEqual(['X', 'Y', 'Z']);
+    const pos = ['X', 'Y', 'Z'].map((x) => out.indexOf(x));
+    expect(pos[0]).toBeLessThan(6);
+    expect(pos[2]).toBeGreaterThan(10);
+    expect(out.filter((x) => x === x.toLowerCase())).toEqual(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n']);
+  });
+  it("bo'sh ro'yxatlar", () => {
+    expect(interleave([], ['X'])).toEqual(['X']);
+    expect(interleave(['a'], [])).toEqual(['a']);
+  });
+});
